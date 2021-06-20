@@ -1,0 +1,92 @@
+.navbarOuterWrapper{
+    display: flex;
+    flex-direction: row;
+    /* /* max-width: 920px; */
+    width: 100vw; 
+    margin: auto;
+    margin-top: 0px;
+    border-bottom: 1px solid #eaeaea;
+    background-color: #fff;
+    padding-top: 1.8rem;
+    padding-bottom: 1.8rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    box-shadow: 0 0 3px 0 rgba(0,0,0,0.2);
+}
+
+.navbarInnerWrapper{
+    max-width: 920px;
+    margin: auto;
+    // height: 6.2rem;
+}
+
+.navbarIconLI{
+    font-size: 3rem;
+    margin-right: 15px;
+    margin-left: 15px;
+    // height: 100%;
+    // margin-top: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.navbarLI{
+    padding: 1rem;
+    // height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.navbarUL{
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 0px;
+    // height: 100%;
+}
+
+.activeNavLink{
+    a{
+        // border-bottom: 1px solid #000;
+        // width: 0px;
+        // transform: scaleX(0.0001);
+        transition: transform 250ms ease-in-out;
+        // border-bottom: 1px solid #eaeaea;
+    }
+}
+.borderDiv{
+    width: 100%;
+
+}
+
+.borderDiv::after{
+    display: block;
+    content: "";
+    border-bottom: 1px solid #000;
+    // height: 0.5rem;
+    // width: 100%;
+    -webkit-transform: scaleX(0.00001);
+    -ms-transform: scaleX(0.00001);
+    transform: scaleX(0.00001);
+    // transition: transform 1250ms ease-in-out;
+}
+
+.activeNavLink .borderDiv::after{
+    display: block;
+    content: "";
+    // height: 0.5rem;
+    // width: 100%;
+    // border-bottom: 3px solid #000;
+    -webkit-transform: scaleX(1);
+    -ms-transform: scaleX(1);
+    transform: scaleX(1);
+    -moz-transition: transform 750ms ease-in-out;
+    -webkit-transition: transform 750ms ease-in-out;
+    -o-transition: transform 750ms ease-in-out;
+    transition: transform 750ms ease-in-out;
+}
+

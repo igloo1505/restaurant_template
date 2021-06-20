@@ -1,0 +1,17 @@
+.PortalLoginContainer{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    // justify-content: center;
+    // align-items: center;
+}
+.portalLoginCard{
+        position: absolute;
+        top: 50vh;
+        left: 50vw;
+        transform: translate(-50%, -50%);
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        padding: 15px;
+        width: 300px;
+}
