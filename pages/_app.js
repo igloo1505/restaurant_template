@@ -1,5 +1,5 @@
 import React, { useEffect, Fragment } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/portalAuthenticated/Navbar";
 import Head from "next/head";
 import "../styles/globals.css";
 import { Provider } from "react-redux";
@@ -10,6 +10,7 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import theme from "../styles/MUITheme";
 import setAuthToken from "../stateManagement/setAuth";
+
 import {
   SET_VIEWPORT_DIMENSIONS,
   SET_NAV_HEIGHT,
@@ -83,6 +84,7 @@ function MyApp({ Component, pageProps }) {
         </Head>
         <ThemeProvider theme={theme}>
           <CssBaseline />
+          <Navbar />
           <Component {...pageProps} />
         </ThemeProvider>
       </Provider>

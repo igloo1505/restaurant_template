@@ -14,7 +14,11 @@ import {
 const useStyles = makeStyles((theme) => ({
   outerContainer: {},
   listRoot: {},
-  listItemRoot: {},
+  listItemRoot: {
+    "&:hover": {
+      backgroundColor: "rgba(120,172,233, 0.1)",
+    },
+  },
   listItemIconRoot: {
     zIndex: 1,
   },

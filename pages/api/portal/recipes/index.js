@@ -4,7 +4,7 @@ import Recipe from "../../../../models/Recipe";
 const colors = require("colors");
 
 const handler = nc();
-handler.use(middleware);
+// handler.use(middleware);
 handler.get(async (req, res) => {
   try {
     let recipes = await Recipe.find({}).sort({ createdAt: -1 }).limit(20);

@@ -166,21 +166,21 @@ const MUITheme = createMuiTheme({
       type: "dark",
     },
     primary: {
-      light: "#7986cb",
-      main: "#3f51b5",
-      dark: "#303f9f",
-      contrastText: "#fff",
-    },
-    brandColor: {
-      light: "#2e73ab",
-      main: "#42a5f5",
-      dark: "#67b7f7",
+      light: "#51a1ff",
+      main: "#268AFF",
+      dark: "#227ce6",
       contrastText: "#fff",
     },
     secondary: {
-      light: "#ff4081",
-      main: "#f50057",
-      dark: "  #c51162",
+      dark: "#d4560e",
+      main: "#EB6010",
+      light: "#ed7028",
+      contrastText: "#fff",
+    },
+    alternative: {
+      light: "#fcd47d",
+      main: "#FBC95C",
+      dark: "  #c9a14a",
       contrastText: " #fff",
     },
     error: {

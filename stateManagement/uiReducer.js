@@ -3,6 +3,8 @@ import {
   RECIPE_ERROR,
   TRIGGER_MODAL,
   SET_MODAL_CONTENT,
+  OPEN_DRAWER,
+  CLOSE_DRAWER,
   MODAL_CONFIRMED,
   MODAL_DISMISSED,
   ERROR_WITH_MODAL,
@@ -25,6 +27,8 @@ import {
   REMOVE_USER,
   ADD_TACO_INGREDIENT,
   SET_NAV_HEIGHT,
+  DISPOSE_ACCOUNT_MENU,
+  SHOW_ACCOUNT_MENU,
 } from "./TYPES";
 import { initialFormData } from "./initialFormData";
 
@@ -42,6 +46,13 @@ const initialState = {
     alertText: "",
     alertType: "",
     isOpen: false,
+  },
+  accountMenu: {
+    el: null,
+    shouldBeVisible: false,
+  },
+  portalDrawer: {
+    open: false,
   },
   viewport: {
     navHeight: 0,
@@ -130,52 +141,8 @@ export default function modalReducer(state = initialState, action) {
           wasAccepted: false,
         },
         alert: { ...state.alert },
+        accountMenu: { ...state.accountMenu },
         leftTab: { ...state.leftTab },
-      };
-    case SET_FORM_INPUTS:
-      return {
-        ...state,
-        modal: { ...state.modal },
-        alert: { ...state.alert },
-        leftTab: { ...state.leftTab },
-        form: {
-          ...state.form,
-          as: action.payload.as,
-          inputs: action.payload.inputs,
-        },
-      };
-    case SET_FORM_DATA:
-      let { selectedName, isSubCategory, display, value } = action.payload;
-      let x = handleFormDataObject(
-        selectedName,
-        isSubCategory,
-        display,
-        value,
-        state
-      );
-      return {
-        ...state,
-        form: {
-          ...state.form,
-          as: state.form.as,
-          inputs: [...state.form.inputs],
-          data: x,
-        },
-      };
-    case ADD_TACO_INGREDIENT:
-      return {
-        ...state,
-        form: {
-          ...state.form,
-          data: {
-            ...state.form.data,
-            Tacos: {
-              ...state.form.data.Tacos,
-              [action.payload.dataType]:
-                initialFormData.Tacos[action.payload.dataType],
-            },
-          },
-        },
       };
 
     case SET_VIEWPORT_DIMENSIONS:
@@ -195,11 +162,16 @@ export default function modalReducer(state = initialState, action) {
           isXL: device === "isXL" ? true : false,
         },
         leftTab: { ...state.leftTab },
+        accountMenu: { ...state.accountMenu },
       };
     case SET_NAV_HEIGHT:
       return {
         ...state,
         viewport: { ...state.viewport, navHeight: action.payload },
+        modal: { ...state.modal },
+        leftTab: { ...state.leftTab },
+        alert: { ...state.alert },
+        accountMenu: { ...state.accountMenu },
       };
     case TRIGGER_ALERT:
       return {
@@ -207,6 +179,7 @@ export default function modalReducer(state = initialState, action) {
         modal: { ...state.modal },
         leftTab: { ...state.leftTab },
         alert: action.payload,
+        accountMenu: { ...state.accountMenu },
       };
     case DISPOSE_ALERT:
       return {
@@ -214,6 +187,7 @@ export default function modalReducer(state = initialState, action) {
         modal: { ...state.modal },
         leftTab: { ...state.leftTab },
         alert: initialState.alert,
+        accountMenu: { ...state.accountMenu },
       };
     case SET_MODAL_INSTANCE:
       return {
@@ -226,6 +200,7 @@ export default function modalReducer(state = initialState, action) {
         },
         alert: { ...state.alert },
         leftTab: { ...state.leftTab },
+        accountMenu: { ...state.accountMenu },
       };
     case MODAL_DISMISSED:
       return {
@@ -238,6 +213,7 @@ export default function modalReducer(state = initialState, action) {
         },
         alert: { ...state.alert },
         leftTab: { ...state.leftTab },
+        accountMenu: { ...state.accountMenu },
       };
     case MODAL_CONFIRMED:
       return {
@@ -250,6 +226,7 @@ export default function modalReducer(state = initialState, action) {
         },
         alert: { ...state.alert },
         leftTab: { ...state.leftTab },
+        accountMenu: { ...state.accountMenu },
       };
 
     case UPDATE_USER_INFO:
@@ -263,6 +240,7 @@ export default function modalReducer(state = initialState, action) {
           isOpen: true,
         },
         isEditing: !state.isEditing,
+        accountMenu: { ...state.accountMenu },
       };
     case EDIT_MENU_ITEM:
       return {
@@ -275,6 +253,7 @@ export default function modalReducer(state = initialState, action) {
           isOpen: true,
         },
         isEditing: !state.isEditing,
+        accountMenu: { ...state.accountMenu },
       };
     case AUTHENTICATION_ERROR:
       return {
@@ -287,6 +266,7 @@ export default function modalReducer(state = initialState, action) {
           isOpen: true,
         },
         isEditing: false,
+        accountMenu: { ...state.accountMenu },
       };
     case USER_ERROR:
     case RECIPE_ERROR:
@@ -300,6 +280,7 @@ export default function modalReducer(state = initialState, action) {
           isOpen: true,
         },
         isEditing: false,
+        accountMenu: { ...state.accountMenu },
       };
 
     case REGISTER_NEW_USER:
@@ -313,6 +294,7 @@ export default function modalReducer(state = initialState, action) {
           isOpen: true,
         },
         isEditing: false,
+        accountMenu: { ...state.accountMenu },
       };
     case REMOVE_USER:
       return {
@@ -325,6 +307,7 @@ export default function modalReducer(state = initialState, action) {
           isOpen: true,
         },
         isEditing: false,
+        accountMenu: { ...state.accountMenu },
       };
 
     case TOGGLE_EDIT_STATE:
@@ -333,6 +316,7 @@ export default function modalReducer(state = initialState, action) {
         modal: { ...state.modal },
         letTab: { ...state.leftTab },
         alert: { ...state.alert },
+        accountMenu: { ...state.accountMenu },
         isEditing: !state.isEditing,
       };
     case TOGGLE_LEFT_TAB:
@@ -344,8 +328,9 @@ export default function modalReducer(state = initialState, action) {
           ...state.leftTab,
           isOpen: !state.leftTab.isOpen,
         },
+        accountMenu: { ...state.accountMenu },
       };
-    case SET_LEFT_TAB_ARRAY: {
+    case SET_LEFT_TAB_ARRAY:
       return {
         ...state,
         modal: { ...state.modal },
@@ -354,8 +339,9 @@ export default function modalReducer(state = initialState, action) {
           ...state.leftTab,
           tabs: action.payload,
         },
+        accountMenu: { ...state.accountMenu },
       };
-    }
+
     case TOGGLE_MODAL:
       return {
         ...state,
@@ -367,6 +353,7 @@ export default function modalReducer(state = initialState, action) {
         },
         alert: { ...state.alert },
         leftTab: { ...state.leftTab },
+        accountMenu: { ...state.accountMenu },
       };
     case TRIGGER_MODAL:
     case ERROR_WITH_MODAL:
@@ -383,6 +370,34 @@ export default function modalReducer(state = initialState, action) {
         },
         alert: { ...state.alert },
         leftTab: { ...state.leftTab },
+        accountMenu: { ...state.accountMenu },
+      };
+    case OPEN_DRAWER:
+      return {
+        ...state,
+        portalDrawer: { ...state.drawer, open: true },
+      };
+    case CLOSE_DRAWER:
+      return {
+        ...state,
+        portalDrawer: { ...state.drawer, open: false },
+      };
+    case SHOW_ACCOUNT_MENU:
+      return {
+        ...state,
+        modal: { ...state.modal },
+        alert: { ...state.alert },
+        leftTab: { ...state.leftTab },
+        accountMenu: {
+          ...state.accountMenu,
+          el: action.payload,
+          shouldBeVisible: true,
+        },
+      };
+    case DISPOSE_ACCOUNT_MENU:
+      return {
+        ...state,
+        accountMenu: { ...state.accountMenu, el: null, shouldBeVisible: false },
       };
     default:
       return state;

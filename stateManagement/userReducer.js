@@ -11,8 +11,8 @@ import {
 } from "./TYPES";
 
 const initialState = {
-  loggedIn: true,
-  token: "",
+  loggedIn: false,
+  token: null,
   allUsers: [],
   filtered: null,
   loading: false,

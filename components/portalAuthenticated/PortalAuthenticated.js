@@ -5,7 +5,6 @@ import Drawer from "./Drawer";
 const PortalAuthenticated = () => {
   return (
     <div>
-      <div>Yup</div>
       <Drawer />
     </div>
   );

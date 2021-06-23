@@ -43,6 +43,7 @@ export default class MyDocument extends Document {
         </Head>
         <body>
           <Main />
+          <div id="topLevelPortalContainer" />
           <NextScript />
         </body>
         <script
@@ -61,9 +62,6 @@ export default class MyDocument extends Document {
 }
 
 MyDocument.getInitialProps = async (ctx) => {
-  console.log("CTXXXXX");
-  console.log(typeof ctx.renderPage);
-  console.log("CTXXXXX");
   // Resolution order
   //
   // On the server:
@@ -110,7 +108,6 @@ MyDocument.getInitialProps = async (ctx) => {
     ...initialProps,
     styles: [
       ...React.Children.toArray(initialProps.styles),
-      // ...emotionStyleTags,
       sheets.getStyleElement(),
     ],
   };

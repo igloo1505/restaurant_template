@@ -16,7 +16,7 @@ const Home = ({
   const [offsetHeight, setOffsetHeight] = useState({});
 
   return (
-    <div style={offsetHeight}>
+    <div style={offsetHeight} id="applicationWrapper">
       <div>Welp...</div>
       <style jsx>{``}</style>
     </div>
