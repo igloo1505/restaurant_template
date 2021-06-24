@@ -19,16 +19,16 @@ const useStylesAppbar = makeStyles((theme) => ({
       color: theme.palette.primary.main,
     },
     [theme.breakpoints.down("xl")]: {
-      width: "100vw",
+      // width: "100vw",
       backgroundColor: theme.palette.primary.main,
-      zIndex: 1301,
+      zIndex: 1303,
       transition: "margin-left 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
       transition: "width 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     },
   },
   accountIconButton: { marginLeft: "auto" },
   accountIconButtonPermanent: {
-    marginLeft: "unset",
+    marginLeft: "auto",
     // position: "absolute",
   },
   accountIconButtonLabel: {
@@ -54,14 +54,13 @@ const useStylesAppbar = makeStyles((theme) => ({
   appbarShifted: {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    zIndex: 1301,
+    zIndex: 1299,
     transition: "margin-left 225ms cubic-bezier(0, 0, 0.2, 1) 0ms",
     transition: "width 225ms cubic-bezier(0, 0, 0.2, 1) 0ms",
   },
   appbarLabelText: {
     color: "#fff",
   },
-
   toolbarRoot: {
     backgroundColor: theme.palette.primary.main,
     [theme.breakpoints.down("xl")]: {
@@ -74,7 +73,8 @@ const useStylesAppbar = makeStyles((theme) => ({
       }),
     },
     [theme.breakpoints.up("xl")]: {
-      width: `calc(100vw - ${drawerWidth})`,
+      width: `calc(100vw - ${drawerWidth}px)`,
+      // marginLeft: drawerWidth,
       backgroundColor: theme.palette.primary.main,
       zIndex: theme.zIndex.drawer - 1,
       transition: theme.transitions.create(["width", "margin"], {
@@ -119,10 +119,34 @@ const useStylesAppbar = makeStyles((theme) => ({
   menuIconRoot: {
     backgroundColor: "transparent",
   },
+  hideMenuButton: { display: "none" },
 }));
 const drawerWidth = 240;
 
-const Navbar = ({ isOpen, viewport }) => {
+const Navbar = ({
+  isOpen,
+  viewport: { width: deviceWidth, height: deviceHeight },
+}) => {
+  const [shiftAppbar, setShiftAppbar] = useState(false);
+  useEffect(() => {
+    // debugger;
+    console.log("width", deviceWidth);
+    console.log("WTF", isOpen);
+    if (deviceWidth === 0) {
+      let shouldShift = isOpen ? true : false;
+      return setShiftAppbar(shouldShift);
+    }
+    if (deviceWidth >= 1920) {
+      setShiftAppbar(true);
+    }
+    if (isOpen) {
+      setShiftAppbar(true);
+    }
+    if (deviceWidth < 1920 || !isOpen) {
+      console.log("Did run this mothalova");
+      setShiftAppbar(false);
+    }
+  }, [deviceWidth, isOpen]);
   const dispatch = useDispatch();
   const setMenuAnchor = (e) => {
     dispatch({ type: Types.SHOW_ACCOUNT_MENU });
@@ -139,43 +163,39 @@ const Navbar = ({ isOpen, viewport }) => {
       });
     }
   };
-  const { width: deviceWidth, height: deviceHeight } = viewport;
+
   const [isPermanent, setIsPermanent] = useState(false);
   const [shouldHideMenuButton, setShouldHideMenuButton] = useState(false);
   useEffect(() => {
-    // if (typeof window !== "undefined") {
-    //   let em = document.getElementById("topLevelPortalContainer");
-    //   if (em) {
-    //     setMenuAnchor(em);
-    //   }
-    // }
     if (deviceWidth >= 1920) {
       setIsPermanent(true);
       setShouldHideMenuButton(true);
+      setShiftAppbar(true);
     }
-    if (deviceWidth < 1920) {
+    if (deviceWidth < 1920 && !isOpen) {
       setIsPermanent(false);
       setShouldHideMenuButton(false);
+      setShiftAppbar(false);
     }
   }, [deviceWidth, deviceHeight]);
-  console.log("isOpen", isOpen, viewport);
   const appbarClasses = useStylesAppbar();
   return (
     <Fragment>
       <AppBar
         position="fixed"
         color="primary"
-        classes={{ root: appbarClasses.appBar }}
-        className={clsx(
-          appbarClasses.appBar,
-          isOpen && appbarClasses.appbarShifted
-        )}
+        classes={{
+          root: clsx(
+            appbarClasses.appBar,
+            isOpen && appbarClasses.appbarShifted
+          ),
+        }}
       >
         <Toolbar
           classes={{
             root: clsx(
               appbarClasses.toolbarRoot,
-              isOpen && appbarClasses.toolbarRootOpen
+              shiftAppbar && appbarClasses.toolbarRootOpen
             ),
           }}
         >
@@ -185,7 +205,10 @@ const Navbar = ({ isOpen, viewport }) => {
             edge="start"
             onClick={handleDrawerToggle}
             classes={{
-              root: appbarClasses.menuButtonRoot,
+              root: clsx(
+                appbarClasses.menuButtonRoot,
+                shiftAppbar && appbarClasses.hideMenuButton
+              ),
               label: appbarClasses.menuButtonLabel,
             }}
           >

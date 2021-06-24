@@ -10,7 +10,7 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   popoverRoot: {
     position: "fixed",
-    zIndex: "1302 !important",
+    zIndex: "1303 !important",
     inset: "0px",
     backgroundColor: "transparent",
     transform: "translate(-30px, 30px)",

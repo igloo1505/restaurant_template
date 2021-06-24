@@ -34,7 +34,6 @@ const DrawerContent = ({
   UI: {
     viewport: { navHeight, width: deviceWidth },
   },
-  props: { setMobileOpen },
 }) => {
   const [heightOffsetStyle, setHeightOffsetStyle] = useState({});
   useEffect(() => {
@@ -42,7 +41,7 @@ const DrawerContent = ({
       marginTop: `${navHeight}px`,
     };
     if (navHeight !== 0 && deviceWidth >= 1920) {
-      setMobileOpen(true);
+      // setMobileOpen(true);
       setHeightOffsetStyle(style);
     }
   }, [navHeight]);

@@ -74,12 +74,13 @@ a {
 .MuiDivider-root{
   opacity: 1
 }
-/* #account-menu {
-  position: fixed;
-  z-index: 1302;
-  inset: 0px;
-  background-color: transparent;
-} */
+#login_email_input, #login_password_input{
+  z-index: 1;
+  background-color: #fff !important;
+}
+.MuiOutlinedInput-root{
+  overflow: visible;
+}
 /* For drawer hover, change to add classes conditionally if this approach causes issues elsewhere */
 .MuiListItemText-root, .MuiTypography-root, .MuiListItemIcon-root{
   background-color: transparent;
