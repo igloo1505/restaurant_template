@@ -8,6 +8,7 @@ import {
   REMOVE_USER,
   RETURN_SINGLE_ITEM,
   UPDATE_USER_INFO,
+  LOGOUT,
 } from "./TYPES";
 
 const initialState = {
@@ -37,6 +38,8 @@ export default function userReducer(state = initialState, action) {
           userName: action.payload.userName,
         },
       };
+    case LOGOUT:
+      return initialState;
 
     case RETURN_SINGLE_ITEM:
       return {

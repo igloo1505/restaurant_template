@@ -1,17 +1,19 @@
 const mongoose = require("mongoose");
 const nc = require("next-connect");
-const authMiddleware = require("./authMiddleware");
+import authMiddleware from "./authMiddleware";
+// const authMiddleware = require("./authMiddleware");
+import errorHandler from "./errorHandler";
 const colors = require("colors");
 
-const connectDB = (handler, isProtected) => async (req, res) => {
+const connectDB = (handler) => async (req, res) => {
+  handler.use(errorHandler);
+  // handler.options.onError = errorHandler
+  await errorHandler(handler);
   console.log(colors.bgCyan.black("Running connectDB()"));
   if (mongoose.connections[0].readyState) {
-    if (isProtected) {
-      await authMiddleware(req, res);
-    }
     return handler(req, res);
   }
-  await mongoose
+  return mongoose
     .connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useCreateIndex: true,
@@ -19,31 +21,10 @@ const connectDB = (handler, isProtected) => async (req, res) => {
       useUnifiedTopology: true,
     })
     .then(async () => {
-      if (isProtected) {
-        await authMiddleware(req, res);
-      }
       return handler(req, res);
     });
 };
 
-// const middleware = nc();
-// const middlewareWithAuth = nc();
-// console.log("MIDDLEWARE", middleware);
-// middleware.use(database);
-// middlewareWithAuth.use(async (req, res, next) => {
-//   // await authMiddleware();
-//   next();
-// });
-// middlewareWithAuth.use(async (req, res, next) => {
-//   connectDB();
-//   next();
-// });
-// middleware.use(async (req, res, next) => {
-//   connectDB();
-//   next();
-// });
-
-// middleware.use(authMiddleware);
 module.exports = {
   connectDB,
 };

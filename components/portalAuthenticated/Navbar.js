@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { connect, useDispatch } from "react-redux";
+import { useRouter } from "next/router";
 import * as Types from "../../stateManagement/TYPES";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -9,6 +10,7 @@ import MyAccountIcon from "./AccountIcon";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import Link from "@material-ui/core/Link";
 
 const useStylesAppbar = makeStyles((theme) => ({
   appBar: {
@@ -120,13 +122,21 @@ const useStylesAppbar = makeStyles((theme) => ({
     backgroundColor: "transparent",
   },
   hideMenuButton: { display: "none" },
+  link: {},
+  linkTypography: { color: "#fff" },
 }));
 const drawerWidth = 240;
 
 const Navbar = ({
   isOpen,
+  loggedIn,
+  user: { token, _id },
   viewport: { width: deviceWidth, height: deviceHeight },
 }) => {
+  let router = useRouter();
+  useEffect(() => {
+    console.log("Router", router);
+  }, []);
   const [shiftAppbar, setShiftAppbar] = useState(false);
   useEffect(() => {
     // debugger;
@@ -224,7 +234,7 @@ const Navbar = ({
             noWrap
             classes={{ root: appbarClasses.appbarLabelText }}
           >
-            Developers'
+            Recipes
             <span
               style={{
                 backgroundColor: "transparent",
@@ -233,31 +243,43 @@ const Navbar = ({
                 paddingRight: "5px",
               }}
             >
-              R
+              'N'
             </span>
-            'us
+            Stuff
           </Typography>
-          <IconButton
-            color="secondary"
-            aria-controls="account-menu"
-            aria-haspopup="true"
-            id="accountIconButton"
-            edge="end"
-            onClick={(e) => setMenuAnchor(e)}
-            classes={{
-              root: clsx(
-                !isPermanent
-                  ? appbarClasses.accountIconButton
-                  : appbarClasses.accountIconButtonPermanent
-              ),
-              label: appbarClasses.accountIconButtonLabel,
-            }}
-          >
-            <MyAccountIcon
-              fontSize="large"
-              classes={{ root: appbarClasses.accountIconRoot }}
-            />
-          </IconButton>
+          {loggedIn && (
+            <IconButton
+              color="secondary"
+              aria-controls="account-menu"
+              aria-haspopup="true"
+              id="accountIconButton"
+              edge="end"
+              onClick={(e) => setMenuAnchor(e)}
+              classes={{
+                root: clsx(
+                  !isPermanent
+                    ? appbarClasses.accountIconButton
+                    : appbarClasses.accountIconButtonPermanent
+                ),
+                label: appbarClasses.accountIconButtonLabel,
+              }}
+            >
+              <MyAccountIcon
+                fontSize="large"
+                classes={{ root: appbarClasses.accountIconRoot }}
+              />
+            </IconButton>
+          )}
+          {!loggedIn && (
+            <Link
+              href="/portal"
+              color="primary"
+              classes={{ root: appbarClasses.link }}
+              TypographyClasses={{ root: appbarClasses.linkTypography }}
+            >
+              Sign in
+            </Link>
+          )}
         </Toolbar>
       </AppBar>
     </Fragment>
@@ -266,6 +288,8 @@ const Navbar = ({
 
 const mapStateToProps = (state, props) => ({
   isOpen: state.UI.portalDrawer.open,
+  user: state.user.user,
+  loggedIn: state.user.loggedIn,
   viewport: state.UI.viewport,
 });
 

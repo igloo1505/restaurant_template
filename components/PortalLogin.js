@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import clsx from "clsx";
+import {
+  validatePassword,
+  authenticateUser,
+} from "../stateManagement/userActions";
 import Copyright from "../components/Copyright";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -14,6 +20,11 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 
+const emailMinLength = 8;
+const passwordMinLength = 8;
+const emailId = "login_email_input";
+const passwordId = "login_password_input";
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -26,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
     top: "50vh",
     left: "50vw",
     transform: "translate(-50%, -50%)",
-    // border: "3px solid red",
   },
   avatar: {
     margin: theme.spacing(1),
@@ -54,23 +64,49 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SignIn = () => {
-  const classes = useStyles();
-  // const [formData, setFormData] = useState({
-  //   email: "",
-  //   password: "",
-  // });
-  const [inputState, setInputState] = useState({
-    email: false,
-    password: false,
+const SignIn = ({ user, props, authenticateUser }) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    rememberMe: false,
   });
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const handleChange = (e, name) => {
-    setFormData({ ...formData, [name]: e.target.value });
+  const classes = useStyles();
+  const [validated, setValidated] = useState(true);
+  const [passwordValidated, setPasswordValidated] = useState(true);
+
+  const handleSubmit = () => {
+    if (validated && passwordValidated) {
+      authenticateUser(formData);
+    }
   };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    if (
+      formData.email.length === emailMinLength ||
+      formData.password.length === passwordMinLength
+    ) {
+      // TODO add this back in after route functional!!
+      // setValidated(false);
+    }
+    if (
+      !formData.email.length === emailMinLength &&
+      !formData.password.length === passwordMinLength
+    ) {
+      // setValidated(passwordValidated);
+    }
+    if (e.target.name === "password") {
+      let x = validatePassword(e.target.value);
+      // setPasswordValidated(x);
+      if (formData.email.length > emailMinLength) {
+        // setValidated(x);
+      }
+    }
+  };
+
   return (
     <Container component="main" maxWidth="xs" className={classes.container}>
-      <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
@@ -84,45 +120,49 @@ const SignIn = () => {
             margin="normal"
             required
             fullWidth
-            id="login_email_input"
+            id={emailId}
             label="Email Address"
             name="email"
             autoComplete="email"
-            // autoFocus
+            autoFocus
             classes={{ root: classes.textFieldRoot }}
             value={formData.email}
-            onSelect={(e) => setInputState({ email: true, password: false })}
-            onChange={(e) => handleChange(e, "email")}
+            onChange={(e) => handleChange(e)}
           />
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
+            autoFocus
             name="password"
             label="Password"
             type="password"
-            id="login_password_input"
+            id={passwordId}
             autoComplete="current-password"
             classes={{ root: classes.textFieldRoot }}
             value={formData.password}
-            InputLabelProps={{
-              focused: inputState.password,
-              shrink: !Boolean(inputState.password),
-            }}
-            onChange={(e) => handleChange(e, "password")}
-            onSelect={(e) => setInputState({ email: false, password: true })}
+            onChange={(e) => handleChange(e)}
           />
           <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
+            control={
+              <Checkbox
+                value={formData.rememberMe}
+                name="rememberMe"
+                onChange={(e) => handleChange(e)}
+                color="primary"
+                disabled={!validated}
+              />
+            }
             label="Remember me"
           />
           <Button
-            type="submit"
+            // type="submit"
             fullWidth
             variant="contained"
             color="primary"
             classes={{ root: classes.submit, label: classes.buttonText }}
+            onClick={handleSubmit}
           >
             Sign In
           </Button>
@@ -147,4 +187,11 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+const mapStateToProps = (state, props) => ({
+  user: state.user,
+  props: props,
+});
+
+export default connect(mapStateToProps, {
+  authenticateUser,
+})(SignIn);

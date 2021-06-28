@@ -44,3 +44,4 @@ export const SHOW_ACCOUNT_MENU = "SHOW_ACCOUNT_MENU";
 export const DISPOSE_ACCOUNT_MENU = "DISPOSE_ACCOUNT_MENU";
 export const OPEN_DRAWER = "OPEN_DRAWER";
 export const CLOSE_DRAWER = "CLOSE_DRAWER";
+export const LOGOUT = "LOGOUT";

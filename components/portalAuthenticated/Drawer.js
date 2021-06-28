@@ -2,32 +2,17 @@ import React, { useEffect, useState, Fragment } from "react";
 import clsx from "clsx";
 import { connect, useDispatch } from "react-redux";
 import * as Types from "../../stateManagement/TYPES";
-import PropTypes from "prop-types";
-import AppBar from "@material-ui/core/AppBar";
-import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
-// import AccountIcon from "@material-ui/icons/AccountCircle";
-// import AccountIcon from "@material-ui/icons/AccountCircleOutlined";
-import AccountIcon from "@material-ui/icons/AccountCircleTwoTone";
-import MyAccountIcon from "./AccountIcon";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import MailIcon from "@material-ui/icons/Mail";
-import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import DrawerContent from "./DrawerContent";
 
 const drawerWidth = 240;
 const breakpoint = 1920;
+
+// TODO Switch to permanent drawer based on viewport only if authenticated
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -158,7 +143,7 @@ const DrawerSwitcher = (props) => {
             root: classes.drawerRoot,
           }}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
         >
           <div className={classes.toolbarIcon}>

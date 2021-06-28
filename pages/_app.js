@@ -63,6 +63,7 @@ function MyApp({ Component, pageProps }) {
       }
     }
   };
+  // Set viewport dimensions and add listener
   useEffect(() => {
     if (typeof window !== "undefined") {
       setViewPortDimensions();
@@ -73,6 +74,7 @@ function MyApp({ Component, pageProps }) {
       });
     }
   }, []);
+
   return (
     <Fragment>
       <Provider store={store}>

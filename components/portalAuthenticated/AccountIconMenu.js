@@ -34,8 +34,14 @@ const AccountIconMenuLocal = ({
       setAnchor(null);
     }
   }, [shouldBeVisible]);
+
   const closeMenu = () => {
     dispatch({ type: Types.DISPOSE_ACCOUNT_MENU });
+  };
+
+  const logOut = () => {
+    closeMenu();
+    dispatch({ type: Types.LOGOUT });
   };
 
   return (
@@ -52,7 +58,7 @@ const AccountIconMenuLocal = ({
           >
             <MenuItem onClick={closeMenu}>Profile</MenuItem>
             <MenuItem onClick={closeMenu}>My account</MenuItem>
-            <MenuItem onClick={closeMenu}>Logout</MenuItem>
+            <MenuItem onClick={logOut}>Logout</MenuItem>
           </Menu>
         </ClientSidePortal>
       )}

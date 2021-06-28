@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import {
   AUTHENTICATE_USER,
   AUTHENTICATION_ERROR,
@@ -12,14 +11,20 @@ import {
 } from "./TYPES";
 let Modal;
 import axios from "axios";
+import store from "../stateManagement/store";
 const config = {
   headers: {
     "Content-Type": "application/json",
   },
 };
+const {
+  user: {
+    user: { _id: idInState },
+  },
+} = store.getState();
 
 export const authenticateUser = (user) => async (dispatch) => {
-  console.log("Did fire in here with: ", user);
+  console.log(idInState);
   try {
     const res = await axios.post("/api/portal/login", user, config);
     console.log("RES: ", res);
@@ -104,4 +109,46 @@ export const updateUserInfo = (user) => async (dispatch) => {
     });
   }
   return false;
+};
+
+export const validatePassword = (password) => {
+  const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+  const spec = [
+    ".",
+    "?",
+    ">",
+    "<",
+    ",",
+    ":",
+    ";",
+    `"`,
+    "}",
+    "{",
+    "[",
+    "]",
+    "|",
+    "+",
+    "=",
+    "-",
+    "_",
+    ")",
+    "(",
+    "*",
+    "&",
+    "^",
+    "%",
+    "$",
+    "#",
+    "@",
+    "!",
+  ];
+  let f = nums.filter((n) => password.includes(n));
+  let z = spec.filter((s) => password.includes(s));
+  if (f.length > 0 && z.length > 0) {
+    console.log("true");
+    return true;
+  } else {
+    console.log("false");
+    return false;
+  }
 };
