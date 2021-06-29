@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Portal.module.scss";
 import PortalLogin from "../components/PortalLogin";
+import PortalSignIn from "../components/PortalSignIn";
 import PortalAuthenticated from "../components/portalAuthenticated/PortalAuthenticated";
 import Drawer from "../components/portalAuthenticated/Drawer";
 import { connect } from "react-redux";
@@ -14,7 +15,7 @@ import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
 const Portal = ({
   user: {
     loggedIn,
-    user: { token, _id, allUsers },
+    self: { _id: userID, allUsers },
   },
   getAllUsers,
   getAllRecipes,
@@ -43,10 +44,10 @@ const Portal = ({
       <Alert />
       <AccountIconMenu />
       <Drawer />
-      {loggedIn && token ? (
+      {loggedIn && userID ? (
         <PortalAuthenticated toggleModal={toggleModal} />
       ) : (
-        <PortalLogin />
+        <LoginSwitcher />
       )}
     </div>
   );
@@ -61,3 +62,15 @@ export default connect(mapStateToProps, {
   getAllRecipes,
   setNavbarHeight,
 })(Portal);
+
+const LoginSwitcher = () => {
+  const [login, setLoginState] = useState(true);
+  const setLogin = () => {
+    setLoginState(!login);
+  };
+  return login ? (
+    <PortalLogin setLogin={setLogin} />
+  ) : (
+    <PortalSignIn setLogin={setLogin} />
+  );
+};

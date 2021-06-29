@@ -22,6 +22,7 @@ const authMiddleware = async (handler) => {
         process.env.JWT_SECRET
       );
       console.log("decoded: ", decoded);
+      // TODO Add redirect here for failed authentication and resign successfull logins
       // let authenticated = Boolean(req.user._id === decoded.userID);
       // console.log("authenticated", authenticated);
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment } from "react";
+import NextLink from "next/link";
 import { connect, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import * as Types from "../../stateManagement/TYPES";
@@ -8,6 +9,7 @@ import AppBar from "@material-ui/core/AppBar";
 import IconButton from "@material-ui/core/IconButton";
 import MyAccountIcon from "./AccountIcon";
 import MenuIcon from "@material-ui/icons/Menu";
+import BookmarkIcon from "@material-ui/icons/Bookmark";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
@@ -28,7 +30,7 @@ const useStylesAppbar = makeStyles((theme) => ({
       transition: "width 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     },
   },
-  accountIconButton: { marginLeft: "auto" },
+  accountIconButton: {},
   accountIconButtonPermanent: {
     marginLeft: "auto",
     // position: "absolute",
@@ -50,6 +52,9 @@ const useStylesAppbar = makeStyles((theme) => ({
     fill: theme.palette.secondary.main,
     // float: "right",
   },
+  favoriteIconButton: { marginLeft: "auto" },
+  favoriteIconButtonPermanent: {},
+  favoriteIconButtonLabel: { color: "#fff", backgroundColor: "transparent" },
   hideMenuButton: {
     display: "none",
   },
@@ -122,8 +127,19 @@ const useStylesAppbar = makeStyles((theme) => ({
     backgroundColor: "transparent",
   },
   hideMenuButton: { display: "none" },
-  link: {},
-  linkTypography: { color: "#fff" },
+  link: {
+    border: "1px solid red",
+    padding: "0 1rem !important",
+    position: "absolute",
+    right: "1rem",
+  },
+  linkTypography: {
+    color: "#fff",
+    fontSize: "1rem",
+    position: "absolute",
+    right: "1rem",
+    cursor: "pointer",
+  },
 }));
 const drawerWidth = 240;
 
@@ -134,14 +150,11 @@ const Navbar = ({
   viewport: { width: deviceWidth, height: deviceHeight },
 }) => {
   let router = useRouter();
-  useEffect(() => {
-    console.log("Router", router);
-  }, []);
+  useEffect(() => {}, []);
   const [shiftAppbar, setShiftAppbar] = useState(false);
   useEffect(() => {
     // debugger;
-    console.log("width", deviceWidth);
-    console.log("WTF", isOpen);
+
     if (deviceWidth === 0) {
       let shouldShift = isOpen ? true : false;
       return setShiftAppbar(shouldShift);
@@ -153,7 +166,6 @@ const Navbar = ({
       setShiftAppbar(true);
     }
     if (deviceWidth < 1920 || !isOpen) {
-      console.log("Did run this mothalova");
       setShiftAppbar(false);
     }
   }, [deviceWidth, isOpen]);
@@ -173,6 +185,9 @@ const Navbar = ({
       });
     }
   };
+
+  // TODO Show favorites screen here
+  const showFavorites = () => console.log("SHOW FAVORITES HERE");
 
   const [isPermanent, setIsPermanent] = useState(false);
   const [shouldHideMenuButton, setShouldHideMenuButton] = useState(false);
@@ -252,6 +267,29 @@ const Navbar = ({
               color="secondary"
               aria-controls="account-menu"
               aria-haspopup="true"
+              id="favoriteIconButton"
+              edge="end"
+              onClick={(e) => showFavorites()}
+              classes={{
+                root: clsx(
+                  !isPermanent
+                    ? appbarClasses.favoriteIconButton
+                    : appbarClasses.favoriteIconButtonPermanent
+                ),
+                label: appbarClasses.favoriteIconButtonLabel,
+              }}
+            >
+              <BookmarkIcon
+                fontSize="large"
+                classes={{ root: appbarClasses.accountIconRoot }}
+              />
+            </IconButton>
+          )}
+          {loggedIn && (
+            <IconButton
+              color="secondary"
+              aria-controls="account-menu"
+              aria-haspopup="true"
               id="accountIconButton"
               edge="end"
               onClick={(e) => setMenuAnchor(e)}
@@ -271,14 +309,16 @@ const Navbar = ({
             </IconButton>
           )}
           {!loggedIn && (
-            <Link
-              href="/portal"
-              color="primary"
-              classes={{ root: appbarClasses.link }}
-              TypographyClasses={{ root: appbarClasses.linkTypography }}
-            >
-              Sign in
-            </Link>
+            <NextLink href="/portal">
+              <Typography
+                variant="h6"
+                noWrap
+                align="right"
+                classes={{ root: appbarClasses.linkTypography }}
+              >
+                Sign in
+              </Typography>
+            </NextLink>
           )}
         </Toolbar>
       </AppBar>
@@ -288,7 +328,7 @@ const Navbar = ({
 
 const mapStateToProps = (state, props) => ({
   isOpen: state.UI.portalDrawer.open,
-  user: state.user.user,
+  user: state.user.self,
   loggedIn: state.user.loggedIn,
   viewport: state.UI.viewport,
 });

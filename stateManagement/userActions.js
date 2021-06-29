@@ -1,5 +1,8 @@
 import {
   AUTHENTICATE_USER,
+  LOGOUT,
+  AUTO_LOGIN_SUCCESS,
+  AUTO_LOGIN_FAIL,
   AUTHENTICATION_ERROR,
   REGISTER_NEW_USER,
   GET_ALL_USERS,
@@ -11,6 +14,7 @@ import {
 } from "./TYPES";
 let Modal;
 import axios from "axios";
+import cookie from "json-cookie";
 import store from "../stateManagement/store";
 const config = {
   headers: {
@@ -19,7 +23,7 @@ const config = {
 };
 const {
   user: {
-    user: { _id: idInState },
+    self: { _id: idInState },
   },
 } = store.getState();
 
@@ -40,15 +44,42 @@ export const authenticateUser = (user) => async (dispatch) => {
   }
 };
 
+export const autoLogin = () => async (dispatch) => {
+  console.log("Running autoLogin...");
+  if (typeof window !== "undefined") {
+    let rememberMe = cookie.get("rememberMe");
+    if (rememberMe) {
+      try {
+        let res = await axios.get("/api/portal/autoLogin", config);
+        if (res.status === 200) {
+          dispatch({
+            type: AUTO_LOGIN_SUCCESS,
+            payload: res.data,
+          });
+        }
+        if (res.status !== 200) {
+          dispatch({
+            type: AUTO_LOGIN_FAIL,
+          });
+        }
+      } catch (error) {
+        console.log("ERROR: ", error);
+      }
+    }
+  }
+};
+
 export const addNewUser = (user) => async (dispatch) => {
-  try {
-    const res = await axios.post("/api/portal/newUser", user, config);
+  console.log("fired addNewUser with: ", user);
+  const res = await axios.post("/api/portal/newUser", user, config);
+  if (res.status === 200) {
     dispatch({
       type: REGISTER_NEW_USER,
       payload: res.data,
     });
     return true;
-  } catch (error) {
+  }
+  if (res.status !== 200) {
     dispatch({
       type: ERROR_WITH_MODAL,
       payload: {
@@ -151,4 +182,10 @@ export const validatePassword = (password) => {
     console.log("false");
     return false;
   }
+};
+
+export const logOut = () => (dispatch) => {
+  console.log("logging out...");
+  cookie.delete("rememberMe");
+  dispatch({ type: LOGOUT });
 };

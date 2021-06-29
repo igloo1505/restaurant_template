@@ -4,11 +4,12 @@ import clsx from "clsx";
 import {
   validatePassword,
   authenticateUser,
+  autoLogin,
 } from "../stateManagement/userActions";
+// import { removeBoxShadow } from "../stateManagement/uiActions";
 import Copyright from "../components/Copyright";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -55,16 +56,16 @@ const useStyles = makeStyles((theme) => ({
   textFieldRoot: {
     overflow: "visible",
   },
-  inputBaseRoot: {
-    overflow: "visible",
-  },
-  textInputRoot: {
-    color: theme.palette.common.black,
-    zIndex: 999999,
-  },
+  // inputBaseRoot: {
+  //   overflow: "visible",
+  // },
+  // textInputRoot: {
+  //   color: theme.palette.common.black,
+  //   zIndex: 999999,
+  // },
 }));
 
-const SignIn = ({ user, props, authenticateUser }) => {
+const SignIn = ({ user, props: { setLogin }, authenticateUser, autoLogin }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -73,6 +74,9 @@ const SignIn = ({ user, props, authenticateUser }) => {
   const classes = useStyles();
   const [validated, setValidated] = useState(true);
   const [passwordValidated, setPasswordValidated] = useState(true);
+  useEffect(() => {
+    autoLogin();
+  }, []);
 
   const handleSubmit = () => {
     if (validated && passwordValidated) {
@@ -81,8 +85,8 @@ const SignIn = ({ user, props, authenticateUser }) => {
   };
 
   const handleChange = (e) => {
+    // removeBoxShadow();
     setFormData({ ...formData, [e.target.name]: e.target.value });
-
     if (
       formData.email.length === emailMinLength ||
       formData.password.length === passwordMinLength
@@ -103,6 +107,10 @@ const SignIn = ({ user, props, authenticateUser }) => {
         // setValidated(x);
       }
     }
+  };
+
+  const handleChangeBoolean = (e) => {
+    setFormData({ ...formData, [e.target.name]: !formData[e.target.name] });
   };
 
   return (
@@ -149,7 +157,7 @@ const SignIn = ({ user, props, authenticateUser }) => {
               <Checkbox
                 value={formData.rememberMe}
                 name="rememberMe"
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => handleChangeBoolean(e)}
                 color="primary"
                 disabled={!validated}
               />
@@ -173,7 +181,7 @@ const SignIn = ({ user, props, authenticateUser }) => {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="#" variant="body2" onClick={setLogin}>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
@@ -194,4 +202,5 @@ const mapStateToProps = (state, props) => ({
 
 export default connect(mapStateToProps, {
   authenticateUser,
+  autoLogin,
 })(SignIn);

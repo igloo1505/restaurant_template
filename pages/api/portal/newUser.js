@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 import nc from "next-connect";
 import { connectDB, middleware } from "../../../util/connectDB";
 import jwt from "jsonwebtoken";
+import Cookies from "cookies";
 const User = require("../../../models/User");
 const colors = require("colors");
 
@@ -9,25 +10,19 @@ const handler = nc();
 // handler.use(middleware);
 handler.post(async (req, res) => {
   console.log(colors.red("Reached backend with: "), req.body);
+  const cookies = new Cookies(req, res);
   try {
-    console.log(colors.red("Reached backend with: "), req.body);
-    console.log("Firstname?", req.body["First Name"]);
-    let user = new User({
-      userName: req.body.Username,
-      password: req.body.Password,
-      firstName: req.body["First Name"],
-      lastName: req.body["Last Name"],
-    });
-
-    console.log("USER!!!", user);
-    // const newUser = user;
+    let user = new User(req.body);
     const newUser = await user.save();
-    // console.log("User Saved!!: ", user);
+    console.log("User Saved!!: ", newUser);
     let token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET);
-    res.json({
-      ...newUser,
-      token: token,
-    });
+    cookies.set("token", token, { httpOnly: true });
+    if (req.body.rememberMe) {
+      cookies.set("rememberMe", true, { httpOnly: false });
+      cookies.set("email", req.body.email, { httpOnly: true });
+      cookies.set("password", req.body.password, { httpOnly: true });
+    }
+    res.json(newUser);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "There was an error adding that user." });

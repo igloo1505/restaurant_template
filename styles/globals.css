@@ -74,7 +74,7 @@ a {
 .MuiDivider-root{
   opacity: 1
 }
-#login_email_input, #login_password_input{
+#login_email_input, #login_password_input, #signIn_password_input, #signIn_email_input, #signIn_firstName_input, #signIn_lastName_input{
   z-index: 1;
 }
 

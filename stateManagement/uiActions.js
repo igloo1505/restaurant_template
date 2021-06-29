@@ -61,3 +61,16 @@ export const setModalInstance = (instance) => (dispatch) => {
     payload: instance,
   });
 };
+
+// const idArray = ["login_email_input", "login_password_input"];
+// export const removeBoxShadow = () => {
+//   let count = 0;
+//   let ems = {};
+//   idArray.forEach((id) => {
+//     let em = document.getElementById(id);
+//     if (em) {
+//       let styles = getComputedStyle(em);
+//       console.log("styles!!!", styles["box-shadow"]);
+//     }
+//   });
+// };

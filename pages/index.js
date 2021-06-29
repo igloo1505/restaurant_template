@@ -9,7 +9,7 @@ const Home = ({
   viewport: { width: deviceWidth, height: deviceHeight, navHeight },
   user: {
     loggedIn,
-    user: { token },
+    self: { token },
   },
 }) => {
   const dispatch = useDispatch();

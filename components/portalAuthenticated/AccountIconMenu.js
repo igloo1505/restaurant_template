@@ -1,5 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import ClientSidePortal from "./ClientSidePortal";
+import { logOut as logOutUser } from "../../stateManagement/userActions";
 import * as Types from "../../stateManagement/TYPES";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
@@ -21,6 +22,7 @@ const AccountIconMenuLocal = ({
   UI: {
     accountMenu: { shouldBeVisible },
   },
+  logOutUser,
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -41,7 +43,8 @@ const AccountIconMenuLocal = ({
 
   const logOut = () => {
     closeMenu();
-    dispatch({ type: Types.LOGOUT });
+    // dispatch({ type: Types.LOGOUT });
+    logOutUser();
   };
 
   return (
@@ -71,4 +74,4 @@ const mapStateToProps = (state, props) => ({
   props: props,
 });
 
-export default connect(mapStateToProps)(AccountIconMenuLocal);
+export default connect(mapStateToProps, { logOutUser })(AccountIconMenuLocal);

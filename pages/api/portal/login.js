@@ -5,8 +5,7 @@ import authMiddleware from "../../../util/authMiddleware";
 import jwt from "jsonwebtoken";
 import cookies from "next-cookies";
 import Cookies from "cookies";
-// const User = require("../../../models/User");
-// var colors = require("colors");
+
 import User from "../../../models/User";
 import colors from "colors";
 
@@ -17,7 +16,7 @@ handler.post(async (req, res) => {
   console.log(colors.bgBlue("Did run in route with...", req.body));
   const cookies = new Cookies(req, res);
   try {
-    const user = await User.findOne({ userName: req.body.email });
+    const user = await User.findOne({ email: req.body.email });
     console.log("User!!!:", user);
     if (!user) {
       return res.status(401).json({ msg: "User not found" });
@@ -33,16 +32,17 @@ handler.post(async (req, res) => {
       const payload = {
         userID: user._id,
       };
-      let expiresIn = req.rememberMe ? 99999 : 3600;
-      let token = await jwt.sign(payload, process.env.JWT_SECRET, {
+      let expiresIn = req.rememberMe ? 604800 : 3600;
+      let token = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: expiresIn,
       });
       cookies.set("token", token, { httpOnly: true });
-      // if(req.rememberMe){
-      //   cookies.set("email", req.email, {httpOnly: true})
-      //   cookies.set("password", req.password, {httpOnly: true})
-      // }
-      return res.json({ userID: user._id, token });
+      if (req.body.rememberMe) {
+        cookies.set("rememberMe", true, { httpOnly: false });
+        cookies.set("email", req.body.email, { httpOnly: true });
+        cookies.set("password", req.body.password, { httpOnly: true });
+      }
+      return res.json(user);
     }
   } catch (error) {
     console.log(error);

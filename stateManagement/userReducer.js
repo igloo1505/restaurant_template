@@ -1,5 +1,6 @@
 import {
   AUTHENTICATE_USER,
+  AUTO_LOGIN_SUCCESS,
   AUTHENTICATION_ERROR,
   REGISTER_NEW_USER,
   GET_ALL_USERS,
@@ -17,8 +18,8 @@ const initialState = {
   allUsers: [],
   filtered: null,
   loading: false,
-  user: {
-    token: 1,
+  self: {
+    token: null,
     _id: null,
     userName: "",
   },
@@ -27,16 +28,13 @@ const initialState = {
 
 export default function userReducer(state = initialState, action) {
   switch (action.type) {
+    case AUTO_LOGIN_SUCCESS:
     case AUTHENTICATE_USER:
       return {
         ...state,
         loggedIn: true,
         loading: false,
-        user: {
-          token: action.payload.token,
-          _id: action.payload.userID,
-          userName: action.payload.userName,
-        },
+        self: action.payload,
       };
     case LOGOUT:
       return initialState;
@@ -44,13 +42,13 @@ export default function userReducer(state = initialState, action) {
     case RETURN_SINGLE_ITEM:
       return {
         ...state,
-        user: { ...state.user },
+        self: { ...state.self },
         filtered: state.allUsers.filter((u) => u._id === action.payload._id),
       };
     case GET_ALL_USERS:
       return {
         ...state,
-        user: { ...state.user },
+        self: { ...state.self },
         allUsers: action.payload.user,
       };
     case UPDATE_USER_INFO:
@@ -60,7 +58,7 @@ export default function userReducer(state = initialState, action) {
       filteredUsers.push(action.payload);
       return {
         ...state,
-        user: { ...state.user },
+        self: { ...state.self },
         allUsers: filteredUsers,
       };
     case REMOVE_USER:
@@ -69,26 +67,23 @@ export default function userReducer(state = initialState, action) {
       );
       return {
         ...state,
-        user: { ...state.user },
+        self: { ...state.self },
         allUsers: filter,
       };
     case USER_ERROR:
       return {
         ...state,
-        user: { ...state.user },
+        self: { ...state.self },
         error: action.payload,
       };
     case REGISTER_NEW_USER:
+      console.log("addnewUser in reducer", action.payload);
       return {
         ...state,
         loggedIn: true,
         loading: false,
         allUsers: [...state.allUsers, action.payload._doc],
-        user: {
-          token: action.payload.token,
-          _id: action.payload._doc._id,
-          userName: action.payload._doc.userName,
-        },
+        self: action.payload,
       };
     case AUTHENTICATION_ERROR:
       return {
@@ -96,7 +91,7 @@ export default function userReducer(state = initialState, action) {
         // loggedIn: false,
         allUsers: [],
         loading: false,
-        user: { ...state.user },
+        self: { ...state.self },
         error: action.payload,
       };
     case ERROR_WITH_MODAL:
@@ -105,7 +100,7 @@ export default function userReducer(state = initialState, action) {
         // loggedIn: false,
         // allUsers: [],
         loading: false,
-        user: { ...state.user },
+        self: { ...state.self },
         error: action.payload.error,
       };
     default:

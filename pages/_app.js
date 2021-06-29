@@ -4,13 +4,13 @@ import Head from "next/head";
 import "../styles/globals.css";
 import { Provider } from "react-redux";
 import store from "../stateManagement/store";
+import { removeBoxShadow } from "../stateManagement/uiActions";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import theme from "../styles/MUITheme";
 import setAuthToken from "../stateManagement/setAuth";
-
 import {
   SET_VIEWPORT_DIMENSIONS,
   SET_NAV_HEIGHT,
@@ -74,6 +74,17 @@ function MyApp({ Component, pageProps }) {
       });
     }
   }, []);
+
+  // Remove autofill styling
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      document.addEventListener("animationstart", (e) => {
+        if (e.animationName === "mui-auto-fill") {
+          e.stopPropagation();
+        }
+      });
+    }
+  });
 
   return (
     <Fragment>
