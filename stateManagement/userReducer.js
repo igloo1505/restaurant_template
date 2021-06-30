@@ -1,6 +1,7 @@
 import {
   AUTHENTICATE_USER,
   AUTO_LOGIN_SUCCESS,
+  AUTO_LOGIN_FAIL,
   AUTHENTICATION_ERROR,
   REGISTER_NEW_USER,
   GET_ALL_USERS,
@@ -14,6 +15,7 @@ import {
 
 const initialState = {
   loggedIn: false,
+  triedAutoLogin: false,
   token: null,
   allUsers: [],
   filtered: null,
@@ -33,11 +35,19 @@ export default function userReducer(state = initialState, action) {
       return {
         ...state,
         loggedIn: true,
+        triedAutoLogin: true,
         loading: false,
         self: action.payload,
       };
     case LOGOUT:
       return initialState;
+    case AUTO_LOGIN_FAIL:
+      return {
+        ...state,
+        loggedIn: false,
+        triedAutoLogin: true,
+        loading: false,
+      };
 
     case RETURN_SINGLE_ITEM:
       return {

@@ -76,6 +76,9 @@ function ResponsiveDrawer({
   const classes = useStyles();
   const theme = useTheme();
   useEffect(() => {
+    console.log("did run useEffect with : ", isOpen);
+  }, [isOpen]);
+  useEffect(() => {
     if (deviceWidth >= 1920) {
       setIsPermanent(true);
       setShouldHideMenuButton(true);
@@ -112,6 +115,7 @@ const DrawerSwitcher = (props) => {
   } = props;
   const [ios, setiOs] = useState(false);
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const iOS =

@@ -1,24 +1,35 @@
+const Ingredient = require("./Ingredient");
 const mongoose = require("mongoose");
 const categoryArray = ["specialty", "side", "drink", "tacoIngredients"];
 
 const RecipeSchema = mongoose.Schema(
   {
     category: {
-      type: String,
-      required: true,
+      type: [String],
+      default: [],
     },
     name: {
       type: String,
       required: true,
     },
+    imgUrl: {
+      type: String,
+    },
     description: {
       type: String,
       required: true,
     },
-    price: {
-      type: Number,
-      required: true,
+    ingredients: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Ingredient",
     },
+    time: {
+      prepTime: { type: mongoose.Schema.Types.ObjectId },
+      cookTime: { type: mongoose.Schema.Types.ObjectId },
+      totalTime: { type: mongoose.Schema.Types.ObjectId },
+    },
+    servings: { type: Number, required: true },
+    directions: { type: [String], required: true },
     isHot: {
       type: Boolean,
       default: false,
@@ -27,9 +38,9 @@ const RecipeSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isInStock: {
-      type: Boolean,
-      default: true,
+    comments: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Comment",
     },
   },
   { timestamps: true }

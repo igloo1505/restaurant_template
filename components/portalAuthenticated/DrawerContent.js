@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
+import { useRouter } from "next/router";
+import * as Types from "../../stateManagement/TYPES";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
+import CategoryIcon from "@material-ui/icons/Category";
 import {
   ListItem,
   ListItemIcon,
@@ -35,6 +40,12 @@ const DrawerContent = ({
     viewport: { navHeight, width: deviceWidth },
   },
 }) => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const closeDrawer = () => {
+    dispatch({ type: Types.CLOSE_DRAWER });
+  };
+  // * Push down to be level with navbar
   const [heightOffsetStyle, setHeightOffsetStyle] = useState({});
   useEffect(() => {
     let style = {
@@ -47,23 +58,25 @@ const DrawerContent = ({
   }, [navHeight]);
   const theme = useTheme();
   const classes = useStyles();
+  const addRecipeAction = () => {
+    // !! Handle redirect or modal here obviously
+    console.log("Did log action this way!!");
+    router.push("/addRecipe");
+    closeDrawer();
+  };
+  let array = [
+    {
+      text: "Add Recipe",
+      action: addRecipeAction,
+      icon: <AddCircleIcon color="secondary" fontSize="large" />,
+    },
+  ];
   return (
     <div className={classes.outerContainer} style={heightOffsetStyle}>
       <Divider />
       <List className={classes.listRoot}>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem button key={text} classes={{ root: classes.listItemRoot }}>
-            <ListItemIcon classes={{ root: classes.listItemIconRoot }}>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText
-              primary={text}
-              classes={{
-                primary: classes.listItemTextPrimary,
-                root: classes.listItemTextRoot,
-              }}
-            />
-          </ListItem>
+        {array.map((a) => (
+          <ListComponent item={a} classes={classes} />
         ))}
       </List>
       <Divider />
@@ -94,3 +107,26 @@ const mapStateToProps = (state, props) => ({
 
 export default connect(mapStateToProps)(DrawerContent);
 // {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} above InboxIcon ln 30
+
+const ListComponent = ({ item, classes }) => {
+  let { text, action, icon } = item;
+  return (
+    <ListItem
+      button
+      key={text}
+      classes={{ root: classes.listItemRoot }}
+      onClick={action}
+    >
+      <ListItemIcon classes={{ root: classes.listItemIconRoot }}>
+        {icon}
+      </ListItemIcon>
+      <ListItemText
+        primary={text}
+        classes={{
+          primary: classes.listItemTextPrimary,
+          root: classes.listItemTextRoot,
+        }}
+      />
+    </ListItem>
+  );
+};

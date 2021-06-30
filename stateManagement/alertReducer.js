@@ -55,7 +55,7 @@ const modalReducer = createReducer(initialState, (builder) => {
   builder.addCase(Types.HIDE_SNACKBAR, (state, action) => {
     return {
       ...state,
-      snackbar: { ...initialState.snackbar, isOpen: false },
+      snackbar: { ...state.snackbar, isOpen: false },
     };
   });
 });

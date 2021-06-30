@@ -162,7 +162,6 @@ const Navbar = ({
   const [shiftAppbar, setShiftAppbar] = useState(false);
   useEffect(() => {
     // debugger;
-
     if (deviceWidth === 0) {
       let shouldShift = isOpen ? true : false;
       return setShiftAppbar(shouldShift);

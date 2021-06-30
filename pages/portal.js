@@ -43,7 +43,6 @@ const Portal = ({
   return (
     <div className={styles.portalOuterWrapper} id="portalPageWrapper">
       <AccountIconMenu />
-      <Drawer />
       {loggedIn && userID ? (
         <PortalAuthenticated toggleModal={toggleModal} />
       ) : (

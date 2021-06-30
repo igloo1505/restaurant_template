@@ -3,6 +3,7 @@ import Navbar from "../components/portalAuthenticated/Navbar";
 import Modal from "../components/modalsAndAlerts/Modal";
 import SnackbarSwitcher from "../components/modalsAndAlerts/SnackbarSwitcher";
 import Alert from "../components/modalsAndAlerts/Alert";
+import Drawer from "../components/portalAuthenticated/Drawer";
 import Head from "next/head";
 import "../styles/globals.css";
 import { Provider } from "react-redux";
@@ -13,6 +14,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import theme from "../styles/MUITheme";
+import { autoLogin } from "../stateManagement/userActions";
 import setAuthToken from "../stateManagement/setAuth";
 import {
   SET_VIEWPORT_DIMENSIONS,
@@ -30,10 +32,18 @@ function MyApp({ Component, pageProps }) {
   // if (localStorage.token) {
   //   setAuthToken(localStorage.token);
   // }
+  const state = store.getState();
   useEffect(() => {
     const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles);
+    }
+  }, []);
+  useEffect(() => {
+    console.log("About to fire autoLogin");
+    console.log(!state.user?.triedAutoLogin);
+    if (!state.user?.triedAutoLogin) {
+      autoLogin();
     }
   }, []);
   const setViewPortDimensions = () => {
@@ -103,6 +113,7 @@ function MyApp({ Component, pageProps }) {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Navbar />
+          <Drawer />
           <Modal />
           <Alert />
           <SnackbarSwitcher />
