@@ -13,6 +13,7 @@ import BookmarkIcon from "@material-ui/icons/Bookmark";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
+import NavbarSearchInput from "./NavbarSearchInput";
 
 const useStylesAppbar = makeStyles((theme) => ({
   appBar: {
@@ -137,7 +138,7 @@ const useStylesAppbar = makeStyles((theme) => ({
     color: "#fff",
     fontSize: "1rem",
     position: "absolute",
-    right: "1rem",
+    right: "2rem",
     cursor: "pointer",
   },
 }));
@@ -146,11 +147,18 @@ const drawerWidth = 240;
 const Navbar = ({
   isOpen,
   loggedIn,
+  isSignUp,
   user: { token, _id },
   viewport: { width: deviceWidth, height: deviceHeight },
 }) => {
+  const dispatch = useDispatch();
   let router = useRouter();
-  useEffect(() => {}, []);
+  const handleSignInClick = () => {
+    if (router.pathname === "/portal" && isSignUp) {
+      dispatch({ type: Types.TOGGLE_SIGNUP_FORM });
+    }
+    console.log("router", router);
+  };
   const [shiftAppbar, setShiftAppbar] = useState(false);
   useEffect(() => {
     // debugger;
@@ -169,7 +177,7 @@ const Navbar = ({
       setShiftAppbar(false);
     }
   }, [deviceWidth, isOpen]);
-  const dispatch = useDispatch();
+
   const setMenuAnchor = (e) => {
     dispatch({ type: Types.SHOW_ACCOUNT_MENU });
   };
@@ -315,6 +323,7 @@ const Navbar = ({
                 noWrap
                 align="right"
                 classes={{ root: appbarClasses.linkTypography }}
+                onClick={handleSignInClick}
               >
                 Sign in
               </Typography>
@@ -331,6 +340,7 @@ const mapStateToProps = (state, props) => ({
   user: state.user.self,
   loggedIn: state.user.loggedIn,
   viewport: state.UI.viewport,
+  isSignUp: state.UI.login.isSignUp,
 });
 
 export default connect(mapStateToProps)(Navbar);

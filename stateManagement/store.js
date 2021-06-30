@@ -6,9 +6,9 @@ import {
   configureStore,
 } from "@reduxjs/toolkit";
 import userReducer from "./userReducer";
-import recipeReducer from "./recipeReducer";
+import modalReducer from "./modalReducer";
+import alertReducer from "./alertReducer";
 import uiReducer from "./uiReducer";
-import tacoReducer from "./tacoReducer";
 
 const initialState = {};
 
@@ -21,8 +21,8 @@ const store = configureStore({
   reducer: {
     user: userReducer,
     UI: uiReducer,
-    recipes: recipeReducer,
-    tacos: tacoReducer,
+    modal: modalReducer,
+    alert: alertReducer,
   },
   devTools: () => withDevtools(),
 });

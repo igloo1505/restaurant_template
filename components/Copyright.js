@@ -4,8 +4,13 @@ import Link from "@material-ui/core/Link";
 
 const Copyright = () => {
   return (
-    <div>
-      <Typography variant="body2" color="textSecondary" align="center">
+    <div style={{ backgroundColor: "transparent" }}>
+      <Typography
+        variant="body2"
+        color="textSecondary"
+        align="center"
+        style={{ backgroundColor: "transparent" }}
+      >
         {"Copyright © "}
         <Link color="inherit" href="https://material-ui.com/">
           IglooDevelopment

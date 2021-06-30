@@ -11,8 +11,9 @@ import {
   REMOVE_USER,
   ERROR_WITH_MODAL,
   UPDATE_USER_INFO,
+  FORGOT_PASSWORD_SUCCESS,
+  FORGOT_PASSWORD_FAIL,
 } from "./TYPES";
-let Modal;
 import axios from "axios";
 import cookie from "json-cookie";
 import store from "../stateManagement/store";
@@ -188,4 +189,15 @@ export const logOut = () => (dispatch) => {
   console.log("logging out...");
   cookie.delete("rememberMe");
   dispatch({ type: LOGOUT });
+};
+
+export const forgotPassword = () => async (dispatch) => {
+  let props = { email: "aiglinski@icloud.com" };
+  console.log("Running forgotPassword");
+  try {
+    let res = axios.post("/api/forgotPassword", props, config);
+    dispatch({ type: FORGOT_PASSWORD_SUCCESS, payload: res.data });
+  } catch (error) {
+    dispatch({ type: FORGOT_PASSWORD_FAIL });
+  }
 };

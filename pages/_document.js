@@ -42,8 +42,8 @@ export default class MyDocument extends Document {
           ></link>
         </Head>
         <body>
-          <Main />
           <div id="topLevelPortalContainer" />
+          <Main />
           <NextScript />
         </body>
         <script

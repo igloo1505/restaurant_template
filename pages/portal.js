@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Portal.module.scss";
 import PortalLogin from "../components/PortalLogin";
-import PortalSignIn from "../components/PortalSignIn";
+import PortalSignUp from "../components/PortalSignUp";
 import PortalAuthenticated from "../components/portalAuthenticated/PortalAuthenticated";
 import Drawer from "../components/portalAuthenticated/Drawer";
 import { connect } from "react-redux";
 import { getAllUsers } from "../stateManagement/userActions";
+import store from "../stateManagement/store";
+import * as Types from "../stateManagement/TYPES";
 import { setNavbarHeight } from "../stateManagement/uiActions";
-import { getAllRecipes } from "../stateManagement/recipeActions";
-import { GET_ALL_USERS, USER_ERROR } from "../stateManagement/TYPES";
-import Alert from "../components/Alert";
+
 import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
 
 const Portal = ({
@@ -17,13 +17,14 @@ const Portal = ({
     loggedIn,
     self: { _id: userID, allUsers },
   },
+  UI: {
+    login: { isSignUp },
+  },
   getAllUsers,
-  getAllRecipes,
   setNavbarHeight,
 }) => {
   useEffect(async () => {
     await setNavbarHeight();
-    await getAllRecipes();
     await getAllUsers();
   }, []);
 
@@ -41,13 +42,12 @@ const Portal = ({
   };
   return (
     <div className={styles.portalOuterWrapper} id="portalPageWrapper">
-      <Alert />
       <AccountIconMenu />
       <Drawer />
       {loggedIn && userID ? (
         <PortalAuthenticated toggleModal={toggleModal} />
       ) : (
-        <LoginSwitcher />
+        <LoginSwitcher isSignUp={isSignUp} />
       )}
     </div>
   );
@@ -55,22 +55,21 @@ const Portal = ({
 
 const mapStateToProps = (state, props) => ({
   user: state.user,
+  UI: state.UI,
 });
 
 export default connect(mapStateToProps, {
   getAllUsers,
-  getAllRecipes,
   setNavbarHeight,
 })(Portal);
 
-const LoginSwitcher = () => {
-  const [login, setLoginState] = useState(true);
+const LoginSwitcher = ({ isSignUp }) => {
   const setLogin = () => {
-    setLoginState(!login);
+    store.dispatch({ type: Types.TOGGLE_SIGNUP_FORM });
   };
-  return login ? (
-    <PortalLogin setLogin={setLogin} />
+  return isSignUp ? (
+    <PortalSignUp setLogin={setLogin} />
   ) : (
-    <PortalSignIn setLogin={setLogin} />
+    <PortalLogin setLogin={setLogin} />
   );
 };

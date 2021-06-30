@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import clsx from "clsx";
 import {
   validatePassword,
   authenticateUser,
   autoLogin,
+  forgotPassword,
 } from "../stateManagement/userActions";
+import * as Types from "../stateManagement/TYPES";
 // import { removeBoxShadow } from "../stateManagement/uiActions";
 import Copyright from "../components/Copyright";
 import Avatar from "@material-ui/core/Avatar";
@@ -36,8 +38,12 @@ const useStyles = makeStyles((theme) => ({
   container: {
     position: "absolute",
     top: "50vh",
+    zIndex: -1,
     left: "50vw",
     transform: "translate(-50%, -50%)",
+  },
+  adjustForBackdropOpen: {
+    backgroundColor: "transparent",
   },
   avatar: {
     margin: theme.spacing(1),
@@ -65,18 +71,49 @@ const useStyles = makeStyles((theme) => ({
   // },
 }));
 
-const SignIn = ({ user, props: { setLogin }, authenticateUser, autoLogin }) => {
+const SignIn = ({
+  user,
+  props: { setLogin },
+  modal: { isOpen: modalIsOpen },
+  alert: {
+    dialog: { isOpen: alertIsOpen },
+  },
+  authenticateUser,
+  autoLogin,
+  forgotPassword,
+}) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    rememberMe: false,
+    rememberMe: true,
   });
   const classes = useStyles();
   const [validated, setValidated] = useState(true);
+  const [shouldBeTransparent, setShouldBeTransparent] = useState(true);
+  useEffect(() => {
+    if (modalIsOpen || alertIsOpen) {
+      setShouldBeTransparent(true);
+    }
+    if (!modalIsOpen && !alertIsOpen) {
+      // setShouldBeTransparent(false);
+    }
+  }, [modalIsOpen, alertIsOpen]);
   const [passwordValidated, setPasswordValidated] = useState(true);
   useEffect(() => {
     autoLogin();
   }, []);
+
+  const handleForgotPassword = () => {
+    dispatch({
+      type: Types.SHOW_MODAL,
+      payload: {
+        isOpen: true,
+        dismissible: false,
+        variant: "forgotPassword",
+      },
+    });
+  };
 
   const handleSubmit = () => {
     if (validated && passwordValidated) {
@@ -114,15 +151,33 @@ const SignIn = ({ user, props: { setLogin }, authenticateUser, autoLogin }) => {
   };
 
   return (
-    <Container component="main" maxWidth="xs" className={classes.container}>
-      <div className={classes.paper}>
+    <Container
+      component="main"
+      maxWidth="xs"
+      className={clsx(
+        classes.container,
+        shouldBeTransparent && classes.adjustForBackdropOpen
+      )}
+    >
+      <div
+        className={clsx(
+          classes.paper,
+          shouldBeTransparent && classes.adjustForBackdropOpen
+        )}
+      >
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form
+          className={clsx(
+            classes.form,
+            shouldBeTransparent && classes.adjustForBackdropOpen
+          )}
+          noValidate
+        >
           <TextField
             variant="outlined"
             margin="normal"
@@ -153,9 +208,11 @@ const SignIn = ({ user, props: { setLogin }, authenticateUser, autoLogin }) => {
             onChange={(e) => handleChange(e)}
           />
           <FormControlLabel
+            style={{ backgroundColor: "transparent" }}
             control={
               <Checkbox
                 value={formData.rememberMe}
+                checked={formData.rememberMe}
                 name="rememberMe"
                 onChange={(e) => handleChangeBoolean(e)}
                 color="primary"
@@ -165,7 +222,6 @@ const SignIn = ({ user, props: { setLogin }, authenticateUser, autoLogin }) => {
             label="Remember me"
           />
           <Button
-            // type="submit"
             fullWidth
             variant="contained"
             color="primary"
@@ -174,13 +230,13 @@ const SignIn = ({ user, props: { setLogin }, authenticateUser, autoLogin }) => {
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
+          <Grid container style={{ backgroundColor: "transparent" }}>
+            <Grid item xs style={{ backgroundColor: "transparent" }}>
+              <Link href="#" variant="body2" onClick={handleForgotPassword}>
                 Forgot password?
               </Link>
             </Grid>
-            <Grid item>
+            <Grid item style={{ backgroundColor: "transparent" }}>
               <Link href="#" variant="body2" onClick={setLogin}>
                 {"Don't have an account? Sign Up"}
               </Link>
@@ -188,7 +244,10 @@ const SignIn = ({ user, props: { setLogin }, authenticateUser, autoLogin }) => {
           </Grid>
         </form>
       </div>
-      <Box mt={8}>
+      <Box
+        mt={8}
+        className={clsx(shouldBeTransparent && classes.adjustForBackdropOpen)}
+      >
         <Copyright />
       </Box>
     </Container>
@@ -197,10 +256,13 @@ const SignIn = ({ user, props: { setLogin }, authenticateUser, autoLogin }) => {
 
 const mapStateToProps = (state, props) => ({
   user: state.user,
+  modal: state.modal,
+  alert: state.alert,
   props: props,
 });
 
 export default connect(mapStateToProps, {
   authenticateUser,
   autoLogin,
+  forgotPassword,
 })(SignIn);

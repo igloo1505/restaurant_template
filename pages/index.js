@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import * as types from "../stateManagement/TYPES";
-import Alert from "../components/Alert";
-import ModalWithConfirmation from "../components/Modal";
-import PortalAuthenticated from "../components/portalAuthenticated/PortalAuthenticated";
 
 const Home = ({
   viewport: { width: deviceWidth, height: deviceHeight, navHeight },

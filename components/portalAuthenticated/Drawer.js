@@ -67,6 +67,7 @@ function ResponsiveDrawer({
     accountMenu: { el: menuAnchor },
     portalDrawer: { open: mobileOpen },
   },
+  modal: { isOpen },
   props,
 }) {
   const [isPermanent, setIsPermanent] = useState(false);
@@ -94,14 +95,21 @@ function ResponsiveDrawer({
         classes={classes}
         deviceWidth={deviceWidth}
         mobileOpen={mobileOpen}
+        isOpen={isOpen}
       />
     </Fragment>
   );
 }
 
 const DrawerSwitcher = (props) => {
-  const { deviceWidth, classes, appbarClasses, mobileOpen, setMobileOpen } =
-    props;
+  const {
+    deviceWidth,
+    isOpen,
+    classes,
+    appbarClasses,
+    mobileOpen,
+    setMobileOpen,
+  } = props;
   const [ios, setiOs] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -136,6 +144,9 @@ const DrawerSwitcher = (props) => {
           anchor={theme.direction === "rtl" ? "right" : "left"}
           open={mobileOpen}
           onClose={handleDrawerToggle}
+          onOpen={handleDrawerToggle}
+          swipeAreaWidth={isOpen ? 0 : 20}
+          SwipeAreaProps={{ id: "swipeAreaDiv" }}
           disableBackdropTransition={!ios}
           disableDiscovery={ios}
           classes={{
@@ -181,6 +192,7 @@ const DrawerSwitcher = (props) => {
 
 const mapStateToProps = (state, props) => ({
   UI: state.UI,
+  modal: state.modal,
   props: props,
 });
 

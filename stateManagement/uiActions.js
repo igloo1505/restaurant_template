@@ -6,6 +6,8 @@ import {
   TOGGLE_LEFT_TAB,
   SET_MODAL_INSTANCE,
   SET_NAV_HEIGHT,
+  SHOW_MODAL,
+  HIDE_MODAL,
 } from "./TYPES";
 
 export const toggleModal = () => (dispatch) => {
@@ -55,13 +57,22 @@ export const setModalContent =
     });
   };
 
-export const setModalInstance = (instance) => (dispatch) => {
+export const showModal = (instance) => (dispatch) => {
+  // let instance = {
+  //   show: Boolean,
+  // varient: String to insert children accordingly
+  // }
   dispatch({
-    type: SET_MODAL_INSTANCE,
+    type: SHOW_MODAL,
     payload: instance,
   });
 };
 
+export const hideModal = () => (dispatch) => {
+  dispatch({
+    type: HIDE_MODAL,
+  });
+};
 // const idArray = ["login_email_input", "login_password_input"];
 // export const removeBoxShadow = () => {
 //   let count = 0;

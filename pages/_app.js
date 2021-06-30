@@ -1,5 +1,8 @@
 import React, { useEffect, Fragment } from "react";
 import Navbar from "../components/portalAuthenticated/Navbar";
+import Modal from "../components/modalsAndAlerts/Modal";
+import SnackbarSwitcher from "../components/modalsAndAlerts/SnackbarSwitcher";
+import Alert from "../components/modalsAndAlerts/Alert";
 import Head from "next/head";
 import "../styles/globals.css";
 import { Provider } from "react-redux";
@@ -14,6 +17,7 @@ import setAuthToken from "../stateManagement/setAuth";
 import {
   SET_VIEWPORT_DIMENSIONS,
   SET_NAV_HEIGHT,
+  IS_CLIENT,
 } from "../stateManagement/TYPES";
 
 const cache = createCache({
@@ -34,6 +38,7 @@ function MyApp({ Component, pageProps }) {
   }, []);
   const setViewPortDimensions = () => {
     if (typeof window !== "undefined") {
+      store.dispatch({ type: IS_CLIENT });
       const vw = Math.max(
         document.documentElement.clientWidth || 0,
         window.innerWidth || 0
@@ -84,7 +89,7 @@ function MyApp({ Component, pageProps }) {
         }
       });
     }
-  });
+  }, []);
 
   return (
     <Fragment>
@@ -98,6 +103,9 @@ function MyApp({ Component, pageProps }) {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Navbar />
+          <Modal />
+          <Alert />
+          <SnackbarSwitcher />
           <Component {...pageProps} />
         </ThemeProvider>
       </Provider>
