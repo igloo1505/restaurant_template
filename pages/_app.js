@@ -4,6 +4,7 @@ import Modal from "../components/modalsAndAlerts/Modal";
 import SnackbarSwitcher from "../components/modalsAndAlerts/SnackbarSwitcher";
 import Alert from "../components/modalsAndAlerts/Alert";
 import Drawer from "../components/portalAuthenticated/Drawer";
+import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
 import Head from "next/head";
 import "../styles/globals.css";
 import { Provider } from "react-redux";
@@ -14,7 +15,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import theme from "../styles/MUITheme";
-import { autoLogin } from "../stateManagement/userActions";
+import { tryAutoLogin } from "../stateManagement/userActions";
 import setAuthToken from "../stateManagement/setAuth";
 import {
   SET_VIEWPORT_DIMENSIONS,
@@ -28,23 +29,23 @@ const cache = createCache({
 });
 cache.compat = true;
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps, ...rest }) {
   // if (localStorage.token) {
   //   setAuthToken(localStorage.token);
   // }
   const state = store.getState();
+
   useEffect(() => {
+    console.log("props", pageProps, rest);
     const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
   useEffect(() => {
-    console.log("About to fire autoLogin");
-    console.log(!state.user?.triedAutoLogin);
-    if (!state.user?.triedAutoLogin) {
-      autoLogin();
-    }
+    console.log("Trying tryAutoLogin...");
+    console.log("typeof", tryAutoLogin);
+    tryAutoLogin();
   }, []);
   const setViewPortDimensions = () => {
     if (typeof window !== "undefined") {
@@ -115,6 +116,7 @@ function MyApp({ Component, pageProps }) {
           <Navbar />
           <Drawer />
           <Modal />
+          <AccountIconMenu />
           <Alert />
           <SnackbarSwitcher />
           <Component {...pageProps} />

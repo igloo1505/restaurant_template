@@ -1,101 +1,148 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { makeStyles } from "@material-ui/core/styles";
+import { GridItem } from "./UIComponents";
+import UnitSelect from "./UnitSelect";
+import { unitObject } from "../util/appWideData";
+import NoSsr from "@material-ui/core/NoSsr";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+import MenuItem from "@material-ui/core/MenuItem";
 
-const StepOneFormComponent = () => {
+const useStyles = makeStyles((theme) => ({
+  textFieldRoot: {
+    minWidth: "100%",
+    alignSelf: "stretch",
+    // border: "1px solid red",
+    // alignItems: "stretch",
+    "& > div": {
+      minWidth: "100%",
+      width: "100%",
+      // marginRight: 0,
+      // paddingRight: 0,
+    },
+  },
+  gridRoot: {
+    // padding: "12px 0px 12px 12px",
+    "& > .MuiGrid-item": {
+      // padding: "12px 0px 12px 12px",
+    },
+  },
+  gridItemRoot: {},
+}));
+
+const StepOneFormComponent = ({
+  props: {
+    handleFormChange,
+    formData,
+    focusState,
+    setFocusState,
+    shouldShrinkDescription,
+    setShouldShrinkDescription,
+    placeHolder,
+    setPlaceHolder,
+  },
+}) => {
+  const classes = useStyles();
+
   return (
     <Fragment>
       <Typography variant="h6" gutterBottom>
-        Shipping address
+        Let's get some information about your recipe!
       </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
+      <Grid
+        container
+        spacing={3}
+        className="addRecipeFormContainer"
+        classes={{ root: classes.gridRoot }}
+      >
+        <Grid item xs={12} sm={4}>
           <TextField
             required
-            id="firstName"
-            name="firstName"
-            label="First name"
+            id="recipeTitleInput"
+            name="title"
             fullWidth
-            autoComplete="given-name"
+            autoFocus
+            multiline
+            label="Give it a name: "
+            onChange={handleFormChange}
+            value={formData.title}
+            InputLabelProps={{
+              focused: focusState.title.focus,
+              shrink: Boolean(formData?.title?.length > 0),
+            }}
+            inputProps={{ className: "inputListener" }}
+            classes={{ root: classes.textFieldRoot }}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={3}>
           <TextField
-            required
-            id="lastName"
-            name="lastName"
-            label="Last name"
+            id="recipeServingInput"
+            name="servings"
+            type="number"
             fullWidth
-            autoComplete="family-name"
+            label="Servings"
+            onChange={handleFormChange}
+            inputProps={{ className: "inputListener" }}
+            InputLabelProps={{
+              focused: focusState.servings.focus,
+              shrink: Boolean(formData?.servings?.length > 0),
+            }}
+            value={formData.servings}
+            classes={{ root: classes.textFieldRoot }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={5}>
+          <UnitSelect
+            handleFormChange={handleFormChange}
+            focusState={focusState}
+            formData={formData}
+            classes={classes}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             required
-            id="address1"
-            name="address1"
-            label="Address line 1"
+            id="recipeDescriptionInput"
+            name="description"
+            label="Tell people about it!"
+            {...(placeHolder && {
+              placeholder:
+                "Here's your chance to tell people about the deliciousness in detail.",
+            })}
+            // placeholder={
+            //   shouldShrinkDescription
+            //     ?
+            //     : null
+            // }
             fullWidth
-            autoComplete="shipping address-line1"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            id="address2"
-            name="address2"
-            label="Address line 2"
-            fullWidth
-            autoComplete="shipping address-line2"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="city"
-            name="city"
-            label="City"
-            fullWidth
-            autoComplete="shipping address-level2"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            id="state"
-            name="state"
-            label="State/Province/Region"
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="zip"
-            name="zip"
-            label="Zip / Postal code"
-            fullWidth
-            autoComplete="shipping postal-code"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="country"
-            name="country"
-            label="Country"
-            fullWidth
-            autoComplete="shipping country"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={
-              <Checkbox color="secondary" name="saveAddress" value="yes" />
-            }
-            label="Use this address for payment details"
+            multiline
+            onChange={handleFormChange}
+            onClick={() => {
+              setShouldShrinkDescription(true);
+              // if (
+              //   formData?.description?.length &&
+              //   formData?.description?.length  0
+              // ) {
+              setPlaceHolder(true);
+              // }
+            }}
+            onBlur={() => {
+              if (formData.description === "") {
+                console.log("Running here");
+                console.log(formData.description);
+                setPlaceHolder(false);
+                setTimeout(() => setShouldShrinkDescription(false), 300);
+              }
+            }}
+            value={formData.description}
+            classes={{ root: classes.textFieldRoot }}
+            inputProps={{ className: "inputListener" }}
+            InputLabelProps={{
+              focused: focusState.description.focus,
+              shrink: shouldShrinkDescription,
+            }}
           />
         </Grid>
       </Grid>
@@ -103,4 +150,19 @@ const StepOneFormComponent = () => {
   );
 };
 
-export const StepOneForm = StepOneFormComponent;
+const mapStateToProps = (state, props) => ({
+  network: state.network,
+  user: state.user,
+  props: props,
+});
+
+export const StepOneForm = connect(mapStateToProps)(StepOneFormComponent);
+
+// <Grid item xs={12}>
+//           <FormControlLabel
+//             control={
+//               <Checkbox color="secondary" name="saveAddress" value="yes" />
+//             }
+//             label="Use this address for payment details"
+//           />
+//         </Grid>

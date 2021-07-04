@@ -14,17 +14,25 @@ handler.get(async (req, res) => {
     let email = cookies.get("email");
     console.log("EMAIL: ", email);
     let password = cookies.get("password");
-    console.log("Password: ", password);
+    console.log("PASSWORD: ", password);
     let user = await User.findOne({ email: email });
     // let user = User.findOne({ email: email }).select("-password");
-    console.log(user);
+    // console.log(user);
     if (!user) {
       return res.status(401).json({
         success: false,
         msg: "User not found through autoLogin attempt",
       });
     }
-    let { isMatch } = await user.comparePassword(password);
+    let { isMatch } = await user.comparePassword(password, true);
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({
+          success: false,
+          msg: "Mix up of secure tokens between DB and client.",
+        });
+    }
     if (isMatch) {
       return res.status(200).json(user);
     }

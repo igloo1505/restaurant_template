@@ -4,7 +4,7 @@ export const TOGGLE_STOCK = "TOGGLE_STOCK";
 export const ADD_MENU_ITEM = "ADD_MENU_ITEM";
 export const REMOVE_MENU_ITEM = "REMOVE_MENU_ITEM";
 export const EDIT_MENU_ITEM = "EDIT_MENU_ITEM";
-export const SET_LOADING = "SET_LOADING";
+
 export const AUTHENTICATE_USER = "AUTHENTICATE_USER";
 export const AUTHENTICATION_ERROR = "AUTHENTICATION_ERROR";
 export const REGISTER_NEW_USER = "REGISTER_NEW_USER";
@@ -55,3 +55,10 @@ export const HIDE_MODAL = "HIDE_MODAL";
 export const SHOW_MODAL = "SHOW_MODAL";
 export const HIDE_SNACKBAR = "HIDE_SNACKBAR";
 export const SHOW_SNACKBAR = "SHOW_SNACKBAR";
+
+// NETWORK STUFF:
+export const IS_LOADING = "IS_LOADING";
+export const NETWORK_ERROR = "NETWORK_ERROR";
+export const NETWORK_RESPONSE = "NETWORK_RESPONSE";
+export const TIMER_START = "TIMER_START";
+export const TIMER_END = "TIMER_END";

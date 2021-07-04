@@ -28,13 +28,14 @@ const AccountIconMenuLocal = ({
   const dispatch = useDispatch();
   const [anchor, setAnchor] = useState(null);
   useEffect(() => {
+    console.log(shouldBeVisible);
     if (shouldBeVisible) {
       let menuAnchor = document.getElementById("accountIconButton");
       setAnchor(menuAnchor);
     }
-    if (!shouldBeVisible) {
-      setAnchor(null);
-    }
+    // if (!shouldBeVisible) {
+    //   setAnchor(null);
+    // }
   }, [shouldBeVisible]);
 
   const closeMenu = () => {
@@ -54,7 +55,7 @@ const AccountIconMenuLocal = ({
           <Menu
             id="account-menu"
             anchorEl={anchor}
-            // keepMounted
+            keepMounted
             open={shouldBeVisible}
             onClose={closeMenu}
             PopoverClasses={{ root: classes.popoverRoot }}

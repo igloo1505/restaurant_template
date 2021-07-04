@@ -2,7 +2,6 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: 'Newsreader', serif;
   background-color: transparent;
 }
 
@@ -13,9 +12,9 @@ a {
 
 * {
   box-sizing: border-box;
-  /* overflow: hidden; */
-  overflow-x: hidden;
   /* AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH I'm going to leave this here. I spent ALL day adjusting everythings background so stuff wouldn't be hidden. I forgot I grabbed this from a old project when I started and had this in here still!!!! */
+  /* overflow: hidden; */
+  /* overflow-x: hidden; */
   /* background-color: #fff; */
 }
 
@@ -25,47 +24,6 @@ a {
 .alert svg{
   background-color: transparent;
 }
-@media only screen and (max-width: 850px) {
-  #RecipesDotTitle {
-    max-width: calc(50% - 20px);
-    width: calc(50% - 20px);
-    margin: 10px 10px 10px 0px;
-    display: inline-block;
-  }
-  
-  #RecipesDotPrice{
-    margin: 10px 0px 10px 10px;
-    float: right;
-    max-width: calc(50% - 20px);
-    width: calc(50% - 20px);
-    display: inline-block;
-  } 
-}
-@media only screen and (max-width: 450px) {
-  #RecipesDotTitle {
-    max-width: 90%;
-    width: 90%;
-    margin: 10px 5% 10px 5%;
-    display: block;
-  }
-  #RecipesDotPrice{
-    max-width: 90%;
-    width: 90%;
-    margin: 10px 5% 10px 5%;
-    display: block;
-  } 
-  #RecipesDotDescription{
-    width: 90%;
-    margin: 10px 5% 10px 5%;
-    display: block;
-  }
-  #RecipesDotCategory{
-    width: 90%;
-    margin: 10px 5% 10px 5%;
-    display: block;
-  }
-}
-
 
 
 
@@ -107,6 +65,17 @@ div[class^="PrivateSwipeArea-root"]{
   transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms
 }
 
+.MuiFormControl-fullWidth {
+  /* min-width: 100% !important; */
+  /* padding: initial !important; */
+}
+.MuiInputBase-fullWidth {
+  /* min-width: 100% !important; */
+}
+
+.addRecipeFormContainer input{
+  /* min-width: 100%; */
+}
 /* .MuiInputLabel-outlined.MuiInputLabel-shrink{
   transform: none !important;
 } */
@@ -128,6 +97,8 @@ input:not(:-webkit-autofill) {
   background-color: rgba(0,0,0,0.2) !important;
 }
 
-
+#menu-servings > .MuiPaper-root.MuiMenu-paper {
+  padding-top: 0;
+}
 
 

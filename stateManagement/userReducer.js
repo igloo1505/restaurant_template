@@ -16,7 +16,6 @@ import {
 const initialState = {
   loggedIn: false,
   triedAutoLogin: false,
-  token: null,
   allUsers: [],
   filtered: null,
   loading: false,
@@ -96,6 +95,7 @@ export default function userReducer(state = initialState, action) {
         self: action.payload,
       };
     case AUTHENTICATION_ERROR:
+      console.log(action.payload);
       return {
         ...state,
         // loggedIn: false,

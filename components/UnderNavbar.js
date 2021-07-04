@@ -8,7 +8,6 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     position: "absolute",
-    border: "3px solid red",
     width: "100%",
     marginBottom: "20px",
   },

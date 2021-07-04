@@ -15,6 +15,7 @@ import {
   FORGOT_PASSWORD_FAIL,
 } from "./TYPES";
 import axios from "axios";
+import useAxios from "./useAxios";
 import cookie from "json-cookie";
 import store from "../stateManagement/store";
 const config = {
@@ -24,34 +25,50 @@ const config = {
 };
 const {
   user: {
+    triedAutoLogin,
     self: { _id: idInState },
   },
 } = store.getState();
 
 export const authenticateUser = (user) => async (dispatch) => {
-  console.log(idInState);
-  try {
-    const res = await axios.post("/api/portal/login", user, config);
-    console.log("RES: ", res);
+  // try {
+  // const res = await useAxios(axios.post("/api/portal/login", user, config));
+  let res = await useAxios({
+    method: "post",
+    url: "/api/portal/login",
+    data: user,
+  });
+  console.log("RES: ", res);
+  if (res.status === 200) {
     dispatch({
       type: AUTHENTICATE_USER,
       payload: res.data,
     });
-  } catch (error) {
+  }
+  if (res.status !== 200) {
     dispatch({
       type: AUTHENTICATION_ERROR,
-      payload: error,
+      payload: "User authentication error.",
     });
   }
+  // } catch (error) {
+  // dispatch({
+  //   type: AUTHENTICATION_ERROR,
+  //   payload: "Error from catch block.",
+  // });
+  // }
 };
 
-export const autoLogin = () => async (dispatch) => {
+export const tryAutoLogin = () => async (dispatch) => {
   console.log("Running autoLogin...");
   if (typeof window !== "undefined") {
     let rememberMe = cookie.get("rememberMe");
-    if (rememberMe) {
+    if (rememberMe && !triedAutoLogin) {
       try {
-        let res = await axios.get("/api/portal/autoLogin", config);
+        let res = await useAxios({
+          method: "get",
+          url: "/api/portal/autoLogin",
+        });
         if (res.status === 200) {
           dispatch({
             type: AUTO_LOGIN_SUCCESS,
@@ -63,6 +80,7 @@ export const autoLogin = () => async (dispatch) => {
             type: AUTO_LOGIN_FAIL,
           });
         }
+        return { msg: "what the flying fuck" };
       } catch (error) {
         console.log("ERROR: ", error);
       }

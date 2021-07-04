@@ -8,7 +8,6 @@ const drawerWidth = 240
 const useStyles = makeStyles((theme) => ({
     root: {
         width: "100vw", 
-        border: "4px solid red",
     },
     shifted: {
         width: `calc(100vw - ${drawerWidth}px)`,

@@ -129,7 +129,6 @@ const useStylesAppbar = makeStyles((theme) => ({
   },
   hideMenuButton: { display: "none" },
   link: {
-    border: "1px solid red",
     padding: "0 1rem !important",
     position: "absolute",
     right: "1rem",
@@ -148,7 +147,7 @@ const Navbar = ({
   isOpen,
   loggedIn,
   isSignUp,
-  user: { token, _id },
+  user: { _id },
   viewport: { width: deviceWidth, height: deviceHeight },
 }) => {
   const dispatch = useDispatch();
@@ -256,18 +255,7 @@ const Navbar = ({
             noWrap
             classes={{ root: appbarClasses.appbarLabelText }}
           >
-            Recipes
-            <span
-              style={{
-                backgroundColor: "transparent",
-                fontSize: "1.5rem",
-                paddingLeft: "5px",
-                paddingRight: "5px",
-              }}
-            >
-              'N'
-            </span>
-            Stuff
+            Ressippi
           </Typography>
           {loggedIn && (
             <IconButton

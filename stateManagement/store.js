@@ -9,6 +9,7 @@ import userReducer from "./userReducer";
 import modalReducer from "./modalReducer";
 import alertReducer from "./alertReducer";
 import uiReducer from "./uiReducer";
+import networkReducer from "./networkReducer";
 
 const initialState = {};
 
@@ -23,6 +24,7 @@ const store = configureStore({
     UI: uiReducer,
     modal: modalReducer,
     alert: alertReducer,
+    network: networkReducer,
   },
   devTools: () => withDevtools(),
 });

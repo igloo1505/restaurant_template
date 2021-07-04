@@ -8,7 +8,6 @@ const drawerWidth = 240;
 const useStylesUnderNavbar = makeStyles((theme) => ({
   root: {
     position: "absolute",
-    border: "3px solid red",
     width: "100%",
     marginBottom: "20px",
   },
@@ -78,6 +77,7 @@ const AdjustForDrawerContainerComponent = ({
   const [shifted, setShifted] = useState(false);
   const [styles, setStyles] = useState({});
   useEffect(() => {
+    console.log(centerAll);
     setShifted(drawerIsOpen);
   }, [drawerIsOpen, navHeight]);
   //   const style = {
@@ -120,3 +120,28 @@ const mapStateToPropsAdjustForDrawer = (state, props) => ({
 export const AdjustForDrawerContainer = connect(mapStateToPropsAdjustForDrawer)(
   AdjustForDrawerContainerComponent
 );
+
+const useGridStyles = makeStyles((theme) => ({
+  columnTwelve: {
+    width: "100%",
+    padding: "0px 12px",
+    border: "1px solid red",
+    display: "inline-block",
+  },
+  columnSix: {
+    width: "50%",
+    border: "1px solid red",
+  },
+}));
+
+const GridItemComponent = ({ columns, children }) => {
+  const classes = useGridStyles();
+  switch (columns) {
+    case 12:
+      return <div className={classes.columnTwelve}>{children}</div>;
+    default:
+      return <div className={classes.columnTwelve}>{children}</div>;
+  }
+};
+
+export const GridItem = GridItemComponent;

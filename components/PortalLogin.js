@@ -4,7 +4,7 @@ import clsx from "clsx";
 import {
   validatePassword,
   authenticateUser,
-  autoLogin,
+  tryAutoLogin,
   forgotPassword,
 } from "../stateManagement/userActions";
 import * as Types from "../stateManagement/TYPES";
@@ -78,8 +78,9 @@ const SignIn = ({
   alert: {
     dialog: { isOpen: alertIsOpen },
   },
+  user: { triedAutoLogin },
   authenticateUser,
-  autoLogin,
+  tryAutoLogin,
   forgotPassword,
 }) => {
   const dispatch = useDispatch();
@@ -88,6 +89,17 @@ const SignIn = ({
     password: "",
     rememberMe: true,
   });
+  const initialFocusState = {
+    email: {
+      focus: false,
+      shrink: false,
+    },
+    password: {
+      focus: false,
+      shrink: false,
+    },
+  };
+  const [focusState, setFocusState] = useState(initialFocusState);
   const classes = useStyles();
   const [validated, setValidated] = useState(true);
   const [shouldBeTransparent, setShouldBeTransparent] = useState(true);
@@ -101,7 +113,10 @@ const SignIn = ({
   }, [modalIsOpen, alertIsOpen]);
   const [passwordValidated, setPasswordValidated] = useState(true);
   useEffect(() => {
-    autoLogin();
+    console.log("logging here");
+    if (!triedAutoLogin) {
+      tryAutoLogin();
+    }
   }, []);
 
   const handleForgotPassword = () => {
@@ -114,7 +129,7 @@ const SignIn = ({
       },
     });
   };
-
+  // TODO make sure initial load doesn't have label overlapping text if autofill is used
   const handleSubmit = () => {
     if (validated && passwordValidated) {
       authenticateUser(formData);
@@ -122,7 +137,13 @@ const SignIn = ({
   };
 
   const handleChange = (e) => {
-    // removeBoxShadow();
+    setFocusState({
+      ...focusState,
+      [e.target.name]: {
+        focus: true,
+        shrink: Boolean(e.target.value.length > 0),
+      },
+    });
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (
       formData.email.length === emailMinLength ||
@@ -191,6 +212,28 @@ const SignIn = ({
             classes={{ root: classes.textFieldRoot }}
             value={formData.email}
             onChange={(e) => handleChange(e)}
+            onClick={() =>
+              setFocusState({
+                ...initialFocusState,
+                email: {
+                  focus: true,
+                  shrink: Boolean(formData.email.length > 0),
+                },
+              })
+            }
+            onBlur={() =>
+              setFocusState({
+                ...initialFocusState,
+                email: {
+                  focus: false,
+                  shrink: Boolean(formData.email.length > 0),
+                },
+              })
+            }
+            InputLabelProps={{
+              focused: focusState.email.focus,
+              shrink: focusState.email.shrink,
+            }}
           />
           <TextField
             variant="outlined"
@@ -206,6 +249,28 @@ const SignIn = ({
             classes={{ root: classes.textFieldRoot }}
             value={formData.password}
             onChange={(e) => handleChange(e)}
+            onClick={() =>
+              setFocusState({
+                ...initialFocusState,
+                password: {
+                  focus: true,
+                  shrink: Boolean(formData.password.length > 0),
+                },
+              })
+            }
+            onBlur={() =>
+              setFocusState({
+                ...initialFocusState,
+                password: {
+                  focus: false,
+                  shrink: Boolean(formData.password.length > 0),
+                },
+              })
+            }
+            InputLabelProps={{
+              focused: focusState.password.focus,
+              shrink: focusState.password.shrink,
+            }}
           />
           <FormControlLabel
             style={{ backgroundColor: "transparent" }}
@@ -263,6 +328,6 @@ const mapStateToProps = (state, props) => ({
 
 export default connect(mapStateToProps, {
   authenticateUser,
-  autoLogin,
+  tryAutoLogin,
   forgotPassword,
 })(SignIn);

@@ -1,11 +1,12 @@
 // const mongoose = require("mongoose");
+import uuid from "uuid";
 import nc from "next-connect";
 import { connectDB } from "../../../util/connectDB";
 import authMiddleware from "../../../util/authMiddleware";
 import jwt from "jsonwebtoken";
 import cookies from "next-cookies";
 import Cookies from "cookies";
-
+import { handleRememberMe } from "../../../util/handleRememberMe";
 import User from "../../../models/User";
 import colors from "colors";
 
@@ -22,7 +23,6 @@ handler.post(async (req, res) => {
       return res.status(401).json({ msg: "User not found" });
     }
     const { isMatch } = await user.comparePassword(req.body.password);
-
     console.log(colors.red("IsMatch!!!"), isMatch);
     if (!isMatch) {
       return res.status(401).json({ error: "These passwords do not match." });
@@ -38,9 +38,13 @@ handler.post(async (req, res) => {
       });
       cookies.set("token", token, { httpOnly: true });
       if (req.body.rememberMe) {
-        cookies.set("rememberMe", true, { httpOnly: false });
-        cookies.set("email", req.body.email, { httpOnly: true });
-        cookies.set("password", req.body.password, { httpOnly: true });
+        console.log("AAA");
+        let { user: updatedUser } = await handleRememberMe(user, req, cookies);
+        console.log("BBB");
+        // await updatedUser.save();
+        // cookies.set("rememberMe", true, { httpOnly: false });
+        // cookies.set("email", req.body.email, { httpOnly: true });
+        // cookies.set("password", req.body.password, { httpOnly: true });
       }
       return res.json(user);
     }

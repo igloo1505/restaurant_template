@@ -12,6 +12,10 @@ const UserSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    oneTimePassword: {
+      type: String,
+      required: false,
+    },
     firstName: {
       type: String,
       required: true,
@@ -28,18 +32,41 @@ const UserSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-UserSchema.pre("save", async function (next) {
+UserSchema.pre("save", async function (next, done) {
   if (this.isModified("password")) {
+    console.log("Did modify password");
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } else {
     next(new Error("failed to encrypt password"));
   }
+  // next();
 });
 
-UserSchema.methods.comparePassword = async function (password, next) {
-  const comparison = await bcrypt.compare(password, this.password);
+UserSchema.pre("save", async function (next) {
+  if (this.isModified("oneTimePassword")) {
+    console.log("Did modify oneTimePassword");
+    const salt = await bcrypt.genSalt(10);
+    this.oneTimePassword = await bcrypt.hash(this.oneTimePassword, salt);
+    next();
+  } else {
+    next(new Error("failed to encrypt oneTimePassword"));
+  }
+});
+
+UserSchema.methods.comparePassword = async function (
+  password,
+  isAutoLogin,
+  next
+) {
+  let comparison;
+  if (isAutoLogin) {
+    comparison = await bcrypt.compare(password, this.oneTimePassword);
+  }
+  if (!isAutoLogin) {
+    comparison = await bcrypt.compare(password, this.password);
+  }
   if (!comparison) {
     return {
       isMatch: false,

@@ -12,7 +12,7 @@ const initialState = {
   snackbar: {
     isOpen: false,
     variant: "success",
-    hideIn: null,
+    hideIn: 5000,
     message: "",
   },
 };
