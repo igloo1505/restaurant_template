@@ -64,6 +64,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const idArray = [
+  "signIn_password_input",
+  "signIn_email_input",
+  "signIn_lastName_input",
+  "signIn_firstName_input",
+];
+
 const PortalSignUp = ({
   user,
   modal: { isOpen: modalIsOpen },
@@ -75,8 +82,50 @@ const PortalSignUp = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [transparent, setTransparent] = useState(true);
+  const initialFocusState = {
+    password: {
+      shrink: false,
+      focus: false,
+    },
+    firstName: {
+      shrink: false,
+      focus: false,
+    },
+    lastName: {
+      shrink: false,
+      focus: false,
+    },
+    email: {
+      shrink: false,
+      focus: false,
+    },
+  };
+  const [focusState, setFocusState] = useState(initialFocusState);
+  const addListeners = () => {
+    idArray.forEach((id) => {
+      let em = document.getElementById(id);
+      em.addEventListener("focus", (e) => {
+        setFocusState({
+          ...initialFocusState,
+          [e.target.name]: {
+            focus: true,
+            shrink: Boolean(formData[e.target.name].length !== 0),
+          },
+        });
+      });
+      em.addEventListener("blur", (e) => {
+        setFocusState({
+          ...focusState,
+          [e.target.name]: {
+            focus: false,
+            shrink: Boolean(formData[e.target.name].length !== 0),
+          },
+        });
+      });
+    });
+  };
   useEffect(() => {
-    console.log("Did run in this bitch", modalIsOpen, alertIsOpen);
+    addListeners();
     if (modalIsOpen || alertIsOpen) {
       setTransparent(true);
     }
@@ -101,6 +150,12 @@ const PortalSignUp = ({
   const classes = useStyles();
 
   const handleChange = (e) => {
+    if (e.target.value !== "") {
+      setFocusState({
+        ...focusState,
+        [e.target.name]: { focus: true, shrink: true },
+      });
+    }
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleChangeBoolean = (e) => {
@@ -108,6 +163,7 @@ const PortalSignUp = ({
   };
 
   const handleSubmit = () => {
+    console.log(formData);
     addNewUser(formData);
   };
 
@@ -172,6 +228,10 @@ const PortalSignUp = ({
                   ),
                 }}
                 onChange={handleChange}
+                InputLabelProps={{
+                  focused: focusState.firstName.focus,
+                  shrink: Boolean(formData.firstName.length !== 0),
+                }}
               />
             </Grid>
             <Grid
@@ -194,6 +254,10 @@ const PortalSignUp = ({
                     classes.textFieldRoot,
                     transparent && classes.adjustForBackdropOpen
                   ),
+                }}
+                InputLabelProps={{
+                  focused: focusState.lastName.focus,
+                  shrink: Boolean(formData.lastName.length !== 0),
                 }}
                 onChange={handleChange}
               />
@@ -218,6 +282,10 @@ const PortalSignUp = ({
                     transparent && classes.adjustForBackdropOpen
                   ),
                 }}
+                InputLabelProps={{
+                  focused: focusState.email.focus,
+                  shrink: Boolean(formData.email.length !== 0),
+                }}
                 onChange={handleChange}
               />
             </Grid>
@@ -241,6 +309,10 @@ const PortalSignUp = ({
                     classes.textFieldRoot,
                     transparent && classes.adjustForBackdropOpen
                   ),
+                }}
+                InputLabelProps={{
+                  focused: focusState.password.focus,
+                  shrink: Boolean(formData.password.length !== 0),
                 }}
                 onChange={handleChange}
                 InputProps={{

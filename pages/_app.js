@@ -1,4 +1,5 @@
 import React, { useEffect, Fragment } from "react";
+import axios from "axios";
 import Navbar from "../components/portalAuthenticated/Navbar";
 import Modal from "../components/modalsAndAlerts/Modal";
 import SnackbarSwitcher from "../components/modalsAndAlerts/SnackbarSwitcher";
@@ -15,7 +16,8 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import theme from "../styles/MUITheme";
-import { tryAutoLogin } from "../stateManagement/userActions";
+// import { tryAutoLogin } from "../stateManagement/userActions";
+import * as userActions from "../stateManagement/userActions";
 import setAuthToken from "../stateManagement/setAuth";
 import {
   SET_VIEWPORT_DIMENSIONS,
@@ -29,6 +31,10 @@ const cache = createCache({
 });
 cache.compat = true;
 
+const reallyTryAutoLogin = () => {
+  // tryAutoLogin();
+};
+
 function MyApp({ Component, pageProps, ...rest }) {
   // if (localStorage.token) {
   //   setAuthToken(localStorage.token);
@@ -36,17 +42,13 @@ function MyApp({ Component, pageProps, ...rest }) {
   const state = store.getState();
 
   useEffect(() => {
-    console.log("props", pageProps, rest);
+    console.log("rest", rest);
     const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
-  useEffect(() => {
-    console.log("Trying tryAutoLogin...");
-    console.log("typeof", tryAutoLogin);
-    tryAutoLogin();
-  }, []);
+
   const setViewPortDimensions = () => {
     if (typeof window !== "undefined") {
       store.dispatch({ type: IS_CLIENT });

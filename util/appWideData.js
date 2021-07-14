@@ -9,7 +9,7 @@ export const unitObject = {
     "milliliters",
     "liters",
   ],
-  ["Cooking is subjective"]: [
+  SUBJECTIVE: [
     "A pinch",
     "A smidgen",
     "A heap",
@@ -18,3 +18,6 @@ export const unitObject = {
     "A speckle",
   ],
 };
+
+// export const liveRootUrl = "https://recipe-social-network.vercel.app/";
+export const liveRootUrl = "localhost:3000";

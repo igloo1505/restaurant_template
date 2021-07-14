@@ -100,5 +100,7 @@ input:not(:-webkit-autofill) {
 #menu-servings > .MuiPaper-root.MuiMenu-paper {
   padding-top: 0;
 }
-
+#menu-servings > .MuiPaper-root.MuiMenu-paper > .MuiList-root.MuiMenu-list{
+  padding-top: 0;
+}
 

@@ -5,6 +5,8 @@ import axios from "axios";
 
 axios.defaults.headers.common["Content-Type"] = "application/json";
 
+// TODO add exception here to not set loading for background requests like autoLogin
+
 const setLoading = (isLoading, timeStart) => {
   console.log("timeStart", timeStart);
   store.dispatch({ type: Types.IS_LOADING, payload: { isLoading, timeStart } });

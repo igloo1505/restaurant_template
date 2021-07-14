@@ -31,8 +31,6 @@ const {
 } = store.getState();
 
 export const authenticateUser = (user) => async (dispatch) => {
-  // try {
-  // const res = await useAxios(axios.post("/api/portal/login", user, config));
   let res = await useAxios({
     method: "post",
     url: "/api/portal/login",
@@ -51,19 +49,15 @@ export const authenticateUser = (user) => async (dispatch) => {
       payload: "User authentication error.",
     });
   }
-  // } catch (error) {
-  // dispatch({
-  //   type: AUTHENTICATION_ERROR,
-  //   payload: "Error from catch block.",
-  // });
-  // }
 };
 
 export const tryAutoLogin = () => async (dispatch) => {
-  console.log("Running autoLogin...");
+  console.log("RUNNING AUTOLOGIN...");
+  debugger;
   if (typeof window !== "undefined") {
     let rememberMe = cookie.get("rememberMe");
-    if (rememberMe && !triedAutoLogin) {
+    let email = cookie.get("email");
+    if (rememberMe && email && !triedAutoLogin) {
       try {
         let res = await useAxios({
           method: "get",
@@ -74,15 +68,18 @@ export const tryAutoLogin = () => async (dispatch) => {
             type: AUTO_LOGIN_SUCCESS,
             payload: res.data,
           });
+          return res.data;
         }
         if (res.status !== 200) {
           dispatch({
             type: AUTO_LOGIN_FAIL,
           });
+          return res.data;
         }
         return { msg: "what the flying fuck" };
       } catch (error) {
         console.log("ERROR: ", error);
+        return error;
       }
     }
   }
@@ -115,18 +112,18 @@ export const addNewUser = (user) => async (dispatch) => {
 };
 
 export const getAllUsers = () => async (dispatch) => {
-  try {
-    const res = await axios.get("/api/portal/", config);
-    dispatch({
-      type: GET_ALL_USERS,
-      payload: res.data,
-    });
-  } catch (error) {
-    dispatch({
-      type: USER_ERROR,
-      payload: error,
-    });
-  }
+  // try {
+  //   const res = await axios.get("/api/portal/", config);
+  //   dispatch({
+  //     type: GET_ALL_USERS,
+  //     payload: res.data,
+  //   });
+  // } catch (error) {
+  //   dispatch({
+  //     type: USER_ERROR,
+  //     payload: error,
+  //   });
+  // }
 };
 
 export const removeUser = (userID) => async (dispatch) => {

@@ -1,7 +1,7 @@
 // import User from "../models/User"
-// const addoneTimePasswordField = async () => {
+// const addotpField = async () => {
 //     let user = await User.find({});
-//     if(!user.oneTimePassword){
-//         user.oneTimePassword = ""
+//     if(!user.otp){
+//         user.otp = ""
 //     }
 // }

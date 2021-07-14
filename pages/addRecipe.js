@@ -1,8 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import clsx from "clsx";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Stepper from "@material-ui/core/Stepper";
@@ -12,13 +13,19 @@ import Button from "@material-ui/core/Button";
 import Copyright from "../components/Copyright";
 import Typography from "@material-ui/core/Typography";
 import { StepOneForm } from "../components/addRecipeForms";
+import Loader from "../components/Loader";
+import {
+  ColorlibConnector,
+  ColorlibStepIcon,
+} from "../components/AddRecipeStepper";
 import { tryAutoLogin } from "../stateManagement/userActions";
+import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
 import {
   UnderNavbar,
   AdjustForDrawerContainer,
 } from "../components/UIComponents";
-import { set } from "json-cookie";
 
+// TODO check deviceheight and if room, shift form downward and tilt banner along corner of form
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: "relative",
@@ -46,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
     padding: theme.spacing(2),
+    paddingTop: "0px  !important",
     [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
       marginTop: theme.spacing(6),
       marginBottom: theme.spacing(6),
@@ -70,6 +78,7 @@ const steps = ["Details", "Ingredients", "Directions"];
 const getStepContent = (
   step,
   formData,
+  setFormData,
   handleFormChange,
   focusState,
   setFocusState,
@@ -84,6 +93,7 @@ const getStepContent = (
         <StepOneForm
           formData={formData}
           handleFormChange={handleFormChange}
+          setFormData={setFormData}
           focusState={focusState}
           setFocusState={setFocusState}
           shouldShrinkDescription={shouldShrinkDescription}
@@ -112,7 +122,7 @@ const AddRecipe = ({
     portalDrawer: { open: drawerIsOpen },
   },
   network: { loading: isLoading },
-  tryAutoLogin,
+  // tryAutoLogin,
 }) => {
   const initialFocusState = {
     title: {
@@ -131,22 +141,21 @@ const AddRecipe = ({
   const [focusState, setFocusState] = useState(initialFocusState);
   const router = useRouter();
   const [formData, setFormData] = useState({
-    description: "",
     servings: "",
+    servingUnit: "cups",
     title: "",
+    description: "",
   });
   const [shouldShrinkDescription, setShouldShrinkDescription] = useState(false);
   const [placeHolder, setPlaceHolder] = useState(false);
   const handleFormChange = (e) => {
-    console.log("setting with: ", e.target.name, e.target.value);
-    console.log("setting with: ", formData);
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    // setFocusState({
-    //   ...focusState,
-    //   [e.target.name]: {
-    //     focus: true,
-    //   },
-    // });
+    if (e) {
+      if (e.target.name === "servingUnit") {
+        console.log("e!!!!", e);
+      }
+      console.log("targets", e.target.name);
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
   };
   const addListeners = () => {
     let ems = document.getElementsByClassName("inputListener");
@@ -154,7 +163,6 @@ const AddRecipe = ({
     if (ems && ems.length !== 0) {
       keys.forEach((k) => {
         ems[k].addEventListener("focus", (e) => {
-          e.preventDefault();
           setFocusState({
             ...focusState,
             [e.target.name]: {
@@ -163,23 +171,6 @@ const AddRecipe = ({
           });
         });
         ems[k].addEventListener("blur", (e) => {
-          e.preventDefault();
-          if (e.target.name === "description") {
-            console.log("Did reach here");
-            console.log("e.target.name", e.target.name);
-            console.log("formData[e.target.name]", formData[e.target.name]);
-            console.log("formData.description", formData.description);
-            // if (formData.description.length === 0) {
-            //   console.log("length of 0");
-            //   console.log("THE WHOLE FUCKING FORM", formData);
-            //   console.log("length of :", formData.description);
-            //   setPlaceHolder(false);
-            //   setTimeout(() => setShouldShrinkDescription(false), 300);
-            // }
-            // if (formData?.[e.target.name]?.length > 0) {
-            //   setShouldShrinkDescription(true);
-            // }
-          }
           setFocusState({
             ...focusState,
             [e.target.name]: {
@@ -198,60 +189,54 @@ const AddRecipe = ({
       router.push("/");
     }
   }, [loggedIn, token]);
-  useEffect(() => {
-    if (!triedAutoLogin) {
-      tryAutoLogin();
-    }
-  }, [triedAutoLogin]);
+
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
-    setActiveStep(activeStep + 1);
+    // TODO authenticate before transition
+    console.log(formData);
+    // setActiveStep(activeStep + 1);
   };
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
-
-  return (
-    <Fragment>
-      <CssBaseline />
-      <UnderNavbar />
-      <AdjustForDrawerContainer>
-        <main
-          className={clsx(
-            classes.layout,
-            drawerIsOpen && classes.layoutShifted
-          )}
-        >
-          <Paper className={classes.paper}>
-            <Typography component="h1" variant="h4" align="center">
-              Add Recipe
-            </Typography>
-            <Stepper activeStep={activeStep} className={classes.stepper}>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-            <Fragment>
-              {activeStep === steps.length ? (
-                <Fragment>
-                  <Typography variant="h5" gutterBottom>
-                    Thank you for your order.
-                  </Typography>
-                  <Typography variant="subtitle1">
-                    Your order number is #2001539. We have emailed your order
-                    confirmation, and will send you an update when your order
-                    has shipped.
-                  </Typography>
-                </Fragment>
-              ) : (
+  if (isLoading || !loggedIn) {
+    return <Loader type="circular" />;
+  }
+  if (!isLoading && loggedIn) {
+    return (
+      <Fragment>
+        <CssBaseline />
+        <UnderNavbar />
+        <AdjustForDrawerContainer>
+          <main
+            className={clsx(
+              classes.layout,
+              drawerIsOpen && classes.layoutShifted
+            )}
+          >
+            <Paper className={classes.paper}>
+              <FormBanner>Add Recipe</FormBanner>
+              <Stepper
+                alternativeLabel
+                activeStep={activeStep}
+                connector={<ColorlibConnector />}
+              >
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel StepIconComponent={ColorlibStepIcon}>
+                      {label}
+                    </StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+              <Fragment>
                 <Fragment>
                   {getStepContent(
                     activeStep,
                     formData,
+                    setFormData,
                     handleFormChange,
                     focusState,
                     setFocusState,
@@ -272,18 +257,22 @@ const AddRecipe = ({
                       onClick={handleNext}
                       className={classes.button}
                     >
-                      {activeStep === steps.length - 1 ? "Place order" : "Next"}
+                      {activeStep === steps.length - 1
+                        ? "Submit Recipe"
+                        : "Next"}
                     </Button>
                   </div>
                 </Fragment>
-              )}
-            </Fragment>
-          </Paper>
-          <Copyright />
-        </main>
-      </AdjustForDrawerContainer>
-    </Fragment>
-  );
+              </Fragment>
+            </Paper>
+            <Copyright />
+          </main>
+        </AdjustForDrawerContainer>
+      </Fragment>
+    );
+  } else {
+    return <div></div>;
+  }
 };
 
 const mapStateToProps = (state, props) => ({
@@ -293,4 +282,60 @@ const mapStateToProps = (state, props) => ({
   network: state.network,
 });
 
-export default connect(mapStateToProps, { tryAutoLogin })(AddRecipe);
+// export async function getServerSideProps(context) {
+//   // console.log("context!!!!", context);
+//   // const { res, req } = context;
+//   // debugger;
+//   // TODO grab cookies and validate jwt here
+//   // const user = await axios.get("/api/portal/autoLogin");
+//   // const res = await tryAutoLogin();
+//   // const response = await autoLoginOnFirstRequest(req, res);
+//   // console.log("User", response);
+//   return {
+//     props: {},
+//   };
+// }
+
+export default connect(mapStateToProps)(AddRecipe);
+
+const useBannerStyles = makeStyles((theme) => ({
+  container: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  bannerRoot: {
+    width: "fit-content",
+    padding: "10px 20px",
+    borderRadius: "60px",
+    // backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.secondary.main,
+    // transform: "translateY(-50%)",
+    color: "#fff",
+  },
+  bannerPaper: {
+    width: "fit-content",
+    height: "fit-content",
+    borderRadius: "60px",
+    transform: "translateY(-50%)",
+  },
+}));
+
+const FormBanner = ({ children }) => {
+  const classes = useBannerStyles();
+  return (
+    <div className={classes.container}>
+      <Paper elevation={3} className={classes.bannerPaper}>
+        <Typography
+          component="h1"
+          variant="h4"
+          align="center"
+          className={classes.bannerRoot}
+        >
+          {children}
+        </Typography>
+      </Paper>
+    </div>
+  );
+};

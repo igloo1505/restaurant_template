@@ -18,13 +18,10 @@ export const handleRememberMe = async (user, req, cookies) => {
     cookies.set("password", stringifiedPassword, { httpOnly: true });
     console.log("here!!", stringifiedPassword);
     let encrypted = await bcrypt.hash(stringifiedPassword, salt);
-    let savedUser = await User.findByIdAndUpdate(user._id, {
-      oneTimePassword: encrypted,
+    await User.findByIdAndUpdate(user._id, {
+      otp: encrypted,
     });
-    console.log("savedUser: ", savedUser);
-    // let newUser = await user.save();
     return { user, req, cookies };
-    return { req, cookies };
   } catch (error) {
     console.log("Error in handleRememberMe block.");
     console.log(error);

@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+// const justLogShitAndDelete = () => {
+//   console.log(mongoose);
+// };
+// justLogShitAndDelete();
+
 const UserSchema = mongoose.Schema(
   {
     email: {
@@ -80,4 +85,4 @@ UserSchema.methods.comparePassword = async function (
   }
 };
 
-module.exports = mongoose.models.User || mongoose.model("User", UserSchema);
+module.exports = mongoose.models?.User || mongoose.model("User", UserSchema);

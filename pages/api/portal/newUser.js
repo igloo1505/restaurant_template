@@ -3,6 +3,7 @@ import nc from "next-connect";
 import { connectDB, middleware } from "../../../util/connectDB";
 import jwt from "jsonwebtoken";
 import Cookies from "cookies";
+import { handleRememberMe } from "../../../util/handleRememberMe";
 const User = require("../../../models/User");
 const colors = require("colors");
 
@@ -18,9 +19,7 @@ handler.post(async (req, res) => {
     let token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET);
     cookies.set("token", token, { httpOnly: true });
     if (req.body.rememberMe) {
-      cookies.set("rememberMe", true, { httpOnly: false });
-      cookies.set("email", req.body.email, { httpOnly: true });
-      cookies.set("password", req.body.password, { httpOnly: true });
+      await handleRememberMe(user, req, cookies);
     }
     res.json(newUser);
   } catch (error) {

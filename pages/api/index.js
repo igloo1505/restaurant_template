@@ -4,6 +4,7 @@ import User from "../../models/User";
 
 const handler = nc();
 // handler.use(middleware);
+debugger;
 handler.post(async (req, res) => {
   res.json({ msg: "Reached portal index route" });
 });

@@ -5,6 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "mocha",
     "dev:verbose": "NODE_OPTIONS='--inspect' next dev"
   },
   "dependencies": {
@@ -26,12 +27,14 @@
     "cookies": "^0.8.0",
     "json-cookie": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
+    "mobile-device-detect": "^0.4.3",
     "mongodb": "^3.5.9",
     "mongoose": "^5.12.14",
     "mongoose-validator": "^2.1.0",
     "next": "latest",
     "next-connect": "^0.10.1",
     "next-cookies": "^2.0.3",
+    "nextjs-cors": "^1.0.5",
     "prop-types": "^15.7.2",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
@@ -45,6 +48,9 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@testing-library/react": "^12.0.0",
+    "chai": "^4.3.4",
+    "mocha": "^9.0.2",
     "typescript": "^4.3.2"
   }
 }

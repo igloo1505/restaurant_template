@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import * as Types from "../../stateManagement/TYPES";
@@ -46,21 +46,32 @@ const DrawerContent = ({
     dispatch({ type: Types.CLOSE_DRAWER });
   };
   // * Push down to be level with navbar
-  const [heightOffsetStyle, setHeightOffsetStyle] = useState({});
-  useEffect(() => {
+  const [heightOffsetStyle, setHeightOffsetStyle] = useState({
+    marginTop: `${navHeight}px`,
+  });
+  useLayoutEffect(() => {
     let style = {
       marginTop: `${navHeight}px`,
     };
+    console.log("Height, Width", navHeight, deviceWidth);
     if (navHeight !== 0 && deviceWidth >= 1920) {
-      // setMobileOpen(true);
       setHeightOffsetStyle(style);
     }
-  }, [navHeight]);
+    if (navHeight === 0 && deviceWidth >= 1920) {
+      setHeightOffsetStyle({ marginTop: "64px" });
+    }
+    if (navHeight === 0 && deviceWidth < 1920) {
+      setHeightOffsetStyle({ marginTop: "0px" });
+    }
+    // if (navHeight === 0) {
+    //   setHeightOffsetStyle({ marginTop: "64px" });
+    // }
+    console.count("Fired");
+  }, [navHeight, deviceWidth]);
   const theme = useTheme();
   const classes = useStyles();
   const addRecipeAction = () => {
-    // !! Handle redirect or modal here obviously
-    console.log("Did log action this way!!");
+    // !! Handle redirect
     router.push("/addRecipe");
     closeDrawer();
   };

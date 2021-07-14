@@ -96,7 +96,7 @@ const SignIn = ({
     },
     password: {
       focus: false,
-      shrink: false,
+      shrink: true,
     },
   };
   const [focusState, setFocusState] = useState(initialFocusState);
@@ -112,12 +112,14 @@ const SignIn = ({
     }
   }, [modalIsOpen, alertIsOpen]);
   const [passwordValidated, setPasswordValidated] = useState(true);
-  useEffect(() => {
-    console.log("logging here");
-    if (!triedAutoLogin) {
-      tryAutoLogin();
-    }
-  }, []);
+
+  // ToDO Remove all occurrences of tryAutoLogin except in _app.js
+  // useEffect(() => {
+  //   console.log("logging here");
+  //   if (!triedAutoLogin) {
+  //     tryAutoLogin();
+  //   }
+  // }, []);
 
   const handleForgotPassword = () => {
     dispatch({
@@ -149,7 +151,7 @@ const SignIn = ({
       formData.email.length === emailMinLength ||
       formData.password.length === passwordMinLength
     ) {
-      // TODO add this back in after route functional!!
+      // TODO validate both login forms on client before sending to server
       // setValidated(false);
     }
     if (
@@ -212,21 +214,27 @@ const SignIn = ({
             classes={{ root: classes.textFieldRoot }}
             value={formData.email}
             onChange={(e) => handleChange(e)}
-            onClick={() =>
+            onFocus={(e) =>
               setFocusState({
-                ...initialFocusState,
+                password: {
+                  focus: false,
+                  shrink: Boolean(formData.password.length !== 0),
+                },
                 email: {
                   focus: true,
-                  shrink: Boolean(formData.email.length > 0),
+                  shrink: Boolean(formData.email.length !== 0),
                 },
               })
             }
-            onBlur={() =>
+            onBlur={(e) =>
               setFocusState({
-                ...initialFocusState,
+                password: {
+                  focus: false,
+                  shrink: Boolean(formData.password.length !== 0),
+                },
                 email: {
                   focus: false,
-                  shrink: Boolean(formData.email.length > 0),
+                  shrink: Boolean(formData.email.length !== 0),
                 },
               })
             }
@@ -249,24 +257,24 @@ const SignIn = ({
             classes={{ root: classes.textFieldRoot }}
             value={formData.password}
             onChange={(e) => handleChange(e)}
-            onClick={() =>
-              setFocusState({
-                ...initialFocusState,
-                password: {
-                  focus: true,
-                  shrink: Boolean(formData.password.length > 0),
-                },
-              })
-            }
-            onBlur={() =>
-              setFocusState({
-                ...initialFocusState,
-                password: {
-                  focus: false,
-                  shrink: Boolean(formData.password.length > 0),
-                },
-              })
-            }
+            // onClick={() =>
+            //   setFocusState({
+            //     ...initialFocusState,
+            //     password: {
+            //       focus: true,
+            //       shrink: Boolean(formData.password.length > 0),
+            //     },
+            //   })
+            // }
+            // onBlur={() =>
+            //   setFocusState({
+            //     ...initialFocusState,
+            //     password: {
+            //       focus: false,
+            //       shrink: Boolean(formData.password.length > 0),
+            //     },
+            //   })
+            // }
             InputLabelProps={{
               focused: focusState.password.focus,
               shrink: focusState.password.shrink,

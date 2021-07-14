@@ -32,29 +32,16 @@ const useStylesAppbar = makeStyles((theme) => ({
     },
   },
   accountIconButton: {},
-  accountIconButtonPermanent: {
-    marginLeft: "auto",
-    // position: "absolute",
-  },
+  accountIconButtonPermanent: {},
   accountIconButtonLabel: {
     color: "#fff",
     backgroundColor: "transparent",
-    // "&:first-child": {
-    // fill: theme.palette.secondary.main,
-    // "&:first-child": {
-    //   fill: theme.palette.alternative.main,
-    // },
-    // "&:nth-child(2)": {
-    //   fill: theme.palette.secondary.main,
-    // },
-    // },
   },
   accountIconRoot: {
     fill: theme.palette.secondary.main,
-    // float: "right",
   },
   favoriteIconButton: { marginLeft: "auto" },
-  favoriteIconButtonPermanent: {},
+  favoriteIconButtonPermanent: { marginLeft: "auto" },
   favoriteIconButtonLabel: { color: "#fff", backgroundColor: "transparent" },
   hideMenuButton: {
     display: "none",
@@ -119,10 +106,7 @@ const useStylesAppbar = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
   },
   menuButtonLabel: {
-    // color: theme.palette.primary.contrastText,
-    // backgroundColor: theme.palette.primary.main,
     backgroundColor: "transparent",
-    // border: "1px solid red",
   },
   menuIconRoot: {
     backgroundColor: "transparent",
@@ -255,7 +239,7 @@ const Navbar = ({
             noWrap
             classes={{ root: appbarClasses.appbarLabelText }}
           >
-            Ressippi
+            Eventual App Name
           </Typography>
           {loggedIn && (
             <IconButton

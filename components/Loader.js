@@ -35,22 +35,13 @@ const useStyles = makeStyles((theme) => ({
     overflow: "visible",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
-    "& > * + *": {
-      marginTop: theme.spacing(2),
-    },
     "& > div": {
       position: "absolute",
     },
   },
-  largeLoginScreenCircle: {},
-  largeLoginScreenSvg: {},
-  largeLoginScreenRoot: {},
-  smallLoginScreenCircle: {},
-  smallLoginScreenSvg: {},
-  smallLoginScreenRoot: { marginBottom: "15px" },
+  smallLoginScreenRoot: { top: "20px" },
   smallestLoginScreenRoot: {
-    marginBottom: "15px",
+    top: "35px",
     color: theme.palette.alternative.main,
   },
 }));

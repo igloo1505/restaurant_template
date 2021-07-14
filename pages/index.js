@@ -17,11 +17,11 @@ const Home = ({
   network: { loading: isLoading },
   tryAutoLogin,
 }) => {
-  useEffect(() => {
-    if (!triedAutoLogin) {
-      tryAutoLogin();
-    }
-  }, [triedAutoLogin]);
+  // useEffect(() => {
+  //   if (!triedAutoLogin) {
+  //     tryAutoLogin();
+  //   }
+  // }, [triedAutoLogin]);
   const dispatch = useDispatch();
 
   return (

@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { GridItem } from "./UIComponents";
-import UnitSelect from "./UnitSelect";
+import UnitSelectDestructed from "./UnitSelectDestructured";
 import { unitObject } from "../util/appWideData";
 import NoSsr from "@material-ui/core/NoSsr";
 import Grid from "@material-ui/core/Grid";
@@ -14,13 +14,9 @@ const useStyles = makeStyles((theme) => ({
   textFieldRoot: {
     minWidth: "100%",
     alignSelf: "stretch",
-    // border: "1px solid red",
-    // alignItems: "stretch",
     "& > div": {
       minWidth: "100%",
       width: "100%",
-      // marginRight: 0,
-      // paddingRight: 0,
     },
   },
   gridRoot: {
@@ -36,6 +32,7 @@ const StepOneFormComponent = ({
   props: {
     handleFormChange,
     formData,
+    setFormData,
     focusState,
     setFocusState,
     shouldShrinkDescription,
@@ -45,6 +42,7 @@ const StepOneFormComponent = ({
   },
 }) => {
   const classes = useStyles();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <Fragment>
@@ -59,20 +57,20 @@ const StepOneFormComponent = ({
       >
         <Grid item xs={12} sm={4}>
           <TextField
-            required
+            // required
             id="recipeTitleInput"
             name="title"
             fullWidth
             autoFocus
             multiline
-            label="Give it a name: "
+            label="Recipe's title "
             onChange={handleFormChange}
             value={formData.title}
             InputLabelProps={{
               focused: focusState.title.focus,
-              shrink: Boolean(formData?.title?.length > 0),
+              shrink: Boolean(formData?.title?.length !== 0),
             }}
-            inputProps={{ className: "inputListener" }}
+            inputProps={{ className: "inputListener", pattern: "d*" }}
             classes={{ root: classes.textFieldRoot }}
           />
         </Grid>
@@ -84,26 +82,40 @@ const StepOneFormComponent = ({
             fullWidth
             label="Servings"
             onChange={handleFormChange}
-            inputProps={{ className: "inputListener" }}
-            InputLabelProps={{
-              focused: focusState.servings.focus,
-              shrink: Boolean(formData?.servings?.length > 0),
+            inputProps={{ className: "inputListener", pattern: "\\d*" }}
+            onKeyDown={(e) => {
+              // All of this to avoid Safari's shadow user agent
+              let allowed = false;
+              let regex = /^\d+$/;
+              if (regex.test(e.key) || e.code.slice(0, 3) !== "Key") {
+                allowed = true;
+              }
+              if (!allowed) {
+                e.preventDefault();
+              }
             }}
             value={formData.servings}
             classes={{ root: classes.textFieldRoot }}
+            InputLabelProps={{
+              focused: focusState.servings.focus,
+              shrink: Boolean(formData?.servings?.length !== 0),
+            }}
           />
         </Grid>
         <Grid item xs={12} sm={5}>
-          <UnitSelect
+          <UnitSelectDestructed
             handleFormChange={handleFormChange}
             focusState={focusState}
             formData={formData}
+            setFormData={setFormData}
             classes={classes}
+            menuOpen={menuOpen}
+            setMenuOpen={setMenuOpen}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
-            required
+            // required
             id="recipeDescriptionInput"
             name="description"
             label="Tell people about it!"
@@ -111,39 +123,38 @@ const StepOneFormComponent = ({
               placeholder:
                 "Here's your chance to tell people about the deliciousness in detail.",
             })}
-            // placeholder={
-            //   shouldShrinkDescription
-            //     ?
-            //     : null
-            // }
             fullWidth
             multiline
             onChange={handleFormChange}
-            onClick={() => {
+            onFocus={() => {
               setShouldShrinkDescription(true);
-              // if (
-              //   formData?.description?.length &&
-              //   formData?.description?.length  0
-              // ) {
               setPlaceHolder(true);
-              // }
             }}
             onBlur={() => {
               if (formData.description === "") {
                 console.log("Running here");
                 console.log(formData.description);
-                setPlaceHolder(false);
+                setPlaceHolder(true);
                 setTimeout(() => setShouldShrinkDescription(false), 300);
               }
             }}
             value={formData.description}
             classes={{ root: classes.textFieldRoot }}
-            inputProps={{ className: "inputListener" }}
             InputLabelProps={{
               focused: focusState.description.focus,
               shrink: shouldShrinkDescription,
             }}
+            inputProps={{ className: "inputListener" }}
           />
+          <style jsx>{`
+            input[type=number]: {
+              -webkit-appearance: none;
+              -moz-appearance: none;
+            }
+            ::-webkit-textfield-decoration-container: {
+              content: none;
+            }
+          `}</style>
         </Grid>
       </Grid>
     </Fragment>
@@ -166,3 +177,11 @@ export const StepOneForm = connect(mapStateToProps)(StepOneFormComponent);
 //             label="Use this address for payment details"
 //           />
 //         </Grid>
+
+const stepTwoFormComponent = () => {
+  return (
+    <div>
+      <div>Yup</div>
+    </div>
+  );
+};

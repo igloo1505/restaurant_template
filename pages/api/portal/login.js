@@ -6,6 +6,7 @@ import authMiddleware from "../../../util/authMiddleware";
 import jwt from "jsonwebtoken";
 import cookies from "next-cookies";
 import Cookies from "cookies";
+// import NextCors from "nextjs-cors";
 import { handleRememberMe } from "../../../util/handleRememberMe";
 import User from "../../../models/User";
 import colors from "colors";
@@ -14,6 +15,11 @@ const handler = nc();
 // TODO add auth middleware back in to all protected routes
 // TODO add check for cookies and adapt to 'remember me' state stored in cookies, and sign jwt in cookies as well.
 handler.post(async (req, res) => {
+  // await NextCors(req, res, {
+  //   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+  //   origin: "*",
+  //   optionsSuccessStatus: 200,
+  // });
   console.log(colors.bgBlue("Did run in route with...", req.body));
   const cookies = new Cookies(req, res);
   try {
@@ -38,15 +44,14 @@ handler.post(async (req, res) => {
       });
       cookies.set("token", token, { httpOnly: true });
       if (req.body.rememberMe) {
-        console.log("AAA");
-        let { user: updatedUser } = await handleRememberMe(user, req, cookies);
-        console.log("BBB");
-        // await updatedUser.save();
-        // cookies.set("rememberMe", true, { httpOnly: false });
-        // cookies.set("email", req.body.email, { httpOnly: true });
-        // cookies.set("password", req.body.password, { httpOnly: true });
+        await handleRememberMe(user, req, cookies);
       }
-      return res.json(user);
+      // delete user.password;
+      let p = { ...user };
+      let doc = p._doc;
+      delete doc.password;
+      // delete doc.otp
+      return res.json(doc);
     }
   } catch (error) {
     console.log(error);
