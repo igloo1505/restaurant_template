@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
     "&:after": {
       // borderBottom: "2px solid #fff",
-      borderBottom: "2px solid #FBC95C",
+      borderBottom: `2px solid ${theme.palette.primary.light}`,
     },
   },
   inputLabelRoot: { color: "#e0e0e0" },

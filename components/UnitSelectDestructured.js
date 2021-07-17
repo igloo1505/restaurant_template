@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   menuItemKeyRoot: {
-    backgroundColor: "rgba(235,96,17, 1)",
+    backgroundColor: theme.palette.primary.main,
     color: "#fff",
     fontSize: "0.7rem !important",
     fontWeight: 900,
@@ -41,10 +41,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     textAlign: "center",
     "&:hover": {
-      backgroundColor: "rgba(235,96,17, 0.8)",
+      backgroundColor: theme.palette.primary.main,
     },
     "&:focus": {
-      backgroundColor: "rgba(235,96,17, 0.8)",
+      backgroundColor: theme.palette.primary.main,
     },
   },
   menuItemRoot: {
@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
     "& > div.MuiInput-underline": {
       "&:before": { borderBottom: "1px solid #fff" },
       "&:after": {
-        borderBottom: `2px solid ${theme.palette.alternative.main}`,
+        borderBottom: `2px solid ${theme.palette.primary.light}`,
       },
       "&:hover:not(.Mui-disabled):before": { borderBottom: "2px solid #fff" },
       // border: "1px solid red",

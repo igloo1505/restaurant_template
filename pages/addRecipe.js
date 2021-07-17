@@ -13,6 +13,7 @@ import Button from "@material-ui/core/Button";
 import Copyright from "../components/Copyright";
 import Typography from "@material-ui/core/Typography";
 import { StepOneForm } from "../components/addRecipeForms";
+import StepTwoForm from "../components/stepTwoAddRecipeForm";
 import Loader from "../components/Loader";
 import {
   ColorlibConnector,
@@ -51,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: theme.palette.secondary.main,
+    boxShadow: "6px 6px 12px #b74b0c, -6px 6px 12px #ff7514",
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
     padding: theme.spacing(2),
@@ -70,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-end",
   },
   button: {
+    color: "#fff",
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
@@ -77,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
   },
   stepLabelActive: { color: "#fff !important" },
-  stepLabelCompleted: {},
+  stepLabelCompleted: { color: "#fff !important", fontWeight: 400 },
 }));
 
 const steps = ["Details", "Ingredients", "Directions"];
@@ -105,8 +108,18 @@ const getStepContent = (
           setPlaceHolder={setPlaceHolder}
         />
       );
-    // case 1:
-    //   return <PaymentForm />;
+    case 1:
+      return (
+        <StepTwoForm
+          formData={formData}
+          handleFormChange={handleFormChange}
+          setFormData={setFormData}
+          focusState={focusState}
+          setFocusState={setFocusState}
+          placeHolder={placeHolder}
+          setPlaceHolder={setPlaceHolder}
+        />
+      );
     // case 2:
     //   return <Review />;
     default:
@@ -173,7 +186,7 @@ const AddRecipe = ({
   const handleNext = () => {
     // TODO authenticate before transition
     console.log(formData);
-    // setActiveStep(activeStep + 1);
+    setActiveStep(activeStep + 1);
   };
   const handleBack = () => {
     setActiveStep(activeStep - 1);
@@ -265,20 +278,6 @@ const mapStateToProps = (state, props) => ({
   network: state.network,
 });
 
-// export async function getServerSideProps(context) {
-//   // console.log("context!!!!", context);
-//   // const { res, req } = context;
-//   // debugger;
-//   // TODO grab cookies and validate jwt here
-//   // const user = await axios.get("/api/portal/autoLogin");
-//   // const res = await tryAutoLogin();
-//   // const response = await autoLoginOnFirstRequest(req, res);
-//   // console.log("User", response);
-//   return {
-//     props: {},
-//   };
-// }
-
 export default connect(mapStateToProps)(AddRecipe);
 
 const useBannerStyles = makeStyles((theme) => ({
@@ -302,6 +301,8 @@ const useBannerStyles = makeStyles((theme) => ({
     height: "fit-content",
     borderRadius: "60px",
     transform: "translateY(-50%)",
+    background: theme.palette.secondary.dark,
+    boxShadow: "6px 6px 12px #b74b0c, -6px 6px 12px #ff7514",
   },
 }));
 
