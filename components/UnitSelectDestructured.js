@@ -80,7 +80,8 @@ const useStyles = makeStyles((theme) => ({
   },
   selectInputRoot: { backgroundColor: "transparent", color: "#fff" },
   selectInputRootFocused: {
-    backgroundColor: `${theme.palette.secondary.light} !important`,
+    // backgroundColor: `${theme.palette.secondary.light} !important`,
+    backgroundColor: "transparent !important",
   },
   inputLabelRoot: { color: "#e0e0e0" },
   inputLabelFocused: { color: "#fff !important" },

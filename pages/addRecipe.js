@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
+import Slide from "@material-ui/core/Slide";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -80,7 +81,10 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
   },
   stepLabelActive: { color: "#fff !important" },
-  stepLabelCompleted: { color: "#fff !important", fontWeight: 400 },
+  stepLabelCompleted: {
+    color: "#fff !important",
+    fontWeight: "400 !important",
+  },
 }));
 
 const steps = ["Details", "Ingredients", "Directions"];
@@ -206,61 +210,63 @@ const AddRecipe = ({
               drawerIsOpen && classes.layoutShifted
             )}
           >
-            <Paper className={classes.paper}>
-              <FormBanner>Add Recipe</FormBanner>
-              <Stepper
-                alternativeLabel
-                activeStep={activeStep}
-                connector={<ColorlibConnector />}
-                classes={{ root: classes.stepperRoot }}
-              >
-                {steps.map((label) => (
-                  <Step key={label}>
-                    <StepLabel
-                      StepIconComponent={ColorlibStepIcon}
-                      classes={{
-                        label: classes.stepLabelRoot,
-                        completed: classes.stepLabelCompleted,
-                        active: classes.stepLabelActive,
-                      }}
-                    >
-                      {label}
-                    </StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-              <Fragment>
+            <Slide direction="right" in={true} mountOnEnter unmountOnExit>
+              <Paper className={classes.paper}>
+                <FormBanner>Add Recipe</FormBanner>
+                <Stepper
+                  alternativeLabel
+                  activeStep={activeStep}
+                  connector={<ColorlibConnector />}
+                  classes={{ root: classes.stepperRoot }}
+                >
+                  {steps.map((label) => (
+                    <Step key={label}>
+                      <StepLabel
+                        StepIconComponent={ColorlibStepIcon}
+                        classes={{
+                          label: classes.stepLabelRoot,
+                          completed: classes.stepLabelCompleted,
+                          active: classes.stepLabelActive,
+                        }}
+                      >
+                        {label}
+                      </StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
                 <Fragment>
-                  {getStepContent(
-                    activeStep,
-                    formData,
-                    setFormData,
-                    handleFormChange,
-                    focusState,
-                    setFocusState,
-                    placeHolder,
-                    setPlaceHolder
-                  )}
-                  <div className={classes.buttons}>
-                    {activeStep !== 0 && (
-                      <Button onClick={handleBack} className={classes.button}>
-                        Back
-                      </Button>
+                  <Fragment>
+                    {getStepContent(
+                      activeStep,
+                      formData,
+                      setFormData,
+                      handleFormChange,
+                      focusState,
+                      setFocusState,
+                      placeHolder,
+                      setPlaceHolder
                     )}
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleNext}
-                      className={classes.button}
-                    >
-                      {activeStep === steps.length - 1
-                        ? "Submit Recipe"
-                        : "Next"}
-                    </Button>
-                  </div>
+                    <div className={classes.buttons}>
+                      {activeStep !== 0 && (
+                        <Button onClick={handleBack} className={classes.button}>
+                          Back
+                        </Button>
+                      )}
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleNext}
+                        className={classes.button}
+                      >
+                        {activeStep === steps.length - 1
+                          ? "Submit Recipe"
+                          : "Next"}
+                      </Button>
+                    </div>
+                  </Fragment>
                 </Fragment>
-              </Fragment>
-            </Paper>
+              </Paper>
+            </Slide>
             <Copyright />
           </main>
         </AdjustForDrawerContainer>
