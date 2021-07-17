@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
   layout: {
     width: "auto",
     marginLeft: theme.spacing(2),
+    backgroundColor: "transparent",
     marginRight: theme.spacing(2),
     position: "absolute",
     left: "50vw",
@@ -58,13 +59,34 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
     padding: theme.spacing(2),
     paddingTop: "0px  !important",
-    transition: theme.transitions.create(["box-shadow"], { duration: 1500 }),
+
+    boxShadow: `0px 0px 0px ${theme.palette.grey[400]}, 0px 0px 0px ${theme.palette.grey[300]}`,
+    transform: "scale(1)",
     [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
       marginTop: theme.spacing(6),
       marginBottom: theme.spacing(6),
       padding: theme.spacing(3),
     },
+    transition: theme.transitions.create(
+      ["box-shadow", "transform", "background"],
+      {
+        duration: 1500,
+      }
+    ),
+    "&:hover": {
+      boxShadow: `6px 6px 12px ${theme.palette.grey[400]}, -6px 6px 12px ${theme.palette.grey[300]}`,
+      transform: "scale(1.1)",
+      // transition: theme.transitions.create(["box-shadow", "transform"], {
+      //   duration: 1500,
+      // }),
+      transition:
+        "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
+    },
+  },
+  addBoxShadow: {
     boxShadow: `6px 6px 12px ${theme.palette.grey[400]}, -6px 6px 12px ${theme.palette.grey[300]}`,
+    transition:
+      "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
   },
   stepper: {
     padding: theme.spacing(3, 0, 5),
@@ -141,8 +163,17 @@ const AddRecipe = ({
   // tryAutoLogin,
 }) => {
   const [paperLifted, setPaperLifted] = useState(false);
+  const [slideIn, setSlideIn] = useState(false);
   useEffect(() => {
     setTimeout(() => setPaperLifted(true), 1500);
+    setTimeout(() => setSlideIn(true), 700);
+    if (typeof window !== "undefined") {
+      document.addEventListener("keydown", (e) => {
+        if (e.key === " ") {
+          setSlideIn(!slideIn);
+        }
+      });
+    }
   }, []);
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -195,9 +226,13 @@ const AddRecipe = ({
               drawerIsOpen && classes.layoutShifted
             )}
           >
-            <Slide direction="right" in={true} mountOnEnter unmountOnExit>
+            <Slide direction="right" in={slideIn} mountOnEnter unmountOnExit>
               <Paper
-                className={clsx(classes.paper, paperLifted && "addBoxShadow")}
+                className={clsx(
+                  classes.paper,
+                  paperLifted && classes.addBoxShadow,
+                  "addBoxShadow"
+                )}
               >
                 <FormBanner>Add Recipe</FormBanner>
                 <Stepper

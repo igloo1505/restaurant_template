@@ -60,13 +60,9 @@ const DrawerContent = ({
     if (navHeight === 0 && deviceWidth >= 1920) {
       setHeightOffsetStyle({ marginTop: "64px" });
     }
-    if (navHeight === 0 && deviceWidth < 1920) {
+    if (deviceWidth < 1920) {
       setHeightOffsetStyle({ marginTop: "0px" });
     }
-    // if (navHeight === 0) {
-    //   setHeightOffsetStyle({ marginTop: "64px" });
-    // }
-    console.count("Fired");
   }, [navHeight, deviceWidth]);
   const theme = useTheme();
   const classes = useStyles();
