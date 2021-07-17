@@ -7,6 +7,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Slide from "@material-ui/core/Slide";
+import Grow from "@material-ui/core/Grow";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -53,16 +54,17 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: theme.palette.secondary.main,
-    boxShadow: "6px 6px 12px #b74b0c, -6px 6px 12px #ff7514",
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
     padding: theme.spacing(2),
     paddingTop: "0px  !important",
+    transition: theme.transitions.create(["box-shadow"], { duration: 1500 }),
     [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
       marginTop: theme.spacing(6),
       marginBottom: theme.spacing(6),
       padding: theme.spacing(3),
     },
+    boxShadow: `6px 6px 12px ${theme.palette.grey[400]}, -6px 6px 12px ${theme.palette.grey[300]}`,
   },
   stepper: {
     padding: theme.spacing(3, 0, 5),
@@ -94,8 +96,6 @@ const getStepContent = (
   formData,
   setFormData,
   handleFormChange,
-  focusState,
-  setFocusState,
   placeHolder,
   setPlaceHolder
 ) => {
@@ -106,8 +106,6 @@ const getStepContent = (
           formData={formData}
           handleFormChange={handleFormChange}
           setFormData={setFormData}
-          focusState={focusState}
-          setFocusState={setFocusState}
           placeHolder={placeHolder}
           setPlaceHolder={setPlaceHolder}
         />
@@ -118,8 +116,6 @@ const getStepContent = (
           formData={formData}
           handleFormChange={handleFormChange}
           setFormData={setFormData}
-          focusState={focusState}
-          setFocusState={setFocusState}
           placeHolder={placeHolder}
           setPlaceHolder={setPlaceHolder}
         />
@@ -144,21 +140,10 @@ const AddRecipe = ({
   network: { loading: isLoading },
   // tryAutoLogin,
 }) => {
-  const initialFocusState = {
-    title: {
-      focus: false,
-      shrink: false,
-    },
-    servings: {
-      focus: false,
-      shrink: false,
-    },
-    description: {
-      focus: false,
-      shrink: false,
-    },
-  };
-  const [focusState, setFocusState] = useState(initialFocusState);
+  const [paperLifted, setPaperLifted] = useState(false);
+  useEffect(() => {
+    setTimeout(() => setPaperLifted(true), 1500);
+  }, []);
   const router = useRouter();
   const [formData, setFormData] = useState({
     servings: "",
@@ -211,7 +196,9 @@ const AddRecipe = ({
             )}
           >
             <Slide direction="right" in={true} mountOnEnter unmountOnExit>
-              <Paper className={classes.paper}>
+              <Paper
+                className={clsx(classes.paper, paperLifted && "addBoxShadow")}
+              >
                 <FormBanner>Add Recipe</FormBanner>
                 <Stepper
                   alternativeLabel
@@ -241,8 +228,7 @@ const AddRecipe = ({
                       formData,
                       setFormData,
                       handleFormChange,
-                      focusState,
-                      setFocusState,
+
                       placeHolder,
                       setPlaceHolder
                     )}
@@ -296,7 +282,7 @@ const useBannerStyles = makeStyles((theme) => ({
   bannerRoot: {
     width: "fit-content",
     padding: "10px 20px",
-    borderRadius: "60px",
+    borderRadius: "17px",
     // backgroundColor: theme.palette.primary.main,
     backgroundColor: theme.palette.secondary.main,
     // transform: "translateY(-50%)",
@@ -305,18 +291,41 @@ const useBannerStyles = makeStyles((theme) => ({
   bannerPaper: {
     width: "fit-content",
     height: "fit-content",
-    borderRadius: "60px",
-    transform: "translateY(-50%)",
+    borderRadius: "17px",
+    transform: "translateY(0px)",
     background: theme.palette.secondary.dark,
-    boxShadow: "6px 6px 12px #b74b0c, -6px 6px 12px #ff7514",
+    boxShadow: "none",
+    transition: theme.transitions.create(["box-shadow", "transform"], {
+      duration: 500,
+    }),
   },
+  bannerPaperBoxShadow: {
+    boxShadow: "6px 6px 12px #b74b0c, -6px 6px 12px #ff7514",
+    transition: theme.transitions.create(["box-shadow", "transform"], {
+      duration: 500,
+    }),
+  },
+  bannerTransform: { transform: "translateY(-50%)" },
 }));
 
 const FormBanner = ({ children }) => {
+  const [bannerLifted, setBannerLifted] = useState(false);
+  const [bannerTransformed, setBannerTransformed] = useState(false);
+  useEffect(() => {
+    setTimeout(() => setBannerLifted(true), 800);
+    setTimeout(() => setBannerTransformed(true), 500);
+  }, []);
   const classes = useBannerStyles();
   return (
     <div className={classes.container}>
-      <Paper elevation={3} className={classes.bannerPaper}>
+      <Paper
+        elevation={3}
+        className={clsx(
+          classes.bannerPaper,
+          bannerLifted && classes.bannerPaperBoxShadow,
+          bannerTransformed && classes.bannerTransform
+        )}
+      >
         <Typography
           component="h1"
           variant="h4"

@@ -99,9 +99,7 @@ const useStyles = makeStyles((theme) => ({
   // inputIconFocused: { color: theme.palette.alternative.main },
 }));
 
-const UnitSelect = ({
-  props: { handleFormChange, focusState, formData, setFormData },
-}) => {
+const UnitSelect = ({ props: { handleFormChange, formData, setFormData } }) => {
   const classes = useStyles();
   const handleChange = (e) => {
     setFormData({ ...formData, servingUnit: e.target.value });
