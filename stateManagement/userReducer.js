@@ -6,7 +6,6 @@ import {
   REGISTER_NEW_USER,
   GET_ALL_USERS,
   USER_ERROR,
-  ERROR_WITH_MODAL,
   REMOVE_USER,
   RETURN_SINGLE_ITEM,
   UPDATE_USER_INFO,
@@ -103,15 +102,6 @@ export default function userReducer(state = initialState, action) {
         loading: false,
         self: { ...state.self },
         error: action.payload,
-      };
-    case ERROR_WITH_MODAL:
-      return {
-        ...state,
-        // loggedIn: false,
-        // allUsers: [],
-        loading: false,
-        self: { ...state.self },
-        error: action.payload.error,
       };
     default:
       return state;

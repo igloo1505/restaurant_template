@@ -7,9 +7,8 @@ import {
   REGISTER_NEW_USER,
   GET_ALL_USERS,
   USER_ERROR,
-  USER_ERROR_WITH_DIALOGUE,
+  ERROR_WITH_DIALOGUE,
   REMOVE_USER,
-  ERROR_WITH_MODAL,
   UPDATE_USER_INFO,
   FORGOT_PASSWORD_SUCCESS,
   FORGOT_PASSWORD_FAIL,
@@ -97,7 +96,7 @@ export const addNewUser = (user) => async (dispatch) => {
   }
   if (res.status !== 200) {
     dispatch({
-      type: ERROR_WITH_MODAL,
+      type: ERROR_WITH_DIALOGUE,
       payload: {
         error,
         modalText:
