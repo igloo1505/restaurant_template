@@ -2,11 +2,12 @@ import React, { useState, useEffect, Fragment, useLayoutEffect } from "react";
 import { connect } from "react-redux";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
+import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import Divider from "@material-ui/core/Divider";
+
 import { unitObject } from "../util/appWideData";
 
 const useStyles = makeStyles((theme) => ({
@@ -63,11 +64,38 @@ const useStyles = makeStyles((theme) => ({
   },
   menuPaper: {
     paddingTop: 0,
+    top: "80px !important",
     // maxHeight: "500px",
   },
   menuList: {
     paddingTop: 0,
+    overflow: "-moz-scrollbars-none",
+    scrollbarWidth: "none",
+    /* this will hide the scrollbar in internet explorers */
+    "-ms-overflow-style": "none",
+    "&::-webkit-scrollbar": {
+      width: "0 !important",
+      display: "none",
+    },
   },
+  selectInputRoot: { backgroundColor: "transparent", color: "#fff" },
+  selectInputRootFocused: {
+    backgroundColor: `${theme.palette.secondary.light} !important`,
+  },
+  inputLabelRoot: { color: "#e0e0e0" },
+  inputLabelFocused: { color: "#fff !important" },
+  wrapper: {
+    "& > div.MuiInput-underline": {
+      "&:before": { borderBottom: "1px solid #fff" },
+      "&:after": {
+        borderBottom: `2px solid ${theme.palette.alternative.main}`,
+      },
+      "&:hover:not(.Mui-disabled):before": { borderBottom: "2px solid #fff" },
+      // border: "1px solid red",
+    },
+  },
+  inputIcon: { color: "#fff" },
+  // inputIconFocused: { color: theme.palette.alternative.main },
 }));
 
 const UnitSelect = ({
@@ -79,7 +107,7 @@ const UnitSelect = ({
   };
   let [unitKeys, setUnitKeys] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [focused, setFocused] = useState(false);
+  const [focused, setFocus] = useState(false);
   useLayoutEffect(() => {
     let unitkeys = [];
     Object.keys(unitObject).map((k) => {
@@ -92,11 +120,17 @@ const UnitSelect = ({
   }, []);
 
   return (
-    <Fragment>
+    <FormControl fullWidth className={classes.wrapper}>
       <InputLabel
         id="unit-select-input-label"
         focused={focused}
         shrink={focused || formData.servingUnit !== ""}
+        classes={{
+          root: clsx(
+            classes.inputLabelRoot,
+            focused && classes.inputLabelFocused
+          ),
+        }}
       >
         Unit
       </InputLabel>
@@ -104,12 +138,21 @@ const UnitSelect = ({
         labelId="unit-select-input-label"
         fullWidth
         id="unit-select-input"
-        defaultValue="Select"
         value={formData.servingUnit}
         onChange={handleChange}
         MenuProps={{
           classes: { paper: classes.menuPaper, list: classes.menuList },
         }}
+        classes={{
+          root: clsx(
+            classes.selectInputRoot,
+            focused && classes.selectInputRootFocused
+          ),
+          icon: clsx(classes.inputIcon, focused && classes.inputIconFocused),
+        }}
+        // input={InputComponent}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
       >
         {unitKeys.map((k) => (
           <MenuItem
@@ -135,7 +178,7 @@ const UnitSelect = ({
           </MenuItem>
         ))}
       </Select>
-    </Fragment>
+    </FormControl>
   );
 };
 
@@ -144,3 +187,11 @@ const mapStateToProps = (state, props) => ({
 });
 
 export default connect(mapStateToProps)(UnitSelect);
+
+export const InputComponent = () => {
+  return (
+    <Fragment>
+      <TextField type="select" />
+    </Fragment>
+  );
+};

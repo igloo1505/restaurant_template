@@ -18,8 +18,8 @@ import {
   ColorlibConnector,
   ColorlibStepIcon,
 } from "../components/AddRecipeStepper";
-import { tryAutoLogin } from "../stateManagement/userActions";
-import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
+// import { tryAutoLogin } from "../stateManagement/userActions";
+// import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
 import {
   UnderNavbar,
   AdjustForDrawerContainer,
@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
   },
   paper: {
+    backgroundColor: theme.palette.secondary.main,
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
     padding: theme.spacing(2),
@@ -63,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
   stepper: {
     padding: theme.spacing(3, 0, 5),
   },
+  stepperRoot: { backgroundColor: theme.palette.secondary.main },
   buttons: {
     display: "flex",
     justifyContent: "flex-end",
@@ -71,6 +73,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
+  stepLabelRoot: {
+    color: "#fff",
+  },
+  stepLabelActive: { color: "#fff !important" },
+  stepLabelCompleted: {},
 }));
 
 const steps = ["Details", "Ingredients", "Directions"];
@@ -82,8 +89,6 @@ const getStepContent = (
   handleFormChange,
   focusState,
   setFocusState,
-  shouldShrinkDescription,
-  setShouldShrinkDescription,
   placeHolder,
   setPlaceHolder
 ) => {
@@ -96,8 +101,6 @@ const getStepContent = (
           setFormData={setFormData}
           focusState={focusState}
           setFocusState={setFocusState}
-          shouldShrinkDescription={shouldShrinkDescription}
-          setShouldShrinkDescription={setShouldShrinkDescription}
           placeHolder={placeHolder}
           setPlaceHolder={setPlaceHolder}
         />
@@ -146,7 +149,7 @@ const AddRecipe = ({
     title: "",
     description: "",
   });
-  const [shouldShrinkDescription, setShouldShrinkDescription] = useState(false);
+
   const [placeHolder, setPlaceHolder] = useState(false);
   const handleFormChange = (e) => {
     if (e) {
@@ -157,33 +160,7 @@ const AddRecipe = ({
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
   };
-  const addListeners = () => {
-    let ems = document.getElementsByClassName("inputListener");
-    let keys = Object.keys(ems);
-    if (ems && ems.length !== 0) {
-      keys.forEach((k) => {
-        ems[k].addEventListener("focus", (e) => {
-          setFocusState({
-            ...focusState,
-            [e.target.name]: {
-              focus: true,
-            },
-          });
-        });
-        ems[k].addEventListener("blur", (e) => {
-          setFocusState({
-            ...focusState,
-            [e.target.name]: {
-              focus: false,
-            },
-          });
-        });
-      });
-    }
-  };
-  useEffect(() => {
-    addListeners();
-  }, []);
+
   useEffect(() => {
     if (!loggedIn) {
       router.push("/");
@@ -222,10 +199,18 @@ const AddRecipe = ({
                 alternativeLabel
                 activeStep={activeStep}
                 connector={<ColorlibConnector />}
+                classes={{ root: classes.stepperRoot }}
               >
                 {steps.map((label) => (
                   <Step key={label}>
-                    <StepLabel StepIconComponent={ColorlibStepIcon}>
+                    <StepLabel
+                      StepIconComponent={ColorlibStepIcon}
+                      classes={{
+                        label: classes.stepLabelRoot,
+                        completed: classes.stepLabelCompleted,
+                        active: classes.stepLabelActive,
+                      }}
+                    >
                       {label}
                     </StepLabel>
                   </Step>
@@ -240,8 +225,6 @@ const AddRecipe = ({
                     handleFormChange,
                     focusState,
                     setFocusState,
-                    shouldShrinkDescription,
-                    setShouldShrinkDescription,
                     placeHolder,
                     setPlaceHolder
                   )}

@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
+import clsx from "clsx";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { GridItem } from "./UIComponents";
@@ -14,11 +15,48 @@ const useStyles = makeStyles((theme) => ({
   textFieldRoot: {
     minWidth: "100%",
     alignSelf: "stretch",
+    // color: "#fff",
     "& > div": {
       minWidth: "100%",
       width: "100%",
     },
   },
+  inputRoot: {
+    color: "#fff",
+    "&:before": {
+      borderBottom: "1px solid #fff",
+    },
+  },
+  inputroot: {
+    "&:before": {
+      borderBottom: "1px solid #fff",
+    },
+    "&:hover:not(.Mui-disabled):before": {
+      borderBottom: "2px solid #fff",
+    },
+    "&:after": {
+      borderBottom: `1px solid ${theme.palette.secondary.light}`,
+    },
+  },
+  descriptionInputRoot: {
+    "&:before": { borderBottom: "1px solid #fff" },
+    "&:after": {},
+    "&:hover:not(.Mui-disabled):before": { borderBottom: "2px solid #fff" },
+  },
+  inputFocused: {
+    color: "#fff",
+    "&:after": {
+      // borderBottom: "2px solid #fff",
+      borderBottom: "2px solid #FBC95C",
+    },
+  },
+  inputLabelRoot: { color: "#e0e0e0" },
+  inputLabelWithValue: { color: "#fff" },
+  inputLabelRequired: {},
+  inputLabelFocused: {
+    color: "#fff !important",
+  },
+  descriptionInputInput: { color: "#fff" },
   gridRoot: {
     // padding: "12px 0px 12px 12px",
     "& > .MuiGrid-item": {
@@ -33,20 +71,59 @@ const StepOneFormComponent = ({
     handleFormChange,
     formData,
     setFormData,
-    focusState,
-    setFocusState,
-    shouldShrinkDescription,
-    setShouldShrinkDescription,
     placeHolder,
     setPlaceHolder,
   },
 }) => {
   const classes = useStyles();
   const [menuOpen, setMenuOpen] = useState(false);
+  const initialFocusState = {
+    title: {
+      focus: false,
+      shrink: false,
+    },
+    servings: {
+      focus: false,
+      shrink: false,
+    },
+    description: {
+      focus: false,
+      shrink: false,
+    },
+  };
+  const [focusState, setFocusState] = useState(initialFocusState);
+  const [shouldShrinkDescription, setShouldShrinkDescription] = useState(false);
+  const fauxListener = (title, type) => {
+    console.log(focusState);
+    if (type === "blur") {
+      setFocusState({
+        ...focusState,
+        [title]: {
+          shrink: Boolean(formData?.[title]?.length !== 0),
+          focus: false,
+        },
+      });
+    }
+    if (type === "focus") {
+      setFocusState({
+        ...focusState,
+        [title]: {
+          shrink: Boolean(formData?.[title]?.length !== 0),
+          focus: true,
+        },
+      });
+    }
+  };
+  useEffect(() => {
+    setFocusState({
+      ...focusState,
+      title: { ...focusState.title, focus: true },
+    });
+  }, []);
 
   return (
     <Fragment>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom style={{ color: "#fff" }}>
         Let's get some information about your recipe!
       </Typography>
       <Grid
@@ -60,6 +137,8 @@ const StepOneFormComponent = ({
             // required
             id="recipeTitleInput"
             name="title"
+            onFocus={() => fauxListener("title", "focus")}
+            onBlur={() => fauxListener("title", "blur")}
             fullWidth
             autoFocus
             multiline
@@ -69,8 +148,23 @@ const StepOneFormComponent = ({
             InputLabelProps={{
               focused: focusState.title.focus,
               shrink: Boolean(formData?.title?.length !== 0),
+              classes: {
+                root: clsx(
+                  classes.inputLabelRoot,
+                  focusState.title.focus && classes.inputLabelFocused,
+                  formData?.title?.length !== 0 && classes.inputLabelWithValue
+                ),
+                required: classes.inputLabelRequired,
+              },
             }}
-            inputProps={{ className: "inputListener", pattern: "d*" }}
+            inputProps={{ className: "inputListener" }}
+            InputProps={{
+              classes: {
+                root: clsx("inputListener", classes.inputroot),
+                input: classes.inputRoot,
+                focused: classes.inputFocused,
+              },
+            }}
             classes={{ root: classes.textFieldRoot }}
           />
         </Grid>
@@ -78,6 +172,8 @@ const StepOneFormComponent = ({
           <TextField
             id="recipeServingInput"
             name="servings"
+            onFocus={() => fauxListener("servings", "focus")}
+            onBlur={() => fauxListener("servings", "blur")}
             type="number"
             fullWidth
             label="Servings"
@@ -99,6 +195,22 @@ const StepOneFormComponent = ({
             InputLabelProps={{
               focused: focusState.servings.focus,
               shrink: Boolean(formData?.servings?.length !== 0),
+              classes: {
+                root: clsx(
+                  classes.inputLabelRoot,
+                  focusState.servings.focus && classes.inputLabelFocused,
+                  formData?.servings?.length !== 0 &&
+                    classes.inputLabelWithValue
+                ),
+                required: classes.inputLabelRequired,
+              },
+            }}
+            InputProps={{
+              classes: {
+                root: clsx("inputListener", classes.inputroot),
+                input: classes.inputRoot,
+                focused: classes.inputFocused,
+              },
             }}
           />
         </Grid>
@@ -118,6 +230,8 @@ const StepOneFormComponent = ({
             // required
             id="recipeDescriptionInput"
             name="description"
+            onFocus={() => fauxListener("description", "focus")}
+            onBlur={() => fauxListener("description", "blur")}
             label="Tell people about it!"
             {...(placeHolder && {
               placeholder:
@@ -127,13 +241,13 @@ const StepOneFormComponent = ({
             multiline
             onChange={handleFormChange}
             onFocus={() => {
+              fauxListener("description", "focus");
               setShouldShrinkDescription(true);
               setPlaceHolder(true);
             }}
             onBlur={() => {
               if (formData.description === "") {
-                console.log("Running here");
-                console.log(formData.description);
+                fauxListener("description", "blur");
                 setPlaceHolder(true);
                 setTimeout(() => setShouldShrinkDescription(false), 300);
               }
@@ -143,6 +257,20 @@ const StepOneFormComponent = ({
             InputLabelProps={{
               focused: focusState.description.focus,
               shrink: shouldShrinkDescription,
+              classes: {
+                root: clsx(
+                  classes.inputLabelRoot,
+                  focusState.description.focus && classes.inputLabelFocused
+                ),
+                required: classes.inputLabelRequired,
+              },
+            }}
+            InputProps={{
+              classes: {
+                root: clsx("inputListener", classes.descriptionInputRoot),
+                input: classes.descriptionInputInput,
+                focused: classes.inputFocused,
+              },
             }}
             inputProps={{ className: "inputListener" }}
           />
@@ -168,20 +296,3 @@ const mapStateToProps = (state, props) => ({
 });
 
 export const StepOneForm = connect(mapStateToProps)(StepOneFormComponent);
-
-// <Grid item xs={12}>
-//           <FormControlLabel
-//             control={
-//               <Checkbox color="secondary" name="saveAddress" value="yes" />
-//             }
-//             label="Use this address for payment details"
-//           />
-//         </Grid>
-
-const stepTwoFormComponent = () => {
-  return (
-    <div>
-      <div>Yup</div>
-    </div>
-  );
-};
