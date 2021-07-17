@@ -53,9 +53,15 @@ const useStyles = makeStyles((theme) => ({
       }
     ),
     "&.addBoxShadow": {
-      boxShadow: "6px 6px 54px #993e0a, -6px -6px 54px #ff8216",
-
+      // boxShadow: "6px 6px 54px #993e0a, -6px -6px 54px #ff8216",
+      // background: "linear-gradient(145deg, #d4560e, #fb6711)",
       background: "linear-gradient(145deg, #d4560e, #fb6711)",
+      boxShadow: "6px 6px 54px #783108, -6px -6px 54px #ff8f18",
+      "&:hover": {
+        // transform: "scale(1.05)",
+        background: "linear-gradient(145deg, #d4560e, #fb6711)",
+        boxShadow: "6px 6px 54px #5e2606, -6px -6px 54px #ff9a1a",
+      },
     },
     "& > .MuiSvgIcon-root": {
       borderBottom: "none",
@@ -74,8 +80,13 @@ const useStyles = makeStyles((theme) => ({
       }
     ),
     "&.addBoxShadow": {
-      transform: "scale(1.05)",
       boxShadow: "6px 6px 15px #b74b0c, -6px -6px 15px #ff7514",
+      transform: "scale(1.05)",
+      "&:hover": {
+        background: "linear-gradient(145deg, #d4560e, #fb6711)",
+        // boxShadow: "6px 6px 54px #5e2606, -6px -6px 54px #ff9a1a",
+        boxShadow: "6px 6px 28px #b74b0c, -6px -6px 28px #ff7514 !important",
+      },
     },
     "& > .MuiSvgIcon-root": {
       content: "\\00a0",
@@ -119,7 +130,8 @@ const useStyles = makeStyles((theme) => ({
 export const ColorlibStepIcon = (props) => {
   const [iconsLifted, setIconsLifted] = useState(false);
   useEffect(() => {
-    setTimeout(() => setIconsLifted(true), 1000);
+    let timeOut = 1200 + 250 * props.index;
+    setTimeout(() => setIconsLifted(true), timeOut);
   }, []);
   const classes = useStyles();
   const { active, completed } = props;

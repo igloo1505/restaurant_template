@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, createRef } from "react";
 import clsx from "clsx";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -7,20 +7,21 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Slide from "@material-ui/core/Slide";
-import Grow from "@material-ui/core/Grow";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import Button from "@material-ui/core/Button";
+// import Grow from "@material-ui/core/Grow";
+// import Stepper from "@material-ui/core/Stepper";
+// import Step from "@material-ui/core/Step";
+// import StepLabel from "@material-ui/core/StepLabel";
+// import Button from "@material-ui/core/Button";
 import Copyright from "../components/Copyright";
+import AddRecipeFormContainer from "../components/addRecipeFormContainer";
 import Typography from "@material-ui/core/Typography";
 import { StepOneForm } from "../components/addRecipeForms";
 import StepTwoForm from "../components/stepTwoAddRecipeForm";
 import Loader from "../components/Loader";
-import {
-  ColorlibConnector,
-  ColorlibStepIcon,
-} from "../components/AddRecipeStepper";
+// import {
+//   ColorlibConnector,
+//   ColorlibStepIcon,
+// } from "../components/AddRecipeStepper";
 // import { tryAutoLogin } from "../stateManagement/userActions";
 // import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
 import {
@@ -53,45 +54,11 @@ const useStyles = makeStyles((theme) => ({
     transform: "translateX(calc(-50% + 120px))",
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
   },
-  paper: {
-    backgroundColor: theme.palette.secondary.main,
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    padding: theme.spacing(2),
-    paddingTop: "0px  !important",
 
-    boxShadow: `0px 0px 0px ${theme.palette.grey[400]}, 0px 0px 0px ${theme.palette.grey[300]}`,
-    transform: "scale(1)",
-    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      padding: theme.spacing(3),
-    },
-    transition: theme.transitions.create(
-      ["box-shadow", "transform", "background"],
-      {
-        duration: 1500,
-      }
-    ),
-    "&:hover": {
-      boxShadow: `6px 6px 12px ${theme.palette.grey[400]}, -6px 6px 12px ${theme.palette.grey[300]}`,
-      transform: "scale(1.1)",
-      // transition: theme.transitions.create(["box-shadow", "transform"], {
-      //   duration: 1500,
-      // }),
-      transition:
-        "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
-    },
-  },
-  addBoxShadow: {
-    boxShadow: `6px 6px 12px ${theme.palette.grey[400]}, -6px 6px 12px ${theme.palette.grey[300]}`,
-    transition:
-      "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
-  },
   stepper: {
     padding: theme.spacing(3, 0, 5),
   },
-  stepperRoot: { backgroundColor: theme.palette.secondary.main },
+
   buttons: {
     display: "flex",
     justifyContent: "flex-end",
@@ -113,42 +80,6 @@ const useStyles = makeStyles((theme) => ({
 
 const steps = ["Details", "Ingredients", "Directions"];
 
-const getStepContent = (
-  step,
-  formData,
-  setFormData,
-  handleFormChange,
-  placeHolder,
-  setPlaceHolder
-) => {
-  switch (step) {
-    case 0:
-      return (
-        <StepOneForm
-          formData={formData}
-          handleFormChange={handleFormChange}
-          setFormData={setFormData}
-          placeHolder={placeHolder}
-          setPlaceHolder={setPlaceHolder}
-        />
-      );
-    case 1:
-      return (
-        <StepTwoForm
-          formData={formData}
-          handleFormChange={handleFormChange}
-          setFormData={setFormData}
-          placeHolder={placeHolder}
-          setPlaceHolder={setPlaceHolder}
-        />
-      );
-    // case 2:
-    //   return <Review />;
-    default:
-      throw new Error("Unknown step");
-  }
-};
-
 const AddRecipe = ({
   user: {
     loggedIn,
@@ -162,19 +93,8 @@ const AddRecipe = ({
   network: { loading: isLoading },
   // tryAutoLogin,
 }) => {
-  const [paperLifted, setPaperLifted] = useState(false);
-  const [slideIn, setSlideIn] = useState(false);
-  useEffect(() => {
-    setTimeout(() => setPaperLifted(true), 1500);
-    setTimeout(() => setSlideIn(true), 700);
-    if (typeof window !== "undefined") {
-      document.addEventListener("keydown", (e) => {
-        if (e.key === " ") {
-          setSlideIn(!slideIn);
-        }
-      });
-    }
-  }, []);
+  const ref = createRef();
+  // const [slideIn, setSlideIn] = useState(false);
   const router = useRouter();
   const [formData, setFormData] = useState({
     servings: "",
@@ -182,6 +102,10 @@ const AddRecipe = ({
     title: "",
     description: "",
   });
+  // useEffect(() => {
+  //   setTimeout(() => setSlideIn(true), 500);
+
+  // }, []);
 
   const [placeHolder, setPlaceHolder] = useState(false);
   const handleFormChange = (e) => {
@@ -226,67 +150,25 @@ const AddRecipe = ({
               drawerIsOpen && classes.layoutShifted
             )}
           >
-            <Slide direction="right" in={slideIn} mountOnEnter unmountOnExit>
-              <Paper
-                className={clsx(
-                  classes.paper,
-                  paperLifted && classes.addBoxShadow,
-                  "addBoxShadow"
-                )}
-              >
-                <FormBanner>Add Recipe</FormBanner>
-                <Stepper
-                  alternativeLabel
-                  activeStep={activeStep}
-                  connector={<ColorlibConnector />}
-                  classes={{ root: classes.stepperRoot }}
-                >
-                  {steps.map((label) => (
-                    <Step key={label}>
-                      <StepLabel
-                        StepIconComponent={ColorlibStepIcon}
-                        classes={{
-                          label: classes.stepLabelRoot,
-                          completed: classes.stepLabelCompleted,
-                          active: classes.stepLabelActive,
-                        }}
-                      >
-                        {label}
-                      </StepLabel>
-                    </Step>
-                  ))}
-                </Stepper>
-                <Fragment>
-                  <Fragment>
-                    {getStepContent(
-                      activeStep,
-                      formData,
-                      setFormData,
-                      handleFormChange,
-
-                      placeHolder,
-                      setPlaceHolder
-                    )}
-                    <div className={classes.buttons}>
-                      {activeStep !== 0 && (
-                        <Button onClick={handleBack} className={classes.button}>
-                          Back
-                        </Button>
-                      )}
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleNext}
-                        className={classes.button}
-                      >
-                        {activeStep === steps.length - 1
-                          ? "Submit Recipe"
-                          : "Next"}
-                      </Button>
-                    </div>
-                  </Fragment>
-                </Fragment>
-              </Paper>
+            <Slide
+              direction="right"
+              in={true}
+              timeout={{ appear: 300, enter: 500, exit: 500 }}
+              mountOnEnter
+              unmountOnExit
+            >
+              <AddRecipeFormContainer
+                ref={ref}
+                activeStep={activeStep}
+                steps={steps}
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
+                formData={formData}
+                setFormData={setFormData}
+                handleFormChange={handleFormChange}
+                placeHolder={placeHolder}
+                setPlaceHolder={setPlaceHolder}
+              />
             </Slide>
             <Copyright />
           </main>
@@ -306,70 +188,3 @@ const mapStateToProps = (state, props) => ({
 });
 
 export default connect(mapStateToProps)(AddRecipe);
-
-const useBannerStyles = makeStyles((theme) => ({
-  container: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  bannerRoot: {
-    width: "fit-content",
-    padding: "10px 20px",
-    borderRadius: "17px",
-    // backgroundColor: theme.palette.primary.main,
-    backgroundColor: theme.palette.secondary.main,
-    // transform: "translateY(-50%)",
-    color: "#fff",
-  },
-  bannerPaper: {
-    width: "fit-content",
-    height: "fit-content",
-    borderRadius: "17px",
-    transform: "translateY(0px)",
-    background: theme.palette.secondary.dark,
-    boxShadow: "none",
-    transition: theme.transitions.create(["box-shadow", "transform"], {
-      duration: 500,
-    }),
-  },
-  bannerPaperBoxShadow: {
-    boxShadow: "6px 6px 12px #b74b0c, -6px 6px 12px #ff7514",
-    transition: theme.transitions.create(["box-shadow", "transform"], {
-      duration: 500,
-    }),
-  },
-  bannerTransform: { transform: "translateY(-50%)" },
-}));
-
-const FormBanner = ({ children }) => {
-  const [bannerLifted, setBannerLifted] = useState(false);
-  const [bannerTransformed, setBannerTransformed] = useState(false);
-  useEffect(() => {
-    setTimeout(() => setBannerLifted(true), 800);
-    setTimeout(() => setBannerTransformed(true), 500);
-  }, []);
-  const classes = useBannerStyles();
-  return (
-    <div className={classes.container}>
-      <Paper
-        elevation={3}
-        className={clsx(
-          classes.bannerPaper,
-          bannerLifted && classes.bannerPaperBoxShadow,
-          bannerTransformed && classes.bannerTransform
-        )}
-      >
-        <Typography
-          component="h1"
-          variant="h4"
-          align="center"
-          className={classes.bannerRoot}
-        >
-          {children}
-        </Typography>
-      </Paper>
-    </div>
-  );
-};
