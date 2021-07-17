@@ -13,7 +13,7 @@ import {
 } from "./TYPES";
 
 const initialState = {
-  loggedIn: true,
+  loggedIn: false,
   triedAutoLogin: false,
   allUsers: [],
   filtered: null,
