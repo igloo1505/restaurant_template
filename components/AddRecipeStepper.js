@@ -62,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
       // boxShadow: "6px 6px 54px #993e0a, -6px -6px 54px #ff8216",
       background: "linear-gradient(145deg, #d4560e, #fb6711)",
       boxShadow: "6px 6px 54px #783108, -6px -6px 54px #ff8f18",
+      border: `1px solid ${theme.palette.secondary.light}`,
       "&:hover": {
         // transform: "scale(1.05)",
         background: "linear-gradient(145deg, #d4560e, #fb6711)",
@@ -102,6 +103,7 @@ const useStyles = makeStyles((theme) => ({
   },
   completed: {
     backgroundColor: theme.palette.secondary.main,
+    background: "unset",
     transition: theme.transitions.create(
       ["box-shadow", "transform", "background-color"],
       {
@@ -109,9 +111,48 @@ const useStyles = makeStyles((theme) => ({
       }
     ),
     "&.addBoxShadow": {
-      backgroundColor: theme.palette.secondary.dark,
-      boxShadow: "6px 6px 54px #993e0a, -6px -6px 54px #ff8216",
+      // backgroundColor: theme.palette.secondary.main,
+      background: theme.palette.secondary.main,
+      // boxShadow: "6px 6px 54px #993e0a, -6px -6px 54px #ff8216",
+      boxShadow: "5px 5px 8px #cc540e,-5px -5px 8px #ff6c12",
+      "&::after": {
+        content: '""',
+        position: "absolute",
+        height: "55px",
+        width: "55px",
+        borderRadius: "50%",
+        // boxShadow: "inset 5px 5px 8px #cc540e, inset -5px -5px 8px #ff6c12",
+        boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
+        transition: theme.transitions.create(
+          ["box-shadow", "transform", "background-color"],
+          {
+            duration: 500,
+          }
+        ),
+      },
+      transition: theme.transitions.create(
+        ["box-shadow", "transform", "background-color"],
+        {
+          duration: 500,
+        }
+      ),
+      "&:hover": {
+        boxShadow: "7px 7px 10px #cc540e, -7px -7px 10px #ff6c12",
+        backgroundColor: theme.palette.secondary.main,
+        background: theme.palette.secondary.main,
+      },
     },
+    // .neumorphism-3 {
+    //   display: flex;
+    //   justify-content: center;
+    //   align-items: center;
+    //   height: 250px;
+    //   width: 250px;
+    //   background: #dde1e7;
+    //   border-radius: 50%;
+    //   box-shadow: -3px -3px 7px #ffffffa6, 3px 3px 5px rgba(94, 104, 121, 0.712);
+    //   position: relative;
+    // }
   },
   borderBottom: {
     borderBottom: "none",
@@ -155,10 +196,11 @@ export const StepIconComponent = (props) => {
       console.log("props not initialRender", props);
       let timeOut = 250 * index;
       let _timeOut = 200 + 250 * index;
-      if (index >= activeStep) setTimeout(() => setIconsLifted(true), timeOut);
-      if (!active) {
-        setTimeout(() => setIconsLifted(false), _timeOut);
-      }
+      // if (index >= activeStep) setTimeout(() => setIconsLifted(true), timeOut);
+      if (active || completed) setTimeout(() => setIconsLifted(true), timeOut);
+      // if (!active) {
+      //   setTimeout(() => setIconsLifted(false), _timeOut);
+      // }
     }
   }, [activeStep]);
   const classes = useStyles();
