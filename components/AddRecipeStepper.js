@@ -9,20 +9,18 @@ import Ballot from "@material-ui/icons/Ballot";
 
 // primary = 235,96,17
 
-export const ColorlibConnector = withStyles((theme) => ({
+export const ConnectorComponent = withStyles((theme) => ({
   alternativeLabel: {
     top: 22,
   },
   active: {
     "& $line": {
       background: "#fff",
-      transition: theme.transitions.create(["background"], { duration: 500 }),
     },
   },
   completed: {
     "& $line": {
-      background: "#fff",
-      transition: theme.transitions.create(["background"], { duration: 500 }),
+      // background: "#fff",
     },
   },
   line: {
@@ -30,13 +28,21 @@ export const ColorlibConnector = withStyles((theme) => ({
     border: 0,
     background: "#e0e0e0",
     borderRadius: 1,
-    transition: theme.transitions.create(["background"], { duration: 500 }),
+    // transition: theme.transitions.create(["background"], { duration: 500 }),
   },
 }))(StepConnector);
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  hideBackdrop: {
+    width: 60,
+    height: 60,
+    borderRadius: "50%",
     backgroundColor: theme.palette.secondary.main,
+    zIndex: 10,
+  },
+  root: {
+    // backgroundColor: theme.palette.secondary.main,
+    backgroundColor: "transparent",
     zIndex: 1,
     color: "#fff",
     width: 60,
@@ -54,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
     ),
     "&.addBoxShadow": {
       // boxShadow: "6px 6px 54px #993e0a, -6px -6px 54px #ff8216",
-      // background: "linear-gradient(145deg, #d4560e, #fb6711)",
       background: "linear-gradient(145deg, #d4560e, #fb6711)",
       boxShadow: "6px 6px 54px #783108, -6px -6px 54px #ff8f18",
       "&:hover": {
@@ -127,15 +132,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const ColorlibStepIcon = (props) => {
+export const StepIconComponent = (props) => {
+  const { active, completed, activeStep, index } = props;
   const [iconsLifted, setIconsLifted] = useState(false);
+  const [initialRender, setInitialRender] = useState(true);
   useEffect(() => {
-    let timeOut = 1200 + 250 * props.index;
-    setTimeout(() => setIconsLifted(true), timeOut);
+    if (initialRender) {
+      console.log("props initialRender", props);
+      setIconsLifted(false);
+      initialRender && setInitialRender(false);
+      let timeOut = 1200 + 250 * index;
+      let _timeOut = 1300 + 250 * index;
+      if (index >= activeStep) setTimeout(() => setIconsLifted(true), timeOut);
+      if (!active) {
+        setTimeout(() => setIconsLifted(false), _timeOut);
+      }
+    }
   }, []);
+  useEffect(() => {
+    if (!initialRender) {
+      setIconsLifted(false);
+      console.log("props not initialRender", props);
+      let timeOut = 250 * index;
+      let _timeOut = 200 + 250 * index;
+      if (index >= activeStep) setTimeout(() => setIconsLifted(true), timeOut);
+      if (!active) {
+        setTimeout(() => setIconsLifted(false), _timeOut);
+      }
+    }
+  }, [activeStep]);
   const classes = useStyles();
-  const { active, completed } = props;
-  useEffect(() => console.log("props", props));
   const icons = {
     1: <ForkAndKnife />,
     2: <Fridge />,
@@ -143,19 +169,15 @@ export const ColorlibStepIcon = (props) => {
   };
 
   return (
-    <div
-      className={clsx(classes.root, iconsLifted && "addBoxShadow", {
-        [classes.active]: active,
-        [classes.completed]: completed,
-      })}
-    >
-      {icons[String(props.icon)]}
+    <div className={classes.hideBackdrop}>
       <div
-        className={clsx(
-          classes.borderBottom,
-          active && classes.borderBottomActive
-        )}
-      />
+        className={clsx(classes.root, iconsLifted && "addBoxShadow", {
+          [classes.active]: active,
+          [classes.completed]: completed,
+        })}
+      >
+        {icons[String(props.icon)]}
+      </div>
     </div>
   );
 };

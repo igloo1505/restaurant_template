@@ -19,8 +19,8 @@ import { StepOneForm } from "../components/addRecipeForms";
 import StepTwoForm from "../components/stepTwoAddRecipeForm";
 import Loader from "../components/Loader";
 // import {
-//   ColorlibConnector,
-//   ColorlibStepIcon,
+//   ConnectorComponent,
+//   StepIconComponent,
 // } from "../components/AddRecipeStepper";
 // import { tryAutoLogin } from "../stateManagement/userActions";
 // import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";

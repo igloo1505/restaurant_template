@@ -8,8 +8,8 @@ import Paper from "@material-ui/core/Paper";
 import Slide from "@material-ui/core/Slide";
 import Button from "@material-ui/core/Button";
 import {
-  ColorlibConnector,
-  ColorlibStepIcon,
+  ConnectorComponent,
+  StepIconComponent,
 } from "../components/AddRecipeStepper";
 import FormBanner from "../components/FormBanner";
 import { StepOneForm } from "../components/addRecipeForms";
@@ -109,14 +109,14 @@ const AddRecipeFormContainer = (
         <Stepper
           alternativeLabel
           activeStep={activeStep}
-          connector={<ColorlibConnector />}
+          connector={<ConnectorComponent activeStep={activeStep} />}
           classes={{ root: classes.stepperRoot }}
         >
           {steps.map((label, index) => (
             <Step key={label}>
               <StepLabel
-                StepIconComponent={ColorlibStepIcon}
-                StepIconProps={{ index }}
+                StepIconComponent={StepIconComponent}
+                StepIconProps={{ index, activeStep }}
                 classes={{
                   label: classes.stepLabelRoot,
                   completed: classes.stepLabelCompleted,
