@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { GridItem } from "./UIComponents";
 import UnitSelectDestructed from "./UnitSelectDestructured";
+import NeumorphicTextField from "./NeumorphicTextField";
 import { unitObject } from "../util/appWideData";
 import NoSsr from "@material-ui/core/NoSsr";
 import Grid from "@material-ui/core/Grid";
@@ -133,7 +134,7 @@ const StepOneFormComponent = ({
         classes={{ root: classes.gridRoot }}
       >
         <Grid item xs={12} sm={4}>
-          <TextField
+          <NeumorphicTextField
             // required
             id="recipeTitleInput"
             name="title"
@@ -145,17 +146,19 @@ const StepOneFormComponent = ({
             label="Recipe's title "
             onChange={handleFormChange}
             value={formData.title}
+            focusState={focusState}
+            formData={formData}
             InputLabelProps={{
               focused: focusState.title.focus,
               shrink: Boolean(formData?.title?.length !== 0),
-              classes: {
-                root: clsx(
-                  classes.inputLabelRoot,
-                  focusState.title.focus && classes.inputLabelFocused,
-                  formData?.title?.length !== 0 && classes.inputLabelWithValue
-                ),
-                required: classes.inputLabelRequired,
-              },
+              // classes: {
+              //   root: clsx(
+              //     classes.inputLabelRoot,
+              //     focusState.title.focus && classes.inputLabelFocused,
+              //     formData?.title?.length !== 0 && classes.inputLabelWithValue
+              //   ),
+              //   required: classes.inputLabelRequired,
+              // },
             }}
             inputProps={{ className: "inputListener" }}
             InputProps={{

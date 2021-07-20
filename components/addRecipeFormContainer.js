@@ -49,8 +49,25 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     color: "#fff",
-    marginTop: theme.spacing(3),
+    // marginTop: theme.spacing(3),
+    backgroundColor: theme.palette.secondary.main,
     marginLeft: theme.spacing(1),
+    padding: "0px",
+    // boxShadow: "4px 4px 7px #cc540e, -4px -4px 8px #ff6c12",
+    "& > .MuiButton-label": {
+      padding: "6px 16px",
+      // margin: "1px 1px",
+      borderRadius: "5px",
+      // background: "linear-gradient(145deg, #57acff, #4991e6)",
+      // boxShadow: "5px 5px 8px #468cde, -5px -5px 8px #5cb6ff",
+      background: "#51a1ff",
+      boxShadow: "inset 2px 2px 5px #468cde, inset -2px -2px 5px #5cb6ff",
+      // backgroundColor: theme.palette.primary.light,
+      "&:hover": {
+        // padding: "5px 15px",
+        // margin: "1px 1px",
+      },
+    },
   },
   stepLabelRoot: {
     color: "#fff",
@@ -62,8 +79,14 @@ const useStyles = makeStyles((theme) => ({
   },
   stepperRoot: { backgroundColor: theme.palette.secondary.main },
   buttons: {
+    marginTop: "24px",
     display: "flex",
     justifyContent: "flex-end",
+  },
+  backButton: {
+    color: "#fff",
+    padding: 0,
+    boxShadow: "5px 5px 8px #cc540e, -5px -5px 8px #ff6c12",
   },
 }));
 
@@ -141,7 +164,10 @@ const AddRecipeFormContainer = (
             )}
             <div className={classes.buttons}>
               {activeStep !== 0 && (
-                <Button onClick={handleBack} className={classes.button}>
+                <Button
+                  onClick={handleBack}
+                  className={(classes.button, classes.backButton)}
+                >
                   Back
                 </Button>
               )}

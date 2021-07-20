@@ -14,7 +14,7 @@ const useBannerStyles = makeStyles((theme) => ({
   bannerRoot: {
     width: "fit-content",
     padding: "10px 20px",
-    borderRadius: "17px",
+    borderRadius: "8px",
     // backgroundColor: theme.palette.primary.main,
     backgroundColor: theme.palette.secondary.main,
     // transform: "translateY(-50%)",
@@ -24,6 +24,7 @@ const useBannerStyles = makeStyles((theme) => ({
     width: "fit-content",
     height: "fit-content",
     borderRadius: "17px",
+    marginTop: "10px",
     transform: "translateY(0px)",
     background: theme.palette.secondary.dark,
     boxShadow: "none",
@@ -32,7 +33,11 @@ const useBannerStyles = makeStyles((theme) => ({
     }),
   },
   bannerPaperBoxShadow: {
-    boxShadow: "6px 6px 12px #b74b0c, -6px 6px 12px #ff7514",
+    boxShadow: "6px 3px 12px #9d400b, -6px -3px 12px #ff8015",
+
+    background: "linear-gradient(145deg, #d4560e, #fb6711)",
+    boxShadow: "5px 5px 10px #c5510d, -5px -5px 10px #ff6f13",
+    border: `1px solid ${theme.palette.secondary.light}`,
     transition: theme.transitions.create(["box-shadow", "transform"], {
       duration: 500,
     }),
@@ -45,7 +50,7 @@ const FormBanner = ({ children }) => {
   const [bannerTransformed, setBannerTransformed] = useState(false);
   useEffect(() => {
     setTimeout(() => setBannerLifted(true), 500);
-    setTimeout(() => setBannerTransformed(true), 700);
+    // setTimeout(() => setBannerTransformed(true), 700);
   }, []);
   const classes = useBannerStyles();
   return (
