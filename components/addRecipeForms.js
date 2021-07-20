@@ -147,6 +147,7 @@ const StepOneFormComponent = ({
             onChange={handleFormChange}
             value={formData.title}
             focusState={focusState}
+            focused={focusState.title.focus}
             formData={formData}
             InputLabelProps={{
               focused: focusState.title.focus,

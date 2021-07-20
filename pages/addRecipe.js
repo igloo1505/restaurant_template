@@ -126,15 +126,6 @@ const AddRecipe = ({
 
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
-
-  // const handleNext = () => {
-  //   // TODO authenticate before transition
-  //   console.log(formData);
-  //   setActiveStep(activeStep + 1);
-  // };
-  // const handleBack = () => {
-  //   setActiveStep(activeStep - 1);
-  // };
   if (isLoading || !loggedIn) {
     return <Loader type="circular" />;
   }
