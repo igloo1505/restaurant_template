@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { GridItem } from "./UIComponents";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
+import InputLabel from "@material-ui/core/InputLabel";
 import UnitSelectDestructed from "./UnitSelectDestructured";
 import { unitObject } from "../util/appWideData";
 import NoSsr from "@material-ui/core/NoSsr";
@@ -39,9 +40,20 @@ const useNeumorphicStyles = makeStyles((theme) => ({
       },
     },
   },
+  inputInputRoot: {
+    color: "#fff",
+    padding: "6px 7px",
+    "&:hover": {
+      "& > .MuiOutlinedInput-notchedOutline": {
+        borderColor: "#fff",
+        border: `1px solid #fff`,
+      },
+    },
+  },
   inputroot: {
     // borderRadius: "5px",
-
+    border: "5px solid red",
+    padding: "0px 0px",
     // background: "linear-gradient(145deg, #d4560e, #fb6711)",
     // boxShadow: "2px 2px 4px #be4e0d, -2px -2px 4px #ff7213",
     // boxShadow: "5px 5px 8px #cc540e,-5px -5px 8px #ff6c12",
@@ -81,12 +93,26 @@ const useNeumorphicStyles = makeStyles((theme) => ({
       ),
     },
   },
-  inputLabelRoot: { color: "#e0e0e0" },
+  inputInputNotchedOutline: {
+    // border: "0px !important",
+    border: "1px solid blue",
+  },
+  inputLabelRoot: {
+    color: "#e0e0e0",
+    transform: "translate(14px, 14px)",
+    transition: theme.transitions.create(["transform"], {
+      duration: 700,
+    }),
+  },
   inputLabelWithValue: { color: "#fff" },
   inputLabelRequired: {},
   inputLabelFocused: {
     color: "#fff !important",
     padding: "2px",
+    // transform: "translate(14px, 11px)",
+    transition: theme.transitions.create(["transform"], {
+      duration: 700,
+    }),
   },
   inputContainerOuter: {
     // boxShadow:
@@ -108,6 +134,7 @@ const useNeumorphicStyles = makeStyles((theme) => ({
       }
     ),
   },
+
   inputContainerInnerFocused: {
     boxShadow: "5px 5px 8px #cc540e,-5px -5px 8px #ff6c12",
     borderRadius: "4px",
@@ -169,18 +196,39 @@ const NeumorphicTextField = (props) => {
         )}
       >
         <div className={classes.inputContainerInner}>
-          <OutlinedInput
+          <TextField
             {...props}
             // color="primary"
+            // variant="outlined"
             classes={{
               root: classes.inputRoot,
               focused: classes.inputFocused,
               error: classes.inputError,
               input: classes.inputInput,
               notchedOutline: clsx(
-                classes.inputNotchedOutline,
-                props.focused && classes.inputNotchedOutlineFocused
+                classes.inputNotchedOutline
+                // props.focused && classes.inputNotchedOutlineFocused
               ),
+            }}
+            InputProps={{
+              ...props.InputProps,
+              notched: true,
+              classes: {
+                ...props.InputProps.classes,
+                root: classes.inputInputRoot,
+                notchedOutline: clsx(
+                  classes.inputNotchedOutline,
+                  props.focused && classes.inputNotchedOutlineFocused
+                ),
+              },
+            }}
+            InputLabelProps={{
+              ...props.InputLabelProps,
+              classes: {
+                root: classes.inputLabelRoot,
+                focused: classes.inputLabelFocused,
+                shrink: classes.inputLabelShrunk,
+              },
             }}
           />
         </div>
