@@ -78,10 +78,21 @@ const useStyles = makeStyles((theme) => ({
       display: "none",
     },
   },
-  selectInputRoot: { backgroundColor: "transparent", color: "#fff" },
+  selectInputRoot: {
+    backgroundColor: "transparent",
+    color: "#fff",
+    paddingLeft: "5px",
+  },
   selectInputRootFocused: {
     // backgroundColor: `${theme.palette.secondary.light} !important`,
     backgroundColor: "transparent !important",
+    boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
+    borderTopLeftRadius: "4px",
+    borderTopRightRadius: "4px",
+    // transform: "translateX(10px)",
+    transition: theme.transitions.create(["box-shadow"], {
+      duration: 250,
+    }),
   },
   inputLabelRoot: { color: "#e0e0e0" },
   inputLabelFocused: { color: "#fff !important" },

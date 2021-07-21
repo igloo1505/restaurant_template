@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { GridItem } from "./UIComponents";
 import UnitSelectDestructed from "./UnitSelectDestructured";
-import NeumorphicTextField from "./NeumorphicTextField";
 import { unitObject } from "../util/appWideData";
 import NoSsr from "@material-ui/core/NoSsr";
 import Grid from "@material-ui/core/Grid";
@@ -24,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   inputRoot: {
     color: "#fff",
+    paddingLeft: "5px",
     "&:before": {
       borderBottom: "1px solid #fff",
     },
@@ -46,18 +46,37 @@ const useStyles = makeStyles((theme) => ({
   },
   inputFocused: {
     color: "#fff",
+    // boxShadow: "5px 5px 8px #cc540e,-5px -5px 8px #ff6c12",
+    boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
+    borderTopLeftRadius: "4px",
+    borderTopRightRadius: "4px",
+    // borderRadius: "4px",
+    transition: theme.transitions.create(["box-shadow"], {
+      duration: 250,
+    }),
     "&:after": {
       // borderBottom: "2px solid #fff",
       borderBottom: `2px solid ${theme.palette.primary.light}`,
     },
   },
   inputLabelRoot: { color: "#e0e0e0" },
-  inputLabelWithValue: { color: "#fff" },
+  inputLabelWithValue: {
+    color: "#fff",
+    // transform: "translate(2px, 2px)"
+    transform: "translate(2px, 0px) !important",
+    fontSize: "0.7rem",
+  },
+  descriptionInputLabelFocused: {
+    transform: "translate(2px, 0px)",
+    fontSize: "0.7rem",
+    color: "#fff !important",
+  },
   inputLabelRequired: {},
   inputLabelFocused: {
     color: "#fff !important",
+    transform: "translate(8px, 24px)",
   },
-  descriptionInputInput: { color: "#fff" },
+  descriptionInputInput: { color: "#fff", paddingLeft: "5px" },
   gridRoot: {
     // padding: "12px 0px 12px 12px",
     "& > .MuiGrid-item": {
@@ -66,6 +85,64 @@ const useStyles = makeStyles((theme) => ({
   },
   gridItemRoot: {},
 }));
+
+// const useStyles = makeStyles((theme) => ({
+//   textFieldRoot: {
+//     minWidth: "100%",
+//     alignSelf: "stretch",
+//     // color: "#fff",
+//     "& > div": {
+//       minWidth: "100%",
+//       width: "100%",
+//     },
+//   },
+//   inputRoot: {
+//     color: "#fff",
+//     "&:before": {
+//       borderBottom: "1px solid #fff",
+//     },
+//   },
+//   inputroot: {
+//     "&:before": {
+//       borderBottom: "1px solid #fff",
+//     },
+//     "&:hover:not(.Mui-disabled):before": {
+//       borderBottom: "2px solid #fff",
+//     },
+//     "&:after": {
+//       borderBottom: `1px solid ${theme.palette.secondary.light}`,
+//     },
+//   },
+//   descriptionInputRoot: {
+//     "&:before": { borderBottom: "1px solid #fff" },
+//     "&:after": {},
+//     "&:hover:not(.Mui-disabled):before": { borderBottom: "2px solid #fff" },
+//   },
+//   inputFocused: {
+//     color: "#fff",
+//     boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
+//     padding: "6px 8px",
+//     "&:after": {
+//       // borderBottom: "2px solid #fff",
+//       borderBottom: `2px solid ${theme.palette.primary.light}`,
+//     },
+//   },
+//   inputLabelRoot: { color: "#e0e0e0" },
+//   inputLabelWithValue: { color: "#fff" },
+//   inputLabelRequired: {},
+//   inputLabelFocused: {
+//     color: "#fff !important",
+//     transform: "translate(8px, 24px)",
+//   },
+//   descriptionInputInput: { color: "#fff" },
+//   gridRoot: {
+//     // padding: "12px 0px 12px 12px",
+//     "& > .MuiGrid-item": {
+//       // padding: "12px 0px 12px 12px",
+//     },
+//   },
+//   gridItemRoot: {},
+// }));
 
 const StepOneFormComponent = ({
   props: {
@@ -134,7 +211,7 @@ const StepOneFormComponent = ({
         classes={{ root: classes.gridRoot }}
       >
         <Grid item xs={12} sm={4}>
-          <NeumorphicTextField
+          <TextField
             // required
             id="recipeTitleInput"
             name="title"
@@ -152,14 +229,14 @@ const StepOneFormComponent = ({
             InputLabelProps={{
               focused: focusState.title.focus,
               shrink: Boolean(formData?.title?.length !== 0),
-              // classes: {
-              //   root: clsx(
-              //     classes.inputLabelRoot,
-              //     focusState.title.focus && classes.inputLabelFocused,
-              //     formData?.title?.length !== 0 && classes.inputLabelWithValue
-              //   ),
-              //   required: classes.inputLabelRequired,
-              // },
+              classes: {
+                root: clsx(
+                  classes.inputLabelRoot,
+                  focusState.title.focus && classes.inputLabelFocused,
+                  formData?.title?.length !== 0 && classes.inputLabelWithValue
+                ),
+                required: classes.inputLabelRequired,
+              },
             }}
             inputProps={{ className: "inputListener" }}
             InputProps={{
@@ -264,7 +341,8 @@ const StepOneFormComponent = ({
               classes: {
                 root: clsx(
                   classes.inputLabelRoot,
-                  focusState.description.focus && classes.inputLabelFocused
+                  focusState.description.focus &&
+                    classes.descriptionInputLabelFocused
                 ),
                 required: classes.inputLabelRequired,
               },
