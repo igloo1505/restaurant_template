@@ -34,9 +34,10 @@ const useBannerStyles = makeStyles((theme) => ({
   },
   bannerPaperBoxShadow: {
     boxShadow: "6px 3px 12px #9d400b, -6px -3px 12px #ff8015",
+    boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
 
     background: "linear-gradient(145deg, #d4560e, #fb6711)",
-    boxShadow: "5px 5px 10px #c5510d, -5px -5px 10px #ff6f13",
+    // boxShadow: "5px 5px 10px #c5510d, -5px -5px 10px #ff6f13",
     border: `1px solid ${theme.palette.secondary.light}`,
     transition: theme.transitions.create(["box-shadow", "transform"], {
       duration: 500,

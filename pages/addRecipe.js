@@ -101,6 +101,11 @@ const AddRecipe = ({
     servingUnit: "cups",
     title: "",
     description: "",
+    ingredients: [],
+    ingredient: {
+      text: "",
+      optional: false,
+    },
   });
   // useEffect(() => {
   //   setTimeout(() => setSlideIn(true), 500);

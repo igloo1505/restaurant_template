@@ -86,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
   backButton: {
     color: "#fff",
     padding: 0,
-    boxShadow: "5px 5px 8px #cc540e, -5px -5px 8px #ff6c12",
+    boxShadow: "4px 4px 6px #cc540e, -4px -4px 6px #ff6c12",
   },
 }));
 
@@ -214,8 +214,6 @@ const getStepContent = (
           formData={formData}
           handleFormChange={handleFormChange}
           setFormData={setFormData}
-          placeHolder={placeHolder}
-          setPlaceHolder={setPlaceHolder}
         />
       );
     // case 2:

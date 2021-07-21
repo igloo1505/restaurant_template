@@ -2,14 +2,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { GridItem } from "./UIComponents";
 import UnitSelectDestructed from "./UnitSelectDestructured";
-import { unitObject } from "../util/appWideData";
-import NoSsr from "@material-ui/core/NoSsr";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
 
 const useStyles = makeStyles((theme) => ({
   textFieldRoot: {
@@ -36,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: "2px solid #fff",
     },
     "&:after": {
-      borderBottom: `1px solid ${theme.palette.secondary.light}`,
+      // borderBottom: `1px solid ${theme.palette.secondary.light}`,
     },
   },
   descriptionInputRoot: {
@@ -46,16 +42,12 @@ const useStyles = makeStyles((theme) => ({
   },
   inputFocused: {
     color: "#fff",
-    // boxShadow: "5px 5px 8px #cc540e,-5px -5px 8px #ff6c12",
     boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
-    borderTopLeftRadius: "4px",
-    borderTopRightRadius: "4px",
-    // borderRadius: "4px",
+    borderRadius: "4px",
     transition: theme.transitions.create(["box-shadow"], {
       duration: 250,
     }),
     "&:after": {
-      // borderBottom: "2px solid #fff",
       borderBottom: `2px solid ${theme.palette.primary.light}`,
     },
   },
