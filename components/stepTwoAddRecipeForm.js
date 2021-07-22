@@ -19,6 +19,14 @@ const useStyles = makeStyles((theme) => ({
 
 const StepTwoAddRecipeForm = (props) => {
   const [isShifted, setIsShifted] = useState(false);
+  useEffect(() => {
+    if (props.formData?.ingredients.length !== 0) {
+      setIsShifted(true);
+    }
+    if (props.formData?.ingredients.length === 0) {
+      setIsShifted(false);
+    }
+  }, [props.formData]);
   const classes = useStyles();
   return (
     <div className={clsx(classes.container)}>

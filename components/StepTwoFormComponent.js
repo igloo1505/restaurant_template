@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import AddIcon from "@material-ui/icons/AddBoxOutlined";
 import CheckedIcon from "@material-ui/icons/DoneOutlined";
 import Paper from "@material-ui/core/Paper";
 import Slide from "@material-ui/core/Slide";
@@ -12,6 +13,7 @@ import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({
   container: {
+    marginRight: "10px",
     transform: "translateX(0%)",
     transition: theme.transitions.create(["transform"], {
       duration: 500,
@@ -114,15 +116,22 @@ const StepTwoFormComponent = ({
       focus: false,
     },
   });
-  const [shift, setShift] = useState({});
-  useEffect(() => {
-    if (!isShifted) {
-      setShift({ transform: "translateX(50%)" });
-    }
-    if (isShifted) {
-      setShift({ transform: "translateX(0px)" });
-    }
-  }, [isShifted]);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: { ...formData[e.target.name], text: e.target.value },
+    });
+  };
+  const addIngredient = (e) => {
+    setFormData({
+      ...formData,
+      ingredients: [...formData.ingredients, formData.ingredient],
+      ingredient: {
+        text: "",
+        optional: false,
+      },
+    });
+  };
   const classes = useStyles();
   const fauxListener = (title, type) => {
     console.log(focusState);
@@ -145,11 +154,22 @@ const StepTwoFormComponent = ({
       });
     }
   };
+  const keyObserver = (e) => {
+    if (!e.shiftKey && e.key === "Enter") {
+      e.preventDefault();
+      if (formData?.ingredient.text?.length !== 0) {
+        addIngredient();
+      }
+    }
+  };
   const handleChangeBoolean = (e) => {
     console.log("event", e);
     setFormData({
       ...formData,
-      [e.target.name]: { optional: !formData[e.target.name].optional },
+      [e.target.name]: {
+        ...formData[e.target.name],
+        optional: !formData[e.target.name].optional,
+      },
     });
   };
   return (
@@ -168,7 +188,8 @@ const StepTwoFormComponent = ({
         autoFocus
         multiline
         label="Ingredient"
-        onChange={handleFormChange}
+        onChange={handleChange}
+        onKeyDown={keyObserver}
         value={formData.ingredient.text}
         focused={focusState.ingredient.focus}
         InputLabelProps={{
@@ -186,6 +207,7 @@ const StepTwoFormComponent = ({
         }}
         //   inputProps={{ className: "inputListener" }}
         InputProps={{
+          endAdornment: AddIngredientAdornment(formData, focusState),
           classes: {
             root: clsx("inputListener", classes.inputroot),
             input: classes.inputRoot,
@@ -223,3 +245,26 @@ const StepTwoFormComponent = ({
 };
 
 export default StepTwoFormComponent;
+
+const useAdornmentClasses = makeStyles((theme) => ({
+  iconRoot: { opacity: 0, color: "#fff" },
+  iconFocused: { color: "#fff" },
+  iconEnabled: { opacity: 1 },
+}));
+
+const AddIngredientAdornment = (formData, focusState) => {
+  const classes = useAdornmentClasses();
+  return (
+    <Fragment>
+      <AddIcon
+        classes={{
+          root: clsx(
+            classes.iconRoot,
+            focusState.ingredient.focus && classes.iconFocused,
+            formData?.ingredient?.text?.length !== 0 && classes.iconEnabled
+          ),
+        }}
+      />
+    </Fragment>
+  );
+};

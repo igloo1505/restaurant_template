@@ -113,6 +113,9 @@ const AddRecipeFormContainer = (
   const handleNext = () => {
     // TODO authenticate before transition
     console.log(formData);
+    if (activeStep === 1) {
+      return console.log(formData);
+    }
     setActiveStep(activeStep + 1);
   };
   const handleBack = () => {
