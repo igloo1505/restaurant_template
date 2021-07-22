@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       boxShadow: "2px 2px 6px #cc540e, -2px -2px 6px #ff6c12",
       "&:before": {
-        boxShadow: "2px 2px 5px #468cde, -2px -2px 5px #5cb6ff",
+        boxShadow: "0px 0px 5px #468cde, -0px -0px 5px #5cb6ff",
       },
     },
 
@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
       height: "calc(100% - 10px)",
       width: "calc(100% - 10px)",
       borderRadius: "4px",
-      boxShadow: "inset 2px 2px 5px #4386d4, inset -2px -2px 5px #5fbcff",
+      boxShadow: "2px 2px 5px #4386d4, -2px -2px 5px #5fbcff",
       // boxShadow: "inset 7px 7px 5px #4386d4, inset -7px -7px 5px #5fbcff",
       transition: theme.transitions.create(["box-shadow"], {
         duration: 350,
