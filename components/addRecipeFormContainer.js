@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { connect } from "react-redux";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -29,10 +30,18 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: theme.spacing(6),
       padding: theme.spacing(3),
     },
+    [theme.breakpoints.up("lg")]: {
+      // maxHeight: "90vh",
+      display: "grid",
+      // gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+      // gridTemplateRows: "auto auto minmax(0px, 200px)",
+      // gridTemplateRows: "auto auto 1fr",
+      gridTemplateAreas: '"banner" "stepper" "form"',
+    },
     transition: theme.transitions.create(
       ["box-shadow", "transform", "background"],
       {
-        duration: 1500,
+        duration: 500,
       }
     ),
     "&:hover": {
@@ -77,7 +86,13 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff !important",
     fontWeight: "400 !important",
   },
-  stepperRoot: { backgroundColor: theme.palette.secondary.main },
+  stepperRoot: {
+    backgroundColor: theme.palette.secondary.main,
+    gridArea: "stepper",
+  },
+  formWrapper: {
+    gridArea: "form",
+  },
   buttons: {
     marginTop: "24px",
     display: "flex",
@@ -101,10 +116,11 @@ const AddRecipeFormContainer = (
     setPlaceHolder,
     setActiveStep,
   },
+
   ref
 ) => {
   const [paperLifted, setPaperLifted] = useState(false);
-
+  const [formHeightLimit, setFormHeightLimit] = useState(400);
   const classes = useStyles();
   useEffect(() => {
     setTimeout(() => setPaperLifted(true), 300);
@@ -130,6 +146,9 @@ const AddRecipeFormContainer = (
           paperLifted && classes.addBoxShadow,
           "addBoxShadow"
         )}
+        style={{
+          gridTemplateRows: `auto auto fit-content(${formHeightLimit}px)`,
+        }}
       >
         <FormBanner>Add Recipe</FormBanner>
         <Stepper
@@ -156,15 +175,16 @@ const AddRecipeFormContainer = (
         </Stepper>
         <Fragment>
           <Fragment>
-            {getStepContent(
-              activeStep,
-              formData,
-              setFormData,
-              handleFormChange,
-
-              placeHolder,
-              setPlaceHolder
-            )}
+            <div className={classes.formWrapper}>
+              {getStepContent(
+                activeStep,
+                formData,
+                setFormData,
+                handleFormChange,
+                placeHolder,
+                setPlaceHolder
+              )}
+            </div>
             <div className={classes.buttons}>
               {activeStep !== 0 && (
                 <Button

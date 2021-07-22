@@ -14,11 +14,13 @@ const useStyles = makeStyles((theme) => ({
   container: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
+    gridTemplateAreas: '"form display"',
+    maxHeight: "100%",
   },
 }));
-
 const StepTwoAddRecipeForm = (props) => {
   const [isShifted, setIsShifted] = useState(false);
+  const [formHeightLimit, setFormHeightLimit] = useState(400);
   useEffect(() => {
     if (props.formData?.ingredients.length !== 0) {
       setIsShifted(true);
@@ -34,11 +36,13 @@ const StepTwoAddRecipeForm = (props) => {
         {...props}
         isShifted={isShifted}
         setIsShifted={setIsShifted}
+        formHeightLimit={formHeightLimit}
       />
       <StepTwoDisplayComponent
         {...props}
         isShifted={isShifted}
         setIsShifted={setIsShifted}
+        formHeightLimit={formHeightLimit}
       />
     </div>
   );

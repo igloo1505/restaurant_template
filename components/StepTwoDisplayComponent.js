@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
+import { FaBalanceScale as ScaleIcon } from "react-icons/fa";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Paper from "@material-ui/core/Paper";
@@ -9,12 +10,16 @@ import Collapse from "@material-ui/core/Collapse";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles((theme) => ({
   container: {
     opacity: 1,
+    gridArea: "display",
     marginLeft: "10px",
     transform: "translateX(0%)",
+    maxHeight: "100%",
+    overflowY: "auto",
     transition: theme.transitions.create(["transform"], {
       duration: 500,
     }),
@@ -30,7 +35,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StepTwoDisplayComponent = ({ isShifted, formData, setFormData }) => {
+const StepTwoDisplayComponent = ({
+  isShifted,
+  formData,
+  setFormData,
+  formHeightLimit,
+}) => {
   const classes = useStyles();
   const removeItem = (e, item) => {
     setFormData({
@@ -44,6 +54,7 @@ const StepTwoDisplayComponent = ({ isShifted, formData, setFormData }) => {
         classes.container,
         !isShifted && classes.transformContainer
       )}
+      style={{ maxHeight: `${formHeightLimit}px` }}
     >
       {formData?.ingredients.map((item) => (
         <DisplayItem item={item} removeItem={removeItem} />
@@ -89,6 +100,7 @@ const useItemStyles = makeStyles((theme) => ({
     transition: theme.transitions.create(["box-shadow"], {
       duration: 500,
     }),
+    // overflowY: "auto",
     "&.addBoxShadow": {
       boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
       transition: theme.transitions.create(["box-shadow"], {
@@ -99,6 +111,13 @@ const useItemStyles = makeStyles((theme) => ({
   text: {
     padding: "4px 6px",
     color: "#fff",
+    width: "100%",
+  },
+  optionalText: {
+    color: "#e0e0e0",
+    fontSize: "0.7rem",
+    float: "right",
+    // width: "100%",
   },
   icon: { display: "flex", alignItems: "center" },
   iconRoot: {
@@ -124,7 +143,26 @@ const useItemStyles = makeStyles((theme) => ({
       },
     },
   },
+  toolTip: {
+    backgroundColor: theme.palette.common.white,
+    color: "rgba(0, 0, 0, 0.87)",
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+  },
 }));
+
+// const LightTooltip = withStyles((theme) => ({
+//   tooltip: {
+//     backgroundColor: theme.palette.common.white,
+//     color: "rgba(0, 0, 0, 0.87)",
+//     boxShadow: theme.shadows[1],
+//     fontSize: 11,
+//   },
+// }))(<Tooltip arrow/>);
+
+const LightTooltip = ({ classes }) => {
+  return <Tooltip arrow classes={{ tooltip: classes.toolTip }} />;
+};
 
 const DisplayItem = ({ item, removeItem }) => {
   const classes = useItemStyles();
@@ -138,28 +176,31 @@ const DisplayItem = ({ item, removeItem }) => {
     exit: 15000,
   };
   return (
-    <Collapse in={true} timeout={timeouts}>
+    <div className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow")}>
       <div
-        className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow")}
+        className={clsx(
+          classes.itemWrapperInner,
+          shifted && classes.itemWrapperInnerShifted
+        )}
       >
-        <div
-          className={clsx(
-            classes.itemWrapperInner,
-            shifted && classes.itemWrapperInnerShifted
-          )}
-        >
-          <div className={clsx(classes.icon, shifted && "addBoxShadow")}>
-            <CloseIcon
-              classes={{
-                root: clsx(classes.iconRoot, shifted && "addBoxShadow"),
-              }}
-              fontSize="small"
-              onClick={(e) => removeItem(e, item)}
-            />
-          </div>
-          <div className={classes.text}>{item.text}</div>
+        <div className={clsx(classes.icon, shifted && "addBoxShadow")}>
+          <CloseIcon
+            classes={{
+              root: clsx(classes.iconRoot, shifted && "addBoxShadow"),
+            }}
+            fontSize="small"
+            onClick={(e) => removeItem(e, item)}
+          />
         </div>
+        <div className={classes.text}>{item.text}</div>
+        {item.optional && (
+          <LightTooltip classes={classes}>
+            <div className={classes.optionalText}>
+              <ScaleIcon />
+            </div>
+          </LightTooltip>
+        )}
       </div>
-    </Collapse>
+    </div>
   );
 };

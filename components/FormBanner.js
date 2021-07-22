@@ -10,6 +10,7 @@ const useBannerStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
+    gridArea: "banner",
   },
   bannerRoot: {
     width: "fit-content",
