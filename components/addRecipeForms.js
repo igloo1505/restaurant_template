@@ -17,9 +17,16 @@ const useStyles = makeStyles((theme) => ({
       width: "100%",
     },
   },
+  textFieldWrapper: { padding: "0px 5px 5px 5px" },
+  textFieldWrapperFocused: {
+    // boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
+    padding: "0px 5px 5px 5px",
+  },
+  textFieldWrapperShrunk: {},
   inputRoot: {
     color: "#fff",
-    paddingLeft: "5px",
+    paddingLeft: "7px",
+    paddingRight: "7px",
     "&:before": {
       borderBottom: "1px solid #fff",
     },
@@ -29,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: "1px solid #fff",
     },
     "&:hover:not(.Mui-disabled):before": {
+      // Underline when hovered
       borderBottom: "2px solid #fff",
     },
     "&:after": {
@@ -38,17 +46,51 @@ const useStyles = makeStyles((theme) => ({
   descriptionInputRoot: {
     "&:before": { borderBottom: "1px solid #fff" },
     "&:after": {},
-    "&:hover:not(.Mui-disabled):before": { borderBottom: "2px solid #fff" },
+    // Underline when hovered and focused
+    "&:hover:not(.Mui-disabled):before": {
+      // borderBottom: `none`,
+      borderBottom: "2px solid #fff",
+    },
   },
   inputFocused: {
     color: "#fff",
     boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
-    borderRadius: "4px",
+    // borderRadius: "2px",
     transition: theme.transitions.create(["box-shadow"], {
       duration: 250,
     }),
+    // boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
+    "&:hover": { borderBottom: "0px solid #fff" },
+    "&:hover:not(.Mui-disabled):before": {
+      // Underline when hovered and focused
+      // borderBottom: `2px solid ${theme.palette.primary.light}`,
+      borderBottom: "none",
+    },
+    "&::before": {
+      borderBottom: "0px solid #fff",
+      content: '""',
+      position: "absolute",
+      height: "calc(100% + 10px)",
+      width: "calc(100% + 6px)",
+      marginTop: "-5px",
+      marginLeft: "-2px",
+      marginBottom: "-10px",
+      borderRadius: "4px",
+      // boxShadow: "inset 5px 5px 8px #cc540e, inset -5px -5px 8px #ff6c12",
+      // boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
+      boxShadow: "3px 3px 6px #cc540e, -3px -3px 6px #ff6c12",
+      transition: theme.transitions.create(
+        ["box-shadow", "transform", "background-color"],
+        {
+          duration: 500,
+        }
+      ),
+    },
     "&:after": {
-      borderBottom: `2px solid ${theme.palette.primary.light}`,
+      boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
+      width: "calc(100% - 12px)",
+      marginLeft: "4px",
+      // borderBottom: `2px solid ${theme.palette.primary.light}`,
     },
   },
   inputLabelRoot: { color: "#e0e0e0" },
@@ -57,11 +99,19 @@ const useStyles = makeStyles((theme) => ({
     // transform: "translate(2px, 2px)"
     transform: "translate(2px, 0px) !important",
     fontSize: "0.7rem",
+    "&.Mui-focused": {
+      boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12",
+      padding: "0px 3px 3px 3px",
+    },
   },
   descriptionInputLabelFocused: {
     transform: "translate(2px, 0px)",
     fontSize: "0.7rem",
     color: "#fff !important",
+    // "&.Mui-focused": {
+    boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12",
+    padding: "0px 3px 3px 3px",
+    // },
   },
   inputLabelRequired: {},
   inputLabelFocused: {
@@ -203,43 +253,52 @@ const StepOneFormComponent = ({
         classes={{ root: classes.gridRoot }}
       >
         <Grid item xs={12} sm={4}>
-          <TextField
-            // required
-            id="recipeTitleInput"
-            name="title"
-            onFocus={() => fauxListener("title", "focus")}
-            onBlur={() => fauxListener("title", "blur")}
-            fullWidth
-            autoFocus
-            multiline
-            label="Recipe's title "
-            onChange={handleFormChange}
-            value={formData.title}
-            focusState={focusState}
-            focused={focusState.title.focus}
-            formData={formData}
-            InputLabelProps={{
-              focused: focusState.title.focus,
-              shrink: Boolean(formData?.title?.length !== 0),
-              classes: {
-                root: clsx(
-                  classes.inputLabelRoot,
-                  focusState.title.focus && classes.inputLabelFocused,
-                  formData?.title?.length !== 0 && classes.inputLabelWithValue
-                ),
-                required: classes.inputLabelRequired,
-              },
-            }}
-            inputProps={{ className: "inputListener" }}
-            InputProps={{
-              classes: {
-                root: clsx("inputListener", classes.inputroot),
-                input: classes.inputRoot,
-                focused: classes.inputFocused,
-              },
-            }}
-            classes={{ root: classes.textFieldRoot }}
-          />
+          <div
+            className={clsx(
+              classes.textFieldWrapper,
+              focusState?.title?.focus && classes.textFieldWrapperFocused,
+              Boolean(formData?.title?.length !== 0) &&
+                classes.textFieldWrapperShrunk
+            )}
+          >
+            <TextField
+              // required
+              id="recipeTitleInput"
+              name="title"
+              onFocus={() => fauxListener("title", "focus")}
+              onBlur={() => fauxListener("title", "blur")}
+              fullWidth
+              autoFocus
+              multiline
+              label="Recipe's title "
+              onChange={handleFormChange}
+              value={formData.title}
+              focusState={focusState}
+              focused={focusState.title.focus}
+              formData={formData}
+              InputLabelProps={{
+                focused: focusState.title.focus,
+                shrink: Boolean(formData?.title?.length !== 0),
+                classes: {
+                  root: clsx(
+                    classes.inputLabelRoot,
+                    focusState.title.focus && classes.inputLabelFocused,
+                    formData?.title?.length !== 0 && classes.inputLabelWithValue
+                  ),
+                  required: classes.inputLabelRequired,
+                },
+              }}
+              inputProps={{ className: "inputListener" }}
+              InputProps={{
+                classes: {
+                  root: clsx("inputListener", classes.inputroot),
+                  input: classes.inputRoot,
+                  focused: classes.inputFocused,
+                },
+              }}
+              classes={{ root: classes.textFieldRoot }}
+            />
+          </div>
         </Grid>
         <Grid item xs={12} sm={3}>
           <TextField
