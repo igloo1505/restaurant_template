@@ -93,9 +93,36 @@ const useStyles = makeStyles((theme) => ({
     transition: theme.transitions.create(["box-shadow"], {
       duration: 250,
     }),
+    "&:before": {
+      borderBottom: "none",
+      content: '""',
+      position: "absolute",
+      height: "calc(100% + 10px)",
+      width: "calc(100% + 6px)",
+      top: 0,
+      left: 0,
+      transform: "translate(-3px, 1px)",
+      // marginTop: "-5px",
+      // marginLeft: "-2px",
+      // marginBottom: "-10px",
+      borderRadius: "4px",
+      // boxShadow: "inset 5px 5px 8px #cc540e, inset -5px -5px 8px #ff6c12",
+      // boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
+      boxShadow: "3px 3px 6px #cc540e, -3px -3px 6px #ff6c12",
+      transition: theme.transitions.create(
+        ["box-shadow", "transform", "background-color"],
+        {
+          duration: 500,
+        }
+      ),
+    },
   },
   inputLabelRoot: { color: "#e0e0e0" },
-  inputLabelFocused: { color: "#fff !important" },
+  inputLabelFocused: {
+    color: "#fff !important",
+    boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12",
+    padding: "0px 3px 3px 3px",
+  },
   wrapper: {
     "& > div.MuiInput-underline": {
       "&:before": { borderBottom: "1px solid #fff" },
