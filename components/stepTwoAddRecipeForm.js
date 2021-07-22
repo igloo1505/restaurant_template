@@ -19,7 +19,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 const StepTwoAddRecipeForm = (props) => {
-  const [isShifted, setIsShifted] = useState(false);
+  const [isShifted, setIsShifted] = useState(
+    props.formData.ingredients.length !== 0
+  );
   const [formHeightLimit, setFormHeightLimit] = useState(400);
   useEffect(() => {
     if (props.formData?.ingredients.length !== 0) {

@@ -117,6 +117,7 @@ const useItemStyles = makeStyles((theme) => ({
     color: "#e0e0e0",
     fontSize: "0.7rem",
     float: "right",
+    height: "fit-content",
     // width: "100%",
   },
   icon: { display: "flex", alignItems: "center" },
@@ -151,18 +152,17 @@ const useItemStyles = makeStyles((theme) => ({
   },
 }));
 
-// const LightTooltip = withStyles((theme) => ({
-//   tooltip: {
-//     backgroundColor: theme.palette.common.white,
-//     color: "rgba(0, 0, 0, 0.87)",
-//     boxShadow: theme.shadows[1],
-//     fontSize: 11,
-//   },
-// }))(<Tooltip arrow/>);
-
-const LightTooltip = ({ classes }) => {
-  return <Tooltip arrow classes={{ tooltip: classes.toolTip }} />;
-};
+// const LightTooltip = ({ classes }) => {
+//   return <Tooltip arrow classes={{ tooltip: classes.toolTip }} />;
+// };
+const LightTooltip = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#fff",
+    fontSize: 11,
+    boxShadow: "6px 6px 54px #5e2606, -6px -6px 54px #ff9a1a",
+  },
+}))(Tooltip);
 
 const DisplayItem = ({ item, removeItem }) => {
   const classes = useItemStyles();
@@ -194,7 +194,7 @@ const DisplayItem = ({ item, removeItem }) => {
         </div>
         <div className={classes.text}>{item.text}</div>
         {item.optional && (
-          <LightTooltip classes={classes}>
+          <LightTooltip title="Optional">
             <div className={classes.optionalText}>
               <ScaleIcon />
             </div>

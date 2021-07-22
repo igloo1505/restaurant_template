@@ -207,7 +207,11 @@ const StepTwoFormComponent = ({
         }}
         //   inputProps={{ className: "inputListener" }}
         InputProps={{
-          endAdornment: AddIngredientAdornment(formData, focusState),
+          endAdornment: AddIngredientAdornment(
+            formData,
+            focusState,
+            addIngredient
+          ),
           classes: {
             root: clsx("inputListener", classes.inputroot),
             input: classes.inputRoot,
@@ -247,12 +251,18 @@ const StepTwoFormComponent = ({
 export default StepTwoFormComponent;
 
 const useAdornmentClasses = makeStyles((theme) => ({
-  iconRoot: { opacity: 0, color: "#fff" },
+  iconRoot: {
+    opacity: 0,
+    color: "#fff",
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
   iconFocused: { color: "#fff" },
   iconEnabled: { opacity: 1 },
 }));
 
-const AddIngredientAdornment = (formData, focusState) => {
+const AddIngredientAdornment = (formData, focusState, addIngredient) => {
   const classes = useAdornmentClasses();
   return (
     <Fragment>
@@ -264,6 +274,7 @@ const AddIngredientAdornment = (formData, focusState) => {
             formData?.ingredient?.text?.length !== 0 && classes.iconEnabled
           ),
         }}
+        onClick={addIngredient}
       />
     </Fragment>
   );
