@@ -86,7 +86,6 @@ const useStyles = makeStyles((theme) => ({
   },
   checkBoxChecked: {
     background: "#eb6010",
-    // boxShadow: "2px 2px 2px #a7440b, -2px -2px 2px #ff7c15",
     boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
     borderRadius: "4px",
 
@@ -157,7 +156,18 @@ const StepTwoFormComponent = ({
   const keyObserver = (e) => {
     if (!e.shiftKey && e.key === "Enter") {
       e.preventDefault();
-      if (formData?.ingredient.text?.length !== 0) {
+      // if (e.shiftKey && formData?.ingredient.text?.length !== 0) {
+      //   e.preventDefault();
+      //   let string = (e.target.value += "\n");
+      //   setFormData({
+      //     ...formData,
+      //     [e.target.name]: {
+      //       ...formData?.[e.target.name],
+      //       text: string,
+      //     },
+      //   });
+      // }
+      if (!e.shiftKey && formData?.ingredient.text?.length !== 0) {
         addIngredient();
       }
     }

@@ -5,29 +5,29 @@ import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Paper from "@material-ui/core/Paper";
 import Slide from "@material-ui/core/Slide";
+import Copyright from "../components/Copyright";
+import Loader from "../components/Loader";
+import AddRecipeFormContainer from "../components/addRecipeFormContainer";
+import {
+  UnderNavbar,
+  AdjustForDrawerContainer,
+} from "../components/UIComponents";
+// import Paper from "@material-ui/core/Paper";
 // import Grow from "@material-ui/core/Grow";
 // import Stepper from "@material-ui/core/Stepper";
 // import Step from "@material-ui/core/Step";
 // import StepLabel from "@material-ui/core/StepLabel";
 // import Button from "@material-ui/core/Button";
-import Copyright from "../components/Copyright";
-import AddRecipeFormContainer from "../components/addRecipeFormContainer";
-import Typography from "@material-ui/core/Typography";
-import { StepOneForm } from "../components/addRecipeForms";
-import StepTwoForm from "../components/stepTwoAddRecipeForm";
-import Loader from "../components/Loader";
+// import Typography from "@material-ui/core/Typography";
+// import { StepOneForm } from "../components/addRecipeForms";
+// import StepTwoForm from "../components/stepTwoAddRecipeForm";
 // import {
 //   ConnectorComponent,
 //   StepIconComponent,
 // } from "../components/AddRecipeStepper";
 // import { tryAutoLogin } from "../stateManagement/userActions";
 // import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
-import {
-  UnderNavbar,
-  AdjustForDrawerContainer,
-} from "../components/UIComponents";
 
 // TODO check deviceheight and if room, shift form downward and tilt banner along corner of form
 const useStyles = makeStyles((theme) => ({
@@ -99,13 +99,15 @@ const AddRecipe = ({
   const [formData, setFormData] = useState({
     servings: "",
     servingUnit: "cups",
-    title: "",
-    description: "",
+    title: ``,
+    description: ``,
     ingredients: [],
     ingredient: {
       text: "",
       optional: false,
     },
+    directions: [],
+    direction: "",
   });
   // useEffect(() => {
   //   setTimeout(() => setSlideIn(true), 500);

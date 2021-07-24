@@ -127,7 +127,7 @@ const useStyles = makeStyles((theme) => ({
     "& > div.MuiInput-underline": {
       "&:before": { borderBottom: "1px solid #fff" },
       "&:after": {
-        borderBottom: `2px solid ${theme.palette.primary.light}`,
+        borderBottom: `2px solid ${theme.palette.primary.main}`,
       },
       "&:hover:not(.Mui-disabled):before": { borderBottom: "2px solid #fff" },
       // border: "1px solid red",

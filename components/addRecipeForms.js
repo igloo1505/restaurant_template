@@ -18,20 +18,23 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   textFieldWrapper: { padding: "0px 5px 5px 5px" },
-  textFieldWrapperFocused: {
-    // boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
-    padding: "0px 5px 5px 5px",
-  },
+  textFieldWrapperFocused: {},
   textFieldWrapperShrunk: {},
   inputRoot: {
     color: "#fff",
     paddingLeft: "7px",
     paddingRight: "7px",
     "&:before": {
+      // border: "1px solid green",
       borderBottom: "1px solid #fff",
     },
   },
   inputroot: {
+    color: "#fff",
+    border: `2px solid ${theme.palette.secondary.main}`,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     "&:before": {
       borderBottom: "1px solid #fff",
     },
@@ -44,81 +47,96 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   descriptionInputRoot: {
+    // padding: "8px 2px 9px 2px",
+    // paddingBottom: "9px",
+    border: `2px solid ${theme.palette.secondary.main}`,
     "&:before": { borderBottom: "1px solid #fff" },
     "&:after": {},
-    // Underline when hovered and focused
     "&:hover:not(.Mui-disabled):before": {
-      // borderBottom: `none`,
       borderBottom: "2px solid #fff",
     },
   },
+  descriptionInputFocused: {},
   inputFocused: {
     color: "#fff",
-    boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
-    // borderRadius: "2px",
+    // boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
+    boxShadow:
+      "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12, -4px -4px 10px #ff6e12, 4px 4px 10px #c8520e",
+
+    // background: "linear-gradient(145deg, #fb6711, #d4560e)",
+    background: "linear-gradient(145deg, #d4560e, #fb6711)",
+    borderRadius: "20px",
+    // zIndex: -1,
+    border: `2px solid ${theme.palette.primary.main}`,
     transition: theme.transitions.create(["box-shadow"], {
       duration: 250,
     }),
-    // boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
-    "&:hover": { borderBottom: "0px solid #fff" },
+    "&:hover": { border: `2px solid ${theme.palette.primary.light}` },
     "&:hover:not(.Mui-disabled):before": {
-      // Underline when hovered and focused
-      // borderBottom: `2px solid ${theme.palette.primary.light}`,
       borderBottom: "none",
     },
     "&::before": {
-      borderBottom: "0px solid #fff",
+      // borderBottom: "0px solid #fff",
+      borderBottom: "none",
       content: '""',
       position: "absolute",
-      height: "calc(100% + 10px)",
-      width: "calc(100% + 6px)",
-      marginTop: "-5px",
-      marginLeft: "-2px",
-      marginBottom: "-10px",
+      // height: "calc(100% + 10px)",
+      border: "4px solid transparent",
+      height: "calc(100% + 12px)",
+      width: "calc(100% + 8px)",
+      transform: "translate(-4px, 6px)",
       borderRadius: "4px",
-      // boxShadow: "inset 5px 5px 8px #cc540e, inset -5px -5px 8px #ff6c12",
-      // boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
-      boxShadow: "3px 3px 6px #cc540e, -3px -3px 6px #ff6c12",
-      transition: theme.transitions.create(
-        ["box-shadow", "transform", "background-color"],
-        {
-          duration: 500,
-        }
-      ),
+      background: theme.palette.secondary.main,
+      zIndex: -999,
+      // boxShadow: "3px 3px 6px #cc540e, -3px -3px 6px #ff6c12",
+      // transition: theme.transitions.create(
+      //   ["box-shadow", "transform", "border"],
+      //   {
+      //     duration: 250,
+      //   }
+      // ),
     },
     "&:after": {
-      boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
+      borderBottom: "none",
       width: "calc(100% - 12px)",
       marginLeft: "4px",
       // borderBottom: `2px solid ${theme.palette.primary.light}`,
     },
   },
-  inputLabelRoot: { color: "#e0e0e0" },
+  inputLabelRoot: { color: "#e0e0e0", zIndex: 999 },
   inputLabelWithValue: {
     color: "#fff",
     // transform: "translate(2px, 2px)"
-    transform: "translate(2px, 0px) !important",
+    transform: "translate(2px, -5px) !important",
     fontSize: "0.7rem",
     "&.Mui-focused": {
-      boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12",
-      padding: "0px 3px 3px 3px",
+      // boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12",
+      // padding: "0px 3px 3px 3px",
     },
   },
+  descriptionLabelRoot: {
+    transform: "translate(10px, 34px)",
+    color: "#e0e0e0",
+    transition: theme.transitions.create(["box-shadow", "transform"], {
+      duration: 250,
+    }),
+  },
   descriptionInputLabelFocused: {
-    transform: "translate(2px, 0px)",
+    transform: "translate(2px, -5px)",
     fontSize: "0.7rem",
     color: "#fff !important",
+    zIndex: 100,
     // "&.Mui-focused": {
-    boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12",
-    padding: "0px 3px 3px 3px",
+    // boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12",
+    // padding: "0px 3px 3px 3px",
     // },
   },
   inputLabelRequired: {},
   inputLabelFocused: {
     color: "#fff !important",
-    transform: "translate(8px, 24px)",
+    transform: "translate(10px, 27px)",
   },
-  descriptionInputInput: { color: "#fff", paddingLeft: "5px" },
+  descriptionInputInput: { color: "#fff", padding: "5px 8px 8px" },
   gridRoot: {
     // padding: "12px 0px 12px 12px",
     "& > .MuiGrid-item": {
@@ -127,64 +145,6 @@ const useStyles = makeStyles((theme) => ({
   },
   gridItemRoot: {},
 }));
-
-// const useStyles = makeStyles((theme) => ({
-//   textFieldRoot: {
-//     minWidth: "100%",
-//     alignSelf: "stretch",
-//     // color: "#fff",
-//     "& > div": {
-//       minWidth: "100%",
-//       width: "100%",
-//     },
-//   },
-//   inputRoot: {
-//     color: "#fff",
-//     "&:before": {
-//       borderBottom: "1px solid #fff",
-//     },
-//   },
-//   inputroot: {
-//     "&:before": {
-//       borderBottom: "1px solid #fff",
-//     },
-//     "&:hover:not(.Mui-disabled):before": {
-//       borderBottom: "2px solid #fff",
-//     },
-//     "&:after": {
-//       borderBottom: `1px solid ${theme.palette.secondary.light}`,
-//     },
-//   },
-//   descriptionInputRoot: {
-//     "&:before": { borderBottom: "1px solid #fff" },
-//     "&:after": {},
-//     "&:hover:not(.Mui-disabled):before": { borderBottom: "2px solid #fff" },
-//   },
-//   inputFocused: {
-//     color: "#fff",
-//     boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
-//     padding: "6px 8px",
-//     "&:after": {
-//       // borderBottom: "2px solid #fff",
-//       borderBottom: `2px solid ${theme.palette.primary.light}`,
-//     },
-//   },
-//   inputLabelRoot: { color: "#e0e0e0" },
-//   inputLabelWithValue: { color: "#fff" },
-//   inputLabelRequired: {},
-//   inputLabelFocused: {
-//     color: "#fff !important",
-//     transform: "translate(8px, 24px)",
-//   },
-//   descriptionInputInput: { color: "#fff" },
-//   gridRoot: {
-//     // padding: "12px 0px 12px 12px",
-//     "& > .MuiGrid-item": {
-//       // padding: "12px 0px 12px 12px",
-//     },
-//   },
-//   gridItemRoot: {},
-// }));
 
 const StepOneFormComponent = ({
   props: {
@@ -374,14 +334,15 @@ const StepOneFormComponent = ({
             onChange={handleFormChange}
             onFocus={() => {
               fauxListener("description", "focus");
-              setShouldShrinkDescription(true);
               setPlaceHolder(true);
+              setShouldShrinkDescription(true);
             }}
             onBlur={() => {
               if (formData.description === "") {
                 fauxListener("description", "blur");
                 setPlaceHolder(true);
-                setTimeout(() => setShouldShrinkDescription(false), 300);
+
+                setShouldShrinkDescription(false);
               }
             }}
             value={formData.description}
@@ -391,7 +352,7 @@ const StepOneFormComponent = ({
               shrink: shouldShrinkDescription,
               classes: {
                 root: clsx(
-                  classes.inputLabelRoot,
+                  classes.descriptionLabelRoot,
                   focusState.description.focus &&
                     classes.descriptionInputLabelFocused
                 ),
@@ -402,7 +363,10 @@ const StepOneFormComponent = ({
               classes: {
                 root: clsx("inputListener", classes.descriptionInputRoot),
                 input: classes.descriptionInputInput,
-                focused: classes.inputFocused,
+                focused: clsx(
+                  classes.inputFocused,
+                  classes.descriptionInputFocused
+                ),
               },
             }}
             inputProps={{ className: "inputListener" }}

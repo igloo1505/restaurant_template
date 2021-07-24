@@ -15,6 +15,7 @@ import {
 import FormBanner from "../components/FormBanner";
 import { StepOneForm } from "../components/addRecipeForms";
 import StepTwoForm from "../components/stepTwoAddRecipeForm";
+import StepThreeForm from "../components/StepThreeForm";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -179,9 +180,8 @@ const AddRecipeFormContainer = (
 
   const handleNext = () => {
     // TODO authenticate before transition
-    console.log(formData);
-    if (activeStep === 1) {
-      return console.log(formData);
+    if (activeStep === 2) {
+      return console.log("formData", formData);
     }
     setActiveStep(activeStep + 1);
   };
@@ -294,8 +294,14 @@ const getStepContent = (
           setFormData={setFormData}
         />
       );
-    // case 2:
-    //   return <Review />;
+    case 2:
+      return (
+        <StepThreeForm
+          formData={formData}
+          handleFormChange={handleFormChange}
+          setFormData={setFormData}
+        />
+      );
     default:
       throw new Error("Unknown step");
   }
