@@ -37,6 +37,7 @@
     "nextjs-cors": "^1.0.5",
     "prop-types": "^15.7.2",
     "react": "^17.0.0",
+    "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.0",
     "react-icons": "^4.2.0",
     "react-redux": "^7.2.4",

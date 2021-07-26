@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
     paddingLeft: "7px",
     paddingRight: "7px",
+    zIndex: 999,
     "&:before": {
       // border: "1px solid green",
       borderBottom: "1px solid #fff",
@@ -50,23 +51,22 @@ const useStyles = makeStyles((theme) => ({
     // padding: "8px 2px 9px 2px",
     // paddingBottom: "9px",
     border: `2px solid ${theme.palette.secondary.main}`,
+
     "&:before": { borderBottom: "1px solid #fff" },
     "&:after": {},
     "&:hover:not(.Mui-disabled):before": {
       borderBottom: "2px solid #fff",
     },
   },
-  descriptionInputFocused: {},
+  descriptionInputFocused: {
+    "&::before": {
+      background:
+        "linear-gradient(145deg, #d4560e 0%, #eb6010 7%, #eb6010 80%, #fb6711 100%) !important",
+    },
+  },
   inputFocused: {
     color: "#fff",
-    // boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
-    boxShadow:
-      "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12, -4px -4px 10px #ff6e12, 4px 4px 10px #c8520e",
-
-    // background: "linear-gradient(145deg, #fb6711, #d4560e)",
-    background: "linear-gradient(145deg, #d4560e, #fb6711)",
-    borderRadius: "20px",
-    // zIndex: -1,
+    boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
     border: `2px solid ${theme.palette.primary.main}`,
     transition: theme.transitions.create(["box-shadow"], {
       duration: 250,
@@ -76,18 +76,20 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: "none",
     },
     "&::before": {
-      // borderBottom: "0px solid #fff",
       borderBottom: "none",
       content: '""',
       position: "absolute",
-      // height: "calc(100% + 10px)",
-      border: "4px solid transparent",
-      height: "calc(100% + 12px)",
-      width: "calc(100% + 8px)",
-      transform: "translate(-4px, 6px)",
-      borderRadius: "4px",
-      background: theme.palette.secondary.main,
-      zIndex: -999,
+      // background: "linear-gradient(145deg, #d4560e, #fb6711)",
+      // background:
+      // "linear-gradient(145deg, rgba(212,86,14,1) 0%, rgba(251,103,17,1) 17%)",
+      background:
+        "linear-gradient(145deg, #d4560e 0%, #eb6010 5%, #eb6010 75%, #fb6711 100%)",
+      height: "calc(100% - 0px)",
+      width: "calc(100% - 0px)",
+      boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
+      // borderRadius: "4px",
+      // background: theme.palette.secondary.main,
+      // zIndex: -999,
       // boxShadow: "3px 3px 6px #cc540e, -3px -3px 6px #ff6c12",
       // transition: theme.transitions.create(
       //   ["box-shadow", "transform", "border"],
@@ -136,7 +138,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff !important",
     transform: "translate(10px, 27px)",
   },
-  descriptionInputInput: { color: "#fff", padding: "5px 8px 8px" },
+  descriptionInputInput: { color: "#fff", padding: "5px 8px 8px", zIndex: 999 },
   gridRoot: {
     // padding: "12px 0px 12px 12px",
     "& > .MuiGrid-item": {
