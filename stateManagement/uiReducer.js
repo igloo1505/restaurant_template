@@ -192,6 +192,7 @@ export default function UIReducer(state = initialState, action) {
     //     isEditing: !state.isEditing,
     //     accountMenu: { ...state.accountMenu },
     //   };
+    // !! DO NOT DELETE BELOW.
     case AUTHENTICATION_ERROR:
       return {
         ...state,
@@ -249,6 +250,7 @@ export default function UIReducer(state = initialState, action) {
         accountMenu: { ...state.accountMenu },
         isEditing: !state.isEditing,
       };
+    // !! DO NOT DELETE ABOVE.
 
     // case TOGGLE_MODAL:
     //   return {

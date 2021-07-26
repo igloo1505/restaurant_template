@@ -34,13 +34,7 @@ const Portal = ({
     modalHeader: "",
     modalText: "",
   });
-  const toggleModal = ({ modalHeader, modalText }) => {
-    setModalContent({
-      modalHeader: modalHeader || "",
-      modalText: modalText || "",
-    });
-    setShowModal(!showModal);
-  };
+
   if (isLoading) {
     return <Loader type="loginScreen" size={100} sizeInner={80} />;
   }
@@ -48,7 +42,7 @@ const Portal = ({
     return (
       <div className={styles.portalOuterWrapper} id="portalPageWrapper">
         {loggedIn && userID && !isLoading ? (
-          <PortalAuthenticated toggleModal={toggleModal} />
+          <PortalAuthenticated />
         ) : (
           <LoginSwitcher isSignUp={isSignUp} />
         )}

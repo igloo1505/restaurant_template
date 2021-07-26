@@ -1,16 +1,26 @@
 import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { useDispatch } from "react-redux";
+import * as Types from "../stateManagement/TYPES";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import AddIcon from "@material-ui/icons/AddBoxOutlined";
 import CheckedIcon from "@material-ui/icons/DoneOutlined";
-import Paper from "@material-ui/core/Paper";
-import Slide from "@material-ui/core/Slide";
-import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
+import ReturnIcon from "@material-ui/icons/KeyboardReturn";
+import Fade from "@material-ui/core/Fade";
+import AddAdornment from "./AddAdornment";
+// import Paper from "@material-ui/core/Paper";
+// import Slide from "@material-ui/core/Slide";
+// import Button from "@material-ui/core/Button";
+// import Typography from "@material-ui/core/Typography";
 
+const getHasSentAlert = () => {
+  let value = localStorage.getItem("hasSentAlert-ingredients");
+  return value ? value : false;
+};
+const shiftKeys = ["ShiftRight", "ShiftLeft"];
 const useStyles = makeStyles((theme) => ({
   container: {
     marginRight: "10px",
@@ -88,7 +98,6 @@ const useStyles = makeStyles((theme) => ({
     background: "#eb6010",
     boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
     borderRadius: "4px",
-
     transition: theme.transitions.create(["box-shadow"], {
       duration: 300,
     }),
@@ -98,24 +107,52 @@ const useStyles = makeStyles((theme) => ({
   checkBoxContainer: { paddingTop: "10px", float: "right" },
 }));
 
-// Props
-// formData={formData}
-//   handleFormChange={handleFormChange}
-//   setFormData={setFormData}
-
 const StepTwoFormComponent = ({
   formData,
   handleFormChange,
   setFormData,
   isShifted,
 }) => {
+  const name = "ingredient";
+  const [hasSentAlert, setHasSentAlert] = useState(getHasSentAlert());
+  const [shiftPressed, setShiftPressed] = useState(false);
+  // useEffect(() => {
+  //   let x = getHasSentAlert();
+  //   if (x !== hasSentAlert) {
+  //     setHasSentAlert(x);
+  //   }
+  // }, []);
+  const dispatch = useDispatch();
   const [focusState, setFocusState] = useState({
     ingredient: {
       shrink: Boolean(formData?.ingredient?.text?.length !== 0),
       focus: false,
     },
   });
+  const sendAddIngredientNotification = () => {
+    console.log("sending", hasSentAlert);
+    if (!hasSentAlert) {
+      if (localStorage) {
+        localStorage.setItem("hasSentAlert-ingredients", true);
+        setHasSentAlert(true);
+      }
+      dispatch({
+        type: Types.SHOW_SNACKBAR,
+        payload: {
+          message: "To add an ingredient, click the + icon or press ENTER.",
+          variant: "info",
+          vertical: "bottom",
+          horizontal: "left",
+          hideIn: 10000,
+        },
+      });
+    }
+  };
+
   const handleChange = (e) => {
+    if (e.target.value.length === 3) {
+      sendAddIngredientNotification();
+    }
     setFormData({
       ...formData,
       [e.target.name]: { ...formData[e.target.name], text: e.target.value },
@@ -156,20 +193,13 @@ const StepTwoFormComponent = ({
   const keyObserver = (e) => {
     if (!e.shiftKey && e.key === "Enter") {
       e.preventDefault();
-      // if (e.shiftKey && formData?.ingredient.text?.length !== 0) {
-      //   e.preventDefault();
-      //   let string = (e.target.value += "\n");
-      //   setFormData({
-      //     ...formData,
-      //     [e.target.name]: {
-      //       ...formData?.[e.target.name],
-      //       text: string,
-      //     },
-      //   });
-      // }
+
       if (!e.shiftKey && formData?.ingredient.text?.length !== 0) {
         addIngredient();
       }
+    }
+    if (shiftKeys.indexOf(e.code) !== -1) {
+      setShiftPressed(true);
     }
   };
   const handleChangeBoolean = (e) => {
@@ -191,7 +221,7 @@ const StepTwoFormComponent = ({
     >
       <TextField
         id="recipeIngredientInput"
-        name="ingredient"
+        name={name}
         onFocus={() => fauxListener("ingredient", "focus")}
         onBlur={() => fauxListener("ingredient", "blur")}
         fullWidth
@@ -200,6 +230,11 @@ const StepTwoFormComponent = ({
         label="Ingredient"
         onChange={handleChange}
         onKeyDown={keyObserver}
+        onKeyUp={(e) => {
+          if (shiftKeys.indexOf(e.code) !== -1) {
+            setShiftPressed(false);
+          }
+        }}
         value={formData.ingredient.text}
         focused={focusState.ingredient.focus}
         InputLabelProps={{
@@ -217,10 +252,14 @@ const StepTwoFormComponent = ({
         }}
         //   inputProps={{ className: "inputListener" }}
         InputProps={{
-          endAdornment: AddIngredientAdornment(
+          endAdornment: AddAdornment(
             formData,
             focusState,
-            addIngredient
+            addIngredient,
+            shiftPressed,
+            name,
+            focusState.ingredient.focus,
+            formData?.ingredient?.text
           ),
           classes: {
             root: clsx("inputListener", classes.inputroot),
@@ -228,7 +267,7 @@ const StepTwoFormComponent = ({
             focused: classes.inputFocused,
           },
         }}
-        //   classes={{ root: classes.textFieldRoot }}
+        // classes={{ root: classes.textFieldRoot }}
       />
       <FormControlLabel
         style={{ backgroundColor: "transparent" }}
@@ -259,33 +298,3 @@ const StepTwoFormComponent = ({
 };
 
 export default StepTwoFormComponent;
-
-const useAdornmentClasses = makeStyles((theme) => ({
-  iconRoot: {
-    opacity: 0,
-    color: "#fff",
-    "&:hover": {
-      cursor: "pointer",
-    },
-  },
-  iconFocused: { color: "#fff" },
-  iconEnabled: { opacity: 1 },
-}));
-
-const AddIngredientAdornment = (formData, focusState, addIngredient) => {
-  const classes = useAdornmentClasses();
-  return (
-    <Fragment>
-      <AddIcon
-        classes={{
-          root: clsx(
-            classes.iconRoot,
-            focusState.ingredient.focus && classes.iconFocused,
-            formData?.ingredient?.text?.length !== 0 && classes.iconEnabled
-          ),
-        }}
-        onClick={addIngredient}
-      />
-    </Fragment>
-  );
-};

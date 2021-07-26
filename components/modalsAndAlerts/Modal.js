@@ -41,23 +41,23 @@ const ModalComponent = ({
   const [backDropStyles, setBackDropStyles] = useState({ width: 0, height: 0 });
 
   // DELETE AFTER CONFIRMATION MODAL AND FORM MODAL WORKING
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      document.addEventListener("keydown", (e) => {
-        if (e.code === "Space") {
-          // dispatch({ type: Types.SHOW_ALERT });
-          dispatch({
-            type: Types.SHOW_SNACKBAR,
-            payload: {
-              message: "Getting rid of frustrated curse words before I commit.",
-              variant: "success",
-            },
-          });
-          // showModal();
-        }
-      });
-    }
-  }, [isClient]);
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     document.addEventListener("keydown", (e) => {
+  //       if (e.code === "Space") {
+  //         // dispatch({ type: Types.SHOW_ALERT });
+  //         dispatch({
+  //           type: Types.SHOW_SNACKBAR,
+  //           payload: {
+  //             message: "Getting rid of frustrated curse words before I commit.",
+  //             variant: "success",
+  //           },
+  //         });
+  //         // showModal();
+  //       }
+  //     });
+  //   }
+  // }, [isClient]);
 
   useEffect(() => {
     if (isOpen) {

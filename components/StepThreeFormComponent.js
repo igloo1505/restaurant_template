@@ -1,17 +1,20 @@
 import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { useDispatch } from "react-redux";
+import * as Types from "../stateManagement/TYPES";
 import TextField from "@material-ui/core/TextField";
+import Fade from "@material-ui/core/Fade";
 import AddIcon from "@material-ui/icons/AddBoxOutlined";
-// import FormControlLabel from "@material-ui/core/FormControlLabel";
-// import Checkbox from "@material-ui/core/Checkbox";
-// import AddIcon from "@material-ui/icons/AddBoxOutlined";
-// import CheckedIcon from "@material-ui/icons/DoneOutlined";
-// import Paper from "@material-ui/core/Paper";
-// import Slide from "@material-ui/core/Slide";
-// import Button from "@material-ui/core/Button";
-// import Typography from "@material-ui/core/Typography";
+import ReturnIcon from "@material-ui/icons/KeyboardReturn";
+import AddAdornment from "./AddAdornment";
 
+const getHasSentAlert = () => {
+  let value = localStorage.getItem("hasSentAlert-directions");
+  return value ? value : false;
+};
+
+const shiftKeys = ["ShiftRight", "ShiftLeft"];
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
     gridArea: "form",
@@ -82,10 +85,14 @@ const StepThreeFormComponent = ({
   formData,
   setFormData,
 }) => {
+  const dispatch = useDispatch();
+  const name = "direction";
   const classes = useStyles();
+  const [hasSentAlert, setHasSentAlert] = useState(getHasSentAlert());
+  const [shiftPressed, setShiftPressed] = useState(false);
   const [focusState, setFocusState] = useState({
     direction: {
-      shrink: Boolean(formData?.direction?.text?.length !== 0),
+      shrink: Boolean(formData?.direction?.length !== 0),
       focus: false,
     },
   });
@@ -103,6 +110,23 @@ const StepThreeFormComponent = ({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    if (!hasSentAlert && e.target.value.length >= 3) {
+      if (localStorage) {
+        localStorage.setItem("hasSentAlert-directions", true);
+        setHasSentAlert(true);
+      }
+      dispatch({
+        type: Types.SHOW_SNACKBAR,
+        payload: {
+          message:
+            "To add a direction with multiple lines, hold SHIFT while pressing ENTER.",
+          variant: "info",
+          vertical: "bottom",
+          horizontal: "left",
+          hideIn: 6000,
+        },
+      });
+    }
   };
   const fauxListener = (title, type) => {
     if (type === "blur") {
@@ -127,9 +151,12 @@ const StepThreeFormComponent = ({
   const keyObserver = (e) => {
     if (!e.shiftKey && e.key === "Enter") {
       e.preventDefault();
-      if (!e.shiftKey && formData?.direction.text?.length !== 0) {
+      if (!e.shiftKey && formData?.direction?.length !== 0) {
         addDirection();
       }
+    }
+    if (shiftKeys.indexOf(e.code) !== -1) {
+      setShiftPressed(true);
     }
   };
   return (
@@ -140,7 +167,7 @@ const StepThreeFormComponent = ({
       )}
     >
       <TextField
-        name="direction"
+        name={name}
         id="recipeDirectionInput"
         label="Direction"
         fullWidth
@@ -150,6 +177,12 @@ const StepThreeFormComponent = ({
         onBlur={() => fauxListener("direction", "blur")}
         onChange={handleChange}
         onKeyDown={keyObserver}
+        onKeyUp={(e) => {
+          console.log("e", e);
+          if (shiftKeys.indexOf(e.code) !== -1) {
+            setShiftPressed(false);
+          }
+        }}
         value={formData.direction}
         focused={focusState.direction.focus}
         InputLabelProps={{
@@ -165,7 +198,15 @@ const StepThreeFormComponent = ({
           },
         }}
         InputProps={{
-          endAdornment: AddAdornment(formData, focusState, addDirection),
+          endAdornment: AddAdornment(
+            formData,
+            focusState,
+            addDirection,
+            shiftPressed,
+            name,
+            focusState.direction.focus,
+            formData?.direction
+          ),
           classes: {
             root: clsx("inputListener", classes.inputroot),
             input: classes.inputRoot,
@@ -191,20 +232,44 @@ const useAdornmentClasses = makeStyles((theme) => ({
   iconEnabled: { opacity: 1 },
 }));
 
-const AddAdornment = (formData, focusState, addDirection) => {
-  const classes = useAdornmentClasses();
-  return (
-    <Fragment>
-      <AddIcon
-        classes={{
-          root: clsx(
-            classes.iconRoot,
-            focusState.direction.focus && classes.iconFocused,
-            formData?.direction?.length !== 0 && classes.iconEnabled
-          ),
-        }}
-        onClick={addDirection}
-      />
-    </Fragment>
-  );
-};
+// const AddAdornment = (formData, focusState, addDirection, shiftPressed) => {
+//   const classes = useAdornmentClasses();
+
+//   console.log("formData.direction: ", formData.direction.length);
+//   if (shiftPressed) {
+//     return (
+//       <Fragment>
+//         <Fade in={shiftPressed && formData?.direction?.length >= 3}>
+//           <ReturnIcon
+//             classes={{
+//               root: clsx(
+//                 classes.iconRoot,
+//                 focusState.direction.focus && classes.iconFocused,
+//                 formData?.direction?.length >= 3 && classes.iconEnabled
+//               ),
+//             }}
+//             onClick={addDirection}
+//           />
+//         </Fade>
+//       </Fragment>
+//     );
+//   }
+//   if (!shiftPressed) {
+//     return (
+//       <Fragment>
+//         <Fade in={!shiftPressed && formData?.direction?.length >= 3}>
+//           <AddIcon
+//             classes={{
+//               root: clsx(
+//                 classes.iconRoot,
+//                 focusState.direction.focus && classes.iconFocused,
+//                 formData?.direction?.length >= 3 && classes.iconEnabled
+//               ),
+//             }}
+//             onClick={addDirection}
+//           />
+//         </Fade>
+//       </Fragment>
+//     );
+//   }
+// };

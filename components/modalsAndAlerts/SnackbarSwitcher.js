@@ -25,7 +25,7 @@ const SlideTransition = (props) => {
 };
 
 const SnackbarSwitcher = ({
-  snackbar: { isOpen, variant, message, hideIn },
+  snackbar: { isOpen, variant, message, hideIn, vertical, horizontal },
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -47,6 +47,7 @@ const SnackbarSwitcher = ({
       autoHideDuration={hideIn}
       onClose={handleClose}
       TransitionComponent={SlideTransition}
+      anchorOrigin={{ vertical, horizontal }}
       classes={{ root: classes.snackbarRoot }}
     >
       <Alert

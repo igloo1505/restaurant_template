@@ -2,24 +2,15 @@ import * as Types from "./TYPES";
 import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
-  dialog: {
-    isOpen: false,
-    contentText:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero ea optio ipsa facilis. Repellendus praesentium ullam delectus expedita, explicabo corrupti consequatur? Facilis ex praesentium harum at eum delectus porro obcaecati perferendis quod. Eos impedit fugiat alias ducimus incidunt rerum modi magni iusto dolore ipsa, excepturi eligendi pariatur, beatae quas aliquam!",
-    title: "Let me do rad stuff",
-    confirmation: null,
-  },
-  snackbar: {
-    isOpen: false,
-    variant: "success",
-    hideIn: 5000,
-    message: "",
-    vertical: "bottom",
-    horizontal: "center",
+  myRecipes: [],
+  myFavorites: [],
+  byCategory: {
+    category: null,
+    results: [],
   },
 };
 
-const modalReducer = createReducer(initialState, (builder) => {
+const recipeReducer = createReducer(initialState, (builder) => {
   builder.addCase(Types.SHOW_ALERT, (state, action) => {
     return {
       ...state,
@@ -62,4 +53,4 @@ const modalReducer = createReducer(initialState, (builder) => {
   });
 });
 
-export default modalReducer;
+export default recipeReducer;

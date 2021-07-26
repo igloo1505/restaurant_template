@@ -17,7 +17,9 @@ const useStyles = makeStyles((theme) => ({
       width: "100%",
     },
   },
-  textFieldWrapper: { padding: "0px 5px 5px 5px" },
+  textFieldWrapper: {
+    padding: "0px 5px 5px 5px",
+  },
   textFieldWrapperFocused: {},
   textFieldWrapperShrunk: {},
   inputRoot: {
@@ -48,11 +50,12 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   descriptionInputRoot: {
-    // padding: "8px 2px 9px 2px",
-    // paddingBottom: "9px",
+    // padding: "8px 2px 9px 2px", paddingBottom: "9px",
     border: `2px solid ${theme.palette.secondary.main}`,
 
-    "&:before": { borderBottom: "1px solid #fff" },
+    "&:before": {
+      borderBottom: "1px solid #fff",
+    },
     "&:after": {},
     "&:hover:not(.Mui-disabled):before": {
       borderBottom: "2px solid #fff",
@@ -61,17 +64,18 @@ const useStyles = makeStyles((theme) => ({
   descriptionInputFocused: {
     "&::before": {
       background:
-        "linear-gradient(145deg, #d4560e 0%, #eb6010 7%, #eb6010 80%, #fb6711 100%) !important",
+        "linear-gradient(145deg, #d4560e 0%, #eb6010 7%, #eb6010 80%, #fb6711 100%) !impo" +
+        "rtant",
     },
   },
   inputFocused: {
     color: "#fff",
     boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
     border: `2px solid ${theme.palette.primary.main}`,
-    transition: theme.transitions.create(["box-shadow"], {
-      duration: 250,
-    }),
-    "&:hover": { border: `2px solid ${theme.palette.primary.light}` },
+    transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
+    "&:hover": {
+      border: `2px solid ${theme.palette.primary.light}`,
+    },
     "&:hover:not(.Mui-disabled):before": {
       borderBottom: "none",
     },
@@ -79,24 +83,17 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: "none",
       content: '""',
       position: "absolute",
-      // background: "linear-gradient(145deg, #d4560e, #fb6711)",
-      // background:
+      // background: "linear-gradient(145deg, #d4560e, #fb6711)", background:
       // "linear-gradient(145deg, rgba(212,86,14,1) 0%, rgba(251,103,17,1) 17%)",
       background:
         "linear-gradient(145deg, #d4560e 0%, #eb6010 5%, #eb6010 75%, #fb6711 100%)",
       height: "calc(100% - 0px)",
       width: "calc(100% - 0px)",
       boxShadow: "inset 3px 3px 6px #cc540e, inset -3px -3px 6px #ff6c12",
-      // borderRadius: "4px",
-      // background: theme.palette.secondary.main,
-      // zIndex: -999,
-      // boxShadow: "3px 3px 6px #cc540e, -3px -3px 6px #ff6c12",
-      // transition: theme.transitions.create(
-      //   ["box-shadow", "transform", "border"],
-      //   {
-      //     duration: 250,
-      //   }
-      // ),
+      // borderRadius: "4px", background: theme.palette.secondary.main, zIndex: -999,
+      // boxShadow: "3px 3px 6px #cc540e, -3px -3px 6px #ff6c12", transition:
+      // theme.transitions.create(   ["box-shadow", "transform", "border"],   {
+      // duration: 250,   } ),
     },
     "&:after": {
       borderBottom: "none",
@@ -105,15 +102,18 @@ const useStyles = makeStyles((theme) => ({
       // borderBottom: `2px solid ${theme.palette.primary.light}`,
     },
   },
-  inputLabelRoot: { color: "#e0e0e0", zIndex: 999 },
+  inputLabelRoot: {
+    color: "#e0e0e0",
+    zIndex: 999,
+  },
   inputLabelWithValue: {
     color: "#fff",
     // transform: "translate(2px, 2px)"
-    transform: "translate(2px, -5px) !important",
+    transform: "translate(2px, 0px) !important",
     fontSize: "0.7rem",
     "&.Mui-focused": {
-      // boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12",
-      // padding: "0px 3px 3px 3px",
+      // boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12", padding: "0px 3px
+      // 3px 3px",
     },
   },
   descriptionLabelRoot: {
@@ -128,17 +128,19 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "0.7rem",
     color: "#fff !important",
     zIndex: 100,
-    // "&.Mui-focused": {
-    // boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12",
-    // padding: "0px 3px 3px 3px",
-    // },
+    // "&.Mui-focused": { boxShadow: "2px 0px 2px #cf540e, -2px -2px 2px #ff6c12",
+    // padding: "0px 3px 3px 3px", },
   },
   inputLabelRequired: {},
   inputLabelFocused: {
     color: "#fff !important",
     transform: "translate(10px, 27px)",
   },
-  descriptionInputInput: { color: "#fff", padding: "5px 8px 8px", zIndex: 999 },
+  descriptionInputInput: {
+    color: "#fff",
+    padding: "5px 8px 8px",
+    zIndex: 999,
+  },
   gridRoot: {
     // padding: "12px 0px 12px 12px",
     "& > .MuiGrid-item": {
@@ -199,20 +201,31 @@ const StepOneFormComponent = ({
   useEffect(() => {
     setFocusState({
       ...focusState,
-      title: { ...focusState.title, focus: true },
+      title: {
+        ...focusState.title,
+        focus: true,
+      },
     });
   }, []);
 
   return (
     <Fragment>
-      <Typography variant="h6" gutterBottom style={{ color: "#fff" }}>
+      <Typography
+        variant="h6"
+        gutterBottom
+        style={{
+          color: "#fff",
+        }}
+      >
         Let's get some information about your recipe!
       </Typography>
       <Grid
         container
         spacing={3}
         className="addRecipeFormContainer"
-        classes={{ root: classes.gridRoot }}
+        classes={{
+          root: classes.gridRoot,
+        }}
       >
         <Grid item xs={12} sm={4}>
           <div
@@ -223,8 +236,7 @@ const StepOneFormComponent = ({
                 classes.textFieldWrapperShrunk
             )}
           >
-            <TextField
-              // required
+            <TextField // required
               id="recipeTitleInput"
               name="title"
               onFocus={() => fauxListener("title", "focus")}
@@ -250,7 +262,9 @@ const StepOneFormComponent = ({
                   required: classes.inputLabelRequired,
                 },
               }}
-              inputProps={{ className: "inputListener" }}
+              inputProps={{
+                className: "inputListener",
+              }}
               InputProps={{
                 classes: {
                   root: clsx("inputListener", classes.inputroot),
@@ -258,7 +272,9 @@ const StepOneFormComponent = ({
                   focused: classes.inputFocused,
                 },
               }}
-              classes={{ root: classes.textFieldRoot }}
+              classes={{
+                root: classes.textFieldRoot,
+              }}
             />
           </div>
         </Grid>
@@ -272,7 +288,10 @@ const StepOneFormComponent = ({
             fullWidth
             label="Servings"
             onChange={handleFormChange}
-            inputProps={{ className: "inputListener", pattern: "\\d*" }}
+            inputProps={{
+              className: "inputListener",
+              pattern: "\\d*",
+            }}
             onKeyDown={(e) => {
               // All of this to avoid Safari's shadow user agent
               let allowed = false;
@@ -285,7 +304,9 @@ const StepOneFormComponent = ({
               }
             }}
             value={formData.servings}
-            classes={{ root: classes.textFieldRoot }}
+            classes={{
+              root: classes.textFieldRoot,
+            }}
             InputLabelProps={{
               focused: focusState.servings.focus,
               shrink: Boolean(formData?.servings?.length !== 0),
@@ -320,8 +341,7 @@ const StepOneFormComponent = ({
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            // required
+          <TextField // required
             id="recipeDescriptionInput"
             name="description"
             onFocus={() => fauxListener("description", "focus")}
@@ -343,12 +363,13 @@ const StepOneFormComponent = ({
               if (formData.description === "") {
                 fauxListener("description", "blur");
                 setPlaceHolder(true);
-
                 setShouldShrinkDescription(false);
               }
             }}
             value={formData.description}
-            classes={{ root: classes.textFieldRoot }}
+            classes={{
+              root: classes.textFieldRoot,
+            }}
             InputLabelProps={{
               focused: focusState.description.focus,
               shrink: shouldShrinkDescription,
@@ -371,17 +392,21 @@ const StepOneFormComponent = ({
                 ),
               },
             }}
-            inputProps={{ className: "inputListener" }}
+            inputProps={{
+              className: "inputListener",
+            }}
           />
-          <style jsx>{`
-            input[type=number]: {
-              -webkit-appearance: none;
-              -moz-appearance: none;
-            }
-            ::-webkit-textfield-decoration-container: {
-              content: none;
-            }
-          `}</style>
+          <style jsx>
+            {`
+              input[type=number]: {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+              }
+              ::-webkit-textfield-decoration-container: {
+                content: none;
+              }
+            `}
+          </style>
         </Grid>
       </Grid>
     </Fragment>

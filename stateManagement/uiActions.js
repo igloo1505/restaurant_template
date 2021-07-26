@@ -7,14 +7,6 @@ import {
   HIDE_MODAL,
 } from "./TYPES";
 
-export const toggleModal = () => (dispatch) => {
-  if (typeof window !== "undefined") {
-    dispatch({
-      type: TOGGLE_MODAL,
-    });
-  }
-};
-
 export const setNavbarHeight = () => async (dispatch) => {
   if (typeof window !== "undefined") {
     const em = document.getElementById("navbarOuterWrapper");
