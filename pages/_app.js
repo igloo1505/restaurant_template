@@ -42,7 +42,6 @@ function MyApp({ Component, pageProps, ...rest }) {
   const state = store.getState();
 
   useEffect(() => {
-    console.log("rest", rest);
     const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles);

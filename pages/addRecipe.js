@@ -1,4 +1,10 @@
-import React, { Fragment, useState, useEffect, createRef } from "react";
+import React, {
+  Fragment,
+  useState,
+  useEffect,
+  createRef,
+  forwardRef,
+} from "react";
 import clsx from "clsx";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -93,7 +99,7 @@ const AddRecipe = ({
   network: { loading: isLoading },
   // tryAutoLogin,
 }) => {
-  const ref = createRef();
+  // const ref = createRef();
   // const [slideIn, setSlideIn] = useState(false);
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -146,15 +152,8 @@ const AddRecipe = ({
               drawerIsOpen && classes.layoutShifted
             )}
           >
-            <Slide
-              direction="right"
-              in={true}
-              timeout={{ appear: 300, enter: 500, exit: 500 }}
-              mountOnEnter
-              unmountOnExit
-            >
+            <SlideComponent>
               <AddRecipeFormContainer
-                ref={ref}
                 activeStep={activeStep}
                 steps={steps}
                 activeStep={activeStep}
@@ -165,7 +164,7 @@ const AddRecipe = ({
                 placeHolder={placeHolder}
                 setPlaceHolder={setPlaceHolder}
               />
-            </Slide>
+            </SlideComponent>
             <Copyright />
           </main>
         </AdjustForDrawerContainer>
@@ -184,3 +183,40 @@ const mapStateToProps = (state, props) => ({
 });
 
 export default connect(mapStateToProps)(AddRecipe);
+
+// const SlideComponent = forwardRef(_SlideComponent);
+const SlideComponent = forwardRef(
+  (props, ref) => {
+    console.log("ref", ref);
+    return (
+      <Slide
+        direction="right"
+        in={true}
+        ref={ref}
+        timeout={{ appear: 300, enter: 500, exit: 500 }}
+        mountOnEnter
+        unmountOnExit
+      >
+        {props.children}
+      </Slide>
+    );
+  }
+  // )
+);
+
+// const _SlideComponent = ({ ...props }) => {
+//   // console.log("ref", props, ref);
+//   console.log("...props", props);
+//   return (
+//     <Slide
+//       direction="right"
+//       in={true}
+//       ref={props.ref}
+//       timeout={{ appear: 300, enter: 500, exit: 500 }}
+//       mountOnEnter
+//       unmountOnExit
+//     >
+//       {props.children}
+//     </Slide>
+//   );
+// }

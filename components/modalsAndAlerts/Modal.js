@@ -6,6 +6,8 @@ import * as Types from "../../stateManagement/TYPES";
 import { showModal, hideModal } from "../../stateManagement/uiActions";
 import ClientSidePortal from "../portalAuthenticated/ClientSidePortal";
 
+const modalId = "modal_ref_id";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
@@ -78,14 +80,15 @@ const ModalComponent = ({
     setBackDropStyles({ width: "100vw", height: "100vh" });
   };
 
-  const rootRef = useRef(null);
+  // const rootRef = useRef(null);
 
   return (
     <Fragment>
       <ClientSidePortal selector="#topLevelPortalContainer">
         <div
           className={classes.root}
-          ref={rootRef}
+          id={modalId}
+          // ref={rootRef}
           style={backDropStyles}
           onClick={handleBackdropClick}
         >
@@ -100,7 +103,12 @@ const ModalComponent = ({
             // aria-labelledby=""
             // aria-describedby=""
             className={classes.modal}
-            container={() => rootRef.current}
+            // container={() => rootRef.current}
+            container={() => {
+              if (typeof window !== "undefined") {
+                document.getElementById(modalId);
+              }
+            }}
           >
             <ModalChildren variant={variant} />
           </Modal>

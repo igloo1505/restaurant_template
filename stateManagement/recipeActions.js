@@ -4,8 +4,7 @@ import store from "./store";
 import cookie from "json-cookie";
 
 export const addNewRecipe = (recipe) => async (dispatch) => {
-  console.log("recipe: ", recipe);
-
+  console.log("!!! recipe !!!", recipe);
   let res = await useAxios({
     method: "post",
     url: "/api/portal/addRecipe",
@@ -24,11 +23,12 @@ export const addNewRecipe = (recipe) => async (dispatch) => {
   }
 };
 
-const authenticateAddRecipeForm = (formData) => {
+export const authenticateAddRecipeForm = (formData) => {
   //TODO Obviously change this
+  let data = { ...formData };
   let obj = {};
-  Object.keys(formData).forEach((key) => {
+  Object.keys(data).forEach((key) => {
     obj[key] = true;
   });
-  return obj;
+  return true;
 };
