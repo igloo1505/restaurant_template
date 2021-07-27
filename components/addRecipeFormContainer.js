@@ -1,4 +1,8 @@
 import React, { useState, useEffect, Fragment, forwardRef } from "react";
+import {
+  addNewRecipe,
+  authenticateAddRecipeForm,
+} from "../stateManagement/recipeActions";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
@@ -6,7 +10,6 @@ import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Paper from "@material-ui/core/Paper";
-import Slide from "@material-ui/core/Slide";
 import Button from "@material-ui/core/Button";
 import {
   ConnectorComponent,
@@ -193,127 +196,142 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddRecipeFormContainer = (
+const AddRecipeFormContainer = ({
+  // props: {
+  activeStep,
+  steps,
+  formData,
+  setFormData,
+  handleFormChange,
+  placeHolder,
+  setPlaceHolder,
+  setActiveStep,
+  // },
+  // addNewRecipe,
+}) =>
+  // ref
   {
-    activeStep,
-    steps,
-    formData,
-    setFormData,
-    handleFormChange,
-    placeHolder,
-    setPlaceHolder,
-    setActiveStep,
-  },
+    const [hasMenuOpen, setHasMenuOpen] = useState(false);
+    const [paperLifted, setPaperLifted] = useState(false);
+    const [formHeightLimit, setFormHeightLimit] = useState(400);
+    const classes = useStyles();
+    useEffect(() => {
+      // console.log("addNewRecipe: ", typeof addNewRecipe);
+      setTimeout(() => setPaperLifted(true), 300);
+    }, []);
 
-  ref
-) => {
-  const [hasMenuOpen, setHasMenuOpen] = useState(false);
-  const [paperLifted, setPaperLifted] = useState(false);
-  const [formHeightLimit, setFormHeightLimit] = useState(400);
-  const classes = useStyles();
-  useEffect(() => {
-    setTimeout(() => setPaperLifted(true), 300);
-  }, []);
+    // const handleSubmit = () => {
+    //   if (Object.keys(authenticateAddRecipeForm(formData)).every((f) => f)) {
+    //     addNewRecipe(formData);
+    //   }
+    // };
+    const handleNext = () => {
+      // TODO authenticate before transition
+      if (activeStep === 2) {
+        return console.log("formData", formData);
+      }
+      setActiveStep(activeStep + 1);
+    };
+    const handleBack = () => {
+      setActiveStep(activeStep - 1);
+    };
 
-  const handleNext = () => {
-    // TODO authenticate before transition
-    if (activeStep === 2) {
-      return console.log("formData", formData);
-    }
-    setActiveStep(activeStep + 1);
-  };
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
-  };
-
-  return (
-    <div ref={ref}>
-      <Paper
-        className={clsx(
-          classes.paper,
-          paperLifted && classes.addBoxShadow,
-          "addBoxShadow"
-        )}
-        style={{
-          gridTemplateRows: `auto auto fit-content(${formHeightLimit}px)`,
-        }}
-      >
-        <FormBanner>Add Recipe</FormBanner>
-        <Stepper
-          alternativeLabel
-          activeStep={activeStep}
-          connector={<ConnectorComponent activeStep={activeStep} />}
-          classes={{ root: classes.stepperRoot }}
+    return (
+      <div>
+        <Paper
+          className={clsx(
+            classes.paper,
+            paperLifted && classes.addBoxShadow,
+            "addBoxShadow"
+          )}
+          style={{
+            gridTemplateRows: `auto auto fit-content(${formHeightLimit}px)`,
+          }}
         >
-          {steps.map((label, index) => (
-            <Step key={label}>
-              <StepLabel
-                StepIconComponent={StepIconComponent}
-                StepIconProps={{ index, activeStep }}
-                classes={{
-                  label: classes.stepLabelRoot,
-                  completed: classes.stepLabelCompleted,
-                  active: classes.stepLabelActive,
-                }}
-              >
-                {label}
-              </StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <Fragment>
-          <Fragment>
-            <div className={classes.formWrapper}>
-              {getStepContent(
-                activeStep,
-                formData,
-                setFormData,
-                handleFormChange,
-                placeHolder,
-                setPlaceHolder,
-                hasMenuOpen,
-                setHasMenuOpen
-              )}
-            </div>
-            <div className={classes.buttons}>
-              {activeStep !== 0 && (
-                <Button
-                  onClick={handleBack}
-                  // className={(classes.button, classes.backButton)}
+          <FormBanner>Add Recipe</FormBanner>
+          <Stepper
+            alternativeLabel
+            activeStep={activeStep}
+            connector={<ConnectorComponent activeStep={activeStep} />}
+            classes={{ root: classes.stepperRoot }}
+          >
+            {steps.map((label, index) => (
+              <Step key={label}>
+                <StepLabel
+                  StepIconComponent={StepIconComponent}
+                  StepIconProps={{ index, activeStep }}
                   classes={{
-                    root: clsx(
-                      classes.backButton,
-                      hasMenuOpen && "hideButtons"
-                    ),
+                    label: classes.stepLabelRoot,
+                    completed: classes.stepLabelCompleted,
+                    active: classes.stepLabelActive,
+                  }}
+                >
+                  {label}
+                </StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <Fragment>
+            <Fragment>
+              <div className={classes.formWrapper}>
+                {getStepContent(
+                  activeStep,
+                  formData,
+                  setFormData,
+                  handleFormChange,
+                  placeHolder,
+                  setPlaceHolder,
+                  hasMenuOpen,
+                  setHasMenuOpen
+                )}
+              </div>
+              <div className={classes.buttons}>
+                {activeStep !== 0 && (
+                  <Button
+                    onClick={handleBack}
+                    // className={(classes.button, classes.backButton)}
+                    classes={{
+                      root: clsx(
+                        classes.backButton,
+                        hasMenuOpen && "hideButtons"
+                      ),
+                      label: clsx(
+                        classes.backButtonLabel,
+                        hasMenuOpen && "hideButtons"
+                      ),
+                    }}
+                  >
+                    Back
+                  </Button>
+                )}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
+                  classes={{
+                    root: clsx(classes.button, hasMenuOpen && "hideButtons"),
                     label: clsx(
-                      classes.backButtonLabel,
+                      classes.nextButton,
                       hasMenuOpen && "hideButtons"
                     ),
                   }}
                 >
-                  Back
+                  {activeStep === steps.length - 1 ? "Submit Recipe" : "Next"}
                 </Button>
-              )}
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleNext}
-                classes={{
-                  root: clsx(classes.button, hasMenuOpen && "hideButtons"),
-                  label: clsx(classes.nextButton, hasMenuOpen && "hideButtons"),
-                }}
-              >
-                {activeStep === steps.length - 1 ? "Submit Recipe" : "Next"}
-              </Button>
-            </div>
+              </div>
+            </Fragment>
           </Fragment>
-        </Fragment>
-      </Paper>
-    </div>
-  );
-};
+        </Paper>
+      </div>
+    );
+  };
+const mapStateToProps = (state, props) => ({
+  props: props,
+});
 
-export default forwardRef(AddRecipeFormContainer);
+export default connect(mapStateToProps, null, null, {
+  forwardRef: true,
+})(AddRecipeFormContainer);
 
 const getStepContent = (
   step,
