@@ -4,10 +4,14 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { useDispatch } from "react-redux";
 import * as Types from "../stateManagement/TYPES";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import Fade from "@material-ui/core/Fade";
 import AddIcon from "@material-ui/icons/AddBoxOutlined";
 import ReturnIcon from "@material-ui/icons/KeyboardReturn";
 import AddAdornment from "./AddAdornment";
+import TimeAdornment from "./timeUnitAdornment";
+
+const timeSectionBreakpoint = "xl";
 
 const getHasSentAlert = () => {
   let value = localStorage.getItem("hasSentAlert-directions");
@@ -77,6 +81,49 @@ const useStyles = makeStyles((theme) => ({
   inputLabelFocused: {
     color: "#fff !important",
   },
+  timeInputsContainer_outer: {
+    marginTop: "16px",
+    width: "100%",
+
+    // display: "flex",
+    // [theme.breakpoints.up(timeSectionBreakpoint)]: {
+    //   flexDirection: "row",
+    // },
+  },
+  timeInputsContainer_insideTypography: {
+    // marginTop: "16px",
+    width: "100%",
+    display: "flex",
+    [theme.breakpoints.up(timeSectionBreakpoint)]: {
+      flexDirection: "row",
+    },
+  },
+  // timeInputsContainer_inner: {
+  //   width: "100%",
+  //   [theme.breakpoints.up(timeSectionBreakpoint)]: {
+  //     width: "45%",
+  //   },
+  // },
+  timeInputsContainer_inner_left: {
+    width: "100%",
+    [theme.breakpoints.up(timeSectionBreakpoint)]: {
+      width: "45%",
+      marginRight: "5%",
+    },
+  },
+  timeInputsContainer_inner_right: {
+    width: "100%",
+    [theme.breakpoints.up(timeSectionBreakpoint)]: {
+      width: "45%",
+      marginLeft: "5%",
+    },
+  },
+  typographyRoot: {
+    color: "#e0e0e0",
+  },
+  typographyRootFocused: {
+    color: "#fff",
+  },
 }));
 const StepThreeFormComponent = ({
   isShifted,
@@ -93,6 +140,14 @@ const StepThreeFormComponent = ({
   const [focusState, setFocusState] = useState({
     direction: {
       shrink: Boolean(formData?.direction?.length !== 0),
+      focus: false,
+    },
+    prepTime: {
+      shrink: Boolean(formData?.prepTime?.length !== 0),
+      focus: false,
+    },
+    cookTime: {
+      shrink: Boolean(formData?.cookTime?.length !== 0),
       focus: false,
     },
   });
@@ -214,62 +269,162 @@ const StepThreeFormComponent = ({
           },
         }}
       />
+
+      <div className={clsx(classes.timeInputsContainer_outer)}>
+        <Typography
+          align="center"
+          classes={{
+            root: clsx(
+              classes.typographyRoot,
+              focusState.prepTime.focus && classes.typographyRootFocused,
+              focusState.cookTime.focus && classes.typographyRootFocused
+            ),
+          }}
+        >
+          Total Time
+        </Typography>
+        <div className={clsx(classes.timeInputsContainer_insideTypography)}>
+          <div
+            className={clsx(
+              classes.timeInputsContainer_inner,
+              classes.timeInputsContainer_inner_left
+            )}
+          >
+            <TextField
+              name="prepTime"
+              id="recipePrepTimeInput"
+              label="Prep Time"
+              fullWidth
+              onFocus={() => fauxListener("prepTime", "focus")}
+              onBlur={() => fauxListener("prepTime", "blur")}
+              onChange={handleChange}
+              onKeyDown={keyObserver}
+              onKeyUp={(e) => {
+                console.log("e", e);
+                if (shiftKeys.indexOf(e.code) !== -1 && shiftPressed) {
+                  setShiftPressed(false);
+                }
+              }}
+              value={formData.prepTime}
+              focused={focusState.prepTime.focus}
+              InputLabelProps={{
+                focused: focusState.prepTime.focus,
+                shrink: Boolean(formData?.prepTime?.length !== 0),
+                classes: {
+                  root: clsx(
+                    classes.inputLabelRoot,
+                    focusState.prepTime.focus && classes.inputLabelFocused,
+                    formData?.prepTime?.length !== 0 &&
+                      classes.inputLabelWithValue
+                  ),
+                  required: classes.inputLabelRequired,
+                },
+              }}
+              InputProps={{
+                endAdornment: TimeAdornment(
+                  formData,
+                  focusState,
+                  addDirection,
+                  shiftPressed,
+                  "prepTime",
+                  focusState.prepTime.focus,
+                  formData?.prepTime
+                ),
+                classes: {
+                  root: clsx("inputListener", classes.inputroot),
+                  input: classes.inputRoot,
+                  focused: classes.inputFocused,
+                },
+              }}
+              inputProps={{
+                className: "inputListener",
+                pattern: "\\d*",
+              }}
+              onKeyDown={(e) => {
+                // All of this to avoid Safari's shadow user agent
+                let allowed = false;
+                let regex = /^\d+$/;
+                if (regex.test(e.key) || e.code.slice(0, 3) !== "Key") {
+                  allowed = true;
+                }
+                if (!allowed) {
+                  e.preventDefault();
+                }
+              }}
+            />
+          </div>
+          <div
+            className={clsx(
+              classes.timeInputsContainer_inner,
+              classes.timeInputsContainer_inner_right
+            )}
+          >
+            <TextField
+              name="cookTime"
+              id="recipeCookTimeInput"
+              label="Cook Time"
+              fullWidth
+              onFocus={() => fauxListener("cookTime", "focus")}
+              onBlur={() => fauxListener("cookTime", "blur")}
+              onChange={handleChange}
+              onKeyDown={keyObserver}
+              onKeyUp={(e) => {
+                if (shiftKeys.indexOf(e.code) !== -1 && shiftPressed) {
+                  setShiftPressed(false);
+                }
+              }}
+              value={formData.cookTime}
+              focused={focusState.cookTime.focus}
+              InputLabelProps={{
+                focused: focusState.cookTime.focus,
+                shrink: Boolean(formData?.cookTime?.length !== 0),
+                classes: {
+                  root: clsx(
+                    classes.inputLabelRoot,
+                    focusState.cookTime.focus && classes.inputLabelFocused,
+                    formData?.cookTime?.length !== 0 &&
+                      classes.inputLabelWithValue
+                  ),
+                  required: classes.inputLabelRequired,
+                },
+              }}
+              InputProps={{
+                endAdornment: TimeAdornment(
+                  formData,
+                  focusState,
+                  addDirection,
+                  shiftPressed,
+                  "cookTime",
+                  focusState.cookTime.focus,
+                  formData?.cookTime
+                ),
+                classes: {
+                  root: clsx("inputListener", classes.inputroot),
+                  input: classes.inputRoot,
+                  focused: classes.inputFocused,
+                },
+              }}
+              inputProps={{
+                className: "inputListener",
+                pattern: "\\d*",
+              }}
+              onKeyDown={(e) => {
+                // All of this to avoid Safari's shadow user agent
+                let allowed = false;
+                let regex = /^\d+$/;
+                if (regex.test(e.key) || e.code.slice(0, 3) !== "Key") {
+                  allowed = true;
+                }
+                if (!allowed) {
+                  e.preventDefault();
+                }
+              }}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default StepThreeFormComponent;
-
-const useAdornmentClasses = makeStyles((theme) => ({
-  iconRoot: {
-    opacity: 0,
-    color: "#fff",
-    "&:hover": {
-      cursor: "pointer",
-    },
-  },
-  iconFocused: { color: "#fff" },
-  iconEnabled: { opacity: 1 },
-}));
-
-// const AddAdornment = (formData, focusState, addDirection, shiftPressed) => {
-//   const classes = useAdornmentClasses();
-
-//   console.log("formData.direction: ", formData.direction.length);
-//   if (shiftPressed) {
-//     return (
-//       <Fragment>
-//         <Fade in={shiftPressed && formData?.direction?.length >= 3}>
-//           <ReturnIcon
-//             classes={{
-//               root: clsx(
-//                 classes.iconRoot,
-//                 focusState.direction.focus && classes.iconFocused,
-//                 formData?.direction?.length >= 3 && classes.iconEnabled
-//               ),
-//             }}
-//             onClick={addDirection}
-//           />
-//         </Fade>
-//       </Fragment>
-//     );
-//   }
-//   if (!shiftPressed) {
-//     return (
-//       <Fragment>
-//         <Fade in={!shiftPressed && formData?.direction?.length >= 3}>
-//           <AddIcon
-//             classes={{
-//               root: clsx(
-//                 classes.iconRoot,
-//                 focusState.direction.focus && classes.iconFocused,
-//                 formData?.direction?.length >= 3 && classes.iconEnabled
-//               ),
-//             }}
-//             onClick={addDirection}
-//           />
-//         </Fade>
-//       </Fragment>
-//     );
-//   }
-// };

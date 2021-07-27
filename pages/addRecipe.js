@@ -108,11 +108,9 @@ const AddRecipe = ({
     },
     directions: [],
     direction: "",
+    prepTime: "",
+    cookTime: "",
   });
-  // useEffect(() => {
-  //   setTimeout(() => setSlideIn(true), 500);
-
-  // }, []);
 
   const [placeHolder, setPlaceHolder] = useState(false);
   const handleFormChange = (e) => {
