@@ -131,6 +131,8 @@ const StepThreeFormComponent = ({
   formHeightLimit,
   formData,
   setFormData,
+  hasMenuOpen,
+  setHasMenuOpen,
 }) => {
   const dispatch = useDispatch();
   const name = "direction";
@@ -322,13 +324,11 @@ const StepThreeFormComponent = ({
               }}
               InputProps={{
                 endAdornment: TimeAdornment(
-                  formData,
-                  focusState,
-                  addDirection,
+                  focusState.cookTime.focus,
                   shiftPressed,
                   "prepTime",
-                  focusState.prepTime.focus,
-                  formData?.prepTime
+                  hasMenuOpen,
+                  setHasMenuOpen
                 ),
                 classes: {
                   root: clsx("inputListener", classes.inputroot),
@@ -390,13 +390,11 @@ const StepThreeFormComponent = ({
               }}
               InputProps={{
                 endAdornment: TimeAdornment(
-                  formData,
-                  focusState,
-                  addDirection,
+                  focusState.cookTime.focus,
                   shiftPressed,
                   "cookTime",
-                  focusState.cookTime.focus,
-                  formData?.cookTime
+                  hasMenuOpen,
+                  setHasMenuOpen
                 ),
                 classes: {
                   root: clsx("inputListener", classes.inputroot),

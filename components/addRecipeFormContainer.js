@@ -32,11 +32,8 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(3),
     },
     [theme.breakpoints.up("lg")]: {
-      // maxHeight: "90vh",
       display: "grid",
-      // gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
-      // gridTemplateRows: "auto auto minmax(0px, 200px)",
-      // gridTemplateRows: "auto auto 1fr",
+
       gridTemplateAreas: '"banner" "stepper" "form"',
     },
     transition: theme.transitions.create(
@@ -84,6 +81,12 @@ const useStyles = makeStyles((theme) => ({
       transition: theme.transitions.create(["box-shadow"], {
         duration: 350,
       }),
+      "&.hideButtons": {
+        boxShadow: "none",
+        transition: theme.transitions.create(["box-shadow"], {
+          duration: 500,
+        }),
+      },
     },
     "& > .MuiButton-label": {
       padding: "6px 16px",
@@ -96,6 +99,20 @@ const useStyles = makeStyles((theme) => ({
       "&:hover": {
         // padding: "5px 15px",
         // margin: "1px 1px",
+      },
+    },
+    "&.hideButtons": {
+      // opacity: 0,
+      backgroundColor: theme.palette.primary.main,
+      boxShadow: "none",
+      transition: theme.transitions.create(["box-shadow"], {
+        duration: 500,
+      }),
+      "&::before": {
+        boxShadow: "none",
+        transition: theme.transitions.create(["box-shadow"], {
+          duration: 500,
+        }),
       },
     },
   },
@@ -126,7 +143,6 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: "4px 4px 6px #cc540e, -4px -4px 6px #ff6c12",
     "&:hover": {
       boxShadow: "2px 2px 6px #cc540e, -2px -2px 6px #ff6c12",
-      // boxShadow: "0px 0px 0px #cc540e, -0px -0px 0px #ff6c12",
       "&:before": {
         boxShadow: "2px 2px 6px #cc540e, -2px -2px 6px #ff6c12",
       },
@@ -137,9 +153,7 @@ const useStyles = makeStyles((theme) => ({
       height: "calc(100% - 10px)",
       width: "calc(100% - 10px)",
       borderRadius: "4px",
-      // boxShadow: "inset 5px 5px 8px #cc540e, inset -5px -5px 8px #ff6c12",
       boxShadow: "inset 2px 2px 6px #cc540e, inset -2px -2px 6px #ff6c12",
-      // boxShadow: "inset 2px 2px 5px #468cde, inset -2px -2px 5px #5cb6ff",
       transition: theme.transitions.create(
         ["box-shadow", "transform", "background-color"],
         {
@@ -150,11 +164,33 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: "2px 2px 6px #cc540e, -2px -2px 6px #ff6c12",
       },
     },
+    "&.hideButtons": {
+      boxShadow: "none",
+      transition: theme.transitions.create(["box-shadow"], {
+        duration: 500,
+      }),
+      "&::before": {
+        boxShadow: "none",
+        transition: theme.transitions.create(["box-shadow"], {
+          duration: 500,
+        }),
+      },
+    },
   },
-  backButtonLabel: {
-    // background: `${theme.palette.secondary.main} !important`
+  nextButton: {
+    boxShadow: "4px 4px 6px #cc540e, -4px -4px 6px #ff6c12",
+    transition: theme.transitions.create(["box-shadow", "background-color"], {
+      duration: 500,
+    }),
+    "&.hideButtons": {
+      boxShadow: "none",
+      borderRadius: 0,
+      backgroundColor: theme.palette.secondary.main,
+      transition: theme.transitions.create(["box-shadow", "background-color"], {
+        duration: 500,
+      }),
+    },
   },
-  nextButton: { boxShadow: "4px 4px 6px #cc540e, -4px -4px 6px #ff6c12" },
 }));
 
 const AddRecipeFormContainer = (
@@ -171,6 +207,7 @@ const AddRecipeFormContainer = (
 
   ref
 ) => {
+  const [hasMenuOpen, setHasMenuOpen] = useState(false);
   const [paperLifted, setPaperLifted] = useState(false);
   const [formHeightLimit, setFormHeightLimit] = useState(400);
   const classes = useStyles();
@@ -233,7 +270,9 @@ const AddRecipeFormContainer = (
                 setFormData,
                 handleFormChange,
                 placeHolder,
-                setPlaceHolder
+                setPlaceHolder,
+                hasMenuOpen,
+                setHasMenuOpen
               )}
             </div>
             <div className={classes.buttons}>
@@ -242,8 +281,14 @@ const AddRecipeFormContainer = (
                   onClick={handleBack}
                   // className={(classes.button, classes.backButton)}
                   classes={{
-                    root: clsx(classes.backButton),
-                    label: classes.backButtonLabel,
+                    root: clsx(
+                      classes.backButton,
+                      hasMenuOpen && "hideButtons"
+                    ),
+                    label: clsx(
+                      classes.backButtonLabel,
+                      hasMenuOpen && "hideButtons"
+                    ),
                   }}
                 >
                   Back
@@ -253,7 +298,10 @@ const AddRecipeFormContainer = (
                 variant="contained"
                 color="primary"
                 onClick={handleNext}
-                classes={{ root: classes.button, label: classes.nextButton }}
+                classes={{
+                  root: clsx(classes.button, hasMenuOpen && "hideButtons"),
+                  label: clsx(classes.nextButton, hasMenuOpen && "hideButtons"),
+                }}
               >
                 {activeStep === steps.length - 1 ? "Submit Recipe" : "Next"}
               </Button>
@@ -273,7 +321,9 @@ const getStepContent = (
   setFormData,
   handleFormChange,
   placeHolder,
-  setPlaceHolder
+  setPlaceHolder,
+  hasMenuOpen,
+  setHasMenuOpen
 ) => {
   switch (step) {
     case 0:
@@ -284,6 +334,8 @@ const getStepContent = (
           setFormData={setFormData}
           placeHolder={placeHolder}
           setPlaceHolder={setPlaceHolder}
+          // hasMenuOpen={hasMenuOpen}
+          // setHasMenuOpen={setHasMenuOpen}
         />
       );
     case 1:
@@ -292,6 +344,8 @@ const getStepContent = (
           formData={formData}
           handleFormChange={handleFormChange}
           setFormData={setFormData}
+          // hasMenuOpen={hasMenuOpen}
+          // setHasMenuOpen={setHasMenuOpen}
         />
       );
     case 2:
@@ -300,6 +354,8 @@ const getStepContent = (
           formData={formData}
           handleFormChange={handleFormChange}
           setFormData={setFormData}
+          hasMenuOpen={hasMenuOpen}
+          setHasMenuOpen={setHasMenuOpen}
         />
       );
     default:

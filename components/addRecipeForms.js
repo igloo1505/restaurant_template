@@ -157,6 +157,8 @@ const StepOneFormComponent = ({
     setFormData,
     placeHolder,
     setPlaceHolder,
+    hasMenuOpen,
+    setHasMenuOpen,
   },
 }) => {
   const classes = useStyles();

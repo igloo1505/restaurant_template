@@ -113,14 +113,13 @@ const useAdornmentClasses = makeStyles((theme) => ({
   },
 }));
 const timeAdornment = (
-  formData,
-  focusState,
-  addMethod,
+  focused,
   shiftPressed,
   name,
-  focused,
-  text
+  hasMenuOpen,
+  setHasMenuOpen
 ) => {
+  console.log("hasMenuOpen: ", hasMenuOpen);
   const units = [
     { long: "Seconds", short: "secs" },
     { long: "Minutes", short: "mins" },
@@ -128,11 +127,17 @@ const timeAdornment = (
     { long: "Days", short: "days" },
   ];
   const [menuOpen, setMenuOpen] = useState(null);
-  const [selectedUnit, setSelectedUnit] = useState(units[0]);
+  const [selectedUnit, setSelectedUnit] = useState(units[1]);
   const classes = useAdornmentClasses();
   const toggleMenu = (e) => {
-    !e && setMenuOpen(null);
-    !menuOpen && setMenuOpen(e.currentTarget);
+    if (!e) {
+      setMenuOpen(null);
+      setHasMenuOpen(false);
+    }
+    if (!menuOpen) {
+      setMenuOpen(e.currentTarget);
+      setHasMenuOpen(true);
+    }
   };
   const handleItemClick = (index) => {
     setSelectedUnit(units[index]);
@@ -162,6 +167,8 @@ const timeAdornment = (
             classes={classes}
             handleItemClick={handleItemClick}
             toggleMenu={toggleMenu}
+            hasMenuOpen={hasMenuOpen}
+            setHasMenuOpen={setHasMenuOpen}
           />
         </InputAdornment>
       </Fade>
@@ -177,13 +184,13 @@ const UnitMenu = ({
   classes,
   handleItemClick,
   toggleMenu,
+  hasMenuOpen,
+  setHasMenuOpen,
 }) => {
+  console.log("hasMenuOpen: ", hasMenuOpen);
   const handleMenuClose = () => {
     toggleMenu(null);
   };
-  useEffect(() => {
-    console.log("menuOpen", menuOpen);
-  }, [menuOpen]);
   return (
     <ClientSidePortal selector="#topLevelPortalContainer">
       <Menu
@@ -191,14 +198,14 @@ const UnitMenu = ({
         elevation={0}
         anchorEl={menuOpen}
         open={Boolean(menuOpen)}
-        // anchorOrigin={{
-        //   vertical: "bottom",
-        //   horizontal: "center",
-        // }}
-        // transformOrigin={{
-        //   vertical: "top",
-        //   horizontal: "center",
-        // }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
         keepMounted
         onClose={handleMenuClose}
         classes={{ root: classes.menuRoot, list: classes.menuList }}
@@ -220,29 +227,13 @@ const UnitMenu = ({
 };
 
 const MenuItemComponent = ({ unit, handleItemClick, index, classes, id }) => {
-  //   console.log("unit", unit);
-  const [dimensions, setDimensions] = useState({});
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      let longId = `${menuId}-${index}`;
-      let containerWidth = getComputedStyle(
-        document.getElementById(longId)
-      ).width;
-      setDimensions({
-        width: `${containerWidth - 8}px`,
-      });
-      console.log("X", containerWidth);
-    }
-  }, []);
   return (
     <MenuItem
       onClick={() => handleItemClick(index)}
       classes={{ root: classes.menuItemRoot }}
       id={id}
     >
-      <div className={classes.menuItemInnerWrapper} style={dimensions}>
-        {unit.long}
-      </div>
+      <div className={classes.menuItemInnerWrapper}>{unit.long}</div>
     </MenuItem>
   );
 };
