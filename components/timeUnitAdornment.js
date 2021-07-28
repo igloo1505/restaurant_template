@@ -24,6 +24,8 @@ const useAdornmentClasses = makeStyles((theme) => ({
     zIndex: "1303 !important",
     inset: "0px",
     backgroundColor: "transparent",
+    // boxShadow: "2px 2px 5px #4386d4, -2px -2px 5px #5fbcff",
+    // boxShadow: "20px 20px 60px #2075d9, -20px -20px 60px #2c9fff",
   },
   menuItemInnerWrapper: {
     backgroundColor: "#e0e0e0",
@@ -32,9 +34,9 @@ const useAdornmentClasses = makeStyles((theme) => ({
     width: "100%",
     height: "100%",
     padding: "0px 3px",
-    alignItems: "center",
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    alignItems: "center",
     padding: "2px 10px",
     transition: theme.transitions.create(["box-shadow"], { duration: 200 }),
     "&:hover": {
@@ -55,7 +57,9 @@ const useAdornmentClasses = makeStyles((theme) => ({
     },
   },
   menuList: { padding: "0px" },
-  menuRoot: {},
+  menuRoot: {
+    boxShadow: `2px 2px 8px ${theme.palette.grey[500]}, -2px 2px 8px ${theme.palette.grey[400]}`,
+  },
   // End menu stuff
   iconRoot: {
     opacity: 1,
@@ -87,7 +91,7 @@ const useAdornmentClasses = makeStyles((theme) => ({
     "&:hover": {
       "& > *": {
         color: "#fff",
-        color: theme.palette.primary.main,
+        color: theme.palette.primary.light,
         cursor: "pointer",
         transition: theme.transitions.create(["color"], { duration: 150 }),
       },
@@ -102,7 +106,7 @@ const useAdornmentClasses = makeStyles((theme) => ({
     "&:hover": {
       "& > *": {
         color: "#fff",
-        color: theme.palette.primary.main,
+        color: theme.palette.primary.light,
         cursor: "pointer",
         transition: theme.transitions.create(["color"], { duration: 150 }),
       },
@@ -208,7 +212,7 @@ const UnitMenu = ({
         }}
         keepMounted
         onClose={handleMenuClose}
-        classes={{ root: classes.menuRoot, list: classes.menuList }}
+        classes={{ paper: classes.menuRoot, list: classes.menuList }}
         PopoverClasses={{ root: classes.popoverRoot }}
       >
         {units.map((unit, index) => (

@@ -48,7 +48,6 @@ const useStyles = makeStyles((theme) => ({
     ),
     "&:hover": {
       boxShadow: `8px 8px 14px ${theme.palette.grey[400]}, -8px 8px 14px ${theme.palette.grey[300]}`,
-      //   transform: "scale(1.1)",
       transition:
         "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
     },
@@ -195,6 +194,19 @@ const useStyles = makeStyles((theme) => ({
       }),
     },
   },
+  // Not sure if I want to change the button styles for the submission... come back to this later
+  // lastStepSubmitButton: {
+  //   backgroundColor: `${theme.palette.success.main} !important`,
+  //   // transition: theme.transitions.create(["box-shadow", "background-color"], {
+  //   //   duration: 500,
+  //   // }),
+  // },
+  // lastStepSubmitButtonLabel: {
+  //   backgroundColor: theme.palette.success.main,
+  //   transition: theme.transitions.create(["box-shadow", "background-color"], {
+  //     duration: 500,
+  //   }),
+  // },
 }));
 
 const AddRecipeFormContainer = (
@@ -315,8 +327,18 @@ const AddRecipeFormContainer = (
                 color="primary"
                 onClick={handleNext}
                 classes={{
-                  root: clsx(classes.button, hasMenuOpen && "hideButtons"),
-                  label: clsx(classes.nextButton, hasMenuOpen && "hideButtons"),
+                  root: clsx(
+                    classes.button,
+                    activeStep === steps.length - 1 &&
+                      classes.lastStepSubmitButton,
+                    hasMenuOpen && "hideButtons"
+                  ),
+                  label: clsx(
+                    classes.nextButton,
+                    activeStep === steps.length - 1 &&
+                      classes.lastStepSubmitButtonLabel,
+                    hasMenuOpen && "hideButtons"
+                  ),
                 }}
               >
                 {activeStep === steps.length - 1 ? "Submit Recipe" : "Next"}
