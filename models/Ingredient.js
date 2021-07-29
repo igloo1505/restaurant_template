@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import validate from "mongoose-validator";
 
+// TODO adjust this to match front-end array, eventually use from same source to avoid errors.
 const units = [
   "grams",
   "kilograms",
@@ -37,6 +38,10 @@ const Ingredient = mongoose.Schema(
       type: String,
       required: true,
       validate: unitValidator,
+    },
+    optional: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

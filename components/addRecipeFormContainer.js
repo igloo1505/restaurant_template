@@ -236,13 +236,24 @@ const AddRecipeFormContainer = (
   }, []);
 
   const handleRecipeSubmission = () => {
-    if (Object.keys(authenticateAddRecipeForm(formData)).every((i) => i)) {
-      store.dispatch(addNewRecipe(formData));
+    // TODO !!! Add validation here!!!
+    // if (Object.keys(authenticateAddRecipeForm(formData)).every((i) => i)) {
+    //   store.dispatch(addNewRecipe(formData));
+    // }
+    let data = { ...formData };
+    if (formData.ingredient.length > 3) {
+      data.ingredients.push(formData.ingredient);
+      delete data.ingredient;
     }
+    if (formData.direction.length > 3) {
+      data.directions.push(formData.direction);
+      delete data.direction;
+    }
+    store.dispatch(addNewRecipe(data));
   };
 
   const handleNext = () => {
-    // TODO authenticate before transition
+    // TODO validate before transition to next step
     if (activeStep === 2) {
       console.log("firing now");
       handleRecipeSubmission();
@@ -386,8 +397,8 @@ const getStepContent = (
           formData={formData}
           handleFormChange={handleFormChange}
           setFormData={setFormData}
-          // hasMenuOpen={hasMenuOpen}
-          // setHasMenuOpen={setHasMenuOpen}
+          hasMenuOpen={hasMenuOpen}
+          setHasMenuOpen={setHasMenuOpen}
         />
       );
     case 2:

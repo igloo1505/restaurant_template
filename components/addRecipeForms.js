@@ -166,15 +166,15 @@ const StepOneFormComponent = ({
   const initialFocusState = {
     title: {
       focus: false,
-      shrink: false,
+      shrink: Boolean(formData.title.length !== 0),
     },
     servings: {
       focus: false,
-      shrink: false,
+      shrink: Boolean(formData.servings.length !== 0),
     },
     description: {
       focus: false,
-      shrink: false,
+      shrink: Boolean(formData.description.length !== 0),
     },
   };
   const [focusState, setFocusState] = useState(initialFocusState);

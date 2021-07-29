@@ -9,6 +9,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Default_Dialog_Content from "../modalContent/Default_Dialog_Content";
 
 const useStyles = makeStyles((theme) => ({
   backdropRoot: {
@@ -21,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Alert = ({
   alert: {
-    dialog: { isOpen, contentText, title },
+    dialog: { isOpen, contentText, title, confirmation, variant },
   },
 }) => {
   const dispatch = useDispatch();
@@ -47,15 +48,19 @@ const Alert = ({
         }}
       >
         <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {contentText}
-          </DialogContentText>
-        </DialogContent>
+        {getDialogContent({
+          variant,
+          isOpen,
+          contentText,
+          title,
+          confirmation,
+        })}
         <DialogActions>
-          <Button onClick={() => handleClose(false)} color="primary">
-            Disagree
-          </Button>
+          {confirmation && (
+            <Button onClick={() => handleClose(false)} color="primary">
+              Disagree
+            </Button>
+          )}
           <Button onClick={() => handleClose(true)} color="primary" autoFocus>
             Agree
           </Button>
@@ -65,8 +70,39 @@ const Alert = ({
   );
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state) => ({
   alert: state.alert,
 });
 
 export default connect(mapStateToProps)(Alert);
+
+const getDialogContent = ({
+  variant,
+  isOpen,
+  contentText,
+  title,
+  confirmation,
+}) => {
+  if (!variant) {
+    return (
+      <Default_Dialog_Content
+        variant={variant}
+        isOpen={isOpen}
+        contentText={contentText}
+        title={title}
+        confirmation={confirmation}
+      />
+    );
+  } else {
+    switch (variant) {
+      default:
+        <Default_Dialog_Content
+          variant={variant}
+          isOpen={isOpen}
+          contentText={contentText}
+          title={title}
+          confirmation={confirmation}
+        />;
+    }
+  }
+};

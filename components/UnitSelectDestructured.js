@@ -7,8 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-
-import { unitObject } from "../util/appWideData";
+import { unitObject, getIngredientUnits } from "../util/appWideData";
 
 const useStyles = makeStyles((theme) => ({
   keyRoot: {
@@ -142,19 +141,9 @@ const UnitSelect = ({ props: { handleFormChange, formData, setFormData } }) => {
   const handleChange = (e) => {
     setFormData({ ...formData, servingUnit: e.target.value });
   };
-  let [unitKeys, setUnitKeys] = useState([]);
+  const unitKeys = getIngredientUnits();
   const [menuOpen, setMenuOpen] = useState(false);
   const [focused, setFocus] = useState(false);
-  useLayoutEffect(() => {
-    let unitkeys = [];
-    Object.keys(unitObject).map((k) => {
-      unitkeys.push({ key: true, text: k });
-      unitObject[k].map((u) => {
-        unitkeys.push({ key: false, text: u });
-      });
-    });
-    setUnitKeys(unitkeys);
-  }, []);
 
   return (
     <FormControl fullWidth className={classes.wrapper}>
@@ -193,8 +182,8 @@ const UnitSelect = ({ props: { handleFormChange, formData, setFormData } }) => {
       >
         {unitKeys.map((k) => (
           <MenuItem
-            key={k.text}
-            value={k.text}
+            key={k.long}
+            value={k.long}
             classes={{
               root: clsx(
                 !k.key && classes.menuItemRoot,
@@ -211,7 +200,7 @@ const UnitSelect = ({ props: { handleFormChange, formData, setFormData } }) => {
               console.log(e);
             }}
           >
-            {k.text}
+            {k.long}
           </MenuItem>
         ))}
       </Select>

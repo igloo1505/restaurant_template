@@ -11,19 +11,20 @@ const modalReducer = createReducer(initialState, (builder) => {
   builder.addCase(Types.SHOW_MODAL, (state, action) => {
     return {
       ...state,
+      ...action,
       isOpen: true,
     };
   });
   builder.addCase(Types.HIDE_MODAL, (state, action) => {
     return {
-      ...state,
-      isOpen: false,
+      ...initialState,
     };
   });
-  builder.addCase(Types.HIDE_ALERT, (state, action) => {
+  builder.addCase(Types.TOGGLE_MODAL, (state, action) => {
     return {
       ...state,
-      isOpen: false,
+      ...action,
+      isOpen: !state.isOpen,
     };
   });
 });

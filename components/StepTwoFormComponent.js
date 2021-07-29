@@ -11,6 +11,7 @@ import TextField from "@material-ui/core/TextField";
 import ReturnIcon from "@material-ui/icons/KeyboardReturn";
 import Fade from "@material-ui/core/Fade";
 import AddAdornment from "./AddAdornment";
+import ingredientAdornment from "./ingredientUnitAdornment";
 // import Paper from "@material-ui/core/Paper";
 // import Slide from "@material-ui/core/Slide";
 // import Button from "@material-ui/core/Button";
@@ -112,6 +113,8 @@ const StepTwoFormComponent = ({
   handleFormChange,
   setFormData,
   isShifted,
+  hasMenuOpen,
+  setHasMenuOpen,
 }) => {
   const name = "ingredient";
   const [hasSentAlert, setHasSentAlert] = useState(getHasSentAlert());
@@ -148,6 +151,10 @@ const StepTwoFormComponent = ({
       });
     }
   };
+
+  useEffect(() => {
+    console.log("typeof: ", typeof setHasMenuOpen);
+  }, []);
 
   const handleChange = (e) => {
     if (e.target.value.length === 3) {
@@ -250,16 +257,17 @@ const StepTwoFormComponent = ({
             required: classes.inputLabelRequired,
           },
         }}
-        //   inputProps={{ className: "inputListener" }}
         InputProps={{
-          endAdornment: AddAdornment(
+          endAdornment: ingredientAdornment(
             formData,
-            focusState,
-            addIngredient,
-            shiftPressed,
-            name,
+            setFormData,
             focusState.ingredient.focus,
-            formData?.ingredient?.text
+            addIngredient,
+            name,
+            shiftPressed,
+            formData?.ingredient?.text,
+            hasMenuOpen,
+            setHasMenuOpen
           ),
           classes: {
             root: clsx("inputListener", classes.inputroot),

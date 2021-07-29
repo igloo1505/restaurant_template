@@ -4,7 +4,7 @@ const categoryArray = ["specialty", "side", "drink", "tacoIngredients"];
 
 const RecipeSchema = mongoose.Schema(
   {
-    category: {
+    categories: {
       type: [String],
       default: [],
     },
@@ -28,7 +28,10 @@ const RecipeSchema = mongoose.Schema(
       cookTime: { type: mongoose.Schema.Types.ObjectId },
       totalTime: { type: mongoose.Schema.Types.ObjectId },
     },
-    servings: { type: Number, required: true },
+    servings: {
+      amount: { type: Number, required: true },
+      unit: { type: String, required: true },
+    },
     directions: { type: [String], required: true },
     isHot: {
       type: Boolean,

@@ -7,7 +7,7 @@ export const addNewRecipe = (recipe) => async (dispatch) => {
   console.log("!!! recipe !!!", recipe);
   let res = await useAxios({
     method: "post",
-    url: "/api/portal/addRecipe",
+    url: "/api/portal/recipes/newRecipe",
     data: recipe,
   });
   switch (res.data) {

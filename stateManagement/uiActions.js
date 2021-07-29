@@ -46,10 +46,10 @@ export const setModalContent =
     });
   };
 
-export const showModal = (instance) => (dispatch) => {
-  // let instance = {
+export const showModal = (data) => (dispatch) => {
+  // let data = {
   //   show: Boolean,
-  // varient: String to insert children accordingly
+  // variant: String to insert children accordingly
   // }
   dispatch({
     type: SHOW_MODAL,

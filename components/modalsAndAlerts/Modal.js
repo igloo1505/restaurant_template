@@ -1,6 +1,7 @@
 import React, { useEffect, Fragment, useState, useRef } from "react";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
+import IngredientUnit_Modal from "../modalContent/IngredientUnit_Modal";
 import Modal from "@material-ui/core/Modal";
 import * as Types from "../../stateManagement/TYPES";
 import { showModal, hideModal } from "../../stateManagement/uiActions";
@@ -43,23 +44,22 @@ const ModalComponent = ({
   const [backDropStyles, setBackDropStyles] = useState({ width: 0, height: 0 });
 
   // DELETE AFTER CONFIRMATION MODAL AND FORM MODAL WORKING
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     document.addEventListener("keydown", (e) => {
-  //       if (e.code === "Space") {
-  //         // dispatch({ type: Types.SHOW_ALERT });
-  //         dispatch({
-  //           type: Types.SHOW_SNACKBAR,
-  //           payload: {
-  //             message: "Getting rid of frustrated curse words before I commit.",
-  //             variant: "success",
-  //           },
-  //         });
-  //         // showModal();
-  //       }
-  //     });
-  //   }
-  // }, [isClient]);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      document.addEventListener("keydown", (e) => {
+        if (e.code === "Space") {
+          // dispatch({ type: Types.SHOW_ALERT });
+          dispatch({
+            type: Types.TOGGLE_MODAL,
+            payload: {
+              message: "Getting rid of frustrated curse words before I commit.",
+              variant: "success",
+            },
+          });
+        }
+      });
+    }
+  }, [isClient]);
 
   useEffect(() => {
     if (isOpen) {
@@ -128,6 +128,6 @@ export default connect(mapStateToProps, { showModal })(ModalComponent);
 const ModalChildren = ({ variant }) => {
   switch (variant) {
     default:
-      return null;
+      return <IngredientUnit_Modal />;
   }
 };

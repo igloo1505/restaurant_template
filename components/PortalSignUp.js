@@ -84,19 +84,19 @@ const PortalSignUp = ({
   const [transparent, setTransparent] = useState(true);
   const initialFocusState = {
     password: {
-      shrink: false,
+      shrink: Boolean(formData.password.length !== 0),
       focus: false,
     },
     firstName: {
-      shrink: false,
+      shrink: Boolean(formData.firstName.length !== 0),
       focus: false,
     },
     lastName: {
-      shrink: false,
+      shrink: Boolean(formData.lastName.length !== 0),
       focus: false,
     },
     email: {
-      shrink: false,
+      shrink: Boolean(formData.email.length !== 0),
       focus: false,
     },
   };

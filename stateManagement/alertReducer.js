@@ -7,6 +7,7 @@ const initialState = {
     contentText:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero ea optio ipsa facilis. Repellendus praesentium ullam delectus expedita, explicabo corrupti consequatur? Facilis ex praesentium harum at eum delectus porro obcaecati perferendis quod. Eos impedit fugiat alias ducimus incidunt rerum modi magni iusto dolore ipsa, excepturi eligendi pariatur, beatae quas aliquam!",
     title: "Let me do rad stuff",
+    variant: null,
     confirmation: null,
   },
   snackbar: {

@@ -8,25 +8,39 @@ const handler = nc();
 handler.use(middleware);
 handler.post(async (req, res) => {
   try {
+    console.log(
+      colors.bgGreen.black("Ran this bitch in /api/portal/recipes/newRecipe")
+    );
     console.log(colors.bgGreen.black(req.body));
+    // const {
+    //   category,
+    //   title,
+    //   imgUrl,
+    //   description,
+    //   ingredients,
+    //   cookTime,
+    //   prepTime,
+    // } = req.body;
     const {
-      Spicy: isHot,
-      Category: category,
-      Title: name,
-      Description: description,
-      Price: price,
-      "In Stock": isInStock,
-      "Gluten Free": isGlutenFree,
-    } = req.body;
-    let data = {
-      category,
-      name,
+      servings,
+      servingUnit,
+      title,
       description,
-      price,
-      isHot,
-      isGlutenFree,
-      isInStock,
-    };
+      ingredients,
+      directions,
+      prepTime,
+      cookTime,
+      // ingredient: { text, optional },
+    } = req.body;
+    // let data = {
+    //   category,
+    //   name,
+    //   description,
+    //   price,
+    //   isHot,
+    //   isGlutenFree,
+    //   isInStock,
+    // };
     let recipe = new Recipe(data);
     console.log(recipe);
     let returned = await recipe.save();

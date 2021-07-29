@@ -103,19 +103,23 @@ const AddRecipe = ({
   // const [slideIn, setSlideIn] = useState(false);
   const router = useRouter();
   const [formData, setFormData] = useState({
-    servings: "",
-    servingUnit: "cups",
+    categories: [],
     title: ``,
+    imgUrl: null,
     description: ``,
     ingredients: [],
+    prepTime: "",
+    cookTime: "",
+    servings: "",
+    servingUnit: "cups",
+    directions: [],
+    direction: "",
     ingredient: {
       text: "",
       optional: false,
+      amount: 1,
+      unit: { long: "cups", short: "cup" },
     },
-    directions: [],
-    direction: "",
-    prepTime: "",
-    cookTime: "",
   });
 
   const [placeHolder, setPlaceHolder] = useState(false);

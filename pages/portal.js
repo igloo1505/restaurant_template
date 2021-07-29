@@ -29,12 +29,6 @@ const Portal = ({
     await getAllUsers();
   }, []);
 
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    modalHeader: "",
-    modalText: "",
-  });
-
   if (isLoading) {
     return <Loader type="loginScreen" size={100} sizeInner={80} />;
   }

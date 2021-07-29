@@ -92,11 +92,11 @@ const SignIn = ({
   const initialFocusState = {
     email: {
       focus: false,
-      shrink: false,
+      shrink: Boolean(formData.email.length !== 0),
     },
     password: {
       focus: false,
-      shrink: true,
+      shrink: Boolean(formData.password.length !== 0),
     },
   };
   const [focusState, setFocusState] = useState(initialFocusState);
