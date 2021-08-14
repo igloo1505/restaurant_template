@@ -67,7 +67,7 @@ function ResponsiveDrawer({
     accountMenu: { el: menuAnchor },
     portalDrawer: { open: mobileOpen },
   },
-  modal: { isOpen },
+
   props,
 }) {
   const [isPermanent, setIsPermanent] = useState(false);
@@ -75,9 +75,7 @@ function ResponsiveDrawer({
   const dispatch = useDispatch();
   const classes = useStyles();
   const theme = useTheme();
-  useEffect(() => {
-    console.log("did run useEffect with : ", isOpen);
-  }, [isOpen]);
+
   useEffect(() => {
     if (deviceWidth >= 1920) {
       setIsPermanent(true);
@@ -98,21 +96,14 @@ function ResponsiveDrawer({
         classes={classes}
         deviceWidth={deviceWidth}
         mobileOpen={mobileOpen}
-        isOpen={isOpen}
       />
     </Fragment>
   );
 }
 
 const DrawerSwitcher = (props) => {
-  const {
-    deviceWidth,
-    isOpen,
-    classes,
-    appbarClasses,
-    mobileOpen,
-    setMobileOpen,
-  } = props;
+  const { deviceWidth, classes, appbarClasses, mobileOpen, setMobileOpen } =
+    props;
   const [ios, setiOs] = useState(false);
   const dispatch = useDispatch();
 
@@ -149,7 +140,7 @@ const DrawerSwitcher = (props) => {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           onOpen={handleDrawerToggle}
-          swipeAreaWidth={isOpen ? 0 : 20}
+          swipeAreaWidth={mobileOpen ? 0 : 20}
           SwipeAreaProps={{ id: "swipeAreaDiv" }}
           disableBackdropTransition={!ios}
           disableDiscovery={ios}
@@ -196,7 +187,7 @@ const DrawerSwitcher = (props) => {
 
 const mapStateToProps = (state, props) => ({
   UI: state.UI,
-  modal: state.modal,
+  drawer: state.drawer,
   props: props,
 });
 

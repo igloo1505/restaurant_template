@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import * as Types from "../stateManagement/TYPES";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import Typography from "@material-ui/core/Typography";
 import AddIcon from "@material-ui/icons/AddBoxOutlined";
 import CheckedIcon from "@material-ui/icons/DoneOutlined";
 import TextField from "@material-ui/core/TextField";
@@ -12,16 +13,16 @@ import ReturnIcon from "@material-ui/icons/KeyboardReturn";
 import Fade from "@material-ui/core/Fade";
 import AddAdornment from "./AddAdornment";
 import ingredientAdornment from "./ingredientUnitAdornment";
-// import Paper from "@material-ui/core/Paper";
-// import Slide from "@material-ui/core/Slide";
-// import Button from "@material-ui/core/Button";
-// import Typography from "@material-ui/core/Typography";
+import UnitSelectCompact from "./UnitSelectCompact";
+import { getIngredientUnits } from "../util/appWideData";
+import { validateStepTwo } from "../util/addRecipeFormValidate";
+
+const unitContainerBreakpoint = "xl";
 
 const getHasSentAlert = () => {
   let value = localStorage.getItem("hasSentAlert-ingredients");
   return value ? value : false;
 };
-const shiftKeys = ["ShiftRight", "ShiftLeft"];
 const useStyles = makeStyles((theme) => ({
   container: {
     marginRight: "10px",
@@ -63,6 +64,20 @@ const useStyles = makeStyles((theme) => ({
     },
     "&:after": {
       borderBottom: `1px solid ${theme.palette.secondary.light}`,
+      transition: "border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+    },
+  },
+  inputrootSelect: {
+    paddingRight: "30px !important",
+    "&:before": {
+      borderBottom: "1px solid #fff",
+    },
+    "&:hover:not(.Mui-disabled):before": {
+      borderBottom: "2px solid #fff",
+    },
+    "&:after": {
+      borderBottom: `2px solid ${theme.palette.primary.light}`,
+      transition: "border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     },
   },
   inputFocused: {
@@ -74,6 +89,7 @@ const useStyles = makeStyles((theme) => ({
     }),
     "&:after": {
       borderBottom: `2px solid ${theme.palette.primary.light}`,
+      transition: "border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     },
   },
   inputLabelRoot: { color: "#e0e0e0" },
@@ -106,6 +122,38 @@ const useStyles = makeStyles((theme) => ({
   checkboxDisabled: {},
   checkboxLabel: { color: "#fff" },
   checkBoxContainer: { paddingTop: "10px", float: "right" },
+  unitAndAmountContainer: {
+    [theme.breakpoints.up(unitContainerBreakpoint)]: {
+      display: "flex",
+      flexDirection: "row",
+    },
+  },
+  amountContainer: {
+    [theme.breakpoints.up(unitContainerBreakpoint)]: {
+      // width: "50%",
+      width: "calc(50% - 5px)",
+      marginRight: "5px",
+    },
+  },
+  unitContainer: {
+    [theme.breakpoints.up(unitContainerBreakpoint)]: {
+      width: "calc(50% - 5px)",
+      marginLeft: "5px",
+    },
+  },
+  typographyRoot: {
+    margin: "12px 4px 7px 4px",
+    color: "#e0e0e0",
+    transition: theme.transitions.create(["color"], {
+      duration: 500,
+    }),
+  },
+  typographyRootFocused: {
+    color: "#fff",
+    transition: theme.transitions.create(["color"], {
+      duration: 500,
+    }),
+  },
 }));
 
 const StepTwoFormComponent = ({
@@ -129,6 +177,14 @@ const StepTwoFormComponent = ({
   const [focusState, setFocusState] = useState({
     ingredient: {
       shrink: Boolean(formData?.ingredient?.text?.length !== 0),
+      focus: false,
+    },
+    amount: {
+      shrink: Boolean(formData?.ingredient?.amount?.length !== 0),
+      focus: false,
+    },
+    unit: {
+      shrink: Boolean(formData?.ingredient?.unit?.length !== 0),
       focus: false,
     },
   });
@@ -160,52 +216,85 @@ const StepTwoFormComponent = ({
     if (e.target.value.length === 3) {
       sendAddIngredientNotification();
     }
+    if (e.target.name === "amount") {
+      return setFormData({
+        ...formData,
+        ingredient: { ...formData.ingredient, amount: e.target.value },
+      });
+    }
+    // };
     setFormData({
       ...formData,
       [e.target.name]: { ...formData[e.target.name], text: e.target.value },
     });
   };
-  const addIngredient = (e) => {
+  // Go back and change this to use users last used unit
+  const addIngredient = (unit) => {
     setFormData({
       ...formData,
-      ingredients: [...formData.ingredients, formData.ingredient],
+      ingredients: [
+        ...formData.ingredients,
+        { ...formData.ingredient, unit: unit },
+      ],
       ingredient: {
         text: "",
         optional: false,
+        amount: 1,
+        unit: { long: "cups", short: "cups" },
       },
     });
   };
   const classes = useStyles();
   const fauxListener = (title, type) => {
     console.log(focusState);
-    if (type === "blur") {
-      setFocusState({
-        ...focusState,
-        [title]: {
-          shrink: Boolean(formData?.[title]?.length !== 0),
-          focus: false,
-        },
-      });
-    }
-    if (type === "focus") {
-      setFocusState({
-        ...focusState,
-        [title]: {
-          shrink: Boolean(formData?.[title]?.length !== 0),
-          focus: true,
-        },
-      });
-    }
-  };
-  const keyObserver = (e) => {
-    if (!e.shiftKey && e.key === "Enter") {
-      e.preventDefault();
 
-      if (!e.shiftKey && formData?.ingredient.text?.length !== 0) {
-        addIngredient();
+    if (title !== "unit") {
+      if (type === "blur") {
+        setFocusState({
+          ...focusState,
+          [title]: {
+            shrink: Boolean(formData?.[title]?.length !== 0),
+            focus: false,
+          },
+        });
+      }
+      if (type === "focus") {
+        setFocusState({
+          ...focusState,
+          [title]: {
+            shrink: Boolean(formData?.[title]?.length !== 0),
+            focus: true,
+          },
+        });
       }
     }
-    if (shiftKeys.indexOf(e.code) !== -1) {
+  };
+  const checkUnit = () => {
+    let unit = formData.ingredient?.unit?.long?.toLowerCase();
+    let units = getIngredientUnits().filter((u) => !u.isKey);
+    let indexOf = units.map((u) => u.long.toLowerCase()).indexOf(unit);
+
+    console.log(units, indexOf);
+    return indexOf !== -1 ? units[indexOf] : false;
+    // return
+  };
+  const keyObserver = (e) => {
+    console.log("e: ", e);
+    if (!e.shiftKey && e.key === "Enter") {
+      e.preventDefault();
+      let validated = {
+        text: Boolean(formData.ingredient.text.length >= 3),
+        amount: Boolean(
+          typeof parseFloat(formData.ingredient.amount) === "number"
+        ),
+        unit: checkUnit(),
+      };
+      console.log("validated", validated);
+      if (Object.values(validated).every((i) => i)) {
+        addIngredient(validated.unit);
+      }
+    }
+    if (e.shiftKey) {
       setShiftPressed(true);
     }
   };
@@ -219,6 +308,7 @@ const StepTwoFormComponent = ({
       },
     });
   };
+
   return (
     <div
       className={clsx(
@@ -238,7 +328,7 @@ const StepTwoFormComponent = ({
         onChange={handleChange}
         onKeyDown={keyObserver}
         onKeyUp={(e) => {
-          if (shiftKeys.indexOf(e.code) !== -1) {
+          if (!e.shiftKey) {
             setShiftPressed(false);
           }
         }}
@@ -258,25 +348,131 @@ const StepTwoFormComponent = ({
           },
         }}
         InputProps={{
-          endAdornment: ingredientAdornment(
-            formData,
-            setFormData,
-            focusState.ingredient.focus,
-            addIngredient,
-            name,
-            shiftPressed,
-            formData?.ingredient?.text,
-            hasMenuOpen,
-            setHasMenuOpen
-          ),
+          // endAdornment: ingredientAdornment(
+          //   formData,
+          //   setFormData,
+          //   focusState.ingredient.focus,
+          //   addIngredient,
+          //   name,
+          //   shiftPressed,
+          //   formData?.ingredient?.text,
+          //   hasMenuOpen,
+          //   setHasMenuOpen
+          // ),
           classes: {
             root: clsx("inputListener", classes.inputroot),
             input: classes.inputRoot,
             focused: classes.inputFocused,
           },
         }}
-        // classes={{ root: classes.textFieldRoot }}
       />
+      <Typography
+        align="center"
+        classes={{
+          root: clsx(
+            classes.typographyRoot,
+            focusState.amount.focus && classes.typographyRootFocused,
+            focusState.unit.focus && classes.typographyRootFocused
+          ),
+        }}
+      >
+        How Much?
+      </Typography>
+      <div className={clsx(classes.unitAndAmountContainer)}>
+        <div className={clsx(classes.amountContainer)}>
+          <TextField
+            name="amount"
+            id="recipeIngredientAmountInput"
+            label="Amount"
+            fullWidth
+            onFocus={() => fauxListener("amount", "focus")}
+            onBlur={() => fauxListener("amount", "blur")}
+            onChange={handleChange}
+            value={formData.ingredient.amount}
+            focused={focusState.amount.focus}
+            InputLabelProps={{
+              focused: focusState.amount.focus,
+              shrink: Boolean(formData?.ingredient.amount?.length !== 0),
+              classes: {
+                root: clsx(
+                  classes.inputLabelRoot,
+                  focusState.amount.focus && classes.inputLabelFocused,
+                  formData?.ingredient.amount?.length !== 0 &&
+                    classes.inputLabelWithValue
+                ),
+                required: classes.inputLabelRequired,
+              },
+            }}
+            inputProps={{
+              className: "inputListener",
+              pattern: "\\d*",
+            }}
+            InputProps={{
+              classes: {
+                root: clsx("inputListener", classes.inputroot),
+                input: classes.inputRoot,
+                focused: classes.inputFocused,
+              },
+            }}
+            onKeyDown={(e) => {
+              let allowed = false;
+              let regex = /^\d+$/;
+              if (regex.test(e.key) || e.code.slice(0, 3) !== "Key") {
+                allowed = true;
+              }
+              if (!allowed) {
+                e.preventDefault();
+              }
+            }}
+          />
+        </div>
+        <div className={clsx(classes.unitContainer)}>
+          <UnitSelectCompact
+            name="unit"
+            id="recipeIngredientUnitInput"
+            label="Unit"
+            fullWidth
+            focusState={focusState}
+            setFocusState={setFocusState}
+            // Each item id format to send whole object to state
+            // `unit-${index}`
+            selectedUnit={formData.ingredient.unit}
+            addIngredient={addIngredient}
+            focused={focusState.unit.focus}
+            setFormData={setFormData}
+            formData={formData}
+            InputLabelProps={{
+              focused: focusState.unit.focus,
+              shrink: Boolean(formData?.ingredient.unit.long?.length !== 0),
+              classes: {
+                root: clsx(
+                  classes.inputLabelRoot,
+                  focusState.unit.focus && classes.inputLabelFocused,
+                  formData?.ingredient.unit.long?.length !== 0 &&
+                    classes.inputLabelWithValue
+                ),
+                required: classes.inputLabelRequired,
+              },
+            }}
+            inputProps={{
+              className: "inputListener",
+            }}
+            InputProps={{
+              classes: {
+                root: clsx("inputListener", classes.inputrootSelect),
+                input: classes.inputRoot,
+                focused: classes.inputFocused,
+              },
+            }}
+            // onKeyDown={keyObserver}
+            onKeyUp={(e) => {
+              if (!e.shiftKey) {
+                setShiftPressed(false);
+              }
+            }}
+          />
+        </div>
+      </div>
       <FormControlLabel
         style={{ backgroundColor: "transparent" }}
         classes={{

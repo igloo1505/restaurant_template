@@ -2,18 +2,13 @@ import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
+import NotWhatThisWasIntendedForButItsMoreVisible from "@material-ui/icons/Exposure";
 import { FaBalanceScale as ScaleIcon } from "react-icons/fa";
-import Tooltip from "@material-ui/core/Tooltip";
+import { PrimaryTooltip } from "./tooltip";
 import Grow from "@material-ui/core/Grow";
+import DisplayItemContent from "./DisplayItemContent";
 
-const LightTooltip = withStyles((theme) => ({
-  tooltip: {
-    backgroundColor: theme.palette.primary.main,
-    color: "#fff",
-    fontSize: 11,
-    boxShadow: "6px 6px 54px #5e2606, -6px -6px 54px #ff9a1a",
-  },
-}))(Tooltip);
+// TODO fix issue where all objects with index > than removed ingredient in array go through boxShadow animation when removeItem(e)
 
 const useItemStyles = makeStyles((theme) => ({
   itemWrapperInner: {
@@ -67,6 +62,12 @@ const useItemStyles = makeStyles((theme) => ({
   textyText: {
     display: "block",
   },
+  "text-subtitle": {
+    fontWeight: 400,
+    fontSize: "0.75rem",
+    lineHeight: 1.66,
+    letterSpacing: "0.03333em",
+  },
   optionalText: {
     color: "#e0e0e0",
     fontSize: "0.7rem",
@@ -106,30 +107,87 @@ const useItemStyles = makeStyles((theme) => ({
   },
 }));
 
-const DisplayItem = ({ item, text, removeItem }) => {
+const superInefficientlyAvoidRepaint = (text, name, index) => {
+  let storedData = localStorage.getItem(name);
+  if (!storedData) {
+    localStorage.setItem(name, JSON.stringify({ [index]: text }));
+    return true;
+  }
+  if (storedData) {
+    storedData = JSON.parse(storedData);
+    console.log("storedData: ", storedData);
+    if (Object.values(storedData).indexOf(text) === -1) {
+      // storedData[index] = text
+      localStorage.setItem(
+        name,
+        JSON.stringify({ ...storedData, [index]: text })
+      );
+      return true;
+    }
+    return false;
+  }
+  return false;
+};
+
+const DisplayItem = ({ item, text, removeItem, name, index }) => {
+  let isInitial = superInefficientlyAvoidRepaint(text, name, index);
+  console.log("isInitial: ", text, isInitial);
   const classes = useItemStyles();
-  const [shifted, setShifted] = useState(false);
+  const [shifted, setShifted] = useState(!isInitial);
   useEffect(() => {
     setTimeout(() => setShifted(true), 250);
   }, []);
-  const timeouts = {
-    appear: 30000,
-    enter: 15000,
-    exit: 15000,
-  };
-  const handleRemoveItem = (e, item, text) => {
-    // setShifted(false);
-    // setTimeout(() => removeItem(e, item, text), 500);
-    removeItem(e, item, text);
-  };
-  return (
-    <Grow
-      in={true}
-      style={{ transformOrigin: "0 0 0" }}
-      {...(true ? { timeout: 750 } : {})}
-    >
+
+  if (isInitial) {
+    return (
+      <Grow
+        in={true}
+        style={{ transformOrigin: "0 0 0" }}
+        {...(true ? { timeout: 350 } : {})}
+      >
+        <div
+          className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow")}
+          onClick={() => console.log("item: ", item)}
+        >
+          <div
+            className={clsx(
+              classes.itemWrapperInner,
+              shifted && classes.itemWrapperInnerShifted
+            )}
+          >
+            <div className={clsx(classes.icon, shifted && "addBoxShadow")}>
+              <CloseIcon
+                classes={{
+                  root: clsx(classes.iconRoot, shifted && "addBoxShadow"),
+                }}
+                fontSize="small"
+                onClick={(e) => removeItem(e, item, text)}
+              />
+            </div>
+            <DisplayItemContent
+              item={item}
+              text={text}
+              removeItem={removeItem}
+              name={name}
+              classes={classes}
+            />
+            {item?.optional && (
+              <PrimaryTooltip title="Optional">
+                <div className={classes.optionalText}>
+                  <NotWhatThisWasIntendedForButItsMoreVisible />
+                </div>
+              </PrimaryTooltip>
+            )}
+          </div>
+        </div>
+      </Grow>
+    );
+  }
+  if (!isInitial) {
+    return (
       <div
         className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow")}
+        onClick={() => console.log("item: ", item)}
       >
         <div
           className={clsx(
@@ -143,25 +201,27 @@ const DisplayItem = ({ item, text, removeItem }) => {
                 root: clsx(classes.iconRoot, shifted && "addBoxShadow"),
               }}
               fontSize="small"
-              onClick={(e) => handleRemoveItem(e, item, text)}
+              onClick={(e) => removeItem(e, item, text)}
             />
           </div>
-          <div className={classes.text}>
-            {text.split(/\r?\n/).map((i) => (
-              <span className={classes.textyText}>{i}</span>
-            ))}
-          </div>
+          <DisplayItemContent
+            item={item}
+            text={text}
+            removeItem={removeItem}
+            name={name}
+            classes={classes}
+          />
           {item?.optional && (
-            <LightTooltip title="Optional">
+            <PrimaryTooltip title="Optional">
               <div className={classes.optionalText}>
-                <ScaleIcon />
+                <NotWhatThisWasIntendedForButItsMoreVisible />
               </div>
-            </LightTooltip>
+            </PrimaryTooltip>
           )}
         </div>
       </div>
-    </Grow>
-  );
+    );
+  }
 };
 
 export default DisplayItem;

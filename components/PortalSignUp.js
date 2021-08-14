@@ -75,7 +75,7 @@ const PortalSignUp = ({
   user,
   modal: { isOpen: modalIsOpen },
   alert: {
-    dialog: { isOpen: alertIsOpen },
+    drawer: { isOpen: alertIsOpen },
   },
   props: { setLogin },
   addNewUser,
@@ -401,7 +401,7 @@ const PortalSignUp = ({
 
 const mapStateToProps = (state, props) => ({
   user: state.user,
-  modal: state.modal,
+  drawer: state.drawer,
   alert: state.alert,
   props: props,
 });

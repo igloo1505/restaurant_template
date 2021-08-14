@@ -19,23 +19,9 @@ import {
   UnderNavbar,
   AdjustForDrawerContainer,
 } from "../components/UIComponents";
-// import Paper from "@material-ui/core/Paper";
-// import Grow from "@material-ui/core/Grow";
-// import Stepper from "@material-ui/core/Stepper";
-// import Step from "@material-ui/core/Step";
-// import StepLabel from "@material-ui/core/StepLabel";
-// import Button from "@material-ui/core/Button";
-// import Typography from "@material-ui/core/Typography";
-// import { StepOneForm } from "../components/addRecipeForms";
-// import StepTwoForm from "../components/stepTwoAddRecipeForm";
-// import {
-//   ConnectorComponent,
-//   StepIconComponent,
-// } from "../components/AddRecipeStepper";
-// import { tryAutoLogin } from "../stateManagement/userActions";
-// import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
+import initialFormData from "../util/initialFormData";
 
-// TODO check deviceheight and if room, shift form downward and tilt banner along corner of form
+// TODO check deviceHeight and if room, shift form downward and tilt banner along corner of form
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: "relative",
@@ -47,8 +33,8 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
     position: "absolute",
     left: "50vw",
-    top: "80px",
-    transform: "translateX(-50%)",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
       width: 600,
@@ -97,36 +83,77 @@ const AddRecipe = ({
     portalDrawer: { open: drawerIsOpen },
   },
   network: { loading: isLoading },
+  recipe: { resetFormData, myRecipes, myFavorites },
   // tryAutoLogin,
 }) => {
-  // const ref = createRef();
   // const [slideIn, setSlideIn] = useState(false);
   const router = useRouter();
+  //!!! The only reason half of this form state isn't in Redux is because I installed Apple's beta OS on my macbook and now Chrome just about starts it on fire... and Safari doesn't have **** for devtools.
   const [formData, setFormData] = useState({
     categories: [],
-    title: ``,
+    title: `Recipe One`,
     imgUrl: null,
-    description: ``,
-    ingredients: [],
-    prepTime: "",
-    cookTime: "",
-    servings: "",
-    servingUnit: "cups",
-    directions: [],
+    description: `Some bomb ass recipe`,
+    prepTime: "12",
+    cookTime: "16",
+    servings: "4",
+    servingUnit: "Cups",
+    directions: ["Add stuff to pan", "Take stuff out of pan"],
     direction: "",
+    ingredients: [
+      {
+        text: "Item One",
+        optional: false,
+        amount: 1,
+        unit: { long: "Tablespoons", short: "tbsp", key: "Volume" },
+      },
+      {
+        text: "Item Two",
+        optional: false,
+        amount: 14,
+        unit: { long: "Tablespoons", short: "tbsp", key: "Volume" },
+      },
+      {
+        text: "Item Three",
+        optional: true,
+        amount: 140,
+        unit: { long: "Cups", short: "cups", key: "Volume" },
+      },
+      {
+        text: "Item Four",
+        optional: true,
+        amount: 1,
+        unit: { long: "Cups", short: "cups", key: "Volume" },
+      },
+      {
+        text: "Item Five",
+        optional: true,
+        amount: 1,
+        unit: { long: "Cups", short: "cups", key: "Volume" },
+      },
+      {
+        text: "Item Six",
+        optional: true,
+        amount: 1,
+        unit: { long: "Cups", short: "cups", key: "Volume" },
+      },
+    ],
     ingredient: {
       text: "",
       optional: false,
       amount: 1,
-      unit: { long: "cups", short: "cup" },
+      unit: { long: "Cups", short: "cups", key: "Volume" },
     },
   });
+  useEffect(() => {
+    // setFormData(initialFormData);
+    setActiveStep(0);
+  }, [resetFormData]);
 
   const [placeHolder, setPlaceHolder] = useState(false);
   const handleFormChange = (e) => {
     if (e) {
       if (e.target.name === "servingUnit") {
-        console.log("e!!!!", e);
       }
       console.log("targets", e.target.name);
       setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -148,7 +175,6 @@ const AddRecipe = ({
     return (
       <Fragment>
         <CssBaseline />
-        <UnderNavbar />
         <AdjustForDrawerContainer>
           <main
             className={clsx(
@@ -184,11 +210,12 @@ const mapStateToProps = (state, props) => ({
   UI: state.UI,
   props: props,
   network: state.network,
+  recipe: state.recipes,
 });
 
 export default connect(mapStateToProps)(AddRecipe);
 
-// const SlideComponent = forwardRef(_SlideComponent);
+// eslint-disable-next-line react/display-name
 const SlideComponent = forwardRef(
   (props, ref) => {
     console.log("ref", ref);
@@ -197,7 +224,7 @@ const SlideComponent = forwardRef(
         direction="right"
         in={true}
         ref={ref}
-        timeout={{ appear: 300, enter: 500, exit: 500 }}
+        timeout={{ appear: 500, enter: 500, exit: 500 }}
         mountOnEnter
         unmountOnExit
       >

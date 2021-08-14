@@ -10,6 +10,8 @@ const useStylesUnderNavbar = makeStyles((theme) => ({
     position: "absolute",
     width: "100%",
     marginBottom: "20px",
+    marginTop: "20px",
+    display: "block",
   },
   shifted: {
     width: `calc(100vw - ${drawerWidth}px)`,
@@ -48,60 +50,55 @@ export const UnderNavbar = connect(mapStateToPropsUnderNavbar)(
   UnderNavbarComponent
 );
 
-const paddingHorizontal = "24px";
+const marginHorizontal = "24px";
+const marginVertical = "24px";
+
 const useStylesAdjustForDrawer = makeStyles((theme) => ({
   root: {
+    display: "block",
     width: "100vw",
-    // border: "4px solid red",
-    paddingRight: paddingHorizontal,
-    paddingLeft: paddingHorizontal,
-    transition: "margin-left 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-    transition: "width 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+    paddingRight: marginHorizontal,
+    paddingLeft: marginHorizontal,
+    paddingTop: marginVertical,
+    transition: theme.transitions.create(["margin-left", "width"], {
+      duration: 500,
+    }),
   },
   shifted: {
     width: `calc(100vw - ${drawerWidth}px)`,
+    display: "block",
     marginLeft: `${drawerWidth}px`,
-    transition: "margin-left 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-    transition: "width 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+    transition: theme.transitions.create(["margin-left", "width"], {
+      duration: 500,
+    }),
   },
 }));
 
 const AdjustForDrawerContainerComponent = ({
   UI: {
     portalDrawer: { open: drawerIsOpen },
-    viewport: { navHeight },
+    viewport: { navHeight, width: deviceWidth },
   },
   props: { children, centerAll },
 }) => {
   const classes = useStylesAdjustForDrawer();
-  const [shifted, setShifted] = useState(false);
+  const [shifted, setShifted] = useState(deviceWidth > 1920);
   const [styles, setStyles] = useState({});
   useEffect(() => {
-    console.log(centerAll);
-    setShifted(drawerIsOpen);
-  }, [drawerIsOpen, navHeight]);
-  //   const style = {
-  //     position: "absolute",
-  //     top: `${navHeight}px`,
-  //   };
+    // console.log(centerAll);
+    let shouldShift = drawerIsOpen
+      ? drawerIsOpen
+      : deviceWidth > 1920
+      ? true
+      : false;
+    setShifted(shouldShift);
+    getStyles();
+  }, [drawerIsOpen, navHeight, deviceWidth]);
+
   const getStyles = () => {
-    if (centerAll) {
-      setStyles({
-        ...styles,
-        display: "flex",
-        width: "100vw",
-        height: `calc(100vh-${navHeight}px)`,
-        justifyContent: "center",
-        alignItems: "center",
-      });
-    }
-    if (drawerIsOpen) {
-      setStyles({
-        ...styles,
-        transform: `translateX(-${drawerWidth * 0.5}px)`,
-      });
-    }
+    setStyles({ marginTop: `${navHeight}px` });
   };
+
   return (
     <div
       className={clsx(classes.root, shifted && classes.shifted)}

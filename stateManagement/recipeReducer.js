@@ -1,56 +1,58 @@
 import * as Types from "./TYPES";
+import store from "./store";
 import { createReducer } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
 
 const initialState = {
+  filters: [],
   myRecipes: [],
+  myRecipesServer: [],
   myFavorites: [],
+  myBookmarks: [],
+  resetFormData: false,
   byCategory: {
     category: null,
     results: [],
   },
+  error: null,
 };
 
-const recipeReducer = createReducer(initialState, (builder) => {
-  builder.addCase(Types.SHOW_ALERT, (state, action) => {
-    return {
-      ...state,
-      dialog: {
-        ...state.dialog,
-        ...action.payload,
-        isOpen: true,
-      },
-    };
-  });
-  builder.addCase(Types.HIDE_ALERT, (state, action) => {
-    return {
-      ...state,
-      dialog: initialState.dialog,
-    };
-  });
-  builder.addCase(Types.ALERT_SUCCESS, (state, action) => {
-    return {
-      ...state,
-      dialog: { ...state.dialog, isOpen: false, confirmation: true },
-    };
-  });
-  builder.addCase(Types.ALERT_FAIL, (state, action) => {
-    return {
-      ...state,
-      dialog: { ...state.dialog, isOpen: false, confirmation: false },
-    };
-  });
-  builder.addCase(Types.SHOW_SNACKBAR, (state, action) => {
-    return {
-      ...state,
-      snackbar: { ...state.snackbar, ...action.payload, isOpen: true },
-    };
-  });
-  builder.addCase(Types.HIDE_SNACKBAR, (state, action) => {
-    return {
-      ...state,
-      snackbar: { ...initialState.snackbar },
-    };
-  });
-});
-
+const recipeReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case Types.ADD_NEW_RECIPE_SUCCESS:
+      return {
+        ...state,
+        resetFormData: !state.resetFormData,
+        myRecipes: [action.payload.recipe, ...state.myRecipes],
+      };
+    case Types.GET_OWN_RECIPES_SUCCESS:
+      console.log("initialState", state.myRecipes);
+      console.log("payload", action.payload);
+      return {
+        ...state,
+        // myRecipes: ["test"],
+        myRecipes: action.payload._myRecipes,
+      };
+    case Types.GET_OWN_RECIPES_SERVER:
+      console.log("initialState", state.myRecipes);
+      console.log("payload", action.payload);
+      return {
+        ...state,
+        // myRecipes
+        // myRecipes:
+        //        // state.myRecipes.length !== 0
+        //   ? state.myRecipes
+        //   : action.payload._myRecipes,
+      };
+    case HYDRATE:
+      console.log("Hydrating", state, action.payload);
+      return {
+        ...state,
+        // myRecipes: action.payload.recipe.myRecipes,
+        // myRecipes: action.payload.recipe.myRecipes,
+      };
+    default:
+      return state;
+  }
+};
 export default recipeReducer;

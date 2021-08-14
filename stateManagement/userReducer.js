@@ -11,16 +11,18 @@ import {
   UPDATE_USER_INFO,
   LOGOUT,
 } from "./TYPES";
+import { getAllRecipesFromUser } from "./recipeActions";
+import store from "./store";
 
 const initialState = {
-  loggedIn: true,
+  loggedIn: false,
   triedAutoLogin: false,
   allUsers: [],
   filtered: null,
   loading: false,
   self: {
     token: null,
-    _id: null,
+    _id: "60ca3c4e89226b09e04ad70e",
     userName: "",
   },
   error: null,

@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
   inputroot: {
     color: "#fff",
     border: `2px solid ${theme.palette.secondary.main}`,
+    transition: "border 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -52,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
   descriptionInputRoot: {
     // padding: "8px 2px 9px 2px", paddingBottom: "9px",
     border: `2px solid ${theme.palette.secondary.main}`,
-
+    transition: "border 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     "&:before": {
       borderBottom: "1px solid #fff",
     },
@@ -72,7 +73,9 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
     boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
     border: `2px solid ${theme.palette.primary.main}`,
-    transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
+    transition: theme.transitions.create(["box-shadow", "border"], {
+      duration: 250,
+    }),
     "&:hover": {
       border: `2px solid ${theme.palette.primary.light}`,
     },
@@ -178,7 +181,14 @@ const StepOneFormComponent = ({
     },
   };
   const [focusState, setFocusState] = useState(initialFocusState);
-  const [shouldShrinkDescription, setShouldShrinkDescription] = useState(false);
+  const [shouldShrinkDescription, setShouldShrinkDescription] = useState(true);
+  useEffect(() => {
+    console.log(formData, formData.description);
+    let shouldShrink = Boolean(formData?.description?.length !== 0);
+    console.log("shouldShrink: ", shouldShrink);
+    setShouldShrinkDescription(shouldShrink);
+    setPlaceHolder(!shouldShrink);
+  }, []);
   const fauxListener = (title, type) => {
     console.log(focusState);
     if (type === "blur") {
@@ -378,7 +388,7 @@ const StepOneFormComponent = ({
               classes: {
                 root: clsx(
                   classes.descriptionLabelRoot,
-                  focusState.description.focus &&
+                  shouldShrinkDescription &&
                     classes.descriptionInputLabelFocused
                 ),
                 required: classes.inputLabelRequired,

@@ -239,7 +239,7 @@ const Navbar = ({
             noWrap
             classes={{ root: appbarClasses.appbarLabelText }}
           >
-            Rad-ish
+            Rad<span className="navbar_italic">-ish</span>
           </Typography>
           {loggedIn && (
             <IconButton

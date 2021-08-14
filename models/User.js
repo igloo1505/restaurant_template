@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 //   console.log(mongoose);
 // };
 // justLogShitAndDelete();
-
+// TODO when adding validation make sure Password uses same validation on change as it does on creation.
 const UserSchema = mongoose.Schema(
   {
     email: {

@@ -7,6 +7,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Paper from "@material-ui/core/Paper";
 import Slide from "@material-ui/core/Slide";
+import Grow from "@material-ui/core/Grow";
 import Button from "@material-ui/core/Button";
 import {
   ConnectorComponent,
@@ -40,16 +41,16 @@ const useStyles = makeStyles((theme) => ({
 
       gridTemplateAreas: '"banner" "stepper" "form"',
     },
-    transition: theme.transitions.create(
-      ["box-shadow", "transform", "background"],
-      {
-        duration: 500,
-      }
-    ),
+    // transition: theme.transitions.create(
+    //   ["box-shadow", "transform", "background"],
+    //   {
+    //     duration: 500,
+    //   }
+    // ),
     "&:hover": {
       boxShadow: `8px 8px 14px ${theme.palette.grey[400]}, -8px 8px 14px ${theme.palette.grey[300]}`,
-      transition:
-        "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
+      // transition:
+      //   "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
     },
   },
   addBoxShadow: {
@@ -227,12 +228,9 @@ const AddRecipeFormContainer = (
   const [paperLifted, setPaperLifted] = useState(false);
   const [formHeightLimit, setFormHeightLimit] = useState(400);
   const classes = useStyles();
-  const handleState = (e) => {
-    console.log("Now I think I get it", store.getState());
-  };
+
   useEffect(() => {
     !paperLifted && setTimeout(() => setPaperLifted(true), 300);
-    store.subscribe(handleState);
   }, []);
 
   const handleRecipeSubmission = () => {
@@ -249,6 +247,7 @@ const AddRecipeFormContainer = (
       data.directions.push(formData.direction);
       delete data.direction;
     }
+    console.log("Data => ", data);
     store.dispatch(addNewRecipe(data));
   };
 
@@ -303,16 +302,16 @@ const AddRecipeFormContainer = (
         <Fragment>
           <Fragment>
             <div className={classes.formWrapper}>
-              {getStepContent(
-                activeStep,
-                formData,
-                setFormData,
-                handleFormChange,
-                placeHolder,
-                setPlaceHolder,
-                hasMenuOpen,
-                setHasMenuOpen
-              )}
+              <GetStepContent
+                activeStep={activeStep}
+                formData={formData}
+                setFormData={setFormData}
+                handleFormChange={handleFormChange}
+                placeHolder={placeHolder}
+                setPlaceHolder={setPlaceHolder}
+                hasMenuOpen={hasMenuOpen}
+                setHasMenuOpen={setHasMenuOpen}
+              />
             </div>
             <div className={classes.buttons}>
               {activeStep !== 0 && (
@@ -368,50 +367,63 @@ const mapStateToProps = (state, props) => ({
 
 export default forwardRef(AddRecipeFormContainer);
 
-const getStepContent = (
-  step,
-  formData,
-  setFormData,
-  handleFormChange,
-  placeHolder,
-  setPlaceHolder,
-  hasMenuOpen,
-  setHasMenuOpen
-) => {
-  switch (step) {
-    case 0:
-      return (
-        <StepOneForm
-          formData={formData}
-          handleFormChange={handleFormChange}
-          setFormData={setFormData}
-          placeHolder={placeHolder}
-          setPlaceHolder={setPlaceHolder}
-          // hasMenuOpen={hasMenuOpen}
-          // setHasMenuOpen={setHasMenuOpen}
-        />
-      );
-    case 1:
-      return (
-        <StepTwoForm
-          formData={formData}
-          handleFormChange={handleFormChange}
-          setFormData={setFormData}
-          hasMenuOpen={hasMenuOpen}
-          setHasMenuOpen={setHasMenuOpen}
-        />
-      );
-    case 2:
-      return (
-        <StepThreeForm
-          formData={formData}
-          handleFormChange={handleFormChange}
-          setFormData={setFormData}
-          hasMenuOpen={hasMenuOpen}
-          setHasMenuOpen={setHasMenuOpen}
-        />
-      );
-    default:
-      throw new Error("Unknown step");
+const GetStepContent = forwardRef(
+  (
+    {
+      activeStep,
+      formData,
+      setFormData,
+      handleFormChange,
+      placeHolder,
+      setPlaceHolder,
+      hasMenuOpen,
+      setHasMenuOpen,
+    },
+    ref
+  ) => {
+    console.log("props, ref: ", activeStep, ref);
+    // step = 0
+    switch (activeStep) {
+      case 0:
+        return (
+          <Grow in={true}>
+            <StepOneForm
+              formData={formData}
+              handleFormChange={handleFormChange}
+              setFormData={setFormData}
+              placeHolder={placeHolder}
+              setPlaceHolder={setPlaceHolder}
+              // hasMenuOpen={hasMenuOpen}
+              // setHasMenuOpen={setHasMenuOpen}
+            />
+          </Grow>
+        );
+      case 1:
+        return (
+          <Grow in={true}>
+            <StepTwoForm
+              formData={formData}
+              handleFormChange={handleFormChange}
+              setFormData={setFormData}
+              hasMenuOpen={hasMenuOpen}
+              setHasMenuOpen={setHasMenuOpen}
+            />
+          </Grow>
+        );
+      case 2:
+        return (
+          <Grow in={true}>
+            <StepThreeForm
+              formData={formData}
+              handleFormChange={handleFormChange}
+              setFormData={setFormData}
+              hasMenuOpen={hasMenuOpen}
+              setHasMenuOpen={setHasMenuOpen}
+            />
+          </Grow>
+        );
+      default:
+        throw new Error("Unknown step");
+    }
   }
-};
+);

@@ -43,8 +43,16 @@ const StepThreeDisplayComponent = ({
         isShifted && classes.outerContainerShifted
       )}
     >
-      {formData?.directions.map((item) => (
-        <DisplayItem text={item} removeItem={removeItem} />
+      {formData?.directions.map((item, index, array) => (
+        <DisplayItem
+          text={item}
+          item={item}
+          index={index}
+          array={array}
+          name="directions"
+          removeItem={removeItem}
+          key={`${item}-${index}`}
+        />
       ))}
     </div>
   );

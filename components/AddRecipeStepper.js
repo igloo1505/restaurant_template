@@ -4,33 +4,133 @@ import { connect } from "react-redux";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import StepConnector from "@material-ui/core/StepConnector";
 import ForkAndKnife from "@material-ui/icons/LocalDining";
+import ForkAndKnifeAlternative from "@material-ui/icons/Restaurant";
 import Fridge from "@material-ui/icons/KitchenRounded";
 import Ballot from "@material-ui/icons/Ballot";
 
 // primary = 235,96,17
 
-export const ConnectorComponent = withStyles((theme) => ({
+const useConnectorClasses = makeStyles((theme) => ({
   alternativeLabel: {
     top: 22,
   },
-  active: {
-    "& $line": {
-      background: "#fff",
-    },
+  root: {
+    transform: "translate(-50%, 30px)",
   },
-  completed: {
-    "& $line": {
-      // background: "#fff",
-    },
-  },
+  // active: {
+  //   "& $line": {
+  //     background: "#fff",
+  //   },
+  // },
+  // completed: {
+  //   "& $line": {
+  //     background: "#fff",
+  //   },
+  // },
   line: {
     height: 3,
     border: 0,
-    background: "#e0e0e0",
+    background:
+      "linear-gradient(90deg, rgba(255,255,255, 1) 0%, rgba(255,255,255, 1) 100%)",
     borderRadius: 1,
-    // transition: theme.transitions.create(["background"], { duration: 500 }),
+    transition: theme.transitions.create(["background"], {
+      duration: 1200,
+    }),
   },
-}))(StepConnector);
+}));
+const addBoxShadowStyles = makeStyles((theme) => ({
+  addShadowRight: {
+    background: "#fff",
+    background:
+      "linear-gradient(90deg, rgba(255,255,255,1) 67%, rgba(81,161,255,1) 100%)",
+    transition: theme.transitions.create(["background"], {
+      duration: 1200,
+    }),
+  },
+  addShadowLeft: {
+    background: "#fff",
+    background:
+      "linear-gradient(270deg, rgba(255,255,255,1) 67%, rgba(81,161,255,1) 100%)",
+    transition: theme.transitions.create(["background"], {
+      duration: 1200,
+    }),
+  },
+  addShadowBoth: {
+    background: "rgb(81,161,255)",
+    // background:
+    //   "linear-gradient(81deg, rgba(81,161,255,1) 0%, rgba(255,255,255,1) 25%, rgba(255,255,255,1) 75%, rgba(81,161,255,1) 100%)",
+    background:
+      "linear-gradient(90deg, rgba(81,161,255,1) 0%, rgba(255,255,255,1) 50%, rgba(81,161,255,1) 100%)",
+    transition: theme.transitions.create(["background"], {
+      duration: 1200,
+    }),
+  },
+}));
+
+export const ConnectorComponent = ({
+  active,
+  activeStep,
+  alternativeLabel,
+  completed,
+  disabled,
+  index,
+  orientation,
+}) => {
+  const [classes, setClasses] = useState({});
+  let _rootConnectorClasses = useConnectorClasses();
+  let _shadowConnectorClasses = addBoxShadowStyles();
+  useEffect(() => {
+    if (index === 1) {
+      if (activeStep === 0) {
+        let line = clsx(
+          _rootConnectorClasses.line,
+          _shadowConnectorClasses.addShadowLeft
+        );
+        let _classes = { ..._rootConnectorClasses, line: line };
+        setClasses(_classes);
+      }
+      if (activeStep === 1) {
+        let line = clsx(
+          _rootConnectorClasses.line,
+          _shadowConnectorClasses.addShadowBoth
+        );
+        let _classes = { ..._rootConnectorClasses, line: line };
+        setClasses(_classes);
+      }
+      if (activeStep === 2) {
+        let line = clsx(
+          _rootConnectorClasses.line,
+          _shadowConnectorClasses.addShadowBoth
+        );
+        let _classes = { ..._rootConnectorClasses, line: line };
+        setClasses(_classes);
+      }
+    }
+    if (index === 2) {
+      if (activeStep === 0) {
+        setClasses(_rootConnectorClasses);
+      }
+      if (activeStep === 1) {
+        let line = clsx(
+          _rootConnectorClasses.line,
+          _shadowConnectorClasses.addShadowLeft
+        );
+        let _classes = { ..._rootConnectorClasses, line: line };
+        setClasses(_classes);
+      }
+      if (activeStep === 2) {
+        let line = clsx(
+          _rootConnectorClasses.line,
+          _shadowConnectorClasses.addShadowBoth
+        );
+        let _classes = { ..._rootConnectorClasses, line: line };
+        setClasses(_classes);
+      }
+    }
+  }, [activeStep]);
+
+  return <StepConnector classes={classes} />;
+};
 
 const useStyles = makeStyles((theme) => ({
   hideBackdrop: {
@@ -175,12 +275,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const StepIconComponent = (props) => {
-  const { active, completed, activeStep, index } = props;
+  let { active, completed, activeStep, index } = props;
+  if (activeStep > index) {
+    completed = true;
+  }
   const [iconsLifted, setIconsLifted] = useState(false);
   const [initialRender, setInitialRender] = useState(true);
   useEffect(() => {
     if (initialRender) {
-      console.log("props initialRender", props);
       setIconsLifted(false);
       initialRender && setInitialRender(false);
       let timeOut = 1200 + 250 * index;
@@ -194,19 +296,15 @@ export const StepIconComponent = (props) => {
   useEffect(() => {
     if (!initialRender) {
       setIconsLifted(false);
-      console.log("props not initialRender", props);
       let timeOut = 250 * index;
       let _timeOut = 200 + 250 * index;
-      // if (index >= activeStep) setTimeout(() => setIconsLifted(true), timeOut);
       if (active || completed) setTimeout(() => setIconsLifted(true), timeOut);
-      // if (!active) {
-      //   setTimeout(() => setIconsLifted(false), _timeOut);
-      // }
     }
   }, [activeStep]);
   const classes = useStyles();
   const icons = {
-    1: <ForkAndKnife />,
+    // 1: <ForkAndKnife />,
+    1: <ForkAndKnifeAlternative />,
     2: <Fridge />,
     3: <Ballot />,
   };

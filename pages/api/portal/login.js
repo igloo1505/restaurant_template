@@ -4,7 +4,6 @@ import nc from "next-connect";
 import { connectDB } from "../../../util/connectDB";
 import authMiddleware from "../../../util/authMiddleware";
 import jwt from "jsonwebtoken";
-import cookies from "next-cookies";
 import Cookies from "cookies";
 // import NextCors from "nextjs-cors";
 import { handleRememberMe } from "../../../util/handleRememberMe";
@@ -36,13 +35,15 @@ handler.post(async (req, res) => {
     console.log("user!!!", user);
     if (isMatch) {
       const payload = {
-        userID: user._id,
+        userId: user._id,
       };
       let expiresIn = req.rememberMe ? 604800 : 3600;
       let token = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: expiresIn,
       });
       cookies.set("token", token, { httpOnly: true });
+      // TODO I added this here in a hurry. Make sure userId in cookies gets removed and handled appropriately elsewhere.
+      cookies.set("userId", user._id, { httpOnly: true });
       if (req.body.rememberMe) {
         await handleRememberMe(user, req, cookies);
       }

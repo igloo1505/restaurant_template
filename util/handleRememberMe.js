@@ -19,7 +19,7 @@ export const handleRememberMe = async (user, req, cookies) => {
     console.log("here!!", stringifiedPassword);
     let encrypted = await bcrypt.hash(stringifiedPassword, salt);
     await User.findByIdAndUpdate(user._id, {
-      otp: encrypted,
+      oneTimePassword: encrypted,
     });
     return { user, req, cookies };
   } catch (error) {

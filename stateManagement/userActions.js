@@ -16,18 +16,18 @@ import {
 import axios from "axios";
 import useAxios from "./useAxios";
 import cookie from "json-cookie";
-import store from "../stateManagement/store";
+
 const config = {
   headers: {
     "Content-Type": "application/json",
   },
 };
-const {
-  user: {
-    triedAutoLogin,
-    self: { _id: idInState },
-  },
-} = store.getState();
+// const {
+//   user: {
+//     triedAutoLogin,
+//     self: { _id: idInState },
+//   },
+// } = store.getState();
 
 export const authenticateUser = (user) => async (dispatch) => {
   let res = await useAxios({

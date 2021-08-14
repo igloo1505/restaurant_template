@@ -4,35 +4,64 @@ const categoryArray = ["specialty", "side", "drink", "tacoIngredients"];
 
 const RecipeSchema = mongoose.Schema(
   {
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [
+        true,
+        "There was an error creating that recipe. Please try logging in again.",
+      ],
+    },
     categories: {
       type: [String],
       default: [],
     },
     title: {
       type: String,
-      required: true,
+      required: [true, "Please give your recipe a title!"],
     },
     imgUrl: {
       type: String,
     },
     description: {
       type: String,
-      required: true,
+      required: [
+        true,
+        "Make sure people can find your recipe by giving it a description.",
+      ],
     },
     ingredients: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Ingredient",
     },
     time: {
-      prepTime: { type: mongoose.Schema.Types.ObjectId },
-      cookTime: { type: mongoose.Schema.Types.ObjectId },
-      totalTime: { type: mongoose.Schema.Types.ObjectId },
+      prepTime: { type: Number },
+      cookTime: { type: Number },
+      totalTime: { type: Number },
     },
     servings: {
-      amount: { type: Number, required: true },
-      unit: { type: String, required: true },
+      amount: {
+        type: Number,
+        required: [
+          true,
+          "Please fill out the serving information as accurately as you can.",
+        ],
+      },
+      unit: {
+        type: String,
+        required: [
+          true,
+          "Please fill out the serving information as accurately as you can.",
+        ],
+      },
     },
-    directions: { type: [String], required: true },
+    directions: {
+      type: [String],
+      required: [
+        true,
+        "Please add some directions. Some of us need more help than others.",
+      ],
+    },
     isHot: {
       type: Boolean,
       default: false,
@@ -48,15 +77,6 @@ const RecipeSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-
-RecipeSchema.pre("save", async function (next, done) {
-  if (!categoryArray.includes(this.category.toLowerCase())) {
-    var err = new Error("category is not valid");
-    next(err);
-  } else {
-    next();
-  }
-});
 
 // module.exports = mongoose.model("Recipe", RecipeSchema);
 module.exports =

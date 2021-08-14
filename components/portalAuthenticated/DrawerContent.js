@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import * as Types from "../../stateManagement/TYPES";
+import TwoToneBookIcon from "../TwoToneBookIcon";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
@@ -21,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   listRoot: {},
   listItemRoot: {
     "&:hover": {
-      backgroundColor: "rgba(120,172,233, 0.1)",
+      backgroundColor: " rgba(251,	201,	92, 0.3)",
     },
   },
   listItemIconRoot: {
@@ -67,8 +68,12 @@ const DrawerContent = ({
   const theme = useTheme();
   const classes = useStyles();
   const addRecipeAction = () => {
-    // !! Handle redirect
     router.push("/addRecipe");
+    closeDrawer();
+  };
+  const myRecipeAction = () => {
+    // !! Handle redirect
+    router.push("/myRecipes");
     closeDrawer();
   };
   let array = [
@@ -77,13 +82,18 @@ const DrawerContent = ({
       action: addRecipeAction,
       icon: <AddCircleIcon color="secondary" fontSize="large" />,
     },
+    {
+      text: "My Recipes",
+      action: myRecipeAction,
+      icon: <TwoToneBookIcon color="secondary" fontSize="large" />,
+    },
   ];
   return (
     <div className={classes.outerContainer} style={heightOffsetStyle}>
       <Divider />
       <List className={classes.listRoot}>
         {array.map((a) => (
-          <ListComponent item={a} classes={classes} />
+          <ListItemComponent item={a} classes={classes} key={a.text} />
         ))}
       </List>
       <Divider />
@@ -115,7 +125,7 @@ const mapStateToProps = (state, props) => ({
 export default connect(mapStateToProps)(DrawerContent);
 // {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} above InboxIcon ln 30
 
-const ListComponent = ({ item, classes }) => {
+const ListItemComponent = ({ item, classes }) => {
   let { text, action, icon } = item;
   return (
     <ListItem

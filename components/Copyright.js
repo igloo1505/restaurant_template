@@ -12,7 +12,7 @@ const Copyright = () => {
         style={{ backgroundColor: "transparent" }}
       >
         {"Copyright © "}
-        <Link color="inherit" href="https://material-ui.com/">
+        <Link color="inherit" href="https://www.igloodevelopment.dev">
           IglooDevelopment
         </Link>{" "}
         {new Date().getFullYear()}

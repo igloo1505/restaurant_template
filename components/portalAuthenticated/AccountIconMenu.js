@@ -1,6 +1,7 @@
 import React, { useEffect, useState, Fragment } from "react";
 import ClientSidePortal from "./ClientSidePortal";
 import { logOut as logOutUser } from "../../stateManagement/userActions";
+import { useRouter } from "next/router";
 import * as Types from "../../stateManagement/TYPES";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
@@ -16,6 +17,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "transparent",
     transform: "translate(-30px, 30px)",
   },
+  itemRoot: {
+    "&:hover": {
+      backgroundColor: " rgba(251,	201,	92, 0.3)",
+    },
+  },
 }));
 const AccountIconMenuLocal = ({
   props,
@@ -24,6 +30,7 @@ const AccountIconMenuLocal = ({
   },
   logOutUser,
 }) => {
+  const router = useRouter();
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchor, setAnchor] = useState(null);
@@ -48,6 +55,11 @@ const AccountIconMenuLocal = ({
     logOutUser();
   };
 
+  const handleItemClick = (path) => {
+    closeMenu();
+    router.push(path);
+  };
+
   return (
     <>
       {shouldBeVisible && (
@@ -60,9 +72,21 @@ const AccountIconMenuLocal = ({
             onClose={closeMenu}
             PopoverClasses={{ root: classes.popoverRoot }}
           >
-            <MenuItem onClick={closeMenu}>Profile</MenuItem>
-            <MenuItem onClick={closeMenu}>My account</MenuItem>
-            <MenuItem onClick={logOut}>Logout</MenuItem>
+            <MenuItem
+              classes={{ root: classes.itemRoot }}
+              onClick={() => handleItemClick("/myProfile")}
+            >
+              Profile
+            </MenuItem>
+            <MenuItem
+              classes={{ root: classes.itemRoot }}
+              onClick={() => handleItemClick("/myAccount")}
+            >
+              My account
+            </MenuItem>
+            <MenuItem classes={{ root: classes.itemRoot }} onClick={logOut}>
+              Logout
+            </MenuItem>
           </Menu>
         </ClientSidePortal>
       )}

@@ -12,57 +12,66 @@ a {
 
 * {
   box-sizing: border-box;
-  /* AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH I'm going to leave this here. I spent ALL day adjusting everythings background so stuff wouldn't be hidden. I forgot I grabbed this from a old project when I started and had this in here still!!!! */
+  /* AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH I'm going to leave this here. I spent ALL day adjusting everything's background so stuff wouldn't be hidden. I forgot I grabbed this from a old project when I started and had this in here still!!!! */
   /* overflow: hidden; */
   /* overflow-x: hidden; */
   /* background-color: #fff; */
 }
 
-.alert div{
+.alert div {
   background-color: transparent;
 }
-.alert svg{
+.alert svg {
   background-color: transparent;
 }
 
-
-
-
-
+.navbar_italic {
+  font-family: "Style Script", cursive;
+  font-weight: 800;
+  /* letter-spacing: 2px */
+}
 
 /* Material-UI stuff */
-.MuiDivider-root{
-  opacity: 1
+.MuiDivider-root {
+  opacity: 1;
 }
-#login_email_input, #login_password_input, #signIn_password_input, #signIn_email_input, #signIn_firstName_input, #signIn_lastName_input{
+#login_email_input,
+#login_password_input,
+#signIn_password_input,
+#signIn_email_input,
+#signIn_firstName_input,
+#signIn_lastName_input {
   z-index: 1;
 }
 
-input:-internal-autofill-selected{
+input:-internal-autofill-selected {
   background-color: transparent !important;
 }
 
-.MuiOutlinedInput-root{
+.MuiOutlinedInput-root {
   overflow: visible;
 }
 /* For drawer hover, change to add classes conditionally if this approach causes issues elsewhere */
-.MuiListItemText-root, .MuiTypography-root, .MuiListItemIcon-root{
+.MuiListItemText-root,
+.MuiTypography-root,
+.MuiListItemIcon-root {
   background-color: transparent;
 }
 
-.MuiSvgIcon-root, #topLevelPortalContainer{
+.MuiSvgIcon-root,
+#topLevelPortalContainer {
   background-color: transparent;
 }
-div[class^="PrivateSwipeArea-root"]{
+div[class^="PrivateSwipeArea-root"] {
   z-index: 1099;
 }
 
-.MuiTouchRipple-root{
-  opacity: 0
+.MuiTouchRipple-root {
+  opacity: 0;
 }
-.MuiBackdrop-root{
-  background-color: rgba(0,0,0, 0.2) !important;
-  transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms
+.MuiBackdrop-root {
+  /* background-color: rgba(0,0,0, 0.2) !important; */
+  transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
 .MuiFormControl-fullWidth {
@@ -73,34 +82,46 @@ div[class^="PrivateSwipeArea-root"]{
   /* min-width: 100% !important; */
 }
 
-.addRecipeFormContainer input{
+.addRecipeFormContainer input {
   /* min-width: 100%; */
 }
 /* .MuiInputLabel-outlined.MuiInputLabel-shrink{
   transform: none !important;
 } */
 
-  @keyframes onAutoFillStart { from {background-color: transparent} to {background-color: transparent;}}
-  @keyframes onAutoFillCancel { from {background-color: transparent} to {background-color: transparent;}}
-
+@keyframes onAutoFillStart {
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: transparent;
+  }
+}
+@keyframes onAutoFillCancel {
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: transparent;
+  }
+}
 
 input:-webkit-autofill {
-    animation-name: onAutoFillStart;
-    transition: background-color 50000s ease-in-out 0s;
+  animation-name: onAutoFillStart;
+  transition: background-color 50000s ease-in-out 0s;
 }
 
 input:not(:-webkit-autofill) {
-    animation-name: onAutoFillCancel;
+  animation-name: onAutoFillCancel;
 }
 
-#backDropDiv{
-  background-color: rgba(0,0,0,0.2) !important;
+#backDropDiv {
+  background-color: rgba(0, 0, 0, 0.2) !important;
 }
 
 #menu-servings > .MuiPaper-root.MuiMenu-paper {
   padding-top: 0;
 }
-#menu-servings > .MuiPaper-root.MuiMenu-paper > .MuiList-root.MuiMenu-list{
+#menu-servings > .MuiPaper-root.MuiMenu-paper > .MuiList-root.MuiMenu-list {
   padding-top: 0;
 }
-

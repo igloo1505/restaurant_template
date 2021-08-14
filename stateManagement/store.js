@@ -4,12 +4,17 @@ import {
   current,
   applyMiddleware,
   configureStore,
+  createSlice,
 } from "@reduxjs/toolkit";
+import { createStore } from "redux";
+import { createWrapper, HYDRATE } from "next-redux-wrapper";
 import userReducer from "./userReducer";
-import modalReducer from "./modalReducer";
+import drawerReducer from "./drawerReducer";
 import alertReducer from "./alertReducer";
 import uiReducer from "./uiReducer";
 import networkReducer from "./networkReducer";
+import recipeReducer from "./recipeReducer";
+import myGroceryReducer from "./myGroceryReducer";
 
 const initialState = {};
 
@@ -21,12 +26,18 @@ const withDevtools = () => {
 const store = configureStore({
   reducer: {
     user: userReducer,
+    recipes: recipeReducer,
     UI: uiReducer,
-    modal: modalReducer,
+    drawer: drawerReducer,
     alert: alertReducer,
     network: networkReducer,
+    myGroceries: myGroceryReducer,
   },
   devTools: () => withDevtools(),
 });
 
 export default store;
+
+const makeStore = (context) => store;
+
+export const wrapper = createWrapper(makeStore);

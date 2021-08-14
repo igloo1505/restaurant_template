@@ -163,6 +163,7 @@ const MUITheme = createMuiTheme({
     common: {
       black: "#000",
       white: "#fff",
+      paperLight: "#ecf0f3",
       type: "dark",
     },
     primary: {
@@ -183,9 +184,14 @@ const MUITheme = createMuiTheme({
       dark: "  #c9a14a",
       contrastText: " #fff",
     },
+    alternativeTwo: {
+      light: "#80e9bb",
+      main: "#37DC94",
+      dark: "#2db479",
+    },
     error: {
       light: "#e57373",
-      main: "#f44336",
+      main: "#f03e3e",
       dark: "#d32f2f",
       contrastText: "#fff",
     },

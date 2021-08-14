@@ -5,27 +5,27 @@ import Slide from "@material-ui/core/Slide";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
-// import * as Types from "../../stateManagement/TYPES";
 import * as Types from "../../stateManagement/TYPES";
+// TODO add a info snackbar and use this as icon on primary.dark background
+import { FcIdea } from "react-icons/gi";
 
 const useStyles = makeStyles((theme) => ({
   snackbarRoot: {
     overflow: "visible",
-    // backgroundColor: "transparent",
-    // border: "1px solid red",
   },
   alertRoot: {},
-  // alertMessage: { backgroundColor: "transparent" },
-  // alertAction: { backgroundColor: "transparent" },
-  // alertIcon: { backgroundColor: "transparent" },
 }));
 
-const SlideTransition = (props) => {
-  return <Slide {...props} direction="up" />;
-};
-
 const SnackbarSwitcher = ({
-  snackbar: { isOpen, variant, message, hideIn, vertical, horizontal },
+  snackbar: {
+    isOpen,
+    variant,
+    message,
+    hideIn,
+    vertical,
+    horizontal,
+    transitionDirection,
+  },
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -47,6 +47,7 @@ const SnackbarSwitcher = ({
       autoHideDuration={hideIn}
       onClose={handleClose}
       TransitionComponent={SlideTransition}
+      TransitionProps={{ transitionDirection }}
       anchorOrigin={{ vertical, horizontal }}
       classes={{ root: classes.snackbarRoot }}
     >
@@ -72,3 +73,7 @@ const mapStateToProps = (state, props) => ({
   snackbar: state.alert.snackbar,
 });
 export default connect(mapStateToProps)(SnackbarSwitcher);
+
+export const SlideTransition = (props) => {
+  return <Slide {...props} direction={props.transitionDirection} />;
+};

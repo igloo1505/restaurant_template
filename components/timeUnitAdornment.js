@@ -182,53 +182,58 @@ const timeAdornment = (
 
 export default timeAdornment;
 
-const UnitMenu = ({
-  menuOpen,
-  units,
-  classes,
-  handleItemClick,
-  toggleMenu,
-  hasMenuOpen,
-  setHasMenuOpen,
-}) => {
-  console.log("hasMenuOpen: ", hasMenuOpen);
-  const handleMenuClose = () => {
-    toggleMenu(null);
-  };
-  return (
-    <ClientSidePortal selector="#topLevelPortalContainer">
-      <Menu
-        id={menuId}
-        elevation={0}
-        anchorEl={menuOpen}
-        open={Boolean(menuOpen)}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        keepMounted
-        onClose={handleMenuClose}
-        classes={{ paper: classes.menuRoot, list: classes.menuList }}
-        PopoverClasses={{ root: classes.popoverRoot }}
-      >
-        {units.map((unit, index) => (
-          <MenuItemComponent
-            unit={unit}
-            id={`${menuId}-${index}`}
-            key={unit.long}
-            handleItemClick={handleItemClick}
-            index={index}
-            classes={classes}
-          />
-        ))}
-      </Menu>
-    </ClientSidePortal>
-  );
-};
+const UnitMenu = forwardRef(
+  (
+    {
+      menuOpen,
+      units,
+      classes,
+      handleItemClick,
+      toggleMenu,
+      hasMenuOpen,
+      setHasMenuOpen,
+    },
+    ref
+  ) => {
+    console.log("hasMenuOpen: ", hasMenuOpen);
+    const handleMenuClose = () => {
+      toggleMenu(null);
+    };
+    return (
+      <ClientSidePortal selector="#topLevelPortalContainer">
+        <Menu
+          id={menuId}
+          elevation={0}
+          anchorEl={menuOpen}
+          open={Boolean(menuOpen)}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          keepMounted
+          onClose={handleMenuClose}
+          classes={{ paper: classes.menuRoot, list: classes.menuList }}
+          PopoverClasses={{ root: classes.popoverRoot }}
+        >
+          {units.map((unit, index) => (
+            <MenuItemComponent
+              unit={unit}
+              id={`${menuId}-${index}`}
+              key={unit.long}
+              handleItemClick={handleItemClick}
+              index={index}
+              classes={classes}
+            />
+          ))}
+        </Menu>
+      </ClientSidePortal>
+    );
+  }
+);
 
 const MenuItemComponent = ({ unit, handleItemClick, index, classes, id }) => {
   return (

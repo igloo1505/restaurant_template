@@ -5,13 +5,14 @@ import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
+import Menu_item from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import { unitObject, getIngredientUnits } from "../util/appWideData";
 
 const useStyles = makeStyles((theme) => ({
   keyRoot: {
     gridTemplateColumns: "1fr min-content 1fr",
+    // outlineColor: "#fff !important",
     "&:hover": {
       backgroundColor: theme.palette.secondary.main,
       // borderRadius: "5px",
@@ -40,10 +41,12 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     textAlign: "center",
     "&:hover": {
-      backgroundColor: theme.palette.primary.main,
+      // backgroundColor: theme.palette.primary.main,
+      backgroundColor: "#fff !important",
     },
     "&:focus": {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: "#fff",
+      // backgroundColor: theme.palette.primary.main,
     },
   },
   menuItemRoot: {
@@ -55,9 +58,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "rgba(38, 138, 255, 0.3)",
     },
   },
-  listItemRoot: {
-    fontSize: "1rem",
-  },
+
   noMargin: {
     marginTop: 0,
   },
@@ -176,26 +177,15 @@ const UnitSelect = ({ props: { handleFormChange, formData, setFormData } }) => {
           ),
           icon: clsx(classes.inputIcon, focused && classes.inputIconFocused),
         }}
-        // input={InputComponent}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
       >
-        {unitKeys.map((k) => (
+        {unitKeys.map((k, i) => (
           <MenuItem
             key={k.long}
             value={k.long}
-            classes={{
-              root: clsx(
-                !k.key && classes.menuItemRoot,
-                k.key && classes.menuItemKeyRoot
-              ),
-            }}
-            ListItemClasses={{
-              root: clsx(
-                classes.listItemRoot,
-                k.key && classes.listItemKeyRoot
-              ),
-            }}
+            unit={k}
+            index={i}
             onClick={(e) => {
               console.log(e);
             }}
@@ -214,10 +204,122 @@ const mapStateToProps = (state, props) => ({
 
 export default connect(mapStateToProps)(UnitSelect);
 
-export const InputComponent = () => {
-  return (
-    <Fragment>
-      <TextField type="select" />
-    </Fragment>
-  );
+const useItemStyles = makeStyles((theme) => ({
+  strikethroughContainerThing: {
+    display: "flex",
+    width: "100%",
+    height: "100%",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    backgroundColor: theme.palette.primary.main,
+  },
+  strikethroughUpper: {
+    height: "calc(50% - 1px)",
+    width: "100%",
+    backgroundColor: "#fff",
+  },
+  strikethroughLower: {
+    height: "calc(50% - 1px)",
+    // height: "100%",
+    width: "100%",
+    backgroundColor: "#fff",
+  },
+  ["item-key"]: {
+    width: "100%",
+    display: "grid",
+    gridTemplateColumns: "1fr auto 1fr",
+    "& span": {
+      fontSize: "0.7rem",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+    "&:hover": {
+      backgroundColor: "#fff",
+    },
+  },
+  listItemRoot: {
+    fontSize: "1rem",
+    "&:hover": {
+      backgroundColor: "rgba(38, 138, 255, 0.3)",
+    },
+    "&:focus": {
+      backgroundColor: "rgba(38, 138, 255, 0.3)",
+    },
+  },
+  listItemKeyRoot: {
+    fontSize: "1rem",
+    "&:focus": {
+      border: "none !important",
+      border: "none !important",
+      outlineColor: "#fff !important",
+    },
+    "&:focus-visible": {
+      // backgroundColor: "green",
+      border: "none !important",
+      outlineColor: "#fff !important",
+      backgroundColor: "#fff",
+      ["-webkit-focus-ring-color"]: "#fff",
+    },
+    "&:-webkit-direct-focus": {
+      border: "none !important",
+      // outline: "none !important",
+      outlineColor: "#fff !important",
+      outlineStyle: "auto",
+      outlineWidth: "0px",
+    },
+  },
+}));
+
+const MenuItem = (props) => {
+  const itemId = `unit-select-${props.index}`;
+  useEffect(() => {}, []);
+  const classes = useItemStyles();
+  const checkFocus = (e) => {
+    let em = document.getElementById(itemId);
+    console.log("em: ", em);
+    console.log(e);
+  };
+  console.log("props: ", props);
+  if (!props.unit.isKey) {
+    return (
+      <Menu_item
+        {...props}
+        className={classes.item_root}
+        ListItemClasses={{
+          root: classes.listItemRoot,
+        }}
+      />
+    );
+  }
+  if (props.unit.isKey) {
+    return (
+      <div className={classes["item-key"]} onClick={(e) => e.preventDefault()}>
+        <div className={classes.strikethroughContainerThing}>
+          <div className={classes.strikethroughUpper}></div>
+          <div className={classes.strikethroughLower}></div>
+        </div>
+        <Menu_item
+          {...props}
+          button={false}
+          id={itemId}
+          onClick={(e) => e.preventDefault()}
+          className={classes.item_root}
+          ListItemClasses={{
+            root: classes.listItemKeyRoot,
+          }}
+          tabindex="-1"
+          onFocus={(e) => {
+            checkFocus();
+            e.preventDefault();
+          }}
+          disabled
+        />
+        <div className={classes.strikethroughContainerThing}>
+          <div className={classes.strikethroughUpper}></div>
+          <div className={classes.strikethroughLower}></div>
+        </div>
+      </div>
+    );
+  }
 };

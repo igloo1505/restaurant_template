@@ -4,6 +4,7 @@ import createCache from "@emotion/cache";
 import createEmotionServer from "@emotion/server/create-instance";
 import { CacheProvider } from "@emotion/react";
 import { ServerStyleSheets } from "@material-ui/core/styles";
+import { wrapper } from "../stateManagement/store";
 
 // const getCache = () => {
 //   const cache = createCache({ key: "css", prepend: true });
@@ -26,6 +27,10 @@ export default class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,300&display=swap"
             rel="stylesheet"
           />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Style+Script&display=swap"
+            rel="stylesheet"
+          ></link>
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
@@ -62,32 +67,10 @@ export default class MyDocument extends Document {
 }
 
 MyDocument.getInitialProps = async (ctx) => {
-  // Resolution order
-  //
-  // On the server:
-  // 1. app.getInitialProps
-  // 2. page.getInitialProps
-  // 3. document.getInitialProps
-  // 4. app.render
-  // 5. page.render
-  // 6. document.render
-  //
-  // On the server with error:
-  // 1. document.getInitialProps
-  // 2. app.render
-  // 3. page.render
-  // 4. document.render
-  //
-  // On the client
-  // 1. app.getInitialProps
-  // 2. page.getInitialProps
-  // 3. app.render
-  // 4. page.render
   const sheets = new ServerStyleSheets();
   const originalRenderPage = ctx.renderPage;
   // const cache = getCache();
   // const { extractCriticalToChunks } = createEmotionServer(cache);
-
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: (App) => (props) => sheets.collect(<App {...props} />),

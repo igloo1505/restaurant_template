@@ -10,9 +10,10 @@ import AddIcon from "@material-ui/icons/AddBoxOutlined";
 import ReturnIcon from "@material-ui/icons/KeyboardReturn";
 import AddAdornment from "./AddAdornment";
 import TimeAdornment from "./timeUnitAdornment";
+import { PrimaryTooltip } from "./tooltip";
 
 const timeSectionBreakpoint = "xl";
-
+// TODO put time section in an accordian to limit confusion.
 const getHasSentAlert = () => {
   let value = localStorage.getItem("hasSentAlert-directions");
   return value ? value : false;
@@ -82,13 +83,8 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff !important",
   },
   timeInputsContainer_outer: {
-    marginTop: "16px",
+    marginTop: "60px",
     width: "100%",
-
-    // display: "flex",
-    // [theme.breakpoints.up(timeSectionBreakpoint)]: {
-    //   flexDirection: "row",
-    // },
   },
   timeInputsContainer_insideTypography: {
     // marginTop: "16px",
@@ -98,12 +94,7 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: "row",
     },
   },
-  // timeInputsContainer_inner: {
-  //   width: "100%",
-  //   [theme.breakpoints.up(timeSectionBreakpoint)]: {
-  //     width: "45%",
-  //   },
-  // },
+
   timeInputsContainer_inner_left: {
     width: "100%",
     [theme.breakpoints.up(timeSectionBreakpoint)]: {
@@ -120,9 +111,24 @@ const useStyles = makeStyles((theme) => ({
   },
   typographyRoot: {
     color: "#e0e0e0",
+    transition: theme.transitions.create(["color"], {
+      duration: 350,
+    }),
   },
   typographyRootFocused: {
-    color: "#fff",
+    color: "#fff !important",
+    transition: theme.transitions.create(["color"], {
+      duration: 350,
+    }),
+  },
+  typographyCaptionRoot: {
+    color: "#e0e0e0",
+    width: "100%",
+    fontSize: "0.7rem",
+    fontStyle: "italic",
+    transition: theme.transitions.create(["color"], {
+      duration: 350,
+    }),
   },
 }));
 const StepThreeFormComponent = ({
@@ -283,8 +289,22 @@ const StepThreeFormComponent = ({
             ),
           }}
         >
-          Total Time
+          How long?
         </Typography>
+        <PrimaryTooltip title="For entire recipe">
+          <Typography
+            align="center"
+            classes={{
+              root: clsx(
+                classes.typographyCaptionRoot,
+                focusState.prepTime.focus && classes.typographyRootFocused,
+                focusState.cookTime.focus && classes.typographyRootFocused
+              ),
+            }}
+          >
+            ~Total~
+          </Typography>
+        </PrimaryTooltip>
         <div className={clsx(classes.timeInputsContainer_insideTypography)}>
           <div
             className={clsx(
@@ -341,7 +361,6 @@ const StepThreeFormComponent = ({
                 pattern: "\\d*",
               }}
               onKeyDown={(e) => {
-                // All of this to avoid Safari's shadow user agent
                 let allowed = false;
                 let regex = /^\d+$/;
                 if (regex.test(e.key) || e.code.slice(0, 3) !== "Key") {
@@ -407,7 +426,6 @@ const StepThreeFormComponent = ({
                 pattern: "\\d*",
               }}
               onKeyDown={(e) => {
-                // All of this to avoid Safari's shadow user agent
                 let allowed = false;
                 let regex = /^\d+$/;
                 if (regex.test(e.key) || e.code.slice(0, 3) !== "Key") {

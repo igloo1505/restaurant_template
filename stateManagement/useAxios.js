@@ -39,7 +39,7 @@ async function useAxios(request) {
     setResponse(res);
     return res;
   } catch (error) {
-    console.log("This error occurred in the useAxios hook.");
+    console.error("This error occurred in the useAxios hook.");
     setError(error);
     return error;
   }

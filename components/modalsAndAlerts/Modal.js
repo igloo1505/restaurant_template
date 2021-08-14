@@ -1,133 +1,125 @@
-import React, { useEffect, Fragment, useState, useRef } from "react";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import React, { Fragment } from "react";
 import { connect, useDispatch } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
-import IngredientUnit_Modal from "../modalContent/IngredientUnit_Modal";
-import Modal from "@material-ui/core/Modal";
 import * as Types from "../../stateManagement/TYPES";
-import { showModal, hideModal } from "../../stateManagement/uiActions";
-import ClientSidePortal from "../portalAuthenticated/ClientSidePortal";
-
-const modalId = "modal_ref_id";
+import Default_Dialog_Content from "../modalContent/Default_Dialog_Content";
+import Modal_confirmDeleteRecipe from "../myRecipes/Modal_confirmDeleteRecipe";
+import { FcHighPriority } from "react-icons/fc";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    height: "100vh",
-    flexGrow: 1,
-    minWidth: 300,
-    transform: "translateZ(0)",
-    backgroundColor: "transparent",
+  backdropRoot: {
+    backgroundColor: "rgba(0,0,0,0.2)",
   },
-  modal: {
+  dialogScrollPaper: {},
+  dialogContainer: { backgroundColor: "rgba(0,0,0,0.2)" },
+  dialogScrollBody: {},
+  title: {
+    fontSize: "1.1rem",
     display: "flex",
-    padding: theme.spacing(1),
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "transparent",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    // paddingBottom: "0px",
   },
-  paper: {
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: "1px solid #000",
-    borderRadius: "5px",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
+  warningIcon: {
+    width: "30px",
+    height: "30px",
+    position: "absolute",
+    right: "10px",
+    top: "10px",
   },
 }));
 
-const ModalComponent = ({
-  UI: { isClient },
-  modal: { isOpen, dismissible, variant },
-  showModal,
+const Alert = ({
+  alert: {
+    dialog: { isOpen, contentText, title, variant },
+  },
 }) => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [backDropStyles, setBackDropStyles] = useState({ width: 0, height: 0 });
-
-  // DELETE AFTER CONFIRMATION MODAL AND FORM MODAL WORKING
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      document.addEventListener("keydown", (e) => {
-        if (e.code === "Space") {
-          // dispatch({ type: Types.SHOW_ALERT });
-          dispatch({
-            type: Types.TOGGLE_MODAL,
-            payload: {
-              message: "Getting rid of frustrated curse words before I commit.",
-              variant: "success",
-            },
-          });
-        }
-      });
-    }
-  }, [isClient]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setBackDropStyles({ width: "100vw", height: "100vh" });
-    }
-    if (!isOpen) {
-      setBackDropStyles({ width: 0, height: 0 });
-    }
-  }, [isOpen]);
-
-  const handleBackdropClick = () => {
-    if (dismissible) {
-      dispatch({ type: Types.HIDE_MODAL });
-    }
+  const handleClose = () => {
+    dispatch({ type: Types.HIDE_ALERT });
   };
-
-  const willOpen = () => {
-    setBackDropStyles({ width: "100vw", height: "100vh" });
-  };
-
-  // const rootRef = useRef(null);
 
   return (
     <Fragment>
-      <ClientSidePortal selector="#topLevelPortalContainer">
-        <div
-          className={classes.root}
-          id={modalId}
-          // ref={rootRef}
-          style={backDropStyles}
-          onClick={handleBackdropClick}
+      <Dialog
+        open={isOpen}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        classes={{
+          root: classes.backdropRoot,
+          scrollPaper: classes.dialogScrollPaper,
+          container: classes.dialogContainer,
+          scrollBody: classes.dialogScrollBody,
+        }}
+      >
+        <DialogTitle
+          id="alert-dialog-title"
+          classes={{ root: classes.title }}
+          disableTypography
         >
-          <Modal
-            disablePortal
-            disableEnforceFocus
-            disableAutoFocus
-            open={isOpen}
-            // hideBackdrop
-            onOpen={willOpen}
-            BackdropProps={{ id: "backDropDiv" }}
-            // aria-labelledby=""
-            // aria-describedby=""
-            className={classes.modal}
-            // container={() => rootRef.current}
-            container={() => {
-              if (typeof window !== "undefined") {
-                document.getElementById(modalId);
-              }
-            }}
-          >
-            <ModalChildren variant={variant} />
-          </Modal>
-        </div>
-      </ClientSidePortal>
+          {title}
+          {variant === "deleteRecipe" && (
+            <FcHighPriority className={classes.warningIcon} />
+          )}
+        </DialogTitle>
+        <GetDialogContent
+          variant={variant}
+          isOpen={isOpen}
+          contentText={contentText}
+          title={title}
+        />
+      </Dialog>
     </Fragment>
   );
 };
 
-const mapStateToProps = (state, props) => ({
-  UI: state.UI,
-  modal: state.modal,
+const mapStateToProps = (state) => ({
+  alert: state.alert,
 });
 
-export default connect(mapStateToProps, { showModal })(ModalComponent);
+export default connect(mapStateToProps)(Alert);
 
-const ModalChildren = ({ variant }) => {
-  switch (variant) {
-    default:
-      return <IngredientUnit_Modal />;
+const GetDialogContent = ({
+  variant,
+  isOpen,
+  contentText,
+  title,
+
+  handleClick,
+  ...rest
+}) => {
+  if (!variant) {
+    return (
+      <Default_Dialog_Content
+        variant={variant}
+        isOpen={isOpen}
+        contentText={contentText}
+        title={title}
+      />
+    );
+  } else {
+    switch (variant) {
+      case "deleteRecipe":
+        return (
+          <Modal_confirmDeleteRecipe
+            variant={variant}
+            isOpen={isOpen}
+            contentText={contentText}
+            title={title}
+          />
+        );
+      default:
+        <Default_Dialog_Content
+          variant={variant}
+          isOpen={isOpen}
+          contentText={contentText}
+          title={title}
+        />;
+    }
   }
 };

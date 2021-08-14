@@ -1,15 +1,15 @@
 import React, { useEffect, Fragment } from "react";
 import axios from "axios";
 import Navbar from "../components/portalAuthenticated/Navbar";
-import Modal from "../components/modalsAndAlerts/Modal";
 import SnackbarSwitcher from "../components/modalsAndAlerts/SnackbarSwitcher";
-import Alert from "../components/modalsAndAlerts/Alert";
+import SimpleBooleanSnackbar from "../components/SimpleBooleanSnackbar";
+import Alert from "../components/modalsAndAlerts/Modal";
 import Drawer from "../components/portalAuthenticated/Drawer";
 import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
 import Head from "next/head";
 import "../styles/globals.css";
 import { Provider } from "react-redux";
-import store from "../stateManagement/store";
+import store, { wrapper } from "../stateManagement/store";
 import { removeBoxShadow } from "../stateManagement/uiActions";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -39,7 +39,6 @@ function MyApp({ Component, pageProps, ...rest }) {
   // if (localStorage.token) {
   //   setAuthToken(localStorage.token);
   // }
-  const state = store.getState();
 
   useEffect(() => {
     const jssStyles = document.querySelector("#jss-server-side");
@@ -116,10 +115,11 @@ function MyApp({ Component, pageProps, ...rest }) {
           <CssBaseline />
           <Navbar />
           <Drawer />
-          <Modal />
+
           <AccountIconMenu />
           <Alert />
           <SnackbarSwitcher />
+          <SimpleBooleanSnackbar />
           <Component {...pageProps} />
         </ThemeProvider>
       </Provider>
@@ -127,7 +127,7 @@ function MyApp({ Component, pageProps, ...rest }) {
   );
 }
 
-export default MyApp;
+export default wrapper.withRedux(MyApp);
 
 // <Navbar />
 // <CacheProvider value={cache}>

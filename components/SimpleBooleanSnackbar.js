@@ -1,39 +1,59 @@
 import React, { useState } from "react";
+import { deleteRecipe } from "../stateManagement/recipeActions";
+import { connect, useDispatch } from "react-redux";
+import * as Types from "../stateManagement/TYPES";
 import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 
 // TODO use this for bookmark and favorite confirmations and whatnot
-export default function SimpleSnackbar() {
-  const [open, setOpen] = useState(false);
+const SimpleSnackbar = ({
+  booleanSnackbar: {
+    isOpen,
+    transitionDirection,
+    variant,
+    hideIn,
+    message,
+    vertical,
+    horizontal,
+    relevantId,
+    undoAction,
+  },
+}) => {
+  const dispatch = useDispatch();
 
-  const handleClick = () => {
-    setOpen(true);
+  const checkUndoAction = () => {
+    switch (undoAction) {
+      case "deleteRecipe": {
+        return dispatch(deleteRecipe(relevantId));
+      }
+      default:
+        return;
+    }
   };
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-    setOpen(false);
+    dispatch({ type: Types.HIDE_BOOLEAN_SNACKBAR });
   };
 
   return (
     <div>
-      <Button onClick={handleClick}>Open simple snackbar</Button>
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
         }}
-        open={open}
-        autoHideDuration={6000}
+        open={isOpen}
+        autoHideDuration={hideIn}
         onClose={handleClose}
-        message="Note archived"
+        message={message}
         action={
           <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
+            <Button color="secondary" size="small" onClick={checkUndoAction}>
               UNDO
             </Button>
             <IconButton
@@ -49,4 +69,10 @@ export default function SimpleSnackbar() {
       />
     </div>
   );
-}
+};
+
+const mapStateToProps = (state, props) => ({
+  booleanSnackbar: state.alert.booleanSnackbar,
+});
+
+export default connect(mapStateToProps, { deleteRecipe })(SimpleSnackbar);

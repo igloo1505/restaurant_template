@@ -1,55 +1,96 @@
 const mongoose = require("mongoose");
 import nc from "next-connect";
 import { connectDB, middleware } from "../../../../util/connectDB";
+import { unitObject } from "../../../../util/appWideData";
+
 import Recipe from "../../../../models/Recipe";
+import Ingredient from "../../../../models/Ingredient";
 const colors = require("colors");
 
 const handler = nc();
-handler.use(middleware);
+// handler.use(middleware);
 handler.post(async (req, res) => {
   try {
     console.log(
       colors.bgGreen.black("Ran this bitch in /api/portal/recipes/newRecipe")
     );
-    console.log(colors.bgGreen.black(req.body));
-    // const {
-    //   category,
-    //   title,
-    //   imgUrl,
-    //   description,
-    //   ingredients,
-    //   cookTime,
-    //   prepTime,
-    // } = req.body;
+    console.log(colors.bgBlue.white(req.body));
+
     const {
       servings,
+      createdBy,
       servingUnit,
+      imgUrl,
       title,
       description,
       ingredients,
       directions,
       prepTime,
       cookTime,
-      // ingredient: { text, optional },
     } = req.body;
-    // let data = {
-    //   category,
-    //   name,
-    //   description,
-    //   price,
-    //   isHot,
-    //   isGlutenFree,
-    //   isInStock,
-    // };
+    if (!createdBy) {
+      res.statusCode = 401;
+      res.json({ error: "You must be logged in to add a recipe." });
+    }
+    let _ingredients = [];
+    let _ingredientsToReturn = [];
+
+    ingredients.forEach(async (ingredient, index) => {
+      // console.log("newIngredient: ", {
+      //   name: ingredient.text,
+      //   quantity: parseFloat(ingredient.amount),
+      //   unit: ingredient.unit.long,
+      //   optional: ingredient.optional,
+      // });
+      let newIngredient = new Ingredient({
+        name: ingredient.text,
+        quantity: parseFloat(ingredient.amount),
+        unit: ingredient.unit.long,
+        optional: ingredient.optional,
+      });
+      _ingredients.push(newIngredient._id);
+      console.log(newIngredient);
+      let _newIngredient = await newIngredient.save();
+      _ingredientsToReturn.push(_newIngredient);
+    });
+
+    let data = {
+      createdBy,
+      servings,
+      servingUnit,
+      imgUrl,
+      title,
+      description,
+      ingredients: _ingredients,
+      directions,
+      time: {
+        prepTime: null,
+        cookTime: null,
+      },
+      servings: {
+        amount: servings,
+        unit: servingUnit,
+      },
+    };
+    if (prepTime && typeof parseFloat(prepTime) === "number") {
+      data.time.prepTime = parseFloat(prepTime);
+    }
+    if (cookTime && typeof parseFloat(cookTime) === "number") {
+      data.time.cookTime = parseFloat(cookTime);
+    }
+
     let recipe = new Recipe(data);
-    console.log(recipe);
-    let returned = await recipe.save();
-    console.log("returned", returned.errors);
-    return res.json(recipe);
+    let returnRecipe = await recipe.save();
+    return res.json({
+      recipe: returnRecipe,
+      ingredients: _ingredientsToReturn,
+    });
   } catch (error) {
     console.log("Return this error?", error);
-    return res.statusCode(500).json({
-      msg: "There was an error saving that recipe to the database.",
+    console.log("Return this error?", res);
+    res.statusCode = 500;
+    return res.json({
+      error: "Something went wrong while validating that recipe.",
     });
   }
 });

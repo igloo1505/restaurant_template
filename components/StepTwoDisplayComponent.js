@@ -44,6 +44,13 @@ const StepTwoDisplayComponent = ({
 }) => {
   const classes = useStyles();
   const removeItem = (e, item) => {
+    let data = {};
+    let storedData = localStorage.getItem("ingredients");
+    storedData = JSON.parse(storedData);
+    storedData = Object.values(storedData).filter((s) => s !== item.text);
+    storedData.forEach((s, i) => (data[i] = s));
+    localStorage.setItem("ingredients", JSON.stringify(data));
+    console.log("storedData: ", data);
     setFormData({
       ...formData,
       ingredients: formData?.ingredients.filter((i) => i.text !== item.text),
@@ -60,15 +67,19 @@ const StepTwoDisplayComponent = ({
         maxHeight: `${formHeightLimit}px`,
       }}
     >
-      {formData?.ingredients.map((item) => (
-        <DisplayItem item={item} text={item.text} removeItem={removeItem} />
+      {formData?.ingredients.map((item, index, a) => (
+        <DisplayItem
+          item={item}
+          text={item.text}
+          index={index}
+          array={a}
+          name="ingredients"
+          key={`${item.text}-${index}`}
+          removeItem={removeItem}
+        />
       ))}
     </div>
   );
 };
 
 export default StepTwoDisplayComponent;
-
-// const LightTooltip = ({ classes }) => {
-//   return <Tooltip arrow classes={{ tooltip: classes.toolTip }} />;
-// };
