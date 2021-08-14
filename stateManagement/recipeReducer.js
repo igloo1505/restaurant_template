@@ -33,23 +33,13 @@ const recipeReducer = (state = initialState, action) => {
         // myRecipes: ["test"],
         myRecipes: action.payload._myRecipes,
       };
-    case Types.GET_OWN_RECIPES_SERVER:
-      console.log("initialState", state.myRecipes);
-      console.log("payload", action.payload);
+
+    case Types.REMOVE_RECIPE_SUCCESS:
       return {
         ...state,
-        // myRecipes
-        // myRecipes:
-        //        // state.myRecipes.length !== 0
-        //   ? state.myRecipes
-        //   : action.payload._myRecipes,
-      };
-    case HYDRATE:
-      console.log("Hydrating", state, action.payload);
-      return {
-        ...state,
-        // myRecipes: action.payload.recipe.myRecipes,
-        // myRecipes: action.payload.recipe.myRecipes,
+        myRecipes: state.myRecipes.filter(
+          (r) => r._id !== action.payload.recipe._id
+        ),
       };
     default:
       return state;
