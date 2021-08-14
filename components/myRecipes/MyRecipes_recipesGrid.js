@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "16px",
     display: "grid",
     gridGap: "10px",
-    gridTemplateColumns: "repeat(auto-fit, minmax(calc(50% - 20px), 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
   },
 }));
 

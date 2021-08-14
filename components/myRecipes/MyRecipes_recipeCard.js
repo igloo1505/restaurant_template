@@ -3,6 +3,8 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { connect, useDispatch } from "react-redux";
 import CloseIcon from "@material-ui/icons/Close";
+import MyRecipes_cardBanner from "./MyRecipes_cardBanner";
+import MyRecipes_cardSummary from "./MyRecipes_cardSummary";
 import {
   deleteRecipe,
   addDeleteConfirmationListeners,
@@ -15,7 +17,10 @@ let backgroundTransition = 650;
 const useStyles = makeStyles((theme) => ({
   cardOuterContainer: {
     border: `1px solid #fff`,
-    padding: "1rem",
+    // padding: "1rem",
+    padding: "0",
+    display: "flex",
+    flexDirection: "column",
     opacity: 0,
     borderRadius: "4px",
     position: "relative",
@@ -106,6 +111,7 @@ export const MyRecipes_recipeCard = ({
   },
   deleteRecipe,
 }) => {
+  let itemId = `myRecipes-card-${index}`;
   const dispatch = useDispatch();
   const [addBoxShadow, setAddBoxShadow] = useState(false);
   const [addBackground, setAddBackground] = useState(false);
@@ -143,21 +149,24 @@ export const MyRecipes_recipeCard = ({
     }
   }, []);
   return (
-    <div
-      style={showSingle ? { display: "flex" } : { display: "none" }}
-      className={clsx(
-        classes.cardOuterContainer,
-        addBoxShadow && classes.addBoxShadow,
-        addBackground && classes.addBackground
-      )}
-    >
-      <div className={classes.closeIconContainer}>
-        <CloseIcon
-          classes={{ root: classes.closeIcon }}
-          onClick={handleDeleteRecipe}
-        />
+    <div id={itemId}>
+      <div
+        style={showSingle ? { display: "flex" } : { display: "none" }}
+        className={clsx(
+          classes.cardOuterContainer,
+          addBoxShadow && classes.addBoxShadow,
+          addBackground && classes.addBackground
+        )}
+      >
+        <div className={classes.closeIconContainer}>
+          <CloseIcon
+            classes={{ root: classes.closeIcon }}
+            onClick={handleDeleteRecipe}
+          />
+        </div>
+        <MyRecipes_cardBanner itemId={itemId} />
+        <MyRecipes_cardSummary itemId={itemId} />
       </div>
-      <div>{title}</div>
     </div>
   );
 };

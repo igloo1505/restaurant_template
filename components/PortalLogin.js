@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
 const SignIn = ({
   user,
   props: { setLogin },
-  modal: { isOpen: modalIsOpen },
+  drawer: { isOpen: modalIsOpen },
   alert: {
     dialog: { isOpen: alertIsOpen },
   },
@@ -329,7 +329,7 @@ const SignIn = ({
 
 const mapStateToProps = (state, props) => ({
   user: state.user,
-  modal: state.modal,
+  drawer: state.drawer,
   alert: state.alert,
   props: props,
 });

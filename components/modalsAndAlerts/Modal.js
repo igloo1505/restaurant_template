@@ -84,15 +84,7 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps)(Alert);
 
-const GetDialogContent = ({
-  variant,
-  isOpen,
-  contentText,
-  title,
-
-  handleClick,
-  ...rest
-}) => {
+const GetDialogContent = ({ variant, isOpen, contentText, title }) => {
   if (!variant) {
     return (
       <Default_Dialog_Content
