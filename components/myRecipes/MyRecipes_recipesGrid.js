@@ -7,9 +7,9 @@ import MyRecipes_recipeCard from "./MyRecipes_recipeCard";
 const useStyles = makeStyles((theme) => ({
   gridContainer: {
     width: "100%",
-    paddingTop: "16px",
+    // paddingTop: "16px",
     display: "grid",
-    gridGap: "10px",
+    gridColumnGap: "10px",
     gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
   },
 }));

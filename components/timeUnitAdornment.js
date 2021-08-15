@@ -121,7 +121,9 @@ const timeAdornment = (
   shiftPressed,
   name,
   hasMenuOpen,
-  setHasMenuOpen
+  setHasMenuOpen,
+  setFormData,
+  formData
 ) => {
   console.log("hasMenuOpen: ", hasMenuOpen);
   const units = [
@@ -145,6 +147,8 @@ const timeAdornment = (
   };
   const handleItemClick = (index) => {
     setSelectedUnit(units[index]);
+    setFormData({ ...formData, [`${name}Unit`]: units[index] });
+    console.log(formData);
     toggleMenu(null);
   };
   return (
@@ -162,8 +166,9 @@ const timeAdornment = (
           <Typography
             classes={{ root: classes.inputAdornmentText }}
             onClick={toggleMenu}
+            id={`time-adornment-${name}`}
           >
-            {selectedUnit.short}
+            {formData[`${name}Unit`].short}
           </Typography>
           <UnitMenu
             menuOpen={menuOpen}

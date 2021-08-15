@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MyRecipes_cardBanner = ({
-  props: { itemId },
+  props: { cardId },
   UI: {
     viewport: { width: deviceWidth },
   },

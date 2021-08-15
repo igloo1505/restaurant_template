@@ -27,6 +27,8 @@ handler.post(async (req, res) => {
       directions,
       prepTime,
       cookTime,
+      prepTimeUnit,
+      cookTimeUnit,
     } = req.body;
     if (!createdBy) {
       res.statusCode = 401;
@@ -53,6 +55,18 @@ handler.post(async (req, res) => {
       let _newIngredient = await newIngredient.save();
       _ingredientsToReturn.push(_newIngredient);
     });
+    let getTime = (time, unit) => {
+      switch (unit.long.toLowerCase()) {
+        case "minutes":
+          return parseFloat(time);
+        case "hours":
+          return parseFloat(time) * 60;
+        case "days":
+          return parseFloat(time) * 1440;
+        default:
+          return parseFloat(time);
+      }
+    };
 
     let data = {
       createdBy,
@@ -73,10 +87,10 @@ handler.post(async (req, res) => {
       },
     };
     if (prepTime && typeof parseFloat(prepTime) === "number") {
-      data.time.prepTime = parseFloat(prepTime);
+      data.time.prepTime = getTime(prepTime, prepTimeUnit);
     }
     if (cookTime && typeof parseFloat(cookTime) === "number") {
-      data.time.cookTime = parseFloat(cookTime);
+      data.time.cookTime = getTime(cookTime, cookTimeUnit);
     }
 
     let recipe = new Recipe(data);

@@ -17,14 +17,15 @@ let backgroundTransition = 650;
 const useStyles = makeStyles((theme) => ({
   cardOuterContainer: {
     border: `1px solid #fff`,
-    // padding: "1rem",
+    marginTop: "10px",
+    marginBottom: "10px",
     padding: "0",
     display: "flex",
     flexDirection: "column",
-    opacity: 0,
+    opacity: 0.25,
     borderRadius: "4px",
     position: "relative",
-    transition: `background-color ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow ${boxShadowTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
+    transition: `background-color ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 2000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
   },
   addBackground: {
     backgroundColor: theme.palette.common.paperLight,
@@ -89,26 +90,7 @@ const useStyles = makeStyles((theme) => ({
 export const MyRecipes_recipeCard = ({
   user,
   recipes,
-  props: {
-    recipe: {
-      _id,
-      categories,
-      comments,
-      createdAt,
-      createdBy,
-      description,
-      directions,
-      imgUrl,
-      ingredients,
-      isGlutenFree,
-      isHot,
-      servings,
-      time,
-      title,
-    },
-    index,
-    key,
-  },
+  props: { recipe, index, key },
   deleteRecipe,
 }) => {
   let itemId = `myRecipes-card-${index}`;
@@ -125,9 +107,9 @@ export const MyRecipes_recipeCard = ({
       //   contentText: `Are you sure you want to permanently remove ${title}?`,
       title: "Delete Recipe?",
       variant: "deleteRecipe",
-      relevantId: _id,
+      relevantId: recipe._id,
       confirmation: {
-        confirmAction: () => deleteRecipe(_id),
+        confirmAction: () => deleteRecipe(recipe._id),
         dismissAction: () => dispatch({ type: Types.HIDE_ALERT }),
       },
     };
@@ -164,8 +146,8 @@ export const MyRecipes_recipeCard = ({
             onClick={handleDeleteRecipe}
           />
         </div>
-        <MyRecipes_cardBanner itemId={itemId} />
-        <MyRecipes_cardSummary itemId={itemId} />
+        <MyRecipes_cardBanner cardId={itemId} recipe={recipe} />
+        <MyRecipes_cardSummary cardId={itemId} recipe={recipe} />
       </div>
     </div>
   );

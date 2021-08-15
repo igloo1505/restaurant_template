@@ -241,7 +241,6 @@ const StepThreeFormComponent = ({
         onChange={handleChange}
         onKeyDown={keyObserver}
         onKeyUp={(e) => {
-          console.log("e", e);
           if (shiftKeys.indexOf(e.code) !== -1) {
             setShiftPressed(false);
           }
@@ -322,7 +321,6 @@ const StepThreeFormComponent = ({
               onChange={handleChange}
               onKeyDown={keyObserver}
               onKeyUp={(e) => {
-                console.log("e", e);
                 if (shiftKeys.indexOf(e.code) !== -1 && shiftPressed) {
                   setShiftPressed(false);
                 }
@@ -348,7 +346,9 @@ const StepThreeFormComponent = ({
                   shiftPressed,
                   "prepTime",
                   hasMenuOpen,
-                  setHasMenuOpen
+                  setHasMenuOpen,
+                  setFormData,
+                  formData
                 ),
                 classes: {
                   root: clsx("inputListener", classes.inputroot),
@@ -413,7 +413,9 @@ const StepThreeFormComponent = ({
                   shiftPressed,
                   "cookTime",
                   hasMenuOpen,
-                  setHasMenuOpen
+                  setHasMenuOpen,
+                  setFormData,
+                  formData
                 ),
                 classes: {
                   root: clsx("inputListener", classes.inputroot),

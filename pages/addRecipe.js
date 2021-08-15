@@ -96,6 +96,8 @@ const AddRecipe = ({
     description: `Some bomb ass recipe`,
     prepTime: "12",
     cookTime: "16",
+    prepTimeUnit: { long: "Minutes", short: "mins" },
+    cookTimeUnit: { long: "Minutes", short: "mins" },
     servings: "4",
     servingUnit: "Cups",
     directions: ["Add stuff to pan", "Take stuff out of pan"],
@@ -152,8 +154,14 @@ const AddRecipe = ({
 
   const [placeHolder, setPlaceHolder] = useState(false);
   const handleFormChange = (e) => {
+    console.log("event: ", e.target.name);
     if (e) {
-      if (e.target.name === "servingUnit") {
+      if (e.target.name === "prepTime" || e.target.name === "cookTime") {
+        let _prepTime = document.getElementById("time-adornment-prepTime");
+        console.log("_prepTime: ", _prepTime);
+        let _cookTime = document.getElementById("time-adornment-cookTime");
+        console.log("_cookTime: ", _cookTime);
+        // let _value = parseFloat(e.target.value)
       }
       console.log("targets", e.target.name);
       setFormData({ ...formData, [e.target.name]: e.target.value });
