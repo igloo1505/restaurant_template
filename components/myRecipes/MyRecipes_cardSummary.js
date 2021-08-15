@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { Fragment, useState, useEffect } from "react";
+import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import TimerIcon from "@material-ui/icons/Timer";
@@ -7,7 +8,21 @@ import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
-    padding: "0.75rem",
+    margin: "0.5rem",
+    padding: "0.5rem",
+    // border: "1px solid black",
+    borderRadius: "4px",
+    // background: "linear-gradient(145deg, #d4d8db, #fdffff)",
+    // boxShadow: "5px 5px 7px #b1b4b6, -5px -5px 7px #ffffff",
+    // boxShadow: "inset 3px 3px 4px #b1b4b6, inset -3px -3px 4px #ffffff",
+
+    boxShadow: `2px 2px 4px ${theme.palette.grey[400]}, -2px -2px 4px #ffffff`,
+  },
+  addBackground: {
+    backgroundColor: "#f0f3f5",
+    transition: theme.transitions.create(["background"], {
+      duration: 500,
+    }),
   },
   innerContainer: {},
   topDiv: {
@@ -46,13 +61,24 @@ const useTimeIconStyles = makeStyles((theme) => ({
 }));
 
 const MyRecipes_cardSummary = ({ props: { recipe, cardId } }) => {
+  const [addBackground, setAddBackground] = useState(false);
   const { title, createdBy, description, servings } = recipe;
+  useEffect(() => {
+    setTimeout(() => {
+      setAddBackground(true);
+    }, 600);
+  }, []);
   const classes = useStyles();
   const titleClasses = useTitleStyles();
   const timeIconClasses = useTimeIconStyles();
 
   return (
-    <div className={classes.outerContainer}>
+    <div
+      className={clsx(
+        classes.outerContainer,
+        addBackground && classes.addBackground
+      )}
+    >
       <div className={classes.innerContainer}>
         <div className={classes.topDiv}>
           <Typography className={titleClasses}>

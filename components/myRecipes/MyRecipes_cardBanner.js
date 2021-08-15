@@ -40,12 +40,12 @@ const useStyles = makeStyles((theme) => ({
   },
   addBoxShadow: {
     borderRadius: "30px",
-    background: "#ecf0f3",
-    boxShadow: "12px 12px 24px #c9cccf, -12px -12px 24px #ffffff",
+    background: "linear-gradient(145deg, #fdffff, #d4d8db)",
+    boxShadow: "12px 12px 24px #a8aaad, -12px -12px 24px #ffffff",
     transition: theme.transitions.create(["box-shadow"], { duration: 350 }),
     "&:hover": {
       cursor: "pointer",
-      boxShadow: "9px 9px 18px #c9cccf, -9px -9px 18px #ffffff",
+      boxShadow: "9px 9px 18px #a8aaad, -9px -9px 18px #ffffff",
     },
   },
 }));

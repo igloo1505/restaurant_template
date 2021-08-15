@@ -9,8 +9,17 @@ import { connect } from "react-redux";
 import { FcHighPriority } from "react-icons/fc";
 
 const useStyles = makeStyles((theme) => ({
-  outerContainer: { padding: "1rem" },
-  innerContainer: {},
+  outerContainer: {
+    padding: "1rem",
+  },
+  innerContainer: {
+    minWidth: "300px",
+    minHeight: "100px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    // alignItems: "center",
+  },
   confirmTextContainer: {},
   titleText: { fontStyle: "italic" },
   warningText: {

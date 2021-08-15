@@ -26,26 +26,32 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.25,
     borderRadius: "4px",
     position: "relative",
-    transition: `background-color ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 2000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
+    backgroundColor: "#fff",
+    // transition: `background-color ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 2000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
+    transition: `background-color 4000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 2000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
   },
   addBackground: {
     backgroundColor: theme.palette.common.paperLight,
     opacity: 1,
-    transition: `background-color ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow ${boxShadowTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
+    // transition: `background-color ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow ${boxShadowTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
+    transition: `background-color 4000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 2000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
   },
   addBoxShadow: {
     border: `1px solid ${theme.palette.grey[200]}`,
     boxShadow: `2px 2px 5px ${theme.palette.grey[400]}, -2px 2px 5px ${theme.palette.grey[300]}`,
-    transition: theme.transitions.create(
-      ["background-color", "box-shadow", "border"],
-      { duration: boxShadowTransition }
-    ),
-    "&:hover": {
-      boxShadow: `1px 1px 3px ${theme.palette.grey[400]}, -1px 1px 3px ${theme.palette.grey[300]}`,
-      transition: theme.transitions.create(["box-shadow", "border"], {
-        duration: 350,
-      }),
-    },
+    // transition: theme.transitions.create(
+    //   ["background-color", "box-shadow", "border"],
+    //   { duration: 1600 }
+
+    // transition: `background-color 500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 500ms`,
+    transition:
+      "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
+    // "&:hover": {
+    //   // boxShadow: `1px 1px 3px ${theme.palette.grey[400]}, -1px 1px 3px ${theme.palette.grey[300]}`,
+    //   transition: theme.transitions.create(["box-shadow", "border"], {
+    //     duration: 350,
+    //   }),
+    // },
   },
   closeIconContainer: {
     position: "absolute",
@@ -115,19 +121,15 @@ export const MyRecipes_recipeCard = ({
       },
     };
     dispatch({ type: Types.SHOW_ALERT, payload: modalPayload });
-    // deleteRecipe(_id);
   };
   useEffect(() => {
-    let duration = 100 * index;
-    console.log("duration: ", duration);
-    // setTimeout(() => setAddBackground(true), boxShadowTransition + duration);
+    let duration = 135 * index;
+    // console.log("duration: ", duration);
     setTimeout(() => setAddBackground(true), duration);
-    // setTimeout(() => setAddBoxShadow(true), backgroundTransition + duration);
     setTimeout(() => setAddBoxShadow(true), duration);
   }, []);
   useEffect(() => {
     if (index === 0) {
-      console.log("index: ", index);
       setShowSingle(true);
     }
   }, []);

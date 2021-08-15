@@ -150,3 +150,39 @@ export const getOwnRecipes = () => async (props) => {
       });
   }
 };
+
+export const addRecipeImage = () => async (props) => {
+  // let userId = getUserId();
+  // if (!userId) {
+  //   return dispatch({
+  //     type: Types.SHOW_SNACKBAR,
+  //     payload: {
+  //       message:
+  //         "There was an error retrieving recipes. Please try signing in again.",
+  //       variant: "error",
+  //       vertical: "top",
+  //       horizontal: "center",
+  //       transitionDirection: "down",
+  //       hideIn: 4000,
+  //     },
+  //   });
+  // }
+  // let res = await useAxios({
+  //   method: "get",
+  //   url: "/api/portal/recipes/userCreatedRecipes",
+  //   data: { userId },
+  // });
+  // switch (res.status) {
+  //   case 200:
+  //     return dispatch({
+  //       type: Types.GET_OWN_RECIPES_SUCCESS,
+  //       payload: res.data,
+  //     });
+  //   case 401:
+  //   default:
+  //     return dispatch({
+  //       type: Types.GET_OWN_RECIPES_ERROR,
+  //       payload: res.data,
+  //     });
+  // }
+};

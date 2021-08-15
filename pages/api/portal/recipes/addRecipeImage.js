@@ -3,6 +3,12 @@ import Cookies from "cookies";
 import nc from "next-connect";
 import { connectDB } from "../../../../util/connectDB";
 import multer from "multer";
+// // import entire SDK
+// import AWS from 'aws-sdk';
+// // import AWS object without services
+// import AWS from 'aws-sdk/global';
+// // import individual service
+// import S3 from 'aws-sdk/clients/s3';
 
 const upload = multer({
   storage: multer.diskStorage({
