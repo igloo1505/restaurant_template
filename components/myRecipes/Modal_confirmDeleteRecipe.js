@@ -4,17 +4,17 @@ import { useDispatch } from "react-redux";
 import { deleteRecipe } from "../../stateManagement/recipeActions";
 import * as Types from "../../stateManagement/TYPES";
 import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import { FcHighPriority } from "react-icons/fc";
 
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
-    padding: "1rem",
+    padding: "0px 1rem 1rem 1rem",
   },
   innerContainer: {
     minWidth: "300px",
-    minHeight: "100px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.error.main,
     width: "calc(100% - 20px)",
     textAlign: "right",
-    margin: "5px 10px 10px",
   },
 }));
 const useDeleteButtonClasses = makeStyles((theme) => ({
@@ -77,16 +76,18 @@ const Modal_confirmDeleteRecipe = ({
   return (
     <div className={classes.outerContainer}>
       <div className={classes.innerContainer}>
-        {recipe && (
-          <div className={classes.confirmTextContainer}>
-            Are you sure you want to remove{" "}
-            <span className={classes.titleText}>{recipe.title}</span>?
-          </div>
-        )}
-        {!recipe && (
-          <div className={classes.confirmTextContainer}>Are you sure?</div>
-        )}
-        <div className={classes.warningText}>This cannot be undone.</div>
+        <DialogContent>
+          {recipe && (
+            <div className={classes.confirmTextContainer}>
+              Are you sure you want to remove{" "}
+              <span className={classes.titleText}>{recipe.title}</span>?
+            </div>
+          )}
+          {!recipe && (
+            <div className={classes.confirmTextContainer}>Are you sure?</div>
+          )}
+          <div className={classes.warningText}>This cannot be undone.</div>
+        </DialogContent>
       </div>
       <DialogActions>
         <Button

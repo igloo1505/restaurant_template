@@ -1,5 +1,6 @@
 import * as Types from "./TYPES";
 import useAxios from "./useAxios";
+import axios from "axios";
 import store from "./store";
 
 const getUserId = () => {
@@ -151,38 +152,46 @@ export const getOwnRecipes = () => async (props) => {
   }
 };
 
-export const addRecipeImage = () => async (props) => {
-  // let userId = getUserId();
-  // if (!userId) {
-  //   return dispatch({
-  //     type: Types.SHOW_SNACKBAR,
-  //     payload: {
-  //       message:
-  //         "There was an error retrieving recipes. Please try signing in again.",
-  //       variant: "error",
-  //       vertical: "top",
-  //       horizontal: "center",
-  //       transitionDirection: "down",
-  //       hideIn: 4000,
-  //     },
-  //   });
-  // }
-  // let res = await useAxios({
-  //   method: "get",
-  //   url: "/api/portal/recipes/userCreatedRecipes",
-  //   data: { userId },
-  // });
-  // switch (res.status) {
-  //   case 200:
-  //     return dispatch({
-  //       type: Types.GET_OWN_RECIPES_SUCCESS,
-  //       payload: res.data,
-  //     });
-  //   case 401:
-  //   default:
-  //     return dispatch({
-  //       type: Types.GET_OWN_RECIPES_ERROR,
-  //       payload: res.data,
-  //     });
-  // }
+const sendUploadProgress = (progress) => (dispatch) => {
+  dispatch({
+    type: Types.SEND_UPLOAD_PROGRESS,
+    payload: { progress: progress },
+  });
+};
+
+export const addRecipeImage = (formData) => async (dispatch) => {
+  let userId = getUserId();
+  if (!userId) {
+    return dispatch({
+      type: Types.SHOW_SNACKBAR,
+      payload: {
+        message:
+          "There was an error adding that image. Please try signing in again.",
+        variant: "error",
+        vertical: "top",
+        horizontal: "center",
+        transitionDirection: "down",
+        hideIn: 4000,
+      },
+    });
+  }
+  try {
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+      onUploadProgress: (event) => {
+        let progress = Math.round((event.loaded * 100) / event.total);
+        console.log("progress: ", progress);
+        sendUploadProgress(progress);
+      },
+    };
+    const res = await axios.post(
+      "/api/portal/recipes/addRecipeImage",
+      formData,
+      config
+    );
+
+    dispatch({ type: Types.ADD_RECIPE_IMAGE, payload: res.data });
+  } catch (error) {
+    dispatch({ type: Types.ADD_RECIPE_IMAGE_ERROR, payload: error });
+  }
 };

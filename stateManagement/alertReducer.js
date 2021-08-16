@@ -13,19 +13,17 @@ const initialState = {
   dialog: {
     isOpen: false,
     relevantId: null,
+    titleColor: "primary",
     title: "",
     variant: null,
-    contentText:
-      // "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero ea optio ipsa facilis. Repellendus praesentium ullam delectus expedita, explicabo corrupti consequatur? Facilis ex praesentium harum at eum delectus porro obcaecati perferendis quod. Eos impedit fugiat alias ducimus incidunt rerum modi magni iusto dolore ipsa, excepturi eligendi pariatur, beatae quas aliquam!",
-      "",
-    // isOpen: true,
-    // relevantId: "6116020737c12f29bf3727c6",
-    // title: "Are you sure?",
-    // variant: "deleteRecipe",
+    contentText: "",
     confirmation: {
       dismissAction: null,
       confirmAction: null,
     },
+  },
+  addImageModal: {
+    relevantId: null,
   },
   snackbar: {
     isOpen: false,
@@ -65,6 +63,31 @@ const modalReducer = createReducer(initialState, (builder) => {
       dialog: {
         ...state.dialog,
         isOpen: false,
+      },
+    };
+  });
+  builder.addCase(Types.SHOW_ADD_IMAGE_MODAL, (state, action) => {
+    console.log("Ran in reducer");
+    return {
+      ...state,
+      dialog: {
+        isOpen: true,
+        variant: "addRecipeImage",
+        title: "Select an Image:",
+        titleColor: "primary",
+      },
+      addImageModal: {
+        isOpen: true,
+        relevantId: action.payload.recipeId,
+      },
+    };
+  });
+  builder.addCase(Types.DISMISS_ADD_IMAGE_MODAL, (state, action) => {
+    return {
+      ...state,
+      addImageModal: {
+        isOpen: false,
+        relevantId: null,
       },
     };
   });
@@ -152,6 +175,40 @@ const modalReducer = createReducer(initialState, (builder) => {
         undoAction: "deleteRecipe",
         vertical: "top",
         horizontal: "center",
+      },
+    };
+  });
+  builder.addCase(Types.ADD_RECIPE_IMAGE_ERROR, (state, action) => {
+    console.log("action: ", action);
+    return {
+      ...state,
+      snackbar: {
+        isOpen: true,
+        transitionDirection: "down",
+        variant: "error",
+        hideIn: 5000,
+        message: "Oh no. Something went wrong.",
+        vertical: "top",
+        horizontal: "center",
+      },
+    };
+  });
+  builder.addCase(Types.ADD_RECIPE_IMAGE, (state, action) => {
+    console.log("action: ", action);
+    return {
+      ...state,
+      addImageModal: {
+        ...initialState.addImageModal,
+      },
+      dialog: { ...initialState.dialog },
+      snackbar: {
+        isOpen: true,
+        transitionDirection: "down",
+        variant: "success",
+        hideIn: 5000,
+        message: "Image uploaded",
+        vertical: "top",
+        horizontal: "right",
       },
     };
   });

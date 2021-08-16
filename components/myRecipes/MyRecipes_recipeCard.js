@@ -27,31 +27,19 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "4px",
     position: "relative",
     backgroundColor: "#fff",
-    // transition: `background-color ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 2000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
     transition: `background-color 4000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 2000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
   },
   addBackground: {
     backgroundColor: theme.palette.common.paperLight,
     opacity: 1,
-    // transition: `background-color ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow ${boxShadowTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
     transition: `background-color 4000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 2000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
   },
   addBoxShadow: {
     border: `1px solid ${theme.palette.grey[200]}`,
     boxShadow: `2px 2px 5px ${theme.palette.grey[400]}, -2px 2px 5px ${theme.palette.grey[300]}`,
-    // transition: theme.transitions.create(
-    //   ["background-color", "box-shadow", "border"],
-    //   { duration: 1600 }
 
-    // transition: `background-color 500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 500ms`,
     transition:
       "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
-    // "&:hover": {
-    //   // boxShadow: `1px 1px 3px ${theme.palette.grey[400]}, -1px 1px 3px ${theme.palette.grey[300]}`,
-    //   transition: theme.transitions.create(["box-shadow", "border"], {
-    //     duration: 350,
-    //   }),
-    // },
   },
   closeIconContainer: {
     position: "absolute",
@@ -115,6 +103,7 @@ export const MyRecipes_recipeCard = ({
       title: "Delete Recipe?",
       variant: "deleteRecipe",
       relevantId: recipe._id,
+      titleColor: "error",
       confirmation: {
         confirmAction: () => deleteRecipe(recipe._id),
         dismissAction: () => dispatch({ type: Types.HIDE_ALERT }),

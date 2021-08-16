@@ -5,6 +5,7 @@ import { wrapper } from "../stateManagement/store";
 import Cookies from "cookies";
 import Recipe from "../models/Recipe";
 import User from "../models/User";
+import Ingredient from "../models/Ingredient";
 import {
   UnderNavbar,
   AdjustForDrawerContainer,
@@ -107,15 +108,18 @@ export const getServerSideProps = wrapper.getServerSideProps(
       let userId = cookies.get("userId");
       console.log("userId: ", userId);
       if (userId && token) {
+        console.log("userId && token: ", userId, token);
         const { db } = await connectDB();
-        let recipes = await Recipe.find({ createdBy: userId })
-          .populate("ingredients")
-          // .populate({ path: "createdBy", select: "user -oneTimePassword" })
-          .populate("createdBy", { firstName: 1, lastName: 1, _id: 1 })
-          .sort({
-            // Newest first, or recipes[0]
-            createdAt: "descending",
-          });
+        console.log("db: ", db);
+        let recipes = [];
+        // let recipes = await Recipe.find({ createdBy: userId })
+        //   .populate("ingredients")
+        //   // .populate({ path: "createdBy", select: "user -oneTimePassword" })
+        //   .populate("createdBy", { firstName: 1, lastName: 1, _id: 1 })
+        //   .sort({
+        //     // Newest first, or recipes[0]
+        //     createdAt: "descending",
+        //   });
         // BUG An apparently pretty well known issue with mongo and getServerSideProps causing serialization errors. Come back to this and see if can figure out a hack.
         // let jsonRecipes = JSON.stringify(recipes);
         // let _jsonRecipes = JSON.parse(jsonRecipes);

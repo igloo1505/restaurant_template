@@ -9,6 +9,7 @@ const initialState = {
   myRecipesServer: [],
   myFavorites: [],
   myBookmarks: [],
+  recipeImageUpload: null,
   resetFormData: false,
   byCategory: {
     category: null,
@@ -30,8 +31,12 @@ const recipeReducer = (state = initialState, action) => {
       console.log("payload", action.payload);
       return {
         ...state,
-        // myRecipes: ["test"],
         myRecipes: action.payload._myRecipes,
+      };
+    case Types.SEND_UPLOAD_PROGRESS:
+      return {
+        ...state,
+        recipeImageUpload: action.payload.progress,
       };
 
     case Types.REMOVE_RECIPE_SUCCESS:

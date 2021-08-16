@@ -1,11 +1,13 @@
+import React, { Fragment, useState, useEffect } from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import React, { Fragment } from "react";
+import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import { connect, useDispatch } from "react-redux";
 import * as Types from "../../stateManagement/TYPES";
 import Default_Dialog_Content from "../modalContent/Default_Dialog_Content";
 import Modal_confirmDeleteRecipe from "../myRecipes/Modal_confirmDeleteRecipe";
+import Modal_addRecipeImage from "../myRecipes/Modal_addRecipeImage";
 import { FcHighPriority } from "react-icons/fc";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,14 +22,17 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    backgroundColor: theme.palette.primary.dark,
+    borderBottom: `1px solid ${theme.palette.primary.light}`,
+    color: "#fff",
     // paddingBottom: "0px",
   },
   warningIcon: {
     width: "30px",
     height: "30px",
-    position: "absolute",
-    right: "10px",
-    top: "10px",
+    borderRadius: "50%",
+    background: "linear-gradient(145deg, #ff4242, #d83838)",
+    boxShadow: "3px 3px 6px #b42f2f, -3px -3px 6px #ff4e4e",
   },
 }));
 
@@ -36,13 +41,29 @@ const Alert = ({
     dialog: { isOpen, contentText, title, variant },
   },
 }) => {
+  const [titleStyles, setTitleStyles] = useState({});
   const theme = useTheme();
+  useEffect(() => {
+    let color = {
+      dark: theme.palette.primary.dark,
+      light: theme.palette.primary.light,
+    };
+    switch (variant) {
+      case "deleteRecipe":
+        color = {
+          dark: theme.palette.error.main,
+          light: theme.palette.error.light,
+        };
+      default:
+        theme.palette;
+    }
+    setTitleStyles({ backgroundColor: color.dark });
+  }, [variant]);
   const dispatch = useDispatch();
   const classes = useStyles();
   const handleClose = () => {
     dispatch({ type: Types.HIDE_ALERT });
   };
-
   return (
     <Fragment>
       <Dialog
@@ -61,12 +82,14 @@ const Alert = ({
           id="alert-dialog-title"
           classes={{ root: classes.title }}
           disableTypography
+          style={titleStyles}
         >
           {title}
           {variant === "deleteRecipe" && (
-            <FcHighPriority className={classes.warningIcon} />
+            <ErrorOutlineIcon className={classes.warningIcon} />
           )}
         </DialogTitle>
+
         <GetDialogContent
           variant={variant}
           isOpen={isOpen}
@@ -99,6 +122,15 @@ const GetDialogContent = ({ variant, isOpen, contentText, title }) => {
       case "deleteRecipe":
         return (
           <Modal_confirmDeleteRecipe
+            variant={variant}
+            isOpen={isOpen}
+            contentText={contentText}
+            title={title}
+          />
+        );
+      case "addRecipeImage":
+        return (
+          <Modal_addRecipeImage
             variant={variant}
             isOpen={isOpen}
             contentText={contentText}

@@ -27,6 +27,7 @@ export const uploadImage = (file, fileName) => {
 };
 
 export const getRecipeImage = (fileKey) => {
+  console.log("fileKey: ", fileKey);
   const downloadParams = {
     Key: fileKey,
     Bucket: bucketName,

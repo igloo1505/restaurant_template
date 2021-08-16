@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import Image from "next/image";
 import clsx from "clsx";
 import { connect, useDispatch } from "react-redux";
+import * as Types from "../../stateManagement/TYPES";
 import AddPhotoIcon from "@material-ui/icons/AddAPhoto";
 
 const useStyles = makeStyles((theme) => ({
@@ -56,13 +58,24 @@ const MyRecipes_cardBanner = ({
     viewport: { width: deviceWidth },
   },
 }) => {
+  const dispatch = useDispatch();
+  const triggerAddImageModal = () => {
+    dispatch({
+      type: Types.SHOW_ADD_IMAGE_MODAL,
+      payload: { recipeId: recipe._id },
+    });
+  };
   const classes = useStyles();
   return (
     <div className={classes.outerContainer}>
       {recipe.imgUrl ? (
         <BannerImage classes={classes} recipe={recipe} />
       ) : (
-        <BannerAddImage classes={classes} recipe={recipe} />
+        <BannerAddImage
+          classes={classes}
+          recipe={recipe}
+          triggerAddImageModal={triggerAddImageModal}
+        />
       )}
     </div>
   );
@@ -75,7 +88,7 @@ const mapStateToProps = (state, props) => ({
 
 export default connect(mapStateToProps)(MyRecipes_cardBanner);
 
-const BannerAddImage = ({ classes, recipe }) => {
+const BannerAddImage = ({ classes, recipe, triggerAddImageModal }) => {
   const [addBoxShadow, setAddBoxShadow] = useState(true);
   return (
     <div className={classes.addImageBanner}>
@@ -84,6 +97,7 @@ const BannerAddImage = ({ classes, recipe }) => {
           classes.addImageIconWrapper,
           addBoxShadow && classes.addBoxShadow
         )}
+        onClick={triggerAddImageModal}
       >
         <AddPhotoIcon className={classes.addPhotoIcon} />
       </div>
@@ -91,5 +105,10 @@ const BannerAddImage = ({ classes, recipe }) => {
   );
 };
 const BannerImage = ({ classes, recipe }) => {
-  return <div></div>;
+  console.log("recipe.imgUrl: ", recipe.imgUrl);
+  return (
+    <div>
+      <Image src={recipe.imgUrl} alt={`${recipe.title} image`} layout="fill" />
+    </div>
+  );
 };
