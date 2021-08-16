@@ -221,6 +221,9 @@ const FileInput = ({ classes, image, setImage, recipeImageUpload }) => {
     setDisplayText("Click to select:");
     setImage(null);
   };
+  useEffect(() => {
+    console.log("recipeImageUpload: ", recipeImageUpload);
+  }, [recipeImageUpload]);
   return (
     <Fragment>
       {image && !recipeImageUpload && (

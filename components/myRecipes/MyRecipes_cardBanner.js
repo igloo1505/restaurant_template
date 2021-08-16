@@ -7,7 +7,7 @@ import * as Types from "../../stateManagement/TYPES";
 import AddPhotoIcon from "@material-ui/icons/AddAPhoto";
 
 const useStyles = makeStyles((theme) => ({
-  outerContainer: { width: "100%", height: "200px" },
+  outerContainer: { width: "100%", height: "200px", maxHeight: "200px" },
   innerContainer: {},
   addPhotoIcon: {
     color: theme.palette.secondary.dark,
@@ -68,11 +68,15 @@ const MyRecipes_cardBanner = ({
   const classes = useStyles();
   return (
     <div className={classes.outerContainer}>
-      <BannerAddImage
-        classes={classes}
-        recipe={recipe}
-        triggerAddImageModal={triggerAddImageModal}
-      />
+      {recipe.imgUrl ? (
+        <BannerImage classes={classes} url={recipe.imgUrl} recipe={recipe} />
+      ) : (
+        <BannerAddImage
+          classes={classes}
+          recipe={recipe}
+          triggerAddImageModal={triggerAddImageModal}
+        />
+      )}
     </div>
   );
 };
@@ -100,7 +104,43 @@ const BannerAddImage = ({ classes, recipe, triggerAddImageModal }) => {
     </div>
   );
 };
-const BannerImage = ({ classes, recipe }) => {
-  // console.log("recipe.imgUrl: ", recipe.imgUrl);
-  return <div></div>;
+const useImageClasses = makeStyles((theme) => ({
+  outerContainer: {
+    maxWidth: "100%",
+    maxHeight: "100%",
+    // objectFit: "contain",
+    // objectFit: "cover",
+    objectFit: "contain",
+    overflow: "hidden",
+  },
+  innerContainer: {
+    maxWidth: "100%",
+    maxHeight: "100%",
+    // objectFit: "contain",
+    objectFit: "cover",
+    overflow: "hidden",
+  },
+  image: {
+    maxWidth: "100%",
+    width: "100%",
+    maxHeight: "200px",
+    // textAlign: "center",
+    // objectFit: "contain",
+    objectFit: "cover",
+    overflow: "hidden",
+    // transform: "translateY(-50%)",
+    verticalAlign: "middle",
+  },
+}));
+
+const BannerImage = ({ classes, recipe, url }) => {
+  console.log("recipe.imgUrl: ", recipe.imgUrl);
+  const imageClasses = useImageClasses();
+  return (
+    <div className={imageClasses.outerContainer}>
+      <div className={imageClasses.innerContainer}>
+        <img src={url} alt="" className={imageClasses.image} />
+      </div>
+    </div>
+  );
 };

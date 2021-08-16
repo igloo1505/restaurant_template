@@ -3,9 +3,10 @@ import React, { useState, useEffect, forwardRef } from "react";
 import { connect, useDispatch } from "react-redux";
 import { wrapper } from "../stateManagement/store";
 import Cookies from "cookies";
-// import Recipe from "../models/Recipe";
-// import User from "../models/User";
-import Ingredient from "../models/Ingredient";
+import mongoose from "mongoose";
+import Recipe from "../models/Recipe";
+import User from "../models/User";
+// import Ingredient from "../models/Ingredient";
 import {
   UnderNavbar,
   AdjustForDrawerContainer,
@@ -14,8 +15,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import Slide from "@material-ui/core/Slide";
 import MyRecipes_leftSection from "../components/myRecipes/MyRecipes_leftSection";
 import MyRecipes_rightSection from "../components/myRecipes/MyRecipes_rightSection";
-import { connectDB } from "../util/connectDB_client_ish";
+import { connectDB } from "../util/connectDB";
 import * as Types from "../stateManagement/TYPES";
+// mongoose.set("bufferCommands", false);
 // import { deleteRecipe } from "../stateManagement/recipeActions";
 // import * as Types from "../stateManagement/TYPES";
 
@@ -33,6 +35,7 @@ const myRecipes = ({ props, _myRecipes, recipes: { myRecipes }, user }) => {
   const [styles, setStyles] = useState({ gridTemplateColumns: "500px 1fr" });
 
   useEffect(() => {
+    console.log("_myRecipes: ", _myRecipes);
     if (myRecipes.length === 0 && _myRecipes) {
       dispatch({
         type: Types.GET_OWN_RECIPES_SUCCESS,
@@ -100,43 +103,46 @@ const SlideComponentRight = forwardRef((props, ref) => {
   );
 });
 
+// FIXME This worked until I started working with s3, but the uploads worked for a while and all of a sudden querying mongo from getServerSideProps stopped working. There seems to be a common issue with getServerSideProps and the BSON that mongo uses... but this shit worked until last night.
+// I think this is an issue with MongoClient trying to import the fs module on the client side. I'll try with Mongoose connection but if that doesn't work will have to move this to seperate API if getServerSideProps is going to work.
+
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
-    async ({ req, res, ...etc }) => {
+    async ({ req, res }) => {
+      console.log("req: ", req);
       let cookies = new Cookies(req, res);
       let token = cookies.get("token");
       let userId = cookies.get("userId");
       console.log("userId: ", userId);
       if (userId && token) {
         console.log("userId && token: ", userId, token);
-        const { db } = await connectDB();
-        let ingredients = await Ingredient.find({});
-        console.log("ingredients: ", ingredients);
-        // let recipes = await Recipe.find({ createdBy: userId })
-        //   .populate("ingredients")
-        //   .populate("createdBy", { firstName: 1, lastName: 1, _id: 1 })
-        //   .limit(20)
-        //   .sort({
-        //     // Newest first, or recipes[0]
-        //     createdAt: "descending",
-        //   });
-        // console.log("recipes: ", recipes);
-        // BUG An apparently pretty well known issue with mongo and getServerSideProps causing serialization errors. Come back to this and see if can figure out a hack.
-        // let jsonRecipes = JSON.stringify(recipes);
-        // let _jsonRecipes = JSON.parse(jsonRecipes);
-        // // console.log("jsonRecipes: ", _jsonRecipes, jsonRecipes);
-        // store.dispatch({
-        //   type: Types.GET_OWN_RECIPES_SERVER,
-        //   // payload: JSON.parse(JSON.stringify(recipes)),
-        //   payload: _jsonRecipes,
-        //   // payload: recipes,
-        // });
+        // connectDB().then(async (client) => {
+        // console.log("client: ", client);
+        // console.log("ingredients: ", ingredients);
+        let recipes = await mongoose
+          .connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useFindAndModify: false,
+            useUnifiedTopology: true,
+          })
+          .then(async () => {
+            let _recipes = await Recipe.find({ createdBy: userId })
+              .populate("ingredients")
+              .populate("createdBy", { firstName: 1, lastName: 1, _id: 1 })
+              .limit(20)
+              .sort({
+                // Newest first, or recipes[0]
+                createdAt: "descending",
+              });
+            console.log("recipes: ", _recipes);
+            // BUG An apparently pretty well known issue with mongo and getServerSideProps causing serialization errors. Come back to this and see if can figure out a hack.
+            // });
+            return _recipes;
+          });
         return {
-          // props: {
-          //   _myRecipes: JSON.parse(JSON.stringify(recipes)),
-          // },
           props: {
-            _myRecipes: [],
+            _myRecipes: JSON.parse(JSON.stringify(recipes)),
           },
         };
       }
