@@ -12,9 +12,6 @@ handler.get(async (req, res) => {
   try {
     const { recipeImgUrl } = req.query;
     const imageStream = await getRecipeImage(recipeImgUrl);
-    // res.json(uploaded);
-    // }
-    // res.pipe(destination)
     imageStream.pipe(res);
   } catch (error) {
     console.log(error);
@@ -26,11 +23,11 @@ handler.get(async (req, res) => {
 
 export default connectDB(handler);
 
-// export const config = {
-//   api: {
-//     // bodyParser: {
-//     //   sizeLimit: "5mb",
-//     // },
-//     bodyParser: false,
-//   },
-// };
+export const config = {
+  api: {
+    // bodyParser: {
+    //   sizeLimit: "5mb",
+    // },
+    bodyParser: false,
+  },
+};
