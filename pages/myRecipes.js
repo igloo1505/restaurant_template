@@ -4,6 +4,7 @@ import { connect, useDispatch } from "react-redux";
 import { wrapper } from "../stateManagement/store";
 import Cookies from "cookies";
 import Recipe from "../models/Recipe";
+import User from "../models/User";
 import {
   UnderNavbar,
   AdjustForDrawerContainer,

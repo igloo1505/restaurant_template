@@ -9,6 +9,8 @@ const connectDB = (handler) => async (req, res) => {
   handler.use(errorHandler);
   // handler.options.onError = errorHandler
   await errorHandler(handler);
+
+  console.log("process.env.MONGO_URI: ", process.env.MONGO_URI);
   console.log(colors.bgCyan.black("Running connectDB()"));
   if (mongoose.connections[0].readyState) {
     return handler(req, res);

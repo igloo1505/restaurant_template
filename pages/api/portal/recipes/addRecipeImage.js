@@ -2,13 +2,10 @@ import colors from "colors";
 import Cookies from "cookies";
 import nc from "next-connect";
 import { connectDB } from "../../../../util/connectDB";
+import { uploadImage } from "../../../../util/s3";
+import Recipe from "../../../../models/Recipe";
 import multer from "multer";
-// // import entire SDK
-// import AWS from 'aws-sdk';
-// // import AWS object without services
-// import AWS from 'aws-sdk/global';
-// // import individual service
-// import S3 from 'aws-sdk/clients/s3';
+import { v4 as uniqueFileName } from "uuid";
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -16,19 +13,6 @@ const upload = multer({
     filename: (req, file, cb) => cb(null, file.originalname),
   }),
 });
-
-// const runMiddleware = (req, res, fn) => {
-//   return new Promise((resolve, reject) => {
-//     fn(req, res, (result) => {
-//       if (result instanceof Error) {
-//         return reject(result);
-//       }
-
-//       console.log("result: ", result);
-//       return resolve(result);
-//     });
-//   });
-// };
 
 // TODO add auth middleware back in to all protected routes
 // TODO add check for cookies and adapt to 'remember me' state stored in cookies, and sign jwt in cookies as well.
@@ -39,22 +23,31 @@ handler.use(uploadMiddleware);
 
 handler.post(async (req, res) => {
   try {
-    // await runMiddleware(req, res, upload.single("recipeImage"));
-
-    // Multer();
-    // const multer = Multer(req, res);
-    //   let upload = multer.single(fieldName)
-    //   const upload = multer({ dest: "recipeImagesUploading/" });
-
-    // const storage = multer.single("recipeImage");
-
+    let recipe = await Recipe.findById(req.body.recipeId);
+    console.log("recipe: ", recipe);
+    // if (recipe && recipe.createdBy === req.body.userId) {
+    console.log("req: ", req);
+    console.log("req: ");
+    const _fileName = uniqueFileName();
+    const uploaded = await uploadImage(req.file, _fileName);
+    console.log("uploaded: ", req.file);
     console.log(colors.bgBlue("Did run in route with...", req.file));
     const cookies = new Cookies(req, res);
-    res.json(req.file);
-    // res.json({ wait: "Hold on" });
+    await Recipe.findByIdAndUpdate(
+      req.body.recipeId,
+      { imgUrl: `/api/recipeImages/${uploaded.Key}` },
+      (err) => {
+        console.log("Error in update recipe after image upload.", err);
+      }
+    );
+    // res.json(req.file);
+    res.json(uploaded);
+    // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "There was an error logging in." });
+    res
+      .status(500)
+      .json({ error: "Something went wrong while uploading that image." });
   }
 });
 
