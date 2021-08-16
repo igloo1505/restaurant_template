@@ -4,7 +4,7 @@ module.exports = {
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
-  images: {
-    // domains: ["localhost", "localhost:3000"],
-  },
+  // images: {
+  //   // domains: ["localhost", "localhost:3000"],
+  // },
 };

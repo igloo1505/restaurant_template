@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import Image from "next/image";
+// import Image from "next/image";
 import clsx from "clsx";
 import { connect, useDispatch } from "react-redux";
 import * as Types from "../../stateManagement/TYPES";
@@ -106,9 +106,5 @@ const BannerAddImage = ({ classes, recipe, triggerAddImageModal }) => {
 };
 const BannerImage = ({ classes, recipe }) => {
   console.log("recipe.imgUrl: ", recipe.imgUrl);
-  return (
-    <div>
-      <Image src={recipe.imgUrl} alt={`${recipe.title} image`} layout="fill" />
-    </div>
-  );
+  return <div></div>;
 };
