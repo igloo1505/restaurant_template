@@ -3,9 +3,9 @@ import React, { useState, useEffect, forwardRef } from "react";
 import { connect, useDispatch } from "react-redux";
 import { wrapper } from "../stateManagement/store";
 import Cookies from "cookies";
-import Recipe from "../models/Recipe";
+// import Recipe from "../models/Recipe";
 // import User from "../models/User";
-// import Ingredient from "../models/Ingredient";
+import Ingredient from "../models/Ingredient";
 import {
   UnderNavbar,
   AdjustForDrawerContainer,
@@ -110,14 +110,17 @@ export const getServerSideProps = wrapper.getServerSideProps(
       if (userId && token) {
         console.log("userId && token: ", userId, token);
         const { db } = await connectDB();
-        let recipes = await Recipe.find({ createdBy: userId })
-          .populate("ingredients")
-          .populate("createdBy", { firstName: 1, lastName: 1, _id: 1 })
-          .limit(20)
-          .sort({
-            // Newest first, or recipes[0]
-            createdAt: "descending",
-          });
+        let ingredients = await Ingredient.find({});
+        console.log("ingredients: ", ingredients);
+        // let recipes = await Recipe.find({ createdBy: userId })
+        //   .populate("ingredients")
+        //   .populate("createdBy", { firstName: 1, lastName: 1, _id: 1 })
+        //   .limit(20)
+        //   .sort({
+        //     // Newest first, or recipes[0]
+        //     createdAt: "descending",
+        //   });
+        // console.log("recipes: ", recipes);
         // BUG An apparently pretty well known issue with mongo and getServerSideProps causing serialization errors. Come back to this and see if can figure out a hack.
         // let jsonRecipes = JSON.stringify(recipes);
         // let _jsonRecipes = JSON.parse(jsonRecipes);
@@ -129,8 +132,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
         //   // payload: recipes,
         // });
         return {
+          // props: {
+          //   _myRecipes: JSON.parse(JSON.stringify(recipes)),
+          // },
           props: {
-            _myRecipes: JSON.parse(JSON.stringify(recipes)),
+            _myRecipes: [],
           },
         };
       }

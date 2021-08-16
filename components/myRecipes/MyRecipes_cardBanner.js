@@ -68,15 +68,11 @@ const MyRecipes_cardBanner = ({
   const classes = useStyles();
   return (
     <div className={classes.outerContainer}>
-      {recipe.imgUrl ? (
-        <BannerImage classes={classes} recipe={recipe} />
-      ) : (
-        <BannerAddImage
-          classes={classes}
-          recipe={recipe}
-          triggerAddImageModal={triggerAddImageModal}
-        />
-      )}
+      <BannerAddImage
+        classes={classes}
+        recipe={recipe}
+        triggerAddImageModal={triggerAddImageModal}
+      />
     </div>
   );
 };
@@ -105,6 +101,6 @@ const BannerAddImage = ({ classes, recipe, triggerAddImageModal }) => {
   );
 };
 const BannerImage = ({ classes, recipe }) => {
-  console.log("recipe.imgUrl: ", recipe.imgUrl);
+  // console.log("recipe.imgUrl: ", recipe.imgUrl);
   return <div></div>;
 };
