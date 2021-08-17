@@ -205,7 +205,7 @@ const modalReducer = createReducer(initialState, (builder) => {
         isOpen: true,
         transitionDirection: "down",
         variant: "success",
-        hideIn: 5000,
+        hideIn: 2000,
         message: "Image uploaded",
         vertical: "top",
         horizontal: "right",

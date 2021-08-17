@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-// import Image from "next/image";
+import getConfig from "next/config";
+import Image from "next/image";
 import clsx from "clsx";
 import { connect, useDispatch } from "react-redux";
 import * as Types from "../../stateManagement/TYPES";
@@ -124,22 +125,41 @@ const useImageClasses = makeStyles((theme) => ({
     maxWidth: "100%",
     width: "100%",
     maxHeight: "200px",
+    opacity: 0,
     // textAlign: "center",
     // objectFit: "contain",
     objectFit: "cover",
     overflow: "hidden",
     // transform: "translateY(-50%)",
     verticalAlign: "middle",
+    transition: theme.transitions.create(["opacity"], { duration: 1000 }),
+  },
+  imageIn: {
+    opacity: 1,
+    transition: theme.transitions.create(["opacity"], { duration: 1000 }),
   },
 }));
 
 const BannerImage = ({ classes, recipe, url }) => {
-  console.log("recipe.imgUrl: ", recipe.imgUrl);
+  const { publicRuntimeConfig } = getConfig();
+  // console.log("rootUrl: ", publicRuntimeConfig.rootUrl, url);
+  const [fadeIn, setFadeIn] = useState(false);
+  // TODO needs major image optimization work.
+  useEffect(() => {
+    // TODO definitely remove delay after debugged.
+    // setTimeout(() => {
+    setFadeIn(true);
+    // }, 300);
+  }, []);
   const imageClasses = useImageClasses();
   return (
     <div className={imageClasses.outerContainer}>
       <div className={imageClasses.innerContainer}>
-        <img src={url} alt="" className={imageClasses.image} />
+        <img
+          src={url}
+          alt={"Recipe Image"}
+          className={clsx(imageClasses.image, fadeIn && imageClasses.imageIn)}
+        />
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ handler.get(async (req, res) => {
   try {
     console.log("Did run getImage ", req);
     const { recipeImgUrl } = req.query;
-    const imageStream = await getRecipeImage(recipeImgUrl);
+    const imageStream = await getRecipeImage(recipeImgUrl, req, res);
     // res.json(uploaded);
     // }
     // res.pipe(destination)

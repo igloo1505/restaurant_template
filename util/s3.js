@@ -15,6 +15,7 @@ const s3 = new S3({
 
 // TODO add function here to lower resolution before upload.
 
+// POST RECIPE
 export const uploadImage = (file, fileName) => {
   const fileStream = fs.createReadStream(file.path);
   console.log("bucketName: ", bucketName, region, accessKeyId, secretAccessKey);
@@ -26,12 +27,38 @@ export const uploadImage = (file, fileName) => {
   return s3.upload(uploadParams).promise();
 };
 
-export const getRecipeImage = (fileKey) => {
+// GET RECIPE
+export const getRecipeImage = async (fileKey, req, res) => {
   console.log("fileKey: ", fileKey);
   const downloadParams = {
     Key: fileKey,
     Bucket: bucketName,
   };
 
-  return s3.getObject(downloadParams).createReadStream();
+  return (
+    s3
+      .getObject(downloadParams)
+      // .then((response) => {
+      //   console.log("s3Response: ", response);
+      // })
+      .on("response", (response) => {
+        // console.log("s3Response: ", response);
+        // console.log("s3Response: ", Object.keys(response.httpResponse));
+        // console.log("s3Response: ", response.httpResponse.headers);
+        // res.setHeader(
+        //   "Content-Length",
+        //   response.httpResponse.headers["content-length"]
+        // );
+        // res.setHeader(
+        //   "Content-Type",
+        //   response.httpResponse.headers["content-type"]
+        // );
+      })
+      // .on("",  (response) => {
+      // })
+      .createReadStream()
+      .on("data", (...props) => {
+        // console.log("PROPS:", props);
+      })
+  );
 };

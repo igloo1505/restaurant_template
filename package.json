@@ -27,6 +27,7 @@
     "cookie-cutter": "^0.2.0",
     "cookie-parser": "^1.4.5",
     "cookies": "^0.8.0",
+    "jimp": "^0.16.1",
     "json-cookie": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "mobile-device-detect": "^0.4.3",
@@ -49,6 +50,7 @@
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
     "sass": "^1.34.0",
+    "sharp": "^0.28.3",
     "uuid": "^8.3.2"
   },
   "license": "MIT",

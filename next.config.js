@@ -4,6 +4,9 @@ module.exports = {
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
+  images: {
+    domains: ["localhost"],
+  },
   serverRuntimeConfig: {
     MONGO_URI: process.env.MONGO_URI,
     JWT_SECRET: process.env.JWT_SECRET,
@@ -12,5 +15,9 @@ module.exports = {
     AWS_BUCKET_REGION: process.env.AWS_BUCKET_REGION,
     AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+  publicRuntimeConfig: {
+    rootUrl: process.env.ROOT_URL,
+    // staticFolder: '/static',
   },
 };

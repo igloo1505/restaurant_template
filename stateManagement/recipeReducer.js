@@ -33,6 +33,16 @@ const recipeReducer = (state = initialState, action) => {
         ...state,
         myRecipes: action.payload._myRecipes,
       };
+    case Types.ADD_RECIPE_IMAGE:
+      return {
+        ...state,
+        myRecipes: [
+          action.payload.updatedRecipe,
+          ...state.myRecipes.filter(
+            (r) => r._id !== action.payload?.updatedRecipe._id
+          ),
+        ],
+      };
     case Types.SEND_UPLOAD_PROGRESS:
       return {
         ...state,
