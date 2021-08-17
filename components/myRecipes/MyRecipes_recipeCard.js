@@ -3,6 +3,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { connect, useDispatch } from "react-redux";
 import CloseIcon from "@material-ui/icons/Close";
+import Slide from "@material-ui/core/Slide";
 
 import MyRecipes_cardBanner from "./MyRecipes_cardBanner";
 import MyRecipes_cardSummary from "./MyRecipes_cardSummary";
@@ -92,6 +93,7 @@ export const MyRecipes_recipeCard = ({
   const dispatch = useDispatch();
   const [addBoxShadow, setAddBoxShadow] = useState(false);
   const [addBackground, setAddBackground] = useState(false);
+  const [bannerIn, setBannerIn] = useState(true);
   const classes = useStyles();
   //   const [showSingle, setShowSingle] = useState(false);
   const [showSingle, setShowSingle] = useState(true);
@@ -138,8 +140,22 @@ export const MyRecipes_recipeCard = ({
             onClick={handleDeleteRecipe}
           />
         </div>
-        <MyRecipes_cardBanner cardId={itemId} recipe={recipe} />
-        <MyRecipes_cardSummary cardId={itemId} recipe={recipe} />
+
+        <MyRecipes_cardBanner
+          cardId={itemId}
+          recipe={recipe}
+          setBannerIn={setBannerIn}
+          bannerIn={bannerIn}
+        />
+
+        <Slide>
+          <MyRecipes_cardSummary
+            cardId={itemId}
+            recipe={recipe}
+            setBannerIn={setBannerIn}
+            bannerIn={bannerIn}
+          />
+        </Slide>
       </div>
     </div>
   );

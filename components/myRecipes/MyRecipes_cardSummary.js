@@ -60,7 +60,9 @@ const useTimeIconStyles = makeStyles((theme) => ({
   },
 }));
 
-const MyRecipes_cardSummary = ({ props: { recipe, cardId } }) => {
+const MyRecipes_cardSummary = ({
+  props: { recipe, cardId, bannerIn, setBannerIn },
+}) => {
   const [addBackground, setAddBackground] = useState(false);
   const { title, createdBy, description, servings } = recipe;
   useEffect(() => {
@@ -78,6 +80,10 @@ const MyRecipes_cardSummary = ({ props: { recipe, cardId } }) => {
         classes.outerContainer,
         addBackground && classes.addBackground
       )}
+      onClick={() => {
+        setBannerIn(!bannerIn);
+        console.log("bannerIn: ", bannerIn);
+      }}
     >
       <div className={classes.innerContainer}>
         <div className={classes.topDiv}>
