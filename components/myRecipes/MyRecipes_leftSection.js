@@ -9,6 +9,7 @@ import MyRecipes_searchFilterAccordian from "./MyRecipes_searchFilterAccordian";
 const useClasses = makeStyles((theme) => ({
   formContainer: {
     padding: "16px",
+    marginTop: "1rem",
     borderRadius: "4px",
     transition: theme.transitions.create(
       ["box-shadow", "background-color", "padding"],
@@ -39,7 +40,6 @@ const MyRecipes_leftSection = forwardRef((props, ref) => {
   const classes = useClasses();
   return (
     <div ref={ref}>
-      <div>left section</div>
       <div
         className={clsx(
           classes.formContainer,

@@ -50,6 +50,10 @@ const useStyles = makeStyles((theme) => ({
     top: "5px",
     right: "5px",
     transform: "scale(1)",
+    // border: "1px solid red",
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
+    borderRadius: "4px",
+    zIndex: 1,
     transition: theme.transitions.create(["color"], { duration: 250 }),
     "&:hover": {
       cursor: "pointer",

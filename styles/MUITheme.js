@@ -94,8 +94,8 @@ const MUITheme = createMuiTheme({
     },
     h6: {
       fontFamily: defaultFontFamily,
-      fontWeight: 500,
-      fontSize: "1.25rem",
+      fontWeight: 400,
+      fontSize: "1.1rem",
       lineHeight: 1.6,
       letterSpacing: "0.0075em",
       color: defaultTextColor,

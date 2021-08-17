@@ -8,14 +8,13 @@ import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
-    // position: "relative",
     position: "absolute",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
     bottom: 0,
-    zIndex: 9999,
+    zIndex: 1,
     backgroundColor: theme.palette.common.paperLight,
   },
   expandOuter: {
@@ -47,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   timeContainer: {
     display: "flex",
@@ -103,10 +103,10 @@ const MyRecipes_cardSummary = ({
       .getElementById(`card-image-container-${index}`)
       .getBoundingClientRect().height;
     // console.log("innerSummaryHeight: ", innerSummaryHeight);
-    let lowerHeight = cardHeight - imageSectionHeight;
+    let lowerHeight = cardHeight - imageSectionHeight - 16;
     console.log("lowerHeight: ", lowerHeight);
     // console.log("summaryHeight: ", summaryHeight);
-    let _extended = cardHeight - 16;
+    let _extended = cardHeight - 14;
     console.log("_extended: ", _extended);
 
     setAdjustedHeight({
@@ -153,7 +153,7 @@ const MyRecipes_cardSummary = ({
         id={innerSummaryId}
       >
         <div className={classes.topDiv}>
-          <Typography className={titleClasses}>
+          <Typography className={titleClasses} variant="h6">
             {title.length > 15 ? `${title.slice(0, 12)}...` : title}
           </Typography>
           {recipe.time && (

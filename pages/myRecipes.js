@@ -109,11 +109,13 @@ const SlideComponentRight = forwardRef((props, ref) => {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ req, res }) => {
+      let state = store.getState();
       console.log("req: ", req);
       let cookies = new Cookies(req, res);
       let token = cookies.get("token");
-      let userId = cookies.get("userId");
+      let userId = cookies.get("userId") || state.user.self._id;
       console.log("userId: ", userId);
+      state.user.self._id;
       if (userId && token) {
         console.log("userId && token: ", userId, token);
         // connectDB().then(async (client) => {
