@@ -93,7 +93,7 @@ export const MyRecipes_recipeCard = ({
   const dispatch = useDispatch();
   const [addBoxShadow, setAddBoxShadow] = useState(false);
   const [addBackground, setAddBackground] = useState(false);
-  const [bannerIn, setBannerIn] = useState(true);
+  const [summaryOpen, setSummaryOpen] = useState(true);
   const classes = useStyles();
   //   const [showSingle, setShowSingle] = useState(false);
   const [showSingle, setShowSingle] = useState(true);
@@ -144,16 +144,16 @@ export const MyRecipes_recipeCard = ({
         <MyRecipes_cardBanner
           cardId={itemId}
           recipe={recipe}
-          setBannerIn={setBannerIn}
-          bannerIn={bannerIn}
+          setSummaryOpen={setSummaryOpen}
+          summaryOpen={summaryOpen}
         />
 
         <Slide>
           <MyRecipes_cardSummary
             cardId={itemId}
             recipe={recipe}
-            setBannerIn={setBannerIn}
-            bannerIn={bannerIn}
+            setSummaryOpen={setSummaryOpen}
+            summaryOpen={summaryOpen}
           />
         </Slide>
       </div>

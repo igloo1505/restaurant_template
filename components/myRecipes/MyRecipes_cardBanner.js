@@ -9,7 +9,12 @@ import * as Types from "../../stateManagement/TYPES";
 import AddPhotoIcon from "@material-ui/icons/AddAPhoto";
 
 const useStyles = makeStyles((theme) => ({
-  outerContainer: { width: "100%", height: "200px", maxHeight: "200px" },
+  outerContainer: {
+    width: "100%",
+    height: "200px",
+    maxHeight: "200px",
+    marginBottom: "3.5rem",
+  },
   innerContainer: {},
   addPhotoIcon: {
     color: theme.palette.secondary.dark,
@@ -55,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MyRecipes_cardBanner = ({
-  props: { cardId, recipe, bannerIn, setBannerIn },
+  props: { cardId, recipe, summaryOpen, setSummaryOpen },
   UI: {
     viewport: { width: deviceWidth },
   },

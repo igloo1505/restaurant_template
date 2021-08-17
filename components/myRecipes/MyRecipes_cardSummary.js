@@ -8,15 +8,12 @@ import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
-    margin: "0.5rem",
-    padding: "0.5rem",
-    // border: "1px solid black",
-    borderRadius: "4px",
-    // background: "linear-gradient(145deg, #d4d8db, #fdffff)",
-    // boxShadow: "5px 5px 7px #b1b4b6, -5px -5px 7px #ffffff",
-    // boxShadow: "inset 3px 3px 4px #b1b4b6, inset -3px -3px 4px #ffffff",
-
-    boxShadow: `2px 2px 4px ${theme.palette.grey[400]}, -2px -2px 4px #ffffff`,
+    position: "absolute",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    bottom: 0,
   },
   addBackground: {
     backgroundColor: "#f0f3f5",
@@ -24,7 +21,21 @@ const useStyles = makeStyles((theme) => ({
       duration: 500,
     }),
   },
-  innerContainer: {},
+  innerContainer: {
+    margin: "0.5rem",
+    padding: "0.5rem",
+    // border: "1px solid black",
+    borderRadius: "4px",
+    // background: "linear-gradient(145deg, #d4d8db, #fdffff)",
+    // boxShadow: "5px 5px 7px #b1b4b6, -5px -5px 7px #ffffff",
+    // boxShadow: "inset 3px 3px 4px #b1b4b6, inset -3px -3px 4px #ffffff",
+    // display: "block",
+    // position: "absolute",
+    // bottom: 0,
+    // left: 0,
+    width: "100%",
+    boxShadow: `2px 2px 4px ${theme.palette.grey[400]}, -2px -2px 4px #ffffff`,
+  },
   topDiv: {
     display: "flex",
     flexDirection: "row",
@@ -61,7 +72,7 @@ const useTimeIconStyles = makeStyles((theme) => ({
 }));
 
 const MyRecipes_cardSummary = ({
-  props: { recipe, cardId, bannerIn, setBannerIn },
+  props: { recipe, cardId, summaryOpen, setSummaryOpen },
 }) => {
   const [addBackground, setAddBackground] = useState(false);
   const { title, createdBy, description, servings } = recipe;
@@ -75,17 +86,17 @@ const MyRecipes_cardSummary = ({
   const timeIconClasses = useTimeIconStyles();
 
   return (
-    <div
-      className={clsx(
-        classes.outerContainer,
-        addBackground && classes.addBackground
-      )}
-      onClick={() => {
-        setBannerIn(!bannerIn);
-        console.log("bannerIn: ", bannerIn);
-      }}
-    >
-      <div className={classes.innerContainer}>
+    <div className={classes.outerContainer}>
+      <div
+        className={clsx(
+          classes.innerContainer,
+          addBackground && classes.addBackground
+        )}
+        onClick={() => {
+          setSummaryOpen(!summaryOpen);
+          console.log("summaryOpen: ", summaryOpen);
+        }}
+      >
         <div className={classes.topDiv}>
           <Typography className={titleClasses}>
             {title.length > 15 ? `${title.slice(0, 12)}...` : title}
