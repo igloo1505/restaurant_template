@@ -9,11 +9,15 @@ import * as Types from "../../stateManagement/TYPES";
 import AddPhotoIcon from "@material-ui/icons/AddAPhoto";
 
 const useStyles = makeStyles((theme) => ({
-  outerContainer: {
+  outerContainerBanner: {
     width: "100%",
+    // position: "relative",
+    position: "absolute",
+    zIndex: 0,
     height: "200px",
     maxHeight: "200px",
-    marginBottom: "3.5rem",
+    overflow: "hidden",
+    // marginBottom: "3.5rem",
   },
   innerContainer: {},
   addPhotoIcon: {
@@ -60,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MyRecipes_cardBanner = ({
-  props: { cardId, recipe, summaryOpen, setSummaryOpen },
+  props: { cardId, recipe, summaryOpen, setSummaryOpen, index },
   UI: {
     viewport: { width: deviceWidth },
   },
@@ -74,7 +78,10 @@ const MyRecipes_cardBanner = ({
   };
   const classes = useStyles();
   return (
-    <div className={classes.outerContainer}>
+    <div
+      className={classes.outerContainerBanner}
+      id={`card-image-container-${index}`}
+    >
       {recipe.imgUrl ? (
         <BannerImage classes={classes} url={recipe.imgUrl} recipe={recipe} />
       ) : (
@@ -112,7 +119,7 @@ const BannerAddImage = ({ classes, recipe, triggerAddImageModal }) => {
   );
 };
 const useImageClasses = makeStyles((theme) => ({
-  outerContainer: {
+  outerContainerImage: {
     maxWidth: "100%",
     maxHeight: "100%",
     // objectFit: "contain",
@@ -159,7 +166,7 @@ const BannerImage = ({ classes, recipe, url }) => {
   // }, []);
   const imageClasses = useImageClasses();
   return (
-    <div className={imageClasses.outerContainer}>
+    <div className={imageClasses.outerContainerImage}>
       <div className={imageClasses.innerContainer}>
         <img
           src={url}

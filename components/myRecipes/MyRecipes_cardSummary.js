@@ -8,12 +8,18 @@ import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
+    // position: "relative",
     position: "absolute",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
     bottom: 0,
+    zIndex: 9999,
+    backgroundColor: theme.palette.common.paperLight,
+  },
+  expandOuter: {
+    // height: "80%",
   },
   addBackground: {
     backgroundColor: "#f0f3f5",
@@ -25,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
     margin: "0.5rem",
     padding: "0.5rem",
     // border: "1px solid black",
+    height: "calc(100% - 1rem)",
     borderRadius: "4px",
     // background: "linear-gradient(145deg, #d4d8db, #fdffff)",
     // boxShadow: "5px 5px 7px #b1b4b6, -5px -5px 7px #ffffff",
@@ -72,10 +79,49 @@ const useTimeIconStyles = makeStyles((theme) => ({
 }));
 
 const MyRecipes_cardSummary = ({
-  props: { recipe, cardId, summaryOpen, setSummaryOpen },
+  props: { recipe, cardId, summaryOpen, setSummaryOpen, index },
 }) => {
+  const summaryCardId = `summary-card-container-${index}`;
+  const innerSummaryId = `summary-inner-div-${index}`;
+  const [adjustedHeight, setAdjustedHeight] = useState({
+    extended: {},
+    collapsed: {},
+  });
   const [addBackground, setAddBackground] = useState(false);
   const { title, createdBy, description, servings } = recipe;
+  useEffect(() => {
+    let cardHeight = document
+      .getElementById(cardId)
+      .getBoundingClientRect().height;
+    let summaryHeight = document
+      .getElementById(summaryCardId)
+      .getBoundingClientRect().height;
+    let innerSummaryHeight = document
+      .getElementById(innerSummaryId)
+      .getBoundingClientRect().height;
+    let imageSectionHeight = document
+      .getElementById(`card-image-container-${index}`)
+      .getBoundingClientRect().height;
+    // console.log("innerSummaryHeight: ", innerSummaryHeight);
+    let lowerHeight = cardHeight - imageSectionHeight;
+    console.log("lowerHeight: ", lowerHeight);
+    // console.log("summaryHeight: ", summaryHeight);
+    let _extended = cardHeight - 16;
+    console.log("_extended: ", _extended);
+
+    setAdjustedHeight({
+      extended: {
+        height: _extended,
+        // transition: theme.transitions.create(["height"], { duration: 450 }),
+        transition: "height 550ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+      },
+      collapsed: {
+        // height: "24px",
+        height: lowerHeight,
+        transition: "height 550ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+      },
+    });
+  }, []);
   useEffect(() => {
     setTimeout(() => {
       setAddBackground(true);
@@ -86,16 +132,25 @@ const MyRecipes_cardSummary = ({
   const timeIconClasses = useTimeIconStyles();
 
   return (
-    <div className={classes.outerContainer}>
+    <div
+      className={clsx(
+        classes.outerContainer,
+        summaryOpen && classes.expandOuter
+      )}
+      id={summaryCardId}
+    >
       <div
         className={clsx(
           classes.innerContainer,
-          addBackground && classes.addBackground
+          addBackground && classes.addBackground,
+          summaryOpen && classes.expandInner
         )}
         onClick={() => {
           setSummaryOpen(!summaryOpen);
           console.log("summaryOpen: ", summaryOpen);
         }}
+        style={summaryOpen ? adjustedHeight.extended : adjustedHeight.collapsed}
+        id={innerSummaryId}
       >
         <div className={classes.topDiv}>
           <Typography className={titleClasses}>

@@ -23,10 +23,12 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "10px",
     padding: "0",
     display: "flex",
+    height: "256px",
     flexDirection: "column",
     opacity: 0.25,
     borderRadius: "4px",
     position: "relative",
+
     backgroundColor: "#fff",
     transition: `background-color 4000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 2000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
   },
@@ -93,10 +95,24 @@ export const MyRecipes_recipeCard = ({
   const dispatch = useDispatch();
   const [addBoxShadow, setAddBoxShadow] = useState(false);
   const [addBackground, setAddBackground] = useState(false);
-  const [summaryOpen, setSummaryOpen] = useState(true);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [_fixedHeight, _setFixedHeight] = useState({});
   const classes = useStyles();
-  //   const [showSingle, setShowSingle] = useState(false);
-  const [showSingle, setShowSingle] = useState(true);
+
+  useEffect(() => {
+    let imageContainer = document
+      .getElementById(`card-image-container-${index}`)
+      .getBoundingClientRect();
+    let summaryContainer = document
+      .getElementById(`summary-card-container-${index}`)
+      .getBoundingClientRect();
+    let fixed = imageContainer.height + summaryContainer.height;
+    _setFixedHeight({
+      height: ` ${fixed}px`,
+    });
+    console.log("imageContainer: ");
+  }, []);
+
   const handleDeleteRecipe = (e) => {
     // TODO Handle confirmation here before delete
     let modalPayload = {
@@ -119,44 +135,39 @@ export const MyRecipes_recipeCard = ({
     setTimeout(() => setAddBackground(true), duration);
     setTimeout(() => setAddBoxShadow(true), duration);
   }, []);
-  useEffect(() => {
-    if (index === 0) {
-      setShowSingle(true);
-    }
-  }, []);
+
   return (
-    <div id={itemId}>
-      <div
-        style={showSingle ? { display: "flex" } : { display: "none" }}
-        className={clsx(
-          classes.cardOuterContainer,
-          addBoxShadow && classes.addBoxShadow,
-          addBackground && classes.addBackground
-        )}
-      >
-        <div className={classes.closeIconContainer}>
-          <CloseIcon
-            classes={{ root: classes.closeIcon }}
-            onClick={handleDeleteRecipe}
-          />
-        </div>
-
-        <MyRecipes_cardBanner
-          cardId={itemId}
-          recipe={recipe}
-          setSummaryOpen={setSummaryOpen}
-          summaryOpen={summaryOpen}
+    <div
+      className={clsx(
+        classes.cardOuterContainer,
+        addBoxShadow && classes.addBoxShadow,
+        addBackground && classes.addBackground
+      )}
+      style={_fixedHeight}
+      id={itemId}
+    >
+      <div className={classes.closeIconContainer}>
+        <CloseIcon
+          classes={{ root: classes.closeIcon }}
+          onClick={handleDeleteRecipe}
         />
-
-        <Slide>
-          <MyRecipes_cardSummary
-            cardId={itemId}
-            recipe={recipe}
-            setSummaryOpen={setSummaryOpen}
-            summaryOpen={summaryOpen}
-          />
-        </Slide>
       </div>
+
+      <MyRecipes_cardBanner
+        cardId={itemId}
+        recipe={recipe}
+        setSummaryOpen={setSummaryOpen}
+        summaryOpen={summaryOpen}
+        index={index}
+      />
+
+      <MyRecipes_cardSummary
+        index={index}
+        cardId={itemId}
+        recipe={recipe}
+        setSummaryOpen={setSummaryOpen}
+        summaryOpen={summaryOpen}
+      />
     </div>
   );
 };
