@@ -1,10 +1,10 @@
 import {
   AUTHENTICATE_USER,
   AUTO_LOGIN_SUCCESS,
-  AUTO_LOGIN_FAIL,
   AUTHENTICATION_ERROR,
   REGISTER_NEW_USER,
   GET_ALL_USERS,
+  AUTO_LOGIN_FAIL,
   USER_ERROR,
   REMOVE_USER,
   RETURN_SINGLE_ITEM,
@@ -15,7 +15,7 @@ import { getAllRecipesFromUser } from "./recipeActions";
 import store from "./store";
 
 const initialState = {
-  loggedIn: false,
+  loggedIn: true,
   triedAutoLogin: false,
   allUsers: [],
   filtered: null,

@@ -36,11 +36,11 @@ const useStyles = makeStyles((theme) => ({
     top: "50%",
     transform: "translate(-50%, -50%)",
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-    [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-      width: 600,
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
+    // [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
+    //   width: 600,
+    //   marginLeft: "auto",
+    //   marginRight: "auto",
+    // },
   },
   layoutShifted: {
     transform: "translateX(calc(-50% + 120px))",
@@ -79,13 +79,14 @@ const AddRecipe = ({
     self: { token, _id },
   },
   UI: {
-    viewport: { navHeight },
+    viewport: { navHeight, width: deviceWidth },
     portalDrawer: { open: drawerIsOpen },
   },
   network: { loading: isLoading },
   recipe: { resetFormData, myRecipes, myFavorites },
   // tryAutoLogin,
 }) => {
+  const [toggleFormWidth, setToggleFormWidth] = useState({ width: "auto" });
   // const [slideIn, setSlideIn] = useState(false);
   const router = useRouter();
   //!!! The only reason half of this form state isn't in Redux is because I installed Apple's beta OS on my macbook and now Chrome just about starts it on fire... and Safari doesn't have **** for devtools.
@@ -151,6 +152,28 @@ const AddRecipe = ({
     // setFormData(initialFormData);
     setActiveStep(0);
   }, [resetFormData]);
+  useEffect(() => {
+    let _breakpointXS = 780;
+    let _breakpointSM = 1150;
+    let widths = {
+      xs: "85vw",
+      sm: "70vw",
+      reg: "auto",
+    };
+    if (
+      deviceWidth < _breakpointSM &&
+      deviceWidth > _breakpointXS &&
+      activeStep === 1
+    ) {
+      setToggleFormWidth({ width: widths.sm });
+    }
+    if (deviceWidth < _breakpointXS) {
+      setToggleFormWidth({ width: `min(${widths.xs}, 450px)` });
+    }
+    if (deviceWidth >= _breakpointSM && activeStep === 1) {
+      setToggleFormWidth({ width: widths.reg });
+    }
+  }, [deviceWidth]);
 
   const [placeHolder, setPlaceHolder] = useState(false);
   const handleFormChange = (e) => {
@@ -189,6 +212,7 @@ const AddRecipe = ({
               classes.layout,
               drawerIsOpen && classes.layoutShifted
             )}
+            style={toggleFormWidth}
           >
             <SlideComponent>
               <AddRecipeFormContainer

@@ -29,5 +29,15 @@
 				"});",
 			  "};",
 		]
+	},
+	"autoGrid": {
+		"prefix": "auto-fit grid",
+		"body": [
+	"width: '100%',",
+    "display: 'grid',",
+    "gridColumnGap: '10px',",
+    "gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',",
+		]
 	}
+
 }

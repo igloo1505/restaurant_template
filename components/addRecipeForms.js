@@ -145,12 +145,20 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 999,
   },
   gridRoot: {
+    [theme.breakpoints.down(1150)]: {
+      gridRowGap: "0.75rem",
+    },
     // padding: "12px 0px 12px 12px",
     "& > .MuiGrid-item": {
       // padding: "12px 0px 12px 12px",
     },
   },
   gridItemRoot: {},
+  promptText: {
+    marginBottom: "1.3rem",
+    marginTop: "1.3rem",
+    [theme.breakpoints.down(600)]: {},
+  },
 }));
 
 const StepOneFormComponent = ({
@@ -228,6 +236,7 @@ const StepOneFormComponent = ({
         style={{
           color: "#fff",
         }}
+        classes={{ root: classes.promptText }}
       >
         Let's get some information about your recipe!
       </Typography>
@@ -239,7 +248,7 @@ const StepOneFormComponent = ({
           root: classes.gridRoot,
         }}
       >
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={12} md={4}>
           <div
             className={clsx(
               classes.textFieldWrapper,
@@ -290,7 +299,7 @@ const StepOneFormComponent = ({
             />
           </div>
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={4} sm={4} md={3}>
           <TextField
             id="recipeServingInput"
             name="servings"
@@ -341,7 +350,7 @@ const StepOneFormComponent = ({
             }}
           />
         </Grid>
-        <Grid item xs={12} sm={5}>
+        <Grid item xs={8} sm={8} md={5}>
           <UnitSelectDestructed
             handleFormChange={handleFormChange}
             focusState={focusState}

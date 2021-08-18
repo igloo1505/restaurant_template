@@ -41,6 +41,12 @@ const useStyles = makeStyles((theme) => ({
     // left: 0,
     width: "100%",
     boxShadow: `2px 2px 4px ${theme.palette.grey[400]}, -2px -2px 4px #ffffff`,
+    transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
+    "&:hover": {
+      boxShadow: `1px 1px 3px ${theme.palette.grey[500]}, -1px -1px 3px #ffffff`,
+      transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
+      cursor: "pointer",
+    },
   },
   topDiv: {
     display: "flex",

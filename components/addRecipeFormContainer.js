@@ -131,6 +131,9 @@ const useStyles = makeStyles((theme) => ({
   stepperRoot: {
     backgroundColor: theme.palette.secondary.main,
     gridArea: "stepper",
+    [theme.breakpoints.down(1150)]: {
+      padding: "32px 16px 24px 16px",
+    },
   },
   formWrapper: {
     gridArea: "form",

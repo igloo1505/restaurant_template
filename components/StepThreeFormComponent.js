@@ -87,23 +87,23 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   timeInputsContainer_insideTypography: {
-    // marginTop: "16px",
     width: "100%",
-    display: "flex",
-    [theme.breakpoints.up(timeSectionBreakpoint)]: {
-      flexDirection: "row",
-    },
+    display: "grid",
+    gridColumnGap: "10px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
   },
-
   timeInputsContainer_inner_left: {
     width: "100%",
+    marginTop: "0.75rem",
     [theme.breakpoints.up(timeSectionBreakpoint)]: {
       width: "45%",
       marginRight: "5%",
     },
   },
+
   timeInputsContainer_inner_right: {
     width: "100%",
+    marginTop: "0.75rem",
     [theme.breakpoints.up(timeSectionBreakpoint)]: {
       width: "45%",
       marginLeft: "5%",
