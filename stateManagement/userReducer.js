@@ -21,7 +21,9 @@ const initialState = {
   filtered: null,
   loading: false,
   self: {
-    token: null,
+    // token: null,
+    token:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGNhM2M0ZTg5MjI2YjA5ZTA0YWQ3MGUiLCJpYXQiOjE2MjkyNDg1NzgsImV4cCI6MTYyOTI1MjE3OH0.2NssMTRJJebl-_btGOBhwjyYhSPcibMLaEcy3YHJYDk",
     _id: "60ca3c4e89226b09e04ad70e",
     userName: "",
   },

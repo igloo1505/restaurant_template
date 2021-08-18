@@ -112,8 +112,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
       let state = store.getState();
       console.log("req: ", req);
       let cookies = new Cookies(req, res);
-      let token = cookies.get("token");
-      let userId = cookies.get("userId") || state.user.self._id;
+      let token = cookies.get("token") || state?.user?.self?.token;
+      let userId = cookies.get("userId") || state?.user?.self?._id;
       console.log("userId: ", userId);
       state.user.self._id;
       if (userId && token) {
