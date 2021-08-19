@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { Fragment, useState, useEffect } from "react";
+import MyRecipes_cardDescription from "./MyRecipes_cardDescription";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -16,9 +17,10 @@ const useStyles = makeStyles((theme) => ({
     bottom: 0,
     zIndex: 1,
     backgroundColor: theme.palette.common.paperLight,
+    borderTop: `1px solid ${theme.palette.grey[400]}`,
   },
   expandOuter: {
-    // height: "80%",
+    borderTop: "none",
   },
   addBackground: {
     backgroundColor: "#f0f3f5",
@@ -33,8 +35,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "4px",
     width: "100%",
     boxShadow: `2px 2px 4px ${theme.palette.grey[400]}, -2px -2px 4px #ffffff`,
-    // border: "1px solid rgba(255, 255, 255, 0.2)",
     transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
+    overflow: "hidden",
     "&:hover": {
       boxShadow: `1px 1px 3px ${theme.palette.grey[500]}, -1px -1px 3px #ffffff`,
       transition: theme.transitions.create(["box-shadow"], { duration: 450 }),
@@ -46,6 +48,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingBottom: "0.5rem",
+  },
+  topDivOpen: {
+    borderBottom: `1px solid ${theme.palette.grey[500]}`,
   },
   timeContainer: {
     display: "flex",
@@ -89,17 +95,12 @@ const MyRecipes_cardSummary = ({
     extended: {},
     collapsed: {},
   });
+
   const [addBackground, setAddBackground] = useState(false);
   const { title, createdBy, description, servings } = recipe;
   useEffect(() => {
     let cardHeight = document
       .getElementById(cardId)
-      .getBoundingClientRect().height;
-    let summaryHeight = document
-      .getElementById(summaryCardId)
-      .getBoundingClientRect().height;
-    let innerSummaryHeight = document
-      .getElementById(innerSummaryId)
       .getBoundingClientRect().height;
     let imageSectionHeight = document
       .getElementById(`card-image-container-${index}`)
@@ -108,9 +109,8 @@ const MyRecipes_cardSummary = ({
     let lowerHeight = cardHeight - imageSectionHeight - 16;
     console.log("lowerHeight: ", lowerHeight);
     // console.log("summaryHeight: ", summaryHeight);
-    let _extended = cardHeight - 14;
+    let _extended = cardHeight - 5;
     console.log("_extended: ", _extended);
-
     setAdjustedHeight({
       extended: {
         height: _extended,
@@ -119,7 +119,8 @@ const MyRecipes_cardSummary = ({
       },
       collapsed: {
         // height: "24px",
-        height: lowerHeight,
+        // height: lowerHeight,
+        height: "auto",
         transition: "height 550ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
       },
     });
@@ -154,7 +155,9 @@ const MyRecipes_cardSummary = ({
         style={summaryOpen ? adjustedHeight.extended : adjustedHeight.collapsed}
         id={innerSummaryId}
       >
-        <div className={classes.topDiv}>
+        <div
+          className={clsx(classes.topDiv, summaryOpen && classes.topDivOpen)}
+        >
           <Typography classes={titleClasses} variant="h6">
             {title.length > 15 ? `${title.slice(0, 12)}...` : title}
           </Typography>
@@ -166,6 +169,11 @@ const MyRecipes_cardSummary = ({
             />
           )}
         </div>
+        <MyRecipes_cardDescription
+          recipe={recipe}
+          summaryOpen={summaryOpen}
+          index={index}
+        />
       </div>
     </div>
   );
