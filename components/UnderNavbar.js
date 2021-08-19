@@ -40,7 +40,7 @@ const UnderNavbar = ({
 };
 const mapStateToProps = (state, props) => ({
   viewport: state.UI.viewport,
-  drawerIsOpen: state.UI.portalDrawer.open,
+  drawerIsOpen: state.UI.mainDrawer.open,
   props: props,
 });
 

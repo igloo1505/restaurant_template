@@ -10,6 +10,10 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateColumns: "1fr 1fr",
     gridTemplateAreas: '"form display"',
     maxHeight: "100%",
+    [theme.breakpoints.down(600)]: {
+      display: "flex",
+      flexDirection: "column",
+    },
   },
 }));
 const StepThreeForm = (props) => {

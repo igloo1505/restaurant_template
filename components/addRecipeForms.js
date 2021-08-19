@@ -148,9 +148,8 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down(1150)]: {
       gridRowGap: "0.75rem",
     },
-    // padding: "12px 0px 12px 12px",
-    "& > .MuiGrid-item": {
-      // padding: "12px 0px 12px 12px",
+    [theme.breakpoints.down(600)]: {
+      padding: "0px 0.75rem 1rem 0.75rem",
     },
   },
   gridItemRoot: {},

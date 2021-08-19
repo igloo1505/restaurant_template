@@ -43,6 +43,7 @@ const useItemStyles = makeStyles((theme) => ({
     padding: "1px 0px",
     zIndex: 999,
     marginBottom: "7px",
+    minWidth: "150px",
     transition: theme.transitions.create(["box-shadow"], {
       duration: 500,
     }),
@@ -61,6 +62,7 @@ const useItemStyles = makeStyles((theme) => ({
   },
   textyText: {
     display: "block",
+    overflowWrap: "break-word",
   },
   "text-subtitle": {
     fontWeight: 400,

@@ -27,6 +27,13 @@ const emailMinLength = 8;
 const passwordMinLength = 8;
 const emailId = "login_email_input";
 const passwordId = "login_password_input";
+const useLabelClasses = makeStyles((theme) => ({
+  root: {
+    backgroundColor: "#fff",
+    paddingLeft: "5px",
+    paddingRight: "5px",
+  },
+}));
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,12 +42,25 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
   },
+  promptContainer: {
+    marginTop: "0.75rem",
+    [theme.breakpoints.down(960)]: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "flex-start",
+      alignItems: "center",
+      gap: "1rem",
+    },
+  },
   container: {
     position: "absolute",
     top: "50vh",
     zIndex: -1,
     left: "50vw",
     transform: "translate(-50%, -50%)",
+    [theme.breakpoints.down(960)]: {
+      maxWidth: "min(400px, 75vw)",
+    },
   },
   adjustForBackdropOpen: {
     backgroundColor: "transparent",
@@ -79,6 +99,9 @@ const SignIn = ({
     dialog: { isOpen: alertIsOpen },
   },
   user: { triedAutoLogin },
+  UI: {
+    viewport: { width: deviceWidth },
+  },
   authenticateUser,
   tryAutoLogin,
   forgotPassword,
@@ -89,6 +112,8 @@ const SignIn = ({
     password: "",
     rememberMe: true,
   });
+
+  const labelClasses = useLabelClasses();
   const initialFocusState = {
     email: {
       focus: false,
@@ -182,28 +207,17 @@ const SignIn = ({
         shouldBeTransparent && classes.adjustForBackdropOpen
       )}
     >
-      <div
-        className={clsx(
-          classes.paper,
-          shouldBeTransparent && classes.adjustForBackdropOpen
-        )}
-      >
+      <div className={clsx(classes.paper)}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form
-          className={clsx(
-            classes.form,
-            shouldBeTransparent && classes.adjustForBackdropOpen
-          )}
-          noValidate
-        >
+        <form className={clsx(classes.form)} noValidate>
           <TextField
             variant="outlined"
-            margin="normal"
+            margin={deviceWidth < 960 ? "dense" : "normal"}
             required
             fullWidth
             id={emailId}
@@ -241,11 +255,12 @@ const SignIn = ({
             InputLabelProps={{
               focused: focusState.email.focus,
               shrink: focusState.email.shrink,
+              classes: labelClasses,
             }}
           />
           <TextField
             variant="outlined"
-            margin="normal"
+            margin={deviceWidth < 960 ? "dense" : "normal"}
             required
             fullWidth
             autoFocus
@@ -278,6 +293,7 @@ const SignIn = ({
             InputLabelProps={{
               focused: focusState.password.focus,
               shrink: focusState.password.shrink,
+              classes: labelClasses,
             }}
           />
           <FormControlLabel
@@ -303,13 +319,13 @@ const SignIn = ({
           >
             Sign In
           </Button>
-          <Grid container style={{ backgroundColor: "transparent" }}>
-            <Grid item xs style={{ backgroundColor: "transparent" }}>
+          <Grid container className={classes.promptContainer}>
+            <Grid item xs>
               <Link href="#" variant="body2" onClick={handleForgotPassword}>
                 Forgot password?
               </Link>
             </Grid>
-            <Grid item style={{ backgroundColor: "transparent" }}>
+            <Grid item>
               <Link href="#" variant="body2" onClick={setLogin}>
                 {"Don't have an account? Sign Up"}
               </Link>
@@ -330,6 +346,7 @@ const SignIn = ({
 const mapStateToProps = (state, props) => ({
   user: state.user,
   drawer: state.drawer,
+  UI: state.UI,
   alert: state.alert,
   props: props,
 });

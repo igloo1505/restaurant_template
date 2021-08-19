@@ -307,7 +307,7 @@ const Navbar = ({
 };
 
 const mapStateToProps = (state, props) => ({
-  isOpen: state.UI.portalDrawer.open,
+  isOpen: state.UI.mainDrawer.open,
   user: state.user.self,
   loggedIn: state.user.loggedIn,
   viewport: state.UI.viewport,

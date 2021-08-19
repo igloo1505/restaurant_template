@@ -30,6 +30,21 @@ const useStyles = makeStyles((theme) => ({
     transition: theme.transitions.create(["transform"], {
       duration: 500,
     }),
+    minWidth: "300px",
+    [theme.breakpoints.down(960)]: {
+      minWidth: "min(200px, 25vw)",
+    },
+    [theme.breakpoints.down(600)]: {
+      minWidth: "unset",
+      padding: "1rem 0.75rem 1rem 0.75rem",
+      borderRadius: "20px",
+      margin: "0.75rem 0px 0px ",
+      // boxShadow: "3px 3px 12px #783108, -3px -3px 12px #ff8f18",
+      // boxShadow: "3px 3px 10px #bb5820, -3px -3px 10px #ff8830",
+      boxShadow: "5px 5px 10px #c14f0d, -5px -5px 10px #ff7113",
+      backgroundColor: theme.palette.secondary.dark,
+      border: `1px solid ${theme.palette.secondary.light}`,
+    },
   },
   transformContainer: {
     transform: "translateX(50%)",
@@ -112,17 +127,25 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   checkBoxChecked: {
-    background: "#eb6010",
+    background: theme.palette.secondary.main,
     boxShadow: "2px 2px 2px #cf540e, -2px -2px 2px #ff6c12",
     borderRadius: "4px",
     transition: theme.transitions.create(["box-shadow"], {
       duration: 300,
     }),
+    [theme.breakpoints.down(600)]: {
+      background: theme.palette.secondary.dark,
+      boxShadow: "2px 2px 2px #c34f0d, -2px -2px 2px #e55d0f",
+    },
   },
   checkboxDisabled: {},
   checkboxLabel: { color: "#fff" },
   checkBoxContainer: { paddingTop: "10px", float: "right" },
   unitAndAmountContainer: {
+    width: "100%",
+    display: "grid",
+    gridColumnGap: "10px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
     [theme.breakpoints.up(unitContainerBreakpoint)]: {
       display: "flex",
       flexDirection: "row",

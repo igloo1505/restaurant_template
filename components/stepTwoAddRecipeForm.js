@@ -15,7 +15,16 @@ const useStyles = makeStyles((theme) => ({
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gridTemplateAreas: '"form display"',
+    gap: "3rem",
     maxHeight: "100%",
+    [theme.breakpoints.down(600)]: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "1rem",
+    },
+    [theme.breakpoints.down(960)]: {
+      gap: "1.5rem",
+    },
   },
 }));
 const StepTwoAddRecipeForm = (props) => {

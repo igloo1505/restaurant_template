@@ -27,12 +27,27 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     display: "grid",
     gridGap: "1rem",
+    gridTemplateColumns: "500px 1fr",
+    // [theme.breakpoints.down("lg")]: {
+    //   gridTemplateColumns: "1fr 1fr",
+    // },
+    [theme.breakpoints.down(960)]: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "flexStart",
+      alignItems: "center",
+    },
   },
 }));
 
-const myRecipes = ({ props, _myRecipes, recipes: { myRecipes }, user }) => {
+const myRecipes = ({
+  props,
+  _myRecipes,
+  drawer: { isOpen: drawerOpen },
+  recipes: { myRecipes },
+  user,
+}) => {
   const dispatch = useDispatch();
-  const [styles, setStyles] = useState({ gridTemplateColumns: "500px 1fr" });
 
   useEffect(() => {
     console.log("_myRecipes: ", _myRecipes);
@@ -50,7 +65,7 @@ const myRecipes = ({ props, _myRecipes, recipes: { myRecipes }, user }) => {
     <div>
       <UnderNavbar />
       <AdjustForDrawerContainer>
-        <div className={classes.container} style={styles}>
+        <div className={classes.container}>
           <SlideComponentLeft>
             <MyRecipes_leftSection />
           </SlideComponentLeft>
@@ -67,6 +82,7 @@ const mapStateToProps = (state, props) => {
   return {
     user: state.user,
     recipes: state.recipes,
+    drawer: state.drawer,
     props: props,
   };
 };

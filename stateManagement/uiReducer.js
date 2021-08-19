@@ -29,7 +29,7 @@ const initialState = {
     el: null,
     shouldBeVisible: false,
   },
-  portalDrawer: {
+  mainDrawer: {
     open: false,
   },
   viewport: {
@@ -285,12 +285,12 @@ export default function UIReducer(state = initialState, action) {
     case OPEN_DRAWER:
       return {
         ...state,
-        portalDrawer: { ...state.drawer, open: true },
+        mainDrawer: { ...state.drawer, open: true },
       };
     case CLOSE_DRAWER:
       return {
         ...state,
-        portalDrawer: { ...state.drawer, open: false },
+        mainDrawer: { ...state.drawer, open: false },
       };
     case SHOW_ACCOUNT_MENU:
       return {

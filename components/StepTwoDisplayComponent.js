@@ -17,10 +17,12 @@ const useStyles = makeStyles((theme) => ({
   container: {
     opacity: 1,
     gridArea: "display",
-    marginLeft: "10px",
+    // marginLeft: "10px",
     transform: "translateX(0%)",
     maxHeight: "100%",
     overflowY: "auto",
+    overflowX: "hidden",
+    minWidth: "200px",
     transition: theme.transitions.create(["transform"], {
       duration: 500,
     }),

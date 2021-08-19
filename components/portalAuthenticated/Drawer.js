@@ -16,7 +16,7 @@ const breakpoint = 1920;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up(600)]: {
       width: drawerWidth,
       flexShrink: 0,
     },
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(2),
     backgroundColor: "transparent",
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up(600)]: {
       display: "none",
     },
   },
@@ -65,7 +65,7 @@ function ResponsiveDrawer({
   UI: {
     viewport: { width: deviceWidth, navHeight },
     accountMenu: { el: menuAnchor },
-    portalDrawer: { open: mobileOpen },
+    mainDrawer: { open: mobileOpen },
   },
 
   props,

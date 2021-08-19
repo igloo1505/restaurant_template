@@ -18,7 +18,7 @@
 	"runMiddleware": {
 		"prefix": "runMiddleware",
 		"body": [
-			"const runMiddleware = (req, res, fn) => {",
+			"const ${1:functionName} = (req, res, fn) => {",
 				"return new Promise((resolve, reject) => {",
 				  "fn(req, res, (result) => {",
 					"if (result instanceof Error) {",
@@ -31,7 +31,8 @@
 		]
 	},
 	"autoGrid": {
-		"prefix": "auto-fit grid",
+		"prefix": ["autoGrid", "autogrid", "RAM"],
+		"description": "One line autofit grid",
 		"body": [
 	"width: '100%',",
     "display: 'grid',",

@@ -38,9 +38,10 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.up("lg")]: {
       display: "grid",
-
       gridTemplateAreas: '"banner" "stepper" "form"',
     },
+    maxHeight: "calc(90vh - 64px)",
+    [theme.breakpoints.down(600)]: {},
     // transition: theme.transitions.create(
     //   ["box-shadow", "transform", "background"],
     //   {
@@ -137,6 +138,7 @@ const useStyles = makeStyles((theme) => ({
   },
   formWrapper: {
     gridArea: "form",
+    // minWidth: "min(780px, 75vw)",
   },
   buttons: {
     marginTop: "24px",
@@ -229,7 +231,7 @@ const AddRecipeFormContainer = (
   const store = useStore();
   const [hasMenuOpen, setHasMenuOpen] = useState(false);
   const [paperLifted, setPaperLifted] = useState(false);
-  const [formHeightLimit, setFormHeightLimit] = useState(400);
+
   const classes = useStyles();
 
   useEffect(() => {
@@ -274,9 +276,6 @@ const AddRecipeFormContainer = (
           paperLifted && classes.addBoxShadow,
           "addBoxShadow"
         )}
-        style={{
-          gridTemplateRows: `auto auto fit-content(${formHeightLimit}px)`,
-        }}
         ref={ref}
       >
         <FormBanner>Add Recipe</FormBanner>

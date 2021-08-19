@@ -13,9 +13,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+
     bottom: 0,
     zIndex: 1,
-    backgroundColor: theme.palette.common.paperLight,
+    // backgroundColor: theme.palette.common.paperLight,
+    backgroundColor: theme.palette.primary.light,
   },
   expandOuter: {
     // height: "80%",
@@ -29,22 +31,19 @@ const useStyles = makeStyles((theme) => ({
   innerContainer: {
     margin: "0.5rem",
     padding: "0.5rem",
-    // border: "1px solid black",
     height: "calc(100% - 1rem)",
     borderRadius: "4px",
-    // background: "linear-gradient(145deg, #d4d8db, #fdffff)",
-    // boxShadow: "5px 5px 7px #b1b4b6, -5px -5px 7px #ffffff",
-    // boxShadow: "inset 3px 3px 4px #b1b4b6, inset -3px -3px 4px #ffffff",
-    // display: "block",
-    // position: "absolute",
-    // bottom: 0,
-    // left: 0,
     width: "100%",
-    boxShadow: `2px 2px 4px ${theme.palette.grey[400]}, -2px -2px 4px #ffffff`,
+    // boxShadow: `2px 2px 4px ${theme.palette.grey[500]}, -2px -2px 4px ${theme.palette.grey[100]}`,
+    // boxShadow: "3px 3px 10px #4589d9, -3px -3px 10px #5db9ff",
+    boxShadow: "2px 2px 5px #3a74b8, -2px -2px 5px #68ceff",
+    // border: "1px solid rgba(255, 255, 255, 0.2)",
+    backgroundColor: theme.palette.primary.light,
+    // border: `1px solid ${theme.palette.primary.main}`,
     transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
     "&:hover": {
-      boxShadow: `1px 1px 3px ${theme.palette.grey[500]}, -1px -1px 3px #ffffff`,
-      transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
+      boxShadow: "1px 1px 4px #3a74b8, -1px -1px 4px #68ceff",
+      transition: theme.transitions.create(["box-shadow"], { duration: 450 }),
       cursor: "pointer",
     },
   },
@@ -64,21 +63,22 @@ const useStyles = makeStyles((theme) => ({
   },
   hoursText: {
     lineHeight: "auto",
+    color: "#fff",
   },
-  minutesText: { color: theme.palette.grey[700] },
+  minutesText: { color: theme.palette.grey[200] },
 }));
 
 const useTitleStyles = makeStyles((theme) => ({
-  outerContainer: {
-    padding: "1rem",
+  root: {
+    color: "#fff",
   },
-  innerContainer: {},
 }));
 const useTimeIconStyles = makeStyles((theme) => ({
   root: {
     fontSize: "1rem",
     marginRight: "5px",
     transform: "translateY(2px)",
+    color: "#fff",
     // marginBottom: "0px",
     // marginTop: "auto",
   },
@@ -159,19 +159,15 @@ const MyRecipes_cardSummary = ({
         id={innerSummaryId}
       >
         <div className={classes.topDiv}>
-          <Typography className={titleClasses} variant="h6">
+          <Typography classes={titleClasses} variant="h6">
             {title.length > 15 ? `${title.slice(0, 12)}...` : title}
           </Typography>
-          {recipe.time && (
-            <div className={classes.timeContainer}>
-              {recipe.time.prepTime && (
-                <CardTimeSection
-                  classes={classes}
-                  timeIconClasses={timeIconClasses}
-                  recipe={recipe}
-                />
-              )}
-            </div>
+          {recipe?.time?.prepTime && (
+            <CardTimeSection
+              classes={classes}
+              timeIconClasses={timeIconClasses}
+              recipe={recipe}
+            />
           )}
         </div>
       </div>

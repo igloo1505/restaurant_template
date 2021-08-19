@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AdjustForDrawerContainer = ({
   UI: {
-    portalDrawer: { open: drawerIsOpen },
+    mainDrawer: { open: drawerIsOpen },
     viewport: {navHeight}
   },
   props: {children}

@@ -12,6 +12,9 @@ const useStylesUnderNavbar = makeStyles((theme) => ({
     marginBottom: "20px",
     marginTop: "20px",
     display: "block",
+    [theme.breakpoints.down("lg")]: {
+      display: "flex",
+    },
   },
   shifted: {
     width: `calc(100vw - ${drawerWidth}px)`,
@@ -42,7 +45,7 @@ const UnderNavbarComponent = ({
 };
 const mapStateToPropsUnderNavbar = (state, props) => ({
   viewport: state.UI.viewport,
-  drawerIsOpen: state.UI.portalDrawer.open,
+  drawerIsOpen: state.UI.mainDrawer.open,
   props: props,
 });
 
@@ -63,6 +66,12 @@ const useStylesAdjustForDrawer = makeStyles((theme) => ({
     transition: theme.transitions.create(["margin-left", "width"], {
       duration: 500,
     }),
+    overflowY: "auto",
+    [theme.breakpoints.down("lg")]: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   },
   shifted: {
     width: `calc(100vw - ${drawerWidth}px)`,
@@ -71,12 +80,13 @@ const useStylesAdjustForDrawer = makeStyles((theme) => ({
     transition: theme.transitions.create(["margin-left", "width"], {
       duration: 500,
     }),
+    overflowX: "hidden",
   },
 }));
 
 const AdjustForDrawerContainerComponent = ({
   UI: {
-    portalDrawer: { open: drawerIsOpen },
+    mainDrawer: { open: drawerIsOpen },
     viewport: { navHeight, width: deviceWidth },
   },
   props: { children, centerAll },
@@ -103,6 +113,7 @@ const AdjustForDrawerContainerComponent = ({
     <div
       className={clsx(classes.root, shifted && classes.shifted)}
       style={styles}
+      id="ui-layout-container"
     >
       {children}
     </div>
@@ -117,28 +128,3 @@ const mapStateToPropsAdjustForDrawer = (state, props) => ({
 export const AdjustForDrawerContainer = connect(mapStateToPropsAdjustForDrawer)(
   AdjustForDrawerContainerComponent
 );
-
-const useGridStyles = makeStyles((theme) => ({
-  columnTwelve: {
-    width: "100%",
-    padding: "0px 12px",
-    border: "1px solid red",
-    display: "inline-block",
-  },
-  columnSix: {
-    width: "50%",
-    border: "1px solid red",
-  },
-}));
-
-const GridItemComponent = ({ columns, children }) => {
-  const classes = useGridStyles();
-  switch (columns) {
-    case 12:
-      return <div className={classes.columnTwelve}>{children}</div>;
-    default:
-      return <div className={classes.columnTwelve}>{children}</div>;
-  }
-};
-
-export const GridItem = GridItemComponent;

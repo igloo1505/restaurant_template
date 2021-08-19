@@ -31,20 +31,30 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     backgroundColor: "transparent",
     marginRight: theme.spacing(2),
-    position: "absolute",
+    // position: "absolute",
     left: "50vw",
     top: "50%",
     transform: "translate(-50%, -50%)",
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-    // [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-    //   width: 600,
-    //   marginLeft: "auto",
-    //   marginRight: "auto",
-    // },
+    position: "relative !important",
+    [theme.breakpoints.down("lg")]: {
+      position: "relative !important",
+      // transform: "translateX(-50%)",
+      top: "unset",
+      left: "unset",
+      transform: "unset",
+    },
   },
   layoutShifted: {
-    transform: "translateX(calc(-50% + 120px))",
+    transform: "translate(calc(-50% + 120px), -50%)",
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+    [theme.breakpoints.down("lg")]: {
+      // position: "relative !important",
+      transform: "translateX(120px)",
+      // top: "unset",
+      // left: "unset",
+      // transform: "unset",
+    },
   },
 
   stepper: {
@@ -80,7 +90,7 @@ const AddRecipe = ({
   },
   UI: {
     viewport: { navHeight, width: deviceWidth },
-    portalDrawer: { open: drawerIsOpen },
+    mainDrawer: { open: drawerIsOpen },
   },
   network: { loading: isLoading },
   recipe: { resetFormData, myRecipes, myFavorites },
@@ -168,7 +178,7 @@ const AddRecipe = ({
       setToggleFormWidth({ width: widths.sm });
     }
     if (deviceWidth < _breakpointXS) {
-      setToggleFormWidth({ width: `min(${widths.xs}, 450px)` });
+      setToggleFormWidth({ width: `min(${widths.xs}, 650px)` });
     }
     if (deviceWidth >= _breakpointSM && activeStep === 1) {
       setToggleFormWidth({ width: widths.reg });

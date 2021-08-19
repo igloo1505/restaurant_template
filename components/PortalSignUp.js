@@ -27,12 +27,21 @@ const useStyles = makeStyles((theme) => ({
     left: "50vw",
     zIndex: -1,
     transform: "translate(-50%, -50%)",
+    [theme.breakpoints.down(960)]: {
+      maxWidth: "min(400px, 75vw)",
+    },
+  },
+  labelClass: {
+    backgroundColor: "#fff",
+    paddingLeft: "5px",
+    paddingRight: "5px",
   },
   paper: {
-    marginTop: theme.spacing(8),
+    // marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
   },
   avatar: {
     margin: theme.spacing(1),
@@ -59,8 +68,10 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1,
     overflow: "hidden",
   },
-  adjustForBackdropOpen: {
-    backgroundColor: "transparent",
+  gridItemRoot: {
+    [theme.breakpoints.down(960)]: {
+      padding: "8px 12px !important",
+    },
   },
 }));
 
@@ -73,15 +84,20 @@ const idArray = [
 
 const PortalSignUp = ({
   user,
-  modal: { isOpen: modalIsOpen },
-  alert: {
-    drawer: { isOpen: alertIsOpen },
-  },
   props: { setLogin },
+  viewport: { width: deviceWidth },
   addNewUser,
 }) => {
+  const [formData, setFormData] = useState({
+    password: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    allowEmails: true,
+    rememberMe: true,
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [transparent, setTransparent] = useState(true);
+
   const initialFocusState = {
     password: {
       shrink: Boolean(formData.password.length !== 0),
@@ -100,6 +116,7 @@ const PortalSignUp = ({
       focus: false,
     },
   };
+
   const [focusState, setFocusState] = useState(initialFocusState);
   const addListeners = () => {
     idArray.forEach((id) => {
@@ -126,27 +143,14 @@ const PortalSignUp = ({
   };
   useEffect(() => {
     addListeners();
-    if (modalIsOpen || alertIsOpen) {
-      setTransparent(true);
-    }
-    if (!modalIsOpen && !alertIsOpen) {
-      // setTransparent(false);
-    }
-  }, [modalIsOpen, alertIsOpen]);
+  }, []);
   const [validated, setValidated] = useState({
     firstName: false,
     lastName: false,
     email: false,
     password: false,
   });
-  const [formData, setFormData] = useState({
-    password: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    allowEmails: true,
-    rememberMe: true,
-  });
+
   const classes = useStyles();
 
   const handleChange = (e) => {
@@ -171,148 +175,109 @@ const PortalSignUp = ({
     <Container
       component="main"
       maxWidth="xs"
-      className={clsx(
-        classes.container,
-        transparent && classes.adjustForBackdropOpen
-      )}
+      className={clsx(classes.container)}
     >
-      <div
-        className={clsx(
-          classes.paper,
-          transparent && classes.adjustForBackdropOpen
-        )}
-      >
+      <div className={clsx(classes.paper)}>
         <Avatar className={clsx(classes.avatar)}>
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form
-          className={clsx(
-            classes.form,
-            transparent && classes.adjustForBackdropOpen
-          )}
-          noValidate
-        >
+        <form className={clsx(classes.form)} noValidate>
           <Grid
             container
             spacing={3}
             classes={{
-              root: clsx(
-                classes.gridPadding,
-                transparent && classes.adjustForBackdropOpen
-              ),
+              root: clsx(classes.gridPadding),
             }}
           >
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              className={clsx(transparent && classes.adjustForBackdropOpen)}
-            >
+            <Grid item xs={12} sm={6} className={classes.gridItemRoot}>
               <TextField
                 autoComplete="fname"
                 name="firstName"
                 variant="outlined"
                 required
                 fullWidth
+                margin={deviceWidth < 960 ? "dense" : "normal"}
                 id="signIn_firstName_input"
                 label="First Name"
                 autoFocus
                 value={formData.firstName}
                 classes={{
-                  root: clsx(
-                    classes.textFieldRoot,
-                    transparent && classes.adjustForBackdropOpen
-                  ),
+                  root: clsx(classes.textFieldRoot),
                 }}
                 onChange={handleChange}
                 InputLabelProps={{
                   focused: focusState.firstName.focus,
                   shrink: Boolean(formData.firstName.length !== 0),
+                  classes: { root: classes.labelClass },
                 }}
               />
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              className={clsx(transparent && classes.adjustForBackdropOpen)}
-            >
+            <Grid item xs={12} sm={6} className={classes.gridItemRoot}>
               <TextField
                 variant="outlined"
                 required
                 fullWidth
+                margin={deviceWidth < 960 ? "dense" : "normal"}
                 id="signIn_lastName_input"
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
                 value={formData.lastName}
                 classes={{
-                  root: clsx(
-                    classes.textFieldRoot,
-                    transparent && classes.adjustForBackdropOpen
-                  ),
+                  root: clsx(classes.textFieldRoot),
                 }}
                 InputLabelProps={{
                   focused: focusState.lastName.focus,
                   shrink: Boolean(formData.lastName.length !== 0),
+                  classes: { root: classes.labelClass },
                 }}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid
-              item
-              xs={12}
-              className={clsx(transparent && classes.adjustForBackdropOpen)}
-            >
+            <Grid item xs={12} className={classes.gridItemRoot}>
               <TextField
                 variant="outlined"
                 required
                 fullWidth
+                margin={deviceWidth < 960 ? "dense" : "normal"}
                 id="signIn_email_input"
                 label="Email Address"
                 name="email"
                 autoComplete="email"
                 value={formData.email}
                 classes={{
-                  root: clsx(
-                    classes.textFieldRoot,
-                    transparent && classes.adjustForBackdropOpen
-                  ),
+                  root: clsx(classes.textFieldRoot),
                 }}
                 InputLabelProps={{
                   focused: focusState.email.focus,
                   shrink: Boolean(formData.email.length !== 0),
+                  classes: { root: classes.labelClass },
                 }}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid
-              item
-              xs={12}
-              className={clsx(transparent && classes.adjustForBackdropOpen)}
-            >
+            <Grid item xs={12} className={classes.gridItemRoot}>
               <TextField
                 variant="outlined"
                 required
                 fullWidth
                 name="password"
                 label="Password"
+                margin={deviceWidth < 960 ? "dense" : "normal"}
                 type={showPassword ? "text" : "password"}
                 id="signIn_password_input"
                 autoComplete="current-password"
                 value={formData.password}
                 classes={{
-                  root: clsx(
-                    classes.textFieldRoot,
-                    transparent && classes.adjustForBackdropOpen
-                  ),
+                  root: clsx(classes.textFieldRoot),
                 }}
                 InputLabelProps={{
                   focused: focusState.password.focus,
                   shrink: Boolean(formData.password.length !== 0),
+                  classes: { root: classes.labelClass },
                 }}
                 onChange={handleChange}
                 InputProps={{
@@ -324,11 +289,7 @@ const PortalSignUp = ({
                 }}
               />
             </Grid>
-            <Grid
-              item
-              xs={12}
-              className={clsx(transparent && classes.adjustForBackdropOpen)}
-            >
+            <Grid item xs={12} className={classes.gridItemRootCheckbox}>
               <FormControlLabel
                 style={{ backgroundColor: "transparent" }}
                 control={
@@ -344,11 +305,7 @@ const PortalSignUp = ({
                 label="Remember me"
               />
             </Grid>
-            <Grid
-              item
-              xs={12}
-              className={clsx(transparent && classes.adjustForBackdropOpen)}
-            >
+            <Grid item xs={12} className={classes.gridItemRoot}>
               <FormControlLabel
                 style={{ backgroundColor: "transparent" }}
                 control={
@@ -373,15 +330,8 @@ const PortalSignUp = ({
           >
             Sign Up
           </Button>
-          <Grid
-            container
-            justify="flex-end"
-            className={clsx(transparent && classes.adjustForBackdropOpen)}
-          >
-            <Grid
-              item
-              className={clsx(transparent && classes.adjustForBackdropOpen)}
-            >
+          <Grid container justify="flex-end">
+            <Grid item>
               <Link href="#" variant="body2" onClick={setLogin}>
                 Already have an account? Sign in
               </Link>
@@ -389,10 +339,7 @@ const PortalSignUp = ({
           </Grid>
         </form>
       </div>
-      <Box
-        mt={5}
-        className={clsx(transparent && classes.adjustForBackdropOpen)}
-      >
+      <Box mt={5}>
         <Copyright />
       </Box>
     </Container>
@@ -403,6 +350,7 @@ const mapStateToProps = (state, props) => ({
   user: state.user,
   drawer: state.drawer,
   alert: state.alert,
+  viewport: state.UI.viewport,
   props: props,
 });
 
@@ -420,7 +368,11 @@ const passwordInputAdornment = (
         onClick={() => setShowPassword(!showPassword)}
         onMouseDown={(e) => e.preventDefault()}
       >
-        {showPassword ? <Visibility /> : <VisibilityOff />}
+        {showPassword ? (
+          <Visibility style={{ color: "#eb6010" }} />
+        ) : (
+          <VisibilityOff />
+        )}
       </IconButton>
     </InputAdornment>
   );

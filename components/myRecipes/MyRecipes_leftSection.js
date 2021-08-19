@@ -10,7 +10,11 @@ const useClasses = makeStyles((theme) => ({
   formContainer: {
     padding: "16px",
     marginTop: "1rem",
+    marginBottom: "1rem",
     borderRadius: "4px",
+    height: "fit-content",
+    minWidth: "min(350px, 75vw)",
+
     transition: theme.transitions.create(
       ["box-shadow", "background-color", "padding"],
       {
@@ -39,16 +43,12 @@ const MyRecipes_leftSection = forwardRef((props, ref) => {
   }, []);
   const classes = useClasses();
   return (
-    <div ref={ref}>
-      <div
-        className={clsx(
-          classes.formContainer,
-          hasShadow && classes.addBoxShadow
-        )}
-      >
-        <MyRecipes_searchFilterAccordian />
-        <MyRecipes_searchBar />
-      </div>
+    <div
+      ref={ref}
+      className={clsx(classes.formContainer, hasShadow && classes.addBoxShadow)}
+    >
+      <MyRecipes_searchFilterAccordian />
+      <MyRecipes_searchBar />
     </div>
   );
 });
