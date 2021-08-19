@@ -13,11 +13,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-
     bottom: 0,
     zIndex: 1,
-    // backgroundColor: theme.palette.common.paperLight,
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: theme.palette.common.paperLight,
   },
   expandOuter: {
     // height: "80%",
@@ -34,15 +32,11 @@ const useStyles = makeStyles((theme) => ({
     height: "calc(100% - 1rem)",
     borderRadius: "4px",
     width: "100%",
-    // boxShadow: `2px 2px 4px ${theme.palette.grey[500]}, -2px -2px 4px ${theme.palette.grey[100]}`,
-    // boxShadow: "3px 3px 10px #4589d9, -3px -3px 10px #5db9ff",
-    boxShadow: "2px 2px 5px #3a74b8, -2px -2px 5px #68ceff",
+    boxShadow: `2px 2px 4px ${theme.palette.grey[400]}, -2px -2px 4px #ffffff`,
     // border: "1px solid rgba(255, 255, 255, 0.2)",
-    backgroundColor: theme.palette.primary.light,
-    // border: `1px solid ${theme.palette.primary.main}`,
     transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
     "&:hover": {
-      boxShadow: "1px 1px 4px #3a74b8, -1px -1px 4px #68ceff",
+      boxShadow: `1px 1px 3px ${theme.palette.grey[500]}, -1px -1px 3px #ffffff`,
       transition: theme.transitions.create(["box-shadow"], { duration: 450 }),
       cursor: "pointer",
     },
@@ -63,14 +57,15 @@ const useStyles = makeStyles((theme) => ({
   },
   hoursText: {
     lineHeight: "auto",
-    color: "#fff",
+    // color: "#fff",
   },
-  minutesText: { color: theme.palette.grey[200] },
+  minutesText: { color: theme.palette.grey[800] },
 }));
 
 const useTitleStyles = makeStyles((theme) => ({
   root: {
-    color: "#fff",
+    // color: "#fff",
+    color: theme.palette.grey[900],
   },
 }));
 const useTimeIconStyles = makeStyles((theme) => ({
@@ -78,7 +73,8 @@ const useTimeIconStyles = makeStyles((theme) => ({
     fontSize: "1rem",
     marginRight: "5px",
     transform: "translateY(2px)",
-    color: "#fff",
+    color: "#000",
+
     // marginBottom: "0px",
     // marginTop: "auto",
   },
