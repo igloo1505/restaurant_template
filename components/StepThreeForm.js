@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down(600)]: {
       display: "flex",
       flexDirection: "column",
+      gap: "2.5rem",
     },
   },
 }));

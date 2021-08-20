@@ -17,7 +17,6 @@ const useStyles = makeStyles((theme) => ({
   descriptionContainer: {
     position: "absolute",
     opacity: 0,
-    transform: "translateY(8px)",
   },
   descriptionOpen: {
     opacity: 1,
@@ -35,6 +34,12 @@ const useStyles = makeStyles((theme) => ({
   },
   IngredientTitle: {
     fontWeight: 500,
+    marginBottom: "6px",
+  },
+  ingredientItemsContainer: {
+    borderRight: `1px solid ${theme.palette.grey[500]}`,
+    listStyleType: "disc",
+    paddingLeft: "0px !important",
   },
 }));
 
@@ -46,7 +51,7 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
         .getElementById(`card-image-container-${index}`)
         .getBoundingClientRect().height;
       setMaxHeight({
-        maxHeight: `${containerHeight - 16}px`,
+        maxHeight: `${containerHeight}px`,
         overflow: "hidden",
       });
     }
@@ -65,8 +70,13 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
       <div className={classes.descriptionInnerContainer}>
         <div className={classes.ingredientsContainer}>
           <Typography classes={{ root: classes.IngredientTitle }}>
-            Ingredients
+            Ingredients:
           </Typography>
+          <ul className={classes.ingredientItemsContainer}>
+            {recipe.ingredients.map((ingredient, i) => (
+              <RecipeItem ingredient={ingredient} />
+            ))}
+          </ul>
         </div>
         <Typography classes={descriptionClasses}>
           {description.length >= 200
@@ -79,3 +89,7 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
 };
 
 export default MyRecipes_cardDescription;
+
+const RecipeItem = ({ ingredient }) => {
+  return <div>{ingredient.name}</div>;
+};

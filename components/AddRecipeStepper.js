@@ -48,7 +48,6 @@ const addBoxShadowStyles = makeStyles((theme) => ({
     }),
   },
   addShadowLeft: {
-    background: "#fff",
     background:
       "linear-gradient(270deg, rgba(255,255,255,1) 67%, rgba(81,161,255,1) 100%)",
     transition: theme.transitions.create(["background"], {
@@ -56,9 +55,6 @@ const addBoxShadowStyles = makeStyles((theme) => ({
     }),
   },
   addShadowBoth: {
-    background: "rgb(81,161,255)",
-    // background:
-    //   "linear-gradient(81deg, rgba(81,161,255,1) 0%, rgba(255,255,255,1) 25%, rgba(255,255,255,1) 75%, rgba(81,161,255,1) 100%)",
     background:
       "linear-gradient(90deg, rgba(81,161,255,1) 0%, rgba(255,255,255,1) 50%, rgba(81,161,255,1) 100%)",
     transition: theme.transitions.create(["background"], {
@@ -141,9 +137,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 10,
   },
   root: {
-    // backgroundColor: theme.palette.secondary.main,
-
-    backgroundColor: "transparent",
+    backgroundColor: theme.palette.secondary.main,
     zIndex: 1,
     color: "#fff",
     width: 60,

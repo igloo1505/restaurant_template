@@ -4,7 +4,12 @@ import Link from "@material-ui/core/Link";
 
 const Copyright = () => {
   return (
-    <div style={{ backgroundColor: "transparent" }}>
+    <div
+      style={{
+        backgroundColor: "transparent",
+        margin: "1rem 0.75rem 2rem 0.75rem",
+      }}
+    >
       <Typography
         variant="body2"
         color="textSecondary"

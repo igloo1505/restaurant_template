@@ -64,7 +64,7 @@ const myRecipes = ({
   return (
     <div>
       <UnderNavbar />
-      <AdjustForDrawerContainer>
+      <AdjustForDrawerContainer overflowHidden={true}>
         <div className={classes.container}>
           <SlideComponentLeft>
             <MyRecipes_leftSection />

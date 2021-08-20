@@ -89,7 +89,7 @@ const AdjustForDrawerContainerComponent = ({
     mainDrawer: { open: drawerIsOpen },
     viewport: { navHeight, width: deviceWidth },
   },
-  props: { children, centerAll },
+  props: { children, centerAll, overflowHidden },
 }) => {
   const classes = useStylesAdjustForDrawer();
   const [shifted, setShifted] = useState(deviceWidth > 1920);
@@ -106,7 +106,12 @@ const AdjustForDrawerContainerComponent = ({
   }, [drawerIsOpen, navHeight, deviceWidth]);
 
   const getStyles = () => {
-    setStyles({ marginTop: `${navHeight}px` });
+    if (!overflowHidden) {
+      setStyles({ marginTop: `${navHeight}px` });
+    }
+    if (overflowHidden) {
+      setStyles({ marginTop: `${navHeight}px`, overflowX: "hidden" });
+    }
   };
 
   return (

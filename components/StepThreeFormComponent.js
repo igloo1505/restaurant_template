@@ -85,6 +85,9 @@ const useStyles = makeStyles((theme) => ({
   timeInputsContainer_outer: {
     marginTop: "60px",
     width: "100%",
+    [theme.breakpoints.down("md")]: {
+      marginTop: "2rem",
+    },
   },
   timeInputsContainer_insideTypography: {
     width: "100%",
