@@ -15,7 +15,7 @@ import { getAllRecipesFromUser } from "./recipeActions";
 import store from "./store";
 
 const initialState = {
-  loggedIn: false,
+  loggedIn: true,
   triedAutoLogin: false,
   allUsers: [],
   filtered: null,

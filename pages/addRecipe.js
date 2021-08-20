@@ -32,9 +32,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "transparent",
     marginRight: theme.spacing(2),
     // position: "absolute",
-    left: "50vw",
-    top: "50%",
-    transform: "translate(-50%, -50%)",
+    // left: "50vw",
+    // marginTop: "50%",
+    // transform: "translateX(-50%)",
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     position: "relative !important",
     [theme.breakpoints.down("lg")]: {
@@ -216,7 +216,7 @@ const AddRecipe = ({
     return (
       <Fragment>
         <CssBaseline />
-        <AdjustForDrawerContainer>
+        <AdjustForDrawerContainer centerAll>
           <main
             className={clsx(
               classes.layout,

@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 
 const useDescriptionStyles = makeStyles((theme) => ({
   root: {
-    margin: "0.5rem 1rem 1rem 0.5rem ",
+    margin: "1.5rem 1rem 1rem 0.5rem ",
     gridArea: "description",
   },
 }));
@@ -31,15 +31,21 @@ const useStyles = makeStyles((theme) => ({
   },
   ingredientsContainer: {
     marginTop: "0.5rem",
+    paddingRight: "0.85rem",
+    borderRight: `1px solid ${theme.palette.grey[500]}`,
   },
   IngredientTitle: {
     fontWeight: 500,
     marginBottom: "6px",
+    borderBottom: `1px solid ${theme.palette.grey[400]}`,
   },
   ingredientItemsContainer: {
-    borderRight: `1px solid ${theme.palette.grey[500]}`,
+    // borderRight: `1px solid ${theme.palette.grey[500]}`,
     listStyleType: "disc",
     paddingLeft: "0px !important",
+  },
+  ingredientItem: {
+    color: theme.palette.grey[800],
   },
 }));
 
@@ -74,7 +80,7 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
           </Typography>
           <ul className={classes.ingredientItemsContainer}>
             {recipe.ingredients.map((ingredient, i) => (
-              <RecipeItem ingredient={ingredient} />
+              <RecipeItem ingredient={ingredient} classes={classes} />
             ))}
           </ul>
         </div>
@@ -90,6 +96,6 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
 
 export default MyRecipes_cardDescription;
 
-const RecipeItem = ({ ingredient }) => {
-  return <div>{ingredient.name}</div>;
+const RecipeItem = ({ ingredient, classes }) => {
+  return <div className={classes.ingredientItem}>{ingredient.name}</div>;
 };

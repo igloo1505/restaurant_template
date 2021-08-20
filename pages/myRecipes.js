@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     display: "grid",
     gridGap: "1rem",
     gridTemplateColumns: "500px 1fr",
+    // overflowY: "auto !important",
     // [theme.breakpoints.down("lg")]: {
     //   gridTemplateColumns: "1fr 1fr",
     // },

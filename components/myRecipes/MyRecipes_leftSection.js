@@ -14,7 +14,6 @@ const useClasses = makeStyles((theme) => ({
     borderRadius: "4px",
     height: "fit-content",
     minWidth: "min(350px, 75vw)",
-
     transition: theme.transitions.create(
       ["box-shadow", "background-color", "padding"],
       {

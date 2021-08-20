@@ -106,12 +106,21 @@ const AdjustForDrawerContainerComponent = ({
   }, [drawerIsOpen, navHeight, deviceWidth]);
 
   const getStyles = () => {
+    let _styles = {};
     if (!overflowHidden) {
-      setStyles({ marginTop: `${navHeight}px` });
+      // setStyles({ marginTop: `${navHeight}px` });
+      _styles.marginTop = `${navHeight}px`;
     }
     if (overflowHidden) {
-      setStyles({ marginTop: `${navHeight}px`, overflowX: "hidden" });
+      _styles.marginTop = `${navHeight}px`;
+      _styles.overflowX = "hidden";
     }
+    if (centerAll) {
+      _styles.display = "flex";
+      _styles.justifyContent = "center";
+      _styles.alignItems = "center";
+    }
+    setStyles(_styles);
   };
 
   return (

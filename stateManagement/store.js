@@ -35,6 +35,9 @@ const store = configureStore({
   },
   devTools: () => withDevtools(),
 });
+if (process.env.NODE_ENV !== "production" && typeof window !== "undefined") {
+  window.store = store;
+}
 
 export default store;
 
