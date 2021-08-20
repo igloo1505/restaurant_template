@@ -118,7 +118,7 @@ const MyRecipes_cardSummary = ({
     // let lowerHeight = cardHeight - imageSectionHeight + overlap;
     // TODO Make sure this is responsive to title length. This is needed to allow transition but will need to take different approach to accommodate longer titles.
     let lowerHeight = "3rem";
-    let _extended = summaryContainerHeight + imageSectionHeight - 8;
+    let _extended = summaryContainerHeight + imageSectionHeight - 12;
     console.log("_extended: ", _extended);
     if (index === 0) {
       console.log(
