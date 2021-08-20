@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     // height: "calc(100% - 1rem)",
     height: "auto",
     borderRadius: "4px",
+    // borderRadius: "0.5rem",
     width: "100%",
     boxShadow: `2px 2px 4px ${theme.palette.grey[400]}, -2px -2px 4px #ffffff`,
     transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
@@ -49,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingBottom: "0.5rem",
+    // paddingBottom: "0.5rem",
   },
   topDivOpen: {
     borderBottom: `1px solid ${theme.palette.grey[500]}`,
@@ -101,17 +102,24 @@ const MyRecipes_cardSummary = ({
   const [addBackground, setAddBackground] = useState(false);
   const { title, createdBy, description, servings } = recipe;
   useEffect(() => {
-    // let overlap = 12;
     let overlap = 0;
     let cardHeight = document
       .getElementById(`myRecipes-card-${index}`)
       .getBoundingClientRect().height;
+    console.log("cardHeight: ", cardHeight, index);
+    let summaryContainerHeight = document
+      .getElementById(`summary-card-container-${index}`)
+      .getBoundingClientRect().height;
+    console.log("summaryContainerHeight: ", summaryContainerHeight, index);
     let imageSectionHeight = document
       .getElementById(`card-image-container-${index}`)
       .getBoundingClientRect().height;
-    let lowerHeight = cardHeight - imageSectionHeight + overlap;
-    let outerHeight = cardHeight - imageSectionHeight;
-    let _extended = cardHeight + 16;
+    console.log("imageSectionHeight: ", imageSectionHeight, index);
+    // let lowerHeight = cardHeight - imageSectionHeight + overlap;
+    // TODO Make sure this is responsive to title length. This is needed to allow transition but will need to take different approach to accommodate longer titles.
+    let lowerHeight = "3rem";
+    let _extended = summaryContainerHeight + imageSectionHeight - 8;
+    console.log("_extended: ", _extended);
     if (index === 0) {
       console.log(
         "_extended: ",
@@ -127,6 +135,7 @@ const MyRecipes_cardSummary = ({
         height: _extended,
         // transition: theme.transitions.create(["height"], { duration: 450 }),
         transition: "height 550ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+        // transformOrigin: "bottom",
       },
       // extendedOuter: {
       //   height: outerHeight,

@@ -29,7 +29,7 @@ export const uploadImage = (file, fileName) => {
 
 // GET RECIPE
 export const getRecipeImage = async (fileKey, req, res) => {
-  console.log("fileKey: ", fileKey);
+  // console.log("fileKey: ", fileKey);
   const downloadParams = {
     Key: fileKey,
     Bucket: bucketName,
@@ -38,27 +38,7 @@ export const getRecipeImage = async (fileKey, req, res) => {
   return (
     s3
       .getObject(downloadParams)
-      // .then((response) => {
-      //   console.log("s3Response: ", response);
-      // })
-      .on("response", (response) => {
-        // console.log("s3Response: ", response);
-        // console.log("s3Response: ", Object.keys(response.httpResponse));
-        // console.log("s3Response: ", response.httpResponse.headers);
-        // res.setHeader(
-        //   "Content-Length",
-        //   response.httpResponse.headers["content-length"]
-        // );
-        // res.setHeader(
-        //   "Content-Type",
-        //   response.httpResponse.headers["content-type"]
-        // );
-      })
-      // .on("",  (response) => {
-      // })
+      // .on("response", (response) => {})
       .createReadStream()
-      .on("data", (...props) => {
-        // console.log("PROPS:", props);
-      })
   );
 };

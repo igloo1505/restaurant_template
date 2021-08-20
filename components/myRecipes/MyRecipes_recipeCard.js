@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "10px",
     padding: "0",
     display: "flex",
-    height: "256px",
+    // height: "256px",
     flexDirection: "column",
     opacity: 0.25,
     borderRadius: "4px",
@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
   addBoxShadow: {
     border: `1px solid ${theme.palette.grey[200]}`,
     boxShadow: `2px 2px 5px ${theme.palette.grey[400]}, -2px 2px 5px ${theme.palette.grey[300]}`,
-
     transition:
       "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
   },
@@ -93,6 +92,7 @@ export const MyRecipes_recipeCard = ({
   user,
   recipes,
   props: { recipe, index, key },
+  viewport: { width: deviceWidth },
   deleteRecipe,
 }) => {
   let itemId = `myRecipes-card-${index}`;
@@ -114,8 +114,8 @@ export const MyRecipes_recipeCard = ({
     _setFixedHeight({
       height: ` ${fixed}px`,
     });
-    console.log("imageContainer: ");
-  }, []);
+    // console.log("imageContainer: ", imageContainer);
+  }, [deviceWidth]);
 
   const handleDeleteRecipe = (e) => {
     // TODO Handle confirmation here before delete
@@ -179,6 +179,7 @@ export const MyRecipes_recipeCard = ({
 const mapStateToProps = (state, props) => ({
   user: state.user,
   recipes: state.recipes,
+  viewport: state.UI.viewport,
   props: props,
 });
 
