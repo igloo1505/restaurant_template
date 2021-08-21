@@ -78,6 +78,15 @@ const RecipeSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+RecipeSchema.methods.getUsersRecentRecipes = async function () {
+  let recipes = await mongoose
+    .model("Recipe")
+    .find({ createdBy: this.createdBy })
+    .sort({ createdAt: -1 })
+    .limit(5);
+  return recipes;
+};
+
 // module.exports = mongoose.model("Recipe", RecipeSchema);
 module.exports =
   mongoose.models.Recipe || mongoose.model("Recipe", RecipeSchema);

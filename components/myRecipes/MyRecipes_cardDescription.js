@@ -2,6 +2,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
+import { useRouter } from "next/router";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TimerIcon from "@material-ui/icons/Timer";
@@ -87,6 +88,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
+  const router = useRouter();
   const [maxHeight, setMaxHeight] = useState({});
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -103,6 +105,9 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
   const classes = useStyles();
   const descriptionClasses = useDescriptionStyles();
   const handleEditClick = (e) => {};
+  const viewPublicPage = (e) => {
+    router.push(`/recipeDetails/${recipe._id}`);
+  };
   return (
     <div
       className={clsx(
@@ -133,7 +138,7 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
             variant="contained"
             color="primary"
             classes={{ root: classes.editButton, label: classes.buttonText }}
-            onClick={handleEditClick}
+            onClick={() => viewPublicPage()}
           >
             Public
           </Button>

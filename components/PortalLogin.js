@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import clsx from "clsx";
+import { useRouter } from "next/router";
 import {
   validatePassword,
   authenticateUser,
@@ -106,12 +107,17 @@ const SignIn = ({
   tryAutoLogin,
   forgotPassword,
 }) => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     rememberMe: true,
   });
+
+  useEffect(() => {
+    router.prefetch("/index");
+  }, []);
 
   const labelClasses = useLabelClasses();
   const initialFocusState = {

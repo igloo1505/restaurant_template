@@ -12,6 +12,7 @@ const useStylesUnderNavbar = makeStyles((theme) => ({
     marginBottom: "20px",
     marginTop: "20px",
     display: "block",
+
     [theme.breakpoints.down("lg")]: {
       display: "flex",
     },
@@ -106,7 +107,9 @@ const AdjustForDrawerContainerComponent = ({
   }, [drawerIsOpen, navHeight, deviceWidth]);
 
   const getStyles = () => {
-    let _styles = {};
+    let _styles = {
+      height: `calc(100vh - ${navHeight}px)`,
+    };
     if (!overflowHidden) {
       // setStyles({ marginTop: `${navHeight}px` });
       _styles.marginTop = `${navHeight}px`;

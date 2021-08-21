@@ -2,6 +2,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import MyRecipes_cardDescription from "./MyRecipes_cardDescription";
 import clsx from "clsx";
+import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import TimerIcon from "@material-ui/icons/Timer";
@@ -50,12 +51,15 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    height: "100%",
-    // backgroundColor: "rgba(81,161,255,1)",
+    height: "3rem",
+    borderRadius: "4px",
     backgroundColor: theme.palette.primary.light,
     border: `1px solid #b3d6ff`,
     padding: "0.5rem",
-    // paddingBottom: "0.5rem",
+    transition: theme.transitions.create(["height"], {
+      duration: 250,
+      delay: 550,
+    }),
   },
   topDivOpen: {
     borderBottom: `1px solid ${theme.palette.primary.dark}`,
@@ -63,13 +67,9 @@ const useStyles = makeStyles((theme) => ({
     width: "calc(100% + 4px)",
     margin: "0px -2px",
     boxShadow: `0px 2px 5px ${theme.palette.grey[400]}, 2px 3px 8px ${theme.palette.grey[400]}, -2px -3px 8px ${theme.palette.grey[200]}`,
-    // transition: theme.transitions.create(["box-shadow"], {
-    //   // duration: 250,
-    //   duration: 250,
-    // }),
     transition: theme.transitions.create(["height"], {
       duration: 250,
-      delay: 250,
+      delay: 550,
     }),
   },
   timeContainer: {
@@ -113,6 +113,7 @@ const MyRecipes_cardSummary = ({
   props: { recipe, cardId, summaryOpen, setSummaryOpen, index },
   viewport: { width: deviceWidth },
 }) => {
+  const router = useRouter();
   const summaryCardId = `summary-card-container-${index}`;
   const innerSummaryId = `summary-inner-div-${index}`;
   const [adjustedHeight, setAdjustedHeight] = useState({
@@ -154,9 +155,9 @@ const MyRecipes_cardSummary = ({
     setAdjustedHeight({
       extended: {
         height: _extended,
-        // transition: theme.transitions.create(["height"], { duration: 450 }),
-        transition: "height 550ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-        // transformOrigin: "bottom",
+
+        transition:
+          "height 550ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
       },
       // extendedOuter: {
       //   height: outerHeight,
@@ -164,7 +165,8 @@ const MyRecipes_cardSummary = ({
       collapsedOuter: {},
       collapsed: {
         height: lowerHeight,
-        transition: "height 550ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+        transition:
+          "height 550ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
       },
     });
   }, [deviceWidth]);
@@ -198,6 +200,8 @@ const MyRecipes_cardSummary = ({
         )}
         onClick={() => {
           setSummaryOpen(!summaryOpen);
+          router.prefetch(`/editRecipe/${recipe._id}`);
+          router.prefetch(`/recipeDetails/${recipe._id}`);
           console.log("summaryOpen: ", summaryOpen);
         }}
         style={summaryOpen ? adjustedHeight.extended : adjustedHeight.collapsed}
