@@ -312,7 +312,6 @@ const StepTwoFormComponent = ({
         ),
         unit: checkUnit(),
       };
-      console.log("validated", validated);
       if (Object.values(validated).every((i) => i)) {
         addIngredient(validated.unit);
       }

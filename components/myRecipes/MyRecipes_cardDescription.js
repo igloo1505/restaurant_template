@@ -3,13 +3,17 @@ import React, { Fragment, useState, useEffect } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 import TimerIcon from "@material-ui/icons/Timer";
 import { connect } from "react-redux";
 
 const useDescriptionStyles = makeStyles((theme) => ({
   root: {
-    margin: "1.5rem 1rem 1rem 0.5rem ",
+    // margin: "1.5rem 1rem 1rem 0.5rem ",
+    padding: "0px 0.75rem 0.75rem 0.75rem",
     gridArea: "description",
+    width: "100%",
+    height: "100%",
   },
 }));
 
@@ -20,10 +24,13 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     gridTemplateColumns: "[ingredients] 1fr [description] 3fr",
     gridTemplateRows: "1fr",
+    overflow: "hidden",
   },
   descriptionOpen: {
     opacity: 1,
     marginTop: "0.5rem",
+    width: "calc(100% - 8px)",
+    height: "100%",
     transition: theme.transitions.create(["opacity"], {
       duration: 350,
       delay: 400,
@@ -44,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     marginBottom: "6px",
     borderBottom: `1px solid ${theme.palette.grey[400]}`,
+    padding: "0px 0.5rem",
   },
   ingredientItemsContainer: {
     listStyleType: "disc",
@@ -55,7 +63,27 @@ const useStyles = makeStyles((theme) => ({
   },
   ingredientItem: {
     color: theme.palette.grey[800],
+    paddingTop: "0.35rem",
+    display: "block",
   },
+  rightSideContainer: {
+    minHeight: "calc(100% - 31px)",
+    position: "relative",
+    width: "100%",
+    marginRight: "0.75rem",
+  },
+  actionsContainer: {
+    position: "absolute",
+    bottom: "0",
+    right: "0",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "6px",
+  },
+  buttonText: {},
+  editButton: {},
 }));
 
 const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
@@ -74,6 +102,7 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
   const { description } = recipe;
   const classes = useStyles();
   const descriptionClasses = useDescriptionStyles();
+  const handleEditClick = (e) => {};
   return (
     <div
       className={clsx(
@@ -92,11 +121,33 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
           ))}
         </ul>
       </div>
-      <Typography classes={descriptionClasses}>
-        {description.length >= 200
-          ? `${description.slice(0, 200)}...`
-          : description}
-      </Typography>
+      <div className={classes.rightSideContainer}>
+        <Typography classes={descriptionClasses}>
+          {description.length >= 200
+            ? `${description.slice(0, 200)}...`
+            : description}
+        </Typography>
+        <div className={classes.actionsContainer}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            classes={{ root: classes.editButton, label: classes.buttonText }}
+            onClick={handleEditClick}
+          >
+            Public
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            color="secondary"
+            classes={{ root: classes.editButton, label: classes.buttonText }}
+            onClick={handleEditClick}
+          >
+            Edit
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
@@ -104,5 +155,9 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
 export default MyRecipes_cardDescription;
 
 const RecipeItem = ({ ingredient, classes }) => {
-  return <div className={classes.ingredientItem}>{ingredient.name}</div>;
+  return ingredient.name
+    .split(/\r?\n/)
+    .map((i) => (
+      <div className={classes.ingredientItem}>* {ingredient.name}</div>
+    ));
 };

@@ -159,7 +159,7 @@ const AddRecipe = ({
     },
   });
   useEffect(() => {
-    // setFormData(initialFormData);
+    setFormData(initialFormData);
     setActiveStep(0);
   }, [resetFormData]);
   useEffect(() => {

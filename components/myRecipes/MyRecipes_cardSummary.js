@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     boxShadow: `3px 3px 4px ${theme.palette.grey[400]}, -3px -3px 4px #ffffff`,
     transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
-    overflow: "hidden",
+    // overflow: "hidden",
     "&:hover": {
       boxShadow: `1px 1px 3px ${theme.palette.grey[500]}, -1px -1px 3px #ffffff`,
       transition: theme.transitions.create(["box-shadow"], { duration: 450 }),
@@ -58,8 +58,15 @@ const useStyles = makeStyles((theme) => ({
     // paddingBottom: "0.5rem",
   },
   topDivOpen: {
-    borderBottom: `1px solid ${theme.palette.grey[500]}`,
+    borderBottom: `1px solid ${theme.palette.primary.dark}`,
     height: "auto",
+    width: "calc(100% + 4px)",
+    margin: "0px -2px",
+    boxShadow: `0px 2px 5px ${theme.palette.grey[400]}, 2px 3px 8px ${theme.palette.grey[400]}, -2px -3px 8px ${theme.palette.grey[200]}`,
+    // transition: theme.transitions.create(["box-shadow"], {
+    //   // duration: 250,
+    //   duration: 250,
+    // }),
     transition: theme.transitions.create(["height"], {
       duration: 250,
       delay: 250,

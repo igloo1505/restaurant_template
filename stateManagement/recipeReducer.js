@@ -48,7 +48,6 @@ const recipeReducer = (state = initialState, action) => {
         ...state,
         recipeImageUpload: action.payload.progress,
       };
-
     case Types.REMOVE_RECIPE_SUCCESS:
       return {
         ...state,
