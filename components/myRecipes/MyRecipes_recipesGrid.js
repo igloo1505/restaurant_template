@@ -10,18 +10,14 @@ const useStyles = makeStyles((theme) => ({
     // paddingTop: "16px",
     display: "grid",
     gridColumnGap: "10px",
-    gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))",
     marginBottom: "2rem",
     marginRight: "1rem",
     [theme.breakpoints.down(960)]: {
       width: "80vw",
       gridGap: "1rem",
-      // gridTemplateColumns: "repeat(auto-fit, minmax(400px, 750px))",
-      // display: "flex",
-
       display: "grid",
       flexDirection: "column",
-      // display: "flex",
     },
   },
   shiftForDrawer: {

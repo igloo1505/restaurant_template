@@ -17,22 +17,28 @@ const useStyles = makeStyles((theme) => ({
   descriptionContainer: {
     position: "absolute",
     opacity: 0,
+    display: "flex",
+    gridTemplateColumns: "[ingredients] 1fr [description] 3fr",
+    gridTemplateRows: "1fr",
   },
   descriptionOpen: {
     opacity: 1,
+    marginTop: "0.5rem",
     transition: theme.transitions.create(["opacity"], {
       duration: 350,
       delay: 400,
     }),
   },
   descriptionInnerContainer: {
+    // deprecated. adjust elsewhere.
     display: "flex",
     gap: "0.75rem",
   },
   ingredientsContainer: {
     marginTop: "0.5rem",
-    paddingRight: "0.85rem",
+    paddingRight: "0.35rem",
     borderRight: `1px solid ${theme.palette.grey[500]}`,
+    maxWidth: "33%",
   },
   IngredientTitle: {
     fontWeight: 500,
@@ -40,9 +46,12 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.grey[400]}`,
   },
   ingredientItemsContainer: {
-    // borderRight: `1px solid ${theme.palette.grey[500]}`,
     listStyleType: "disc",
-    paddingLeft: "0px !important",
+
+    maxHeight: "calc(100% - 31px)",
+    // Scroll here just looks super congested... as if cramming an entire recipe onto a 400 * 250px card will ever look great.
+    overflowY: "auto",
+    paddingLeft: "0.3rem",
   },
   ingredientItem: {
     color: theme.palette.grey[800],
@@ -57,7 +66,7 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
         .getElementById(`card-image-container-${index}`)
         .getBoundingClientRect().height;
       setMaxHeight({
-        maxHeight: `${containerHeight}px`,
+        maxHeight: `${containerHeight - 8}px`,
         overflow: "hidden",
       });
     }
@@ -73,23 +82,21 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
       )}
       style={maxHeight}
     >
-      <div className={classes.descriptionInnerContainer}>
-        <div className={classes.ingredientsContainer}>
-          <Typography classes={{ root: classes.IngredientTitle }}>
-            Ingredients:
-          </Typography>
-          <ul className={classes.ingredientItemsContainer}>
-            {recipe.ingredients.map((ingredient, i) => (
-              <RecipeItem ingredient={ingredient} classes={classes} />
-            ))}
-          </ul>
-        </div>
-        <Typography classes={descriptionClasses}>
-          {description.length >= 200
-            ? `${description.slice(0, 200)}...`
-            : description}
+      <div className={classes.ingredientsContainer}>
+        <Typography classes={{ root: classes.IngredientTitle }}>
+          Ingredients:
         </Typography>
+        <ul className={classes.ingredientItemsContainer}>
+          {recipe.ingredients.map((ingredient, i) => (
+            <RecipeItem ingredient={ingredient} classes={classes} />
+          ))}
+        </ul>
       </div>
+      <Typography classes={descriptionClasses}>
+        {description.length >= 200
+          ? `${description.slice(0, 200)}...`
+          : description}
+      </Typography>
     </div>
   );
 };

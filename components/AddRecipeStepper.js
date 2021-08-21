@@ -40,7 +40,7 @@ const useConnectorClasses = makeStyles((theme) => ({
 }));
 const addBoxShadowStyles = makeStyles((theme) => ({
   addShadowRight: {
-    background: "#fff",
+    // background: "#fff",
     background:
       "linear-gradient(90deg, rgba(255,255,255,1) 67%, rgba(81,161,255,1) 100%)",
     transition: theme.transitions.create(["background"], {

@@ -30,13 +30,13 @@ const useStyles = makeStyles((theme) => ({
   },
   innerContainer: {
     margin: "0.5rem",
-    padding: "0.5rem",
+    // padding: "0.5rem",
     // height: "calc(100% - 1rem)",
     height: "auto",
     borderRadius: "4px",
     // borderRadius: "0.5rem",
     width: "100%",
-    boxShadow: `2px 2px 4px ${theme.palette.grey[400]}, -2px -2px 4px #ffffff`,
+    boxShadow: `3px 3px 4px ${theme.palette.grey[400]}, -3px -3px 4px #ffffff`,
     transition: theme.transitions.create(["box-shadow"], { duration: 250 }),
     overflow: "hidden",
     "&:hover": {
@@ -50,10 +50,20 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    height: "100%",
+    // backgroundColor: "rgba(81,161,255,1)",
+    backgroundColor: theme.palette.primary.light,
+    border: `1px solid #b3d6ff`,
+    padding: "0.5rem",
     // paddingBottom: "0.5rem",
   },
   topDivOpen: {
     borderBottom: `1px solid ${theme.palette.grey[500]}`,
+    height: "auto",
+    transition: theme.transitions.create(["height"], {
+      duration: 250,
+      delay: 250,
+    }),
   },
   timeContainer: {
     display: "flex",
@@ -65,15 +75,19 @@ const useStyles = makeStyles((theme) => ({
   },
   hoursText: {
     lineHeight: "auto",
+    color: "#fff",
+  },
+  minutesText: {
+    color: theme.palette.grey[100],
     // color: "#fff",
   },
-  minutesText: { color: theme.palette.grey[800] },
 }));
 
 const useTitleStyles = makeStyles((theme) => ({
   root: {
     // color: "#fff",
-    color: theme.palette.grey[900],
+    // color: theme.palette.grey[900],
+    color: "#fff",
   },
 }));
 const useTimeIconStyles = makeStyles((theme) => ({
@@ -81,8 +95,8 @@ const useTimeIconStyles = makeStyles((theme) => ({
     fontSize: "1rem",
     marginRight: "5px",
     transform: "translateY(2px)",
-    color: "#000",
-
+    // color: "#000",
+    color: "#fff",
     // marginBottom: "0px",
     // marginTop: "auto",
   },
