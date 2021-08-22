@@ -92,14 +92,14 @@ const useStyles = makeStyles((theme) => ({
   timeInputsContainer_insideTypography: {
     width: "100%",
     display: "grid",
-    gridColumnGap: "10px",
-    gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
+    gridColumnGap: "16px",
+    gridTemplateColumns: "1fr 1fr",
   },
   timeInputsContainer_inner_left: {
     width: "100%",
     marginTop: "0.75rem",
     [theme.breakpoints.up(timeSectionBreakpoint)]: {
-      width: "45%",
+      width: "100%",
       marginRight: "5%",
     },
   },
@@ -108,7 +108,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     marginTop: "0.75rem",
     [theme.breakpoints.up(timeSectionBreakpoint)]: {
-      width: "45%",
+      width: "100%",
       marginLeft: "5%",
     },
   },

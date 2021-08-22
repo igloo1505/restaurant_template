@@ -8,6 +8,7 @@ import * as Types from "../../stateManagement/TYPES";
 import Default_Dialog_Content from "../modalContent/Default_Dialog_Content";
 import Modal_confirmDeleteRecipe from "../myRecipes/Modal_confirmDeleteRecipe";
 import Modal_addRecipeImage from "../myRecipes/Modal_addRecipeImage";
+import Modal_RateRecipe from "../recipeDetails/Modal_RateRecipe";
 import { FcHighPriority } from "react-icons/fc";
 
 const useStyles = makeStyles((theme) => ({
@@ -131,6 +132,15 @@ const GetDialogContent = ({ variant, isOpen, contentText, title }) => {
       case "addRecipeImage":
         return (
           <Modal_addRecipeImage
+            variant={variant}
+            isOpen={isOpen}
+            contentText={contentText}
+            title={title}
+          />
+        );
+      case "rateRecipe":
+        return (
+          <Modal_RateRecipe
             variant={variant}
             isOpen={isOpen}
             contentText={contentText}

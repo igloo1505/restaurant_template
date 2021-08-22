@@ -19,6 +19,15 @@ const useStyles = makeStyles((theme) => ({
       display: "grid",
       flexDirection: "column",
     },
+    [theme.breakpoints.down(600)]: {
+      // gridTemplateColumns: "repeat(auto-fill, minmax(100%, 1fr))",
+      gridTemplateColumns: "1fr",
+      width: "90vw",
+      marginLeft: "5vw",
+      gridGap: "1rem",
+      display: "grid",
+      flexDirection: "column",
+    },
   },
   shiftForDrawer: {
     [theme.breakpoints.down(960)]: {

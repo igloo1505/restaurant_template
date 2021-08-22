@@ -48,15 +48,17 @@ const recipeDetailsById = ({ UI, user, recipe, usersRecentRecipes }) => {
   return (
     <Fragment>
       <AdjustForDrawerContainer>
-        Main Recipe page here...
-        <div className={classes.recipeDetailsOuterContainer}>
+        <div
+          className={classes.recipeDetailsOuterContainer}
+          id="details-outer-container"
+        >
           <div className={classes.upperWrapper}>
-            <Details_Gallery />
-            <Details_Banner />
+            <Details_Gallery recipe={recipe} />
+            <Details_Banner recipe={recipe} />
           </div>
           <div className={classes.lowerWrapper}>
-            <Details_Ingredients />
-            <Details_Directions />
+            <Details_Ingredients recipe={recipe} />
+            <Details_Directions recipe={recipe} />
           </div>
         </div>
       </AdjustForDrawerContainer>
@@ -87,37 +89,49 @@ export const getServerSideProps = async (ctx) => {
   let userId = cookies.get("userId");
   let inCookies = Boolean(token && userId);
   _props.sendRequest = !inCookies;
-  if (inCookies) {
-    let recipe = await mongoose
-      .connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-        useUnifiedTopology: true,
-      })
-      .then(async () => {
-        let recipe = await Recipe.findById(_recipeId)
-          .populate("ingredients")
-          .populate("createdBy", {
-            email: 1,
-            firstName: 1,
-            lastName: 1,
-            _id: 1,
-          });
-        if (recipe) {
-          _props.recipe = recipe;
-          let usersRecentRecipes = await recipe.getUsersRecentRecipes();
-          if (usersRecentRecipes) {
-            _props.usersRecentRecipes = usersRecentRecipes;
-          }
+  let recipe = await mongoose
+    .connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+      useUnifiedTopology: true,
+    })
+    .then(async () => {
+      let recipe = await Recipe.findById(_recipeId)
+        .populate("ingredients")
+        .populate("createdBy", {
+          email: 1,
+          firstName: 1,
+          lastName: 1,
+          _id: 1,
+        });
+      if (recipe) {
+        _props.recipe = recipe;
+        let usersRecentRecipes = await recipe.getUsersRecentRecipes();
+        if (usersRecentRecipes) {
+          _props.usersRecentRecipes = usersRecentRecipes;
         }
-      });
+      }
+    });
+  if (userId === _props?.recipe?._id) {
+    _props.isOwnRecipe = true;
+  }
+
+  console.log("_props: ", inCookies, _props);
+  if (!_props.usersRecentRecipes && !_props.recipe) {
     return {
-      props: {
-        recipe: JSON.parse(JSON.stringify(_props.recipe)) || null,
-        usersRecentRecipes:
-          JSON.parse(JSON.stringify(_props.usersRecentRecipes)) || null,
+      redirect: {
+        destination: "/",
+        permanent: false,
       },
     };
   }
+  return {
+    props: {
+      recipe: JSON.parse(JSON.stringify(_props.recipe)) || null,
+      usersRecentRecipes:
+        JSON.parse(JSON.stringify(_props.usersRecentRecipes)) || null,
+      sendRequest: _props.sendRequest,
+    },
+  };
 };

@@ -28,9 +28,11 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.25,
     borderRadius: "4px",
     position: "relative",
-
     backgroundColor: "#fff",
     transition: `background-color 4000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 2000ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border ${backgroundTransition}ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
+    [theme.breakpoints.down(600)]: {
+      minWidth: "90vw",
+    },
   },
   addBackground: {
     backgroundColor: theme.palette.common.paperLight,

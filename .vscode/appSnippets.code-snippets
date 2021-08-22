@@ -39,6 +39,24 @@
     "gridColumnGap: '10px',",
     "gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',",
 		]
-	}
+	},
+	"transition": {
+		"prefix": ["transition", "muiTransition"],
+		"description": "MUI Transition",
+		"body": [
+				"transition: theme.transitions.create(['$2'], {",
+				"duration: $1,",
+			  "}),",
+		]
+	},
+	"breakPoint": {
+		"prefix": ["breakPoint", "break-point"],
+		"description": "MUI Breakpoint",
+		"body": [
+			"[theme.breakpoints.down($1)]: {",
+			"",
+			"  },",
+		]
+	},
 
 }

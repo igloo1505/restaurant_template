@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
     width: 400,
     backgroundColor: theme.palette.common.paperLight,
     // backgroundColor: "transparent",
+    maxWidth: "100%",
   },
   input: {
     // zIndex: -9999,
@@ -68,6 +69,10 @@ const useStyles = makeStyles((theme) => ({
   divider: {
     height: 28,
     margin: 4,
+  },
+  dialogContentRoot: {
+    padding: "8px",
+    margin: "0px -8px",
   },
 }));
 const useDeleteButtonClasses = makeStyles((theme) => ({
@@ -151,7 +156,7 @@ const Modal_addRecipeImage = ({
 
   return (
     <div className={classes.outerContainer}>
-      <DialogContent>
+      <DialogContent classes={{ root: classes.dialogContentRoot }}>
         <FileInput
           classes={classes}
           image={image}

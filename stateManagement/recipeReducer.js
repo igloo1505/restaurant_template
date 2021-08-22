@@ -5,10 +5,10 @@ import { HYDRATE } from "next-redux-wrapper";
 
 const initialState = {
   filters: [],
-  myRecipes: [],
-  myRecipesServer: [],
-  myFavorites: [],
-  myBookmarks: [],
+  myRecipes: null,
+  // Return only id's for favorites and bookmarks
+  myFavorites: null,
+  myBookmarks: null,
   recipeImageUpload: null,
   resetFormData: false,
   byCategory: {

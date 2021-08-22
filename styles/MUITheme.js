@@ -50,7 +50,7 @@ const MUITheme = createMuiTheme({
     h1: {
       fontFamily: defaultFontFamily,
       fontWeight: 300,
-      fontSize: "6rem",
+      fontSize: "4rem",
       lineHeight: 1.167,
       letterSpacing: "-0.01562em",
       color: defaultTextColor,

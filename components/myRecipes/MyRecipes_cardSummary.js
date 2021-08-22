@@ -3,6 +3,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import MyRecipes_cardDescription from "./MyRecipes_cardDescription";
 import clsx from "clsx";
 import { useRouter } from "next/router";
+import { getFormattedTime } from "../../util/getFormattedTime";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import TimerIcon from "@material-ui/icons/Timer";
@@ -56,10 +57,20 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.light,
     border: `1px solid #b3d6ff`,
     padding: "0.5rem",
-    transition: theme.transitions.create(["height"], {
-      duration: 250,
-      delay: 550,
-    }),
+    opacity: 1,
+    // transition: theme.transitions.create(["height", "opacity"], {
+    //   duration: 250,
+    // }),
+    transition:
+      "height 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 450ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+  },
+  adjustForDrawer: {
+    "& > *": {
+      opacity: 0,
+      transition: theme.transitions.create(["opacity"], {
+        duration: 450,
+      }),
+    },
   },
   topDivOpen: {
     borderBottom: `1px solid ${theme.palette.primary.dark}`,
@@ -112,6 +123,9 @@ const useTimeIconStyles = makeStyles((theme) => ({
 const MyRecipes_cardSummary = ({
   props: { recipe, cardId, summaryOpen, setSummaryOpen, index },
   viewport: { width: deviceWidth },
+  UI: {
+    mainDrawer: { open: drawerOpen },
+  },
 }) => {
   const router = useRouter();
   const summaryCardId = `summary-card-container-${index}`;
@@ -128,11 +142,10 @@ const MyRecipes_cardSummary = ({
     let cardHeight = document
       .getElementById(`myRecipes-card-${index}`)
       .getBoundingClientRect().height;
-    console.log("cardHeight: ", cardHeight, index);
     let summaryContainerHeight = document
       .getElementById(`summary-card-container-${index}`)
       .getBoundingClientRect().height;
-    console.log("summaryContainerHeight: ", summaryContainerHeight, index);
+
     let imageSectionHeight = document
       .getElementById(`card-image-container-${index}`)
       .getBoundingClientRect().height;
@@ -208,16 +221,21 @@ const MyRecipes_cardSummary = ({
         id={innerSummaryId}
       >
         <div
-          className={clsx(classes.topDiv, summaryOpen && classes.topDivOpen)}
+          className={clsx(
+            classes.topDiv,
+            summaryOpen && classes.topDivOpen,
+            Boolean(drawerOpen && deviceWidth < 960) && classes.adjustForDrawer
+          )}
         >
           <Typography classes={titleClasses} variant="h6">
             {title.length > 15 ? `${title.slice(0, 12)}...` : title}
           </Typography>
-          {recipe?.time?.prepTime && (
+          {Boolean(recipe?.time?.prepTime && recipe?.time?.cookTime) && (
             <CardTimeSection
               classes={classes}
               timeIconClasses={timeIconClasses}
               recipe={recipe}
+              index={index}
             />
           )}
         </div>
@@ -233,56 +251,27 @@ const MyRecipes_cardSummary = ({
 
 const mapStateToProps = (state, props) => ({
   viewport: state.UI.viewport,
+  UI: state.UI,
   props: props,
 });
 
 export default connect(mapStateToProps)(MyRecipes_cardSummary);
 
-const CardTimeSection = ({ classes, recipe, timeIconClasses }) => {
-  const getTotalTime = () => {
-    // let prepTime = recipe.time.prepTime;
-    let totalTime = false;
-    if (recipe?.time?.cookTime) {
-      totalTime = recipe?.time?.cookTime;
-    }
-    if (recipe?.time?.prepTime) {
-      totalTime =
-        typeof totalTime === "number"
-          ? totalTime + recipe?.time?.prepTime
-          : recipe?.time?.prepTime;
-    }
-    console.log(totalTime, recipe?.time?.prepTime, recipe?.time?.cookTime);
-    if (typeof totalTime !== "number") {
-      return totalTime;
-    }
-
-    let formatedTime = totalTime / 60;
-    let _formatedTime = totalTime % 60;
-    console.log("prepTime: ", formatedTime.toFixed(), _formatedTime);
-    console.log("prepTime: ", formatedTime.toFixed(), typeof _formatedTime);
-    // let cookTime = recipe.time.cookTime;
-    // console.log("cookTime: ", cookTime);
-    return {
-      hours:
-        parseInt(formatedTime.toFixed()) > 0 ? formatedTime.toFixed() : null,
-      minutes: _formatedTime !== 0 ? _formatedTime : null,
-    };
-  };
-  let xyx = getTotalTime();
-  console.log("xyx: ", recipe?.time?.prepTime, recipe?.time?.cookTime, xyx);
+const CardTimeSection = ({ classes, recipe, timeIconClasses, index }) => {
+  const formattedTime = getFormattedTime(recipe);
   return (
     <div className={classes.timeContainer}>
       <TimerIcon classes={timeIconClasses} />
-      {getTotalTime()?.hours && (
+      {formattedTime?.hours && (
         <Typography classes={{ root: classes.hoursText }}>
-          {getTotalTime().hours}
+          {formattedTime.hours}
         </Typography>
       )}
-      {getTotalTime()?.minutes && (
+      {formattedTime?.minutes && (
         <Typography variant="caption" classes={{ root: classes.minutesText }}>
-          <Fragment>{getTotalTime()?.hours && ":"}</Fragment>
-          {getTotalTime().minutes}
-          <Fragment>{!getTotalTime()?.hours && " mins"}</Fragment>
+          <Fragment>{formattedTime?.hours && ":"}</Fragment>
+          {formattedTime.minutes}
+          <Fragment>{!formattedTime?.hours && " mins"}</Fragment>
         </Typography>
       )}
     </div>

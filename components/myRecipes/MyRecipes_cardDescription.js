@@ -160,7 +160,7 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
 export default MyRecipes_cardDescription;
 
 const RecipeItem = ({ ingredient, classes }) => {
-  return ingredient.name
+  return ingredient?.name
     .split(/\r?\n/)
     .map((i) => (
       <div className={classes.ingredientItem}>* {ingredient.name}</div>
