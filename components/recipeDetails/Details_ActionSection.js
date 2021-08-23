@@ -3,6 +3,7 @@
 import React, { Fragment, useState, useEffect, forwardRef } from "react";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
+import * as Types from "../../stateManagement/TYPES";
 import Typography from "@material-ui/core/Typography";
 import BookmarkedIcon from "@material-ui/icons/BookmarkOutlined";
 import NotBookmarkedIcon from "@material-ui/icons/BookmarkBorderOutlined";
@@ -66,6 +67,7 @@ const Details_ActionSection = ({
   recipes: { myFavorites },
   handleFavorite,
 }) => {
+  const dispatch = useDispatch();
   const [isFavorited, setIsFavorited] = useState(false);
   const actionArray = [
     {
@@ -82,7 +84,8 @@ const Details_ActionSection = ({
     {
       name: "rateMe",
       action: () => {
-        console.log("Trigger rateMe modal here.");
+        console.log("Dispatchting");
+        dispatch({ type: Types.SHOW_RECIPE_REVIEW_MODAL, payload: recipe._id });
       },
       iconTrue: RateMeIcon,
     },
@@ -116,7 +119,6 @@ export default connect(mapStateToProps, { handleFavorite })(
 
 const ActionItem = ({ action, classes, isFavorited }) => {
   const [Icon, setIcon] = useState(null);
-  const dispatch = useDispatch();
   useEffect(() => {
     let Action;
     if (action.name === "rateMe") {
@@ -128,6 +130,7 @@ const ActionItem = ({ action, classes, isFavorited }) => {
     }
     setIcon(Action);
   }, [isFavorited]);
+
   return (
     <div>
       <div

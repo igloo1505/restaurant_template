@@ -4,6 +4,7 @@ import Navbar from "../components/portalAuthenticated/Navbar";
 import SnackbarSwitcher from "../components/modalsAndAlerts/SnackbarSwitcher";
 import SimpleBooleanSnackbar from "../components/SimpleBooleanSnackbar";
 import Alert from "../components/modalsAndAlerts/Modal";
+import RecipeReviewModal from "../components/modalsAndAlerts/RecipeReviewModal";
 import Drawer from "../components/portalAuthenticated/Drawer";
 import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
 import Head from "next/head";
@@ -115,7 +116,7 @@ function MyApp({ Component, pageProps, ...rest }) {
           <CssBaseline />
           <Navbar />
           <Drawer />
-
+          <RecipeReviewModal />
           <AccountIconMenu />
           <Alert />
           <SnackbarSwitcher />

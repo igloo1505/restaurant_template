@@ -44,6 +44,9 @@ const initialState = {
     vertical: "bottom",
     horizontal: "center",
   },
+  recipeReviewModal: {
+    isOpen: false,
+  },
 };
 
 const modalReducer = createReducer(initialState, (builder) => {
@@ -251,6 +254,24 @@ const modalReducer = createReducer(initialState, (builder) => {
         vertical: "bottom",
         horizontal: "left",
         undoAction: null,
+      },
+    };
+  });
+  builder.addCase(Types.SHOW_RECIPE_REVIEW_MODAL, (state, action) => {
+    return {
+      ...state,
+      recipeReviewModal: {
+        ...state.recipeReviewModal,
+        isOpen: true,
+      },
+    };
+  });
+  builder.addCase(Types.HIDE_RECIPE_REVIEW_MODAL, (state, action) => {
+    return {
+      ...state,
+      recipeReviewModal: {
+        ...initialState.recipeReviewModal,
+        isOpen: false,
       },
     };
   });

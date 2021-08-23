@@ -3,6 +3,8 @@ import React, { Fragment, useState, useEffect, forwardRef } from "react";
 import { connect, useDispatch } from "react-redux";
 import Cookies from "cookies";
 import mongoose from "mongoose";
+import { autoLoginOnFirstRequest } from "../../util/autoLoginOnFirstRequest";
+import * as Types from "../../stateManagement/TYPES";
 import Recipe from "../../models/Recipe";
 import User from "../../models/User";
 import {
@@ -42,7 +44,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const recipeDetailsById = ({ UI, user, recipe, usersRecentRecipes }) => {
+const recipeDetailsById = ({
+  UI,
+  user,
+  recipe,
+  usersRecentRecipes,
+  hasUser,
+}) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (hasUser) {
+      dispatch({
+        type: Types.AUTO_LOGIN_SUCCESS,
+        payload: hasUser,
+      });
+    }
+  }, [hasUser]);
   const classes = useStyles();
   console.log("recipe", recipe);
   return (
@@ -87,6 +104,8 @@ export const getServerSideProps = async (ctx) => {
   console.log("cookies: ", cookies.get("userId"));
   let token = cookies.get("token");
   let userId = cookies.get("userId");
+  let hasUser = false;
+  let rememberMe = cookies.get("rememberMe");
   let inCookies = Boolean(token && userId);
   _props.sendRequest = !inCookies;
   let recipe = await mongoose
@@ -105,6 +124,9 @@ export const getServerSideProps = async (ctx) => {
           lastName: 1,
           _id: 1,
         });
+      if (rememberMe) {
+        hasUser = await autoLoginOnFirstRequest(ctx.req, ctx.res);
+      }
       if (recipe) {
         _props.recipe = recipe;
         let usersRecentRecipes = await recipe.getUsersRecentRecipes();
@@ -132,6 +154,7 @@ export const getServerSideProps = async (ctx) => {
       usersRecentRecipes:
         JSON.parse(JSON.stringify(_props.usersRecentRecipes)) || null,
       sendRequest: _props.sendRequest,
+      hasUser: hasUser,
     },
   };
 };

@@ -30,6 +30,13 @@ export const autoLoginOnFirstRequest = async (req, res) => {
         if (comparison) {
           returnUser = user;
         }
+        if (!comparison) {
+          cookies.set("userId");
+          cookies.set("rememberMe");
+          cookies.set("token");
+          cookies.set("_p");
+          cookies.set("email");
+        }
       }
     });
   if (returnUser) {
