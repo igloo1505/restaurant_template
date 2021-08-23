@@ -15,7 +15,7 @@ export const handleRememberMe = async (user, req, cookies) => {
     }
     cookies.set("rememberMe", true, { httpOnly: false });
     cookies.set("email", req.body.email, { httpOnly: true });
-    cookies.set("password", stringifiedPassword, { httpOnly: true });
+    cookies.set("_p", stringifiedPassword, { httpOnly: true });
     console.log("here!!", stringifiedPassword);
     let encrypted = await bcrypt.hash(stringifiedPassword, salt);
     await User.findByIdAndUpdate(user._id, {

@@ -199,17 +199,20 @@ export const validatePassword = (password) => {
   }
 };
 
-export const logOut = () => (dispatch) => {
+export const logOut = () => async (dispatch) => {
   console.log("logging out...");
   cookie.delete("rememberMe");
+  cookie.delete("userId");
+  cookie.delete("token");
   dispatch({ type: LOGOUT });
+  await axios.post("/api/clearLogin", config);
 };
 
 export const forgotPassword = () => async (dispatch) => {
   let props = { email: "aiglinski@icloud.com" };
   console.log("Running forgotPassword");
   try {
-    let res = axios.post("/api/forgotPassword", props, config);
+    let res = await axios.post("/api/forgotPassword", props, config);
     dispatch({ type: FORGOT_PASSWORD_SUCCESS, payload: res.data });
   } catch (error) {
     dispatch({ type: FORGOT_PASSWORD_FAIL });

@@ -5,6 +5,7 @@ import * as Types from "../stateManagement/TYPES";
 import mongoose from "mongoose";
 import Cookies from "cookies";
 import User from "../models/User";
+import bcrypt from "bcryptjs";
 import {
   UnderNavbar,
   AdjustForDrawerContainer,
@@ -23,6 +24,7 @@ const Home = ({
 }) => {
   const dispatch = useDispatch();
   useEffect(() => {
+    console.log("hasUser: ", hasUser);
     if (hasUser) {
       dispatch({
         type: Types.AUTO_LOGIN_SUCCESS,
@@ -67,11 +69,16 @@ export const getServerSideProps = async (ctx) => {
         useUnifiedTopology: true,
       })
       .then(async () => {
-        let user = await User.findById(userId).select(
-          "-password -otp -oneTimePassword"
-        );
+        let user = await User.findById(userId).select("-password -otp");
+        console.log("user: ", user);
         if (user) {
-          returnUser = user;
+          let comparison = await bcrypt.compare(
+            cookies.get("password"),
+            user._p
+          );
+          if (comparison) {
+            returnUser = user;
+          }
         }
       });
     return {
