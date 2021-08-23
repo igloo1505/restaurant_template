@@ -70,7 +70,7 @@ const Details_Banner = ({
         {recipe?.servings?.amount && (
           <div className={styles.servingsContainer}>
             <Typography
-              variant="subtitle"
+              variant="subtitle1"
               classes={{ root: styles.bannerLabel }}
             >
               Makes About:
@@ -83,7 +83,7 @@ const Details_Banner = ({
         {recipe?.time?.prepTime && (
           <div className={styles.individualTimeWrapper}>
             <Typography
-              variant="subtitle"
+              variant="subtitle1"
               classes={{ root: styles.bannerLabel }}
             >
               Prep Time:{" "}
@@ -111,7 +111,7 @@ const Details_Banner = ({
         {recipe?.time?.cookTime && (
           <div className={styles.individualTimeWrapper}>
             <Typography
-              variant="subtitle"
+              variant="subtitle1"
               classes={{ root: styles.bannerLabel }}
             >
               Cook Time:{" "}

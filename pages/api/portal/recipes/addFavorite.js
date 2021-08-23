@@ -14,15 +14,24 @@ handler.post(async (req, res) => {
   console.log(colors.bgBlue.white(req.body));
   try {
     const recipe = await Recipe.findById(req.body.recipeId);
+    console.log("recipe: ", recipe);
     if (!recipe) {
       res.statusCode = 404;
       return res.json({ msg: "Invalid recipe Id" });
     }
     if (recipe && userId) {
-      let user = await User.findByIdAndUpdate(userId, {
-        $push: { myFavorites: recipe._id },
-      });
-      if (user) {
+      let _user = await User.findById(userId);
+      console.log("_user: ", _user);
+      let user;
+      console.log("_user.myFavorites: ", _user.myFavorites);
+      if (_user) {
+        user = await User.findByIdAndUpdate(
+          userId,
+          {
+            $push: { myFavorites: recipe._id },
+          },
+          { new: true }
+        );
         return res.json({
           msg: "Recipe favorited successfully.",
           recipeId: recipe._id,

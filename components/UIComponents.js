@@ -110,12 +110,16 @@ const AdjustForDrawerContainerComponent = ({
     let _styles = {
       height: `calc(100vh - ${navHeight}px)`,
     };
-    if (!overflowHidden) {
-      // setStyles({ marginTop: `${navHeight}px` });
+    if (navHeight >= 0) {
       _styles.marginTop = `${navHeight}px`;
     }
+    if (navHeight === 0) {
+      _styles.marginTop = "64px";
+    }
+    if (!overflowHidden) {
+      // setStyles({ marginTop: `${navHeight}px` });
+    }
     if (overflowHidden) {
-      _styles.marginTop = `${navHeight}px`;
       _styles.overflowX = "hidden";
     }
     if (centerAll) {

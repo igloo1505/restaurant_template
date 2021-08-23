@@ -20,6 +20,7 @@ import * as Types from "../stateManagement/TYPES";
 // mongoose.set("bufferCommands", false);
 // import { deleteRecipe } from "../stateManagement/recipeActions";
 // import * as Types from "../stateManagement/TYPES";
+import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -47,6 +48,7 @@ const myRecipes = ({
   drawer: { isOpen: drawerOpen },
   recipes: { myRecipes },
   user,
+  hasUser,
 }) => {
   const dispatch = useDispatch();
 
@@ -61,6 +63,14 @@ const myRecipes = ({
     //   Change width here
     // setStyles({ gridTemplateColumns: "500px 1fr" });
   }, []);
+  useEffect(() => {
+    if (hasUser) {
+      dispatch({
+        type: Types.AUTO_LOGIN_SUCCESS,
+        payload: hasUser,
+      });
+    }
+  }, [hasUser]);
   const classes = useStyles();
   return (
     <div>
@@ -129,13 +139,20 @@ export const getServerSideProps = wrapper.getServerSideProps(
       let state = store.getState();
       console.log("req: ", req);
       let cookies = new Cookies(req, res);
+      let hasUser = false;
       let token = cookies.get("token") || state?.user?.self?.token;
       let userId = cookies.get("userId") || state?.user?.self?._id;
+      let rememberMe = cookies.get("rememberMe");
+      console.log("rememberMe: ", rememberMe);
       console.log("userId: ", userId);
       state.user.self._id;
       if (userId && token) {
-        console.log("userId && token: ", userId, token);
+        console.log("userId && token: ", userId, token, rememberMe);
         // connectDB().then(async (client) => {
+        if (rememberMe) {
+          hasUser = await autoLoginOnFirstRequest(req, res);
+          console.log("hasUser: ", hasUser);
+        }
         // console.log("client: ", client);
         // console.log("ingredients: ", ingredients);
         let recipes = await mongoose
@@ -162,6 +179,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
         return {
           props: {
             _myRecipes: JSON.parse(JSON.stringify(recipes)),
+            hasUser: hasUser,
           },
         };
       }

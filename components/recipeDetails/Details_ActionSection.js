@@ -124,9 +124,10 @@ const ActionItem = ({ action, classes, isFavorited }) => {
     }
     if (action.name === "favorite") {
       Action = isFavorited ? action.iconTrue : action.iconFalse;
+      console.log("isFavorited: ", isFavorited);
     }
     setIcon(Action);
-  }, []);
+  }, [isFavorited]);
   return (
     <div>
       <div

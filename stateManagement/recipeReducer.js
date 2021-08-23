@@ -52,6 +52,12 @@ const recipeReducer = (state = initialState, action) => {
         ...state,
         recipeImageUpload: action.payload.progress,
       };
+    case Types.AUTHENTICATE_USER:
+      return {
+        ...state,
+        myFavorites: action.payload.myFavorites,
+        myBookmarks: action.payload.myBookmarks,
+      };
     case Types.REMOVE_RECIPE_SUCCESS:
       return {
         ...state,

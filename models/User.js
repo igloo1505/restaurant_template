@@ -33,6 +33,14 @@ const UserSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    myFavorites: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Recipe",
+    },
+    myBookmarks: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Recipe",
+    },
   },
   { timestamps: true }
 );
