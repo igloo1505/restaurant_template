@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
   descriptionContainer: {
     position: "absolute",
     opacity: 0,
+    zIndex: -999,
     display: "flex",
     gridTemplateColumns: "[ingredients] 1fr [description] 3fr",
     gridTemplateRows: "1fr",
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
   },
   descriptionOpen: {
     opacity: 1,
+    zIndex: 1,
     marginTop: "0.5rem",
     width: "calc(100% - 8px)",
     height: "100%",

@@ -195,3 +195,48 @@ export const addRecipeImage = (formData) => async (dispatch) => {
     dispatch({ type: Types.ADD_RECIPE_IMAGE_ERROR, payload: error });
   }
 };
+
+export const handleFavorite = (fav) => async (dispatch) => {
+  console.log("fav: ", fav);
+
+  let userId = getUserId();
+  if (!userId) {
+    return dispatch({
+      type: Types.SHOW_SNACKBAR,
+      payload: {
+        message: "You must be logged in to favorite that.",
+        variant: "error",
+        vertical: "top",
+        horizontal: "center",
+        transitionDirection: "down",
+        hideIn: 3000,
+      },
+    });
+  }
+  let route = fav.method === "add" ? "addFavorite" : "removeFavorite";
+  let _type =
+    fav.method === "add"
+      ? Types.ADD_RECIPE_FAVORITE
+      : Types.REMOVE_RECIPE_FAVORITE;
+  let res = await useAxios({
+    method: "post",
+    url: `/api/portal/recipes/${route}`,
+    data: {
+      recipeId: fav.recipeId,
+      userId: userId,
+    },
+  });
+  switch (res.status) {
+    case 200:
+      return dispatch({
+        type: _type,
+        payload: res.data,
+      });
+    case 401:
+    default:
+      return dispatch({
+        type: Types.RECIPE_FAVORITE_ERROR,
+        payload: res.data,
+      });
+  }
+};

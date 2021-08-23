@@ -71,7 +71,10 @@ const MyRecipes_cardBanner = ({
   },
 }) => {
   const dispatch = useDispatch();
-  const triggerAddImageModal = () => {
+  const triggerAddImageModal = (e) => {
+    console.log("e: ", e);
+    e.stopPropagation();
+    e.preventDefault();
     dispatch({
       type: Types.SHOW_ADD_IMAGE_MODAL,
       payload: { recipeId: recipe._id },
@@ -113,6 +116,7 @@ const BannerAddImage = ({ classes, recipe, triggerAddImageModal }) => {
           addBoxShadow && classes.addBoxShadow
         )}
         onClick={triggerAddImageModal}
+        onTouchStart={triggerAddImageModal}
       >
         <AddPhotoIcon className={classes.addPhotoIcon} />
       </div>

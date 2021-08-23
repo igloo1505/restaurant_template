@@ -1,7 +1,10 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { connect, useDispatch } from "react-redux";
 import { tryAutoLogin } from "../stateManagement/userActions";
-import * as types from "../stateManagement/TYPES";
+import * as Types from "../stateManagement/TYPES";
+import mongoose from "mongoose";
+import Cookies from "cookies";
+import User from "../models/User";
 import {
   UnderNavbar,
   AdjustForDrawerContainer,
@@ -16,13 +19,17 @@ const Home = ({
   },
   network: { loading: isLoading },
   tryAutoLogin,
+  hasUser,
 }) => {
-  // useEffect(() => {
-  //   if (!triedAutoLogin) {
-  //     tryAutoLogin();
-  //   }
-  // }, [triedAutoLogin]);
   const dispatch = useDispatch();
+  useEffect(() => {
+    if (hasUser) {
+      dispatch({
+        type: Types.AUTO_LOGIN_SUCCESS,
+        payload: hasUser,
+      });
+    }
+  }, [hasUser]);
 
   return (
     <Fragment>
@@ -42,3 +49,41 @@ const mapStateToProps = (state, props) => ({
 });
 
 export default connect(mapStateToProps, { tryAutoLogin })(Home);
+
+export const getServerSideProps = async (ctx) => {
+  console.log("ctx: ", Object.keys(ctx));
+  let cookies = new Cookies(ctx.req, ctx.res);
+  let rememberMe = cookies.get("rememberMe");
+  let userId = cookies.get("userId");
+  let token = cookies.get("token");
+  console.log("cookies: ");
+  let returnUser;
+  if (rememberMe && userId && token) {
+    let _user = await mongoose
+      .connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true,
+      })
+      .then(async () => {
+        let user = await User.findById(userId).select(
+          "-password -otp -oneTimePassword"
+        );
+        if (user) {
+          returnUser = user;
+        }
+      });
+    return {
+      props: {
+        hasUser: JSON.parse(JSON.stringify(returnUser)),
+      },
+    };
+  } else {
+    return {
+      props: {
+        hasUser: false,
+      },
+    };
+  }
+};

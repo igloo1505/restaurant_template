@@ -31,15 +31,14 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     backgroundColor: "transparent",
     marginRight: theme.spacing(2),
+    transform: "translateY(-20vh)",
     // position: "absolute",
     // left: "50vw",
     // marginTop: "50%",
-    // transform: "translateX(-50%)",
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     position: "relative !important",
     [theme.breakpoints.down("lg")]: {
       position: "relative !important",
-      // transform: "translateX(-50%)",
       top: "unset",
       left: "unset",
       transform: "unset",
@@ -100,6 +99,7 @@ const AddRecipe = ({
   // const [slideIn, setSlideIn] = useState(false);
   const router = useRouter();
   //!!! The only reason half of this form state isn't in Redux is because I installed Apple's beta OS on my macbook and now Chrome just about starts it on fire... and Safari doesn't have **** for devtools.
+  // TODO Add character limit to title!!
   const [formData, setFormData] = useState({
     categories: [],
     title: `Recipe One`,

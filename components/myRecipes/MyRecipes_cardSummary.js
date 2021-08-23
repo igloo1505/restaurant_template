@@ -211,14 +211,15 @@ const MyRecipes_cardSummary = ({
           addBackground && classes.addBackground,
           summaryOpen && classes.expandInner
         )}
-        onClick={() => {
+        style={summaryOpen ? adjustedHeight.extended : adjustedHeight.collapsed}
+        id={innerSummaryId}
+        onClick={(e) => {
+          console.log("e: ", e);
           setSummaryOpen(!summaryOpen);
           router.prefetch(`/editRecipe/${recipe._id}`);
           router.prefetch(`/recipeDetails/${recipe._id}`);
           console.log("summaryOpen: ", summaryOpen);
         }}
-        style={summaryOpen ? adjustedHeight.extended : adjustedHeight.collapsed}
-        id={innerSummaryId}
       >
         <div
           className={clsx(

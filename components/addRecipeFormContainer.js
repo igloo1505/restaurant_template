@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(3),
     },
     [theme.breakpoints.up("lg")]: {
+      transform: "translateY(-50%)",
       display: "grid",
       gridTemplateAreas: '"banner" "stepper" "form"',
     },

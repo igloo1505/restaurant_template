@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   upperWrapper: {
     width: "100%",
-    height: "40%",
+    // minHeight: "40%",
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",

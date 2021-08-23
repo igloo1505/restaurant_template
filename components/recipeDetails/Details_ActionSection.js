@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import React, { Fragment, useState, useEffect, forwardRef } from "react";
 import { connect, useDispatch } from "react-redux";
@@ -8,6 +9,7 @@ import NotBookmarkedIcon from "@material-ui/icons/BookmarkBorderOutlined";
 import RateMeIcon from "@material-ui/icons/ThumbsUpDown";
 import FavoritedIcon from "@material-ui/icons/FavoriteSharp";
 import NotFavoritedIcon from "@material-ui/icons/FavoriteBorderSharp";
+import { handleFavorite } from "../../stateManagement/recipeActions";
 
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
@@ -17,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "flex-end",
     // gap: "0.75rem",
     gap: "2rem",
+    marginTop: "1rem",
     paddingBottom: "0.75rem",
     [theme.breakpoints.down(1280)]: {
       paddingBottom: "0.5rem",
@@ -58,32 +61,45 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const actionArray = [
-  {
-    action: () => {
-      console.log("Toggle favorite here.");
-    },
-    iconTrue: FavoritedIcon,
-    iconFalse: NotFavoritedIcon,
-  },
-  {
-    action: () => {
-      console.log("Trigger rateMe modal here.");
-    },
-    iconTrue: RateMeIcon,
-  },
-];
-
 const Details_ActionSection = ({
   props: { recipe },
   recipes: { myFavorites },
+  handleFavorite,
 }) => {
+  const [isFavorited, setIsFavorited] = useState(false);
+  const actionArray = [
+    {
+      name: "favorite",
+      action: (fav) => {
+        handleFavorite({
+          recipeId: recipe._id,
+          method: isFavorited ? "remove" : "add",
+        });
+      },
+      iconTrue: FavoritedIcon,
+      iconFalse: NotFavoritedIcon,
+    },
+    {
+      name: "rateMe",
+      action: () => {
+        console.log("Trigger rateMe modal here.");
+      },
+      iconTrue: RateMeIcon,
+    },
+  ];
   const classes = useStyles();
-
+  useEffect(() => {
+    setIsFavorited(Boolean(myFavorites?.includes(recipe._id)));
+  }, [myFavorites]);
   return (
     <div className={classes.outerContainer}>
       {actionArray.map((action, i) => (
-        <ActionItem action={action} key={`action-${i}`} classes={classes} />
+        <ActionItem
+          action={action}
+          key={`action-${i}`}
+          classes={classes}
+          isFavorited={isFavorited}
+        />
       ))}
     </div>
   );
@@ -94,14 +110,30 @@ const mapStateToProps = (state, props) => ({
   props: props,
 });
 
-export default connect(mapStateToProps)(Details_ActionSection);
+export default connect(mapStateToProps, { handleFavorite })(
+  Details_ActionSection
+);
 
-const ActionItem = ({ action, classes }) => {
-  let Action = action.iconTrue;
+const ActionItem = ({ action, classes, isFavorited }) => {
+  const [Icon, setIcon] = useState(null);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    let Action;
+    if (action.name === "rateMe") {
+      Action = action.iconTrue;
+    }
+    if (action.name === "favorite") {
+      Action = isFavorited ? action.iconTrue : action.iconFalse;
+    }
+    setIcon(Action);
+  }, []);
   return (
     <div>
-      <div className={classes.actionIconContainer} onClick={action.action}>
-        <Action classes={{ root: classes.actionIcon }} />
+      <div
+        className={classes.actionIconContainer}
+        onClick={() => action.action()}
+      >
+        {Icon && <Icon classes={{ root: classes.actionIcon }} />}
       </div>
     </div>
   );

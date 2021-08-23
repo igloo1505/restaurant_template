@@ -32,10 +32,7 @@ const Details_Banner = ({
     });
   }, [deviceWidth]);
   const formattedTime = getFormattedTimeIndividual(recipe);
-  if (new Regex(/teest/gi).test(recipe.name)) {
-    console.log("true: ", true);
-  }
-  console.log("formattedTime: ", formattedTime);
+
   const { title } = recipe;
 
   const handleFavoriteIconClick = (e) => {

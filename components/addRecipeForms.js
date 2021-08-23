@@ -266,6 +266,13 @@ const StepOneFormComponent = ({
               multiline
               label="Recipe's title "
               onChange={handleFormChange}
+              onKeyDown={(e) => {
+                if (formData?.title?.length >= 50 && e.key !== "Backspace") {
+                  console.log("e: ", e);
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+              }}
               value={formData.title}
               focusState={focusState}
               focused={focusState.title.focus}
