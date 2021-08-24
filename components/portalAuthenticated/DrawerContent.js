@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { connect, useDispatch } from "react-redux";
+import clsx from "clsx";
 import { useRouter } from "next/router";
 import * as Types from "../../stateManagement/TYPES";
 import TwoToneBookIcon from "../TwoToneBookIcon";
@@ -28,17 +29,42 @@ const useStyles = makeStyles((theme) => ({
   listItemIconRoot: {
     zIndex: 1,
   },
+  listItemRootDisabled: {
+    "&:hover": {
+      backgroundColor: " rgba(251,	201,	92, 0.1)",
+      cursor: "default",
+    },
+  },
+  listItemIconRootDisabled: {
+    zIndex: 1,
+    "& svg": {
+      color: "rgba(235, 96, 16, 0.5)",
+    },
+  },
   listItemTextPrimary: {
     zIndex: 1,
   },
+  listItemTextPrimaryDisabled: {
+    zIndex: 1,
+    // color: "rgba(235, 96, 16, 0.5)",
+    color: theme.palette.grey[500],
+  },
   listItemTextRoot: {
     // zIndex: 1,
+  },
+  listItemTextRootDisabled: {
+    // zIndex: 1,
+    color: "rgba(235, 96, 16, 0.5)",
   },
 }));
 
 const DrawerContent = ({
   UI: {
     viewport: { navHeight, width: deviceWidth },
+  },
+  user: {
+    loggedIn,
+    self: { _id: userId },
   },
 }) => {
   const dispatch = useDispatch();
@@ -93,7 +119,13 @@ const DrawerContent = ({
       <Divider />
       <List className={classes.listRoot}>
         {array.map((a) => (
-          <ListItemComponent item={a} classes={classes} key={a.text} />
+          <ListItemComponent
+            item={a}
+            classes={classes}
+            key={a.text}
+            loggedIn={loggedIn}
+            userId={userId}
+          />
         ))}
       </List>
       <Divider />
@@ -120,28 +152,52 @@ const DrawerContent = ({
 const mapStateToProps = (state, props) => ({
   UI: state.UI,
   props: props,
+  user: state.user,
 });
 
 export default connect(mapStateToProps)(DrawerContent);
 // {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} above InboxIcon ln 30
 
-const ListItemComponent = ({ item, classes }) => {
+const ListItemComponent = ({ item, classes, loggedIn, userId }) => {
+  const [disabled, setDisabled] = useState(false);
+  useEffect(() => {
+    let shouldDisable = Boolean(loggedIn && userId);
+    setDisabled(!shouldDisable);
+  }, [loggedIn, userId]);
   let { text, action, icon } = item;
   return (
     <ListItem
       button
       key={text}
-      classes={{ root: classes.listItemRoot }}
+      classes={{
+        root: clsx(
+          classes.listItemRoot,
+          disabled && classes.listItemRootDisabled
+        ),
+      }}
       onClick={action}
     >
-      <ListItemIcon classes={{ root: classes.listItemIconRoot }}>
+      <ListItemIcon
+        classes={{
+          root: clsx(
+            classes.listItemIconRoot,
+            disabled && classes.listItemIconRootDisabled
+          ),
+        }}
+      >
         {icon}
       </ListItemIcon>
       <ListItemText
         primary={text}
         classes={{
-          primary: classes.listItemTextPrimary,
-          root: classes.listItemTextRoot,
+          primary: clsx(
+            classes.listItemTextPrimary,
+            disabled && classes.listItemTextPrimaryDisabled
+          ),
+          root: clsx(
+            classes.listItemTextRoot,
+            disabled && classes.listItemTextRootDisabled
+          ),
         }}
       />
     </ListItem>

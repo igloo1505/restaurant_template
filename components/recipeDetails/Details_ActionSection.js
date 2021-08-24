@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import * as Types from "../../stateManagement/TYPES";
 import Typography from "@material-ui/core/Typography";
+import Tooltip from "@material-ui/core/Tooltip";
 import BookmarkedIcon from "@material-ui/icons/BookmarkOutlined";
 import NotBookmarkedIcon from "@material-ui/icons/BookmarkBorderOutlined";
 import RateMeIcon from "@material-ui/icons/ThumbsUpDown";
@@ -44,7 +45,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   actionIconDisabled: {
-    color: theme.palette.secondary.main,
+    // color: theme.palette.secondary.main,
+    color: "rgba(235, 96, 16, 0.6)",
     margin: "0.75rem",
     borderRadius: "50%",
     height: "2.2rem",
@@ -80,18 +82,19 @@ const useStyles = makeStyles((theme) => ({
   actionIconContainerDisabled: {
     borderRadius: "50%",
     padding: "0.25rem",
-    background: "linear-gradient(145deg, #e7f8ff, #c2d1e2)",
-    // backgroundColor: "#a6b3c1",
-    backgroundColor: "purple !important",
+    // background: "linear-gradient(145deg, #e7f8ff, #c2d1e2)",
+    backgroundColor: "#a6b3c1",
     boxShadow: "4px 4px 12px #a6b3c1, -4px -4px 12px #ffffff",
     transition: theme.transitions.create(["box-shadow", "border"], {
       duration: 150,
     }),
-    border: "1px solid rgba(255, 255, 255, 0.3)",
+    border: "none",
+    // padding: "calc(0.25rem + 1px)",
     "&:hover": {
-      cursor: "pointer",
+      cursor: "default",
       boxShadow: "4px 4px 10px #a6b3c1, -4px -4px 10px #ffffff",
-      border: "1px solid rgba(255, 255, 255, 0.5)",
+      border: "none",
+      // border: "1px solid rgba(255, 255, 255, 0.5)",
       transition: theme.transitions.create(["box-shadow", "border"], {
         duration: 250,
       }),
@@ -167,6 +170,7 @@ export default connect(mapStateToProps, { handleFavorite })(
 const ActionItem = ({ action, classes, isFavorited, loggedIn, userId }) => {
   const [Icon, setIcon] = useState(null);
   const [disabled, setDisabled] = useState(false);
+  const [toolTipOpen, setTooltipOpen] = useState(false);
   useEffect(() => {
     let Action;
     if (action.name === "rateMe") {
@@ -184,26 +188,63 @@ const ActionItem = ({ action, classes, isFavorited, loggedIn, userId }) => {
     setDisabled(!shouldDisable);
   }, [loggedIn, userId]);
 
+  const handleTooltipClose = () => {};
+
+  const triggerToolTip = () => {
+    setTooltipOpen(true);
+    setTimeout(() => {
+      setTooltipOpen(false);
+    }, 1500);
+  };
+
   return (
     <div>
-      <div
-        className={clsx(
-          classes.actionIconContainer,
-          disabled && classes.actionIconContainerDisabled
-        )}
-        onClick={() => action.action()}
-      >
-        {Icon && (
-          <Icon
-            classes={{
-              root: clsx(
-                classes.actionIcon,
-                disabled && classes.actionIconDisabled
-              ),
-            }}
-          />
-        )}
-      </div>
+      {Icon && (
+        <div
+          className={clsx(
+            classes.actionIconContainer,
+            disabled && classes.actionIconContainerDisabled
+          )}
+          onClick={() => {
+            if (!disabled) {
+              action.action();
+            }
+          }}
+        >
+          {action.protected ? (
+            <Tooltip
+              PopperProps={{
+                disablePortal: true,
+              }}
+              onClose={handleTooltipClose}
+              open={toolTipOpen}
+              disableFocusListener
+              disableHoverListener
+              disableTouchListener
+              title="You must be signed in to do that."
+            >
+              <Icon
+                classes={{
+                  root: clsx(
+                    classes.actionIcon,
+                    disabled && classes.actionIconDisabled
+                  ),
+                }}
+                onClick={() => triggerToolTip()}
+              />
+            </Tooltip>
+          ) : (
+            <Icon
+              classes={{
+                root: clsx(
+                  classes.actionIcon,
+                  disabled && classes.actionIconDisabled
+                ),
+              }}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };
