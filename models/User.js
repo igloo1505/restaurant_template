@@ -12,6 +12,8 @@ const UserSchema = mongoose.Schema(
       type: String,
       unique: true,
       required: true,
+      lowercase: true,
+      trim: true,
     },
     password: {
       type: String,
@@ -40,6 +42,10 @@ const UserSchema = mongoose.Schema(
     myBookmarks: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Recipe",
+    },
+    reviewsWritten: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "RecipeReviews",
     },
   },
   { timestamps: true }

@@ -24,6 +24,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import StarHalfIcon from "@material-ui/icons/StarHalf";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import StarIcon from "@material-ui/icons/Star";
+import { submitRecipeReview } from "../../stateManagement/recipeActions";
 
 const commentClasses = makeStyles((theme) => ({
   root: {
@@ -38,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     // justifyContent: ""
   },
+  dialogContentRoot: {
+    overflow: "hidden",
+  },
   fieldSection: {
     display: "flex",
     flexDirection: "row",
@@ -45,6 +49,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     gap: "0.75rem",
     padding: "0.75rem 0px",
+    [theme.breakpoints.down(700)]: {
+      flexDirection: "column",
+    },
   },
   dialogTextRoot: {
     marginBottom: "0px",
@@ -64,6 +71,9 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: "column",
     },
   },
+  dialogActionsRoot: {
+    padding: "1rem",
+  },
 }));
 
 const dialogClasses = makeStyles((theme) => ({
@@ -77,13 +87,12 @@ const dialogClasses = makeStyles((theme) => ({
 }));
 
 const RecipeReviewModal = ({
-  thisModal: { isOpen },
+  thisModal: { isOpen, relevantRecipe },
   recipes: { myRecipes, recipeImageUpload },
   user: {
-    self: { _id: userId },
+    self: { _id: userId, loggedIn, token },
   },
-  deleteRecipe,
-  addRecipeImage,
+  submitRecipeReview,
 }) => {
   const [formData, setFormData] = useState({
     kidFriendly: 0,
@@ -109,6 +118,18 @@ const RecipeReviewModal = ({
     }, 1000);
   };
 
+  const handleSubmitReview = () => {
+    if (!userId || !relevantId) {
+      return;
+    }
+    let _review = {
+      ...formData,
+      submittedBy: userId,
+      recipeId: relevantId,
+    };
+    submitRecipeReview(_review);
+  };
+
   return (
     <div className={classes.outerContainer}>
       <Dialog
@@ -117,8 +138,10 @@ const RecipeReviewModal = ({
         aria-labelledby="form-dialog-title"
         classes={dialogClasses()}
       >
-        <DialogTitle id="form-dialog-title">Review:</DialogTitle>
-        <DialogContent>
+        <DialogTitle id="form-dialog-title">
+          {relevantRecipe?.title} Review:
+        </DialogTitle>
+        <DialogContent classes={{ root: classes.dialogContentRoot }}>
           <div className={classes.gridRoot}>
             <div className={classes.fieldSection}>
               <DialogContentText classes={{ root: classes.dialogTextRoot }}>
@@ -203,12 +226,16 @@ const RecipeReviewModal = ({
             />
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={closeModal} color="primary">
+        <DialogActions classes={{ root: classes.dialogActionsRoot }}>
+          <Button onClick={closeModal} color="primary" variant="outlined">
             Cancel
           </Button>
-          <Button onClick={closeModal} color="primary">
-            Subscribe
+          <Button
+            onClick={handleSubmitReview}
+            color="primary"
+            variant="contained"
+          >
+            Submit
           </Button>
         </DialogActions>
       </Dialog>
@@ -223,7 +250,7 @@ const mapStateToProps = (state, props) => ({
   props: props,
 });
 
-export default connect(mapStateToProps, { deleteRecipe, addRecipeImage })(
+export default connect(mapStateToProps, { submitRecipeReview })(
   RecipeReviewModal
 );
 
@@ -242,6 +269,9 @@ const useRatingClasses = makeStyles((theme) => ({
     borderRadius: "16px",
     boxShadow: "none",
     minWidth: "200px",
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
     transition: theme.transitions.create(["box-shadow"], {
       duration: 250,
     }),
@@ -301,6 +331,10 @@ const RatingComponent = ({
         allowHover[name] && ratingClasses.isEditing
       )}
       onClick={() => handleDivClick()}
+      onTouchStart={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
     >
       {Object.keys(selectedRating).map((_r, index) => (
         <RatingIcon
@@ -345,13 +379,11 @@ const _RatingIcon = ({
   }, [deviceWidth]);
 
   const handleMouseMove = (e) => {
+    console.log("e: ", e);
     if (allowHover[name]) {
       let rValue = 0;
       let mouseXValue = e.pageX;
-      // const midwayPoint =
-      //   Math.abs(clientRect.right - clientRect.left) + clientRect.left;
       const midwayPoint = clientRect.width / 2 + clientRect.x;
-
       if (mouseXValue < midwayPoint && mouseXValue > clientRect.left) {
         rValue = 0.5;
       }
@@ -393,6 +425,7 @@ const _RatingIcon = ({
           id={starIconId}
           classes={{ root: ratingClasses.iconRoot }}
           onMouseMove={handleMouseMove}
+          onTouchStart={(e) => console.log("E", e)}
         />
       );
     case 1:
@@ -401,6 +434,7 @@ const _RatingIcon = ({
           id={starIconId}
           classes={{ root: ratingClasses.iconRoot }}
           onMouseMove={handleMouseMove}
+          onTouchStart={(e) => console.log("E", e)}
         />
       );
     case 0:
@@ -410,6 +444,7 @@ const _RatingIcon = ({
           id={starIconId}
           classes={{ root: ratingClasses.iconRoot }}
           onMouseMove={handleMouseMove}
+          onTouchStart={(e) => console.log("E", e)}
         />
       );
   }

@@ -1,6 +1,7 @@
 /* eslint-disable react/display-name */
 import React, { Fragment, useState, useEffect, forwardRef } from "react";
 import { connect, useDispatch } from "react-redux";
+import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { getFormattedTimeIndividual } from "../../util/getFormattedTime";
@@ -80,62 +81,58 @@ const Details_Banner = ({
             </Typography>
           </div>
         )}
-        {recipe?.time?.prepTime && (
-          <div className={styles.individualTimeWrapper}>
-            <Typography
-              variant="subtitle1"
-              classes={{ root: styles.bannerLabel }}
-            >
-              Prep Time:{" "}
+
+        <div
+          className={clsx(
+            styles.individualTimeWrapper,
+            !recipe?.time?.prepTime && styles.hide
+          )}
+        >
+          <Typography
+            variant="subtitle1"
+            classes={{ root: styles.bannerLabel }}
+          >
+            Prep Time:{" "}
+          </Typography>
+          {formattedTime?.prepTime?.hours && (
+            <Typography variant="body" classes={{ root: styles.bannerDetail }}>
+              {formattedTime?.prepTime?.hours}
+              {formattedTime?.prepTime?.hours === 0 ? " Hour," : " Hours,"}
             </Typography>
-            {formattedTime.prepTime.hours && (
-              <Typography
-                variant="body"
-                classes={{ root: styles.bannerDetail }}
-              >
-                {formattedTime.prepTime.hours}
-                {formattedTime.prepTime.hours === 0 ? " Hour," : " Hours,"}
-              </Typography>
-            )}
-            {formattedTime.prepTime.minutes && (
-              <Typography
-                variant="body"
-                classes={{ root: styles.bannerDetail }}
-              >
-                {formattedTime.prepTime.minutes}
-                {formattedTime.prepTime.minutes === 0 ? " minute" : " minutes"}
-              </Typography>
-            )}
-          </div>
-        )}
-        {recipe?.time?.cookTime && (
-          <div className={styles.individualTimeWrapper}>
-            <Typography
-              variant="subtitle1"
-              classes={{ root: styles.bannerLabel }}
-            >
-              Cook Time:{" "}
+          )}
+          {formattedTime?.prepTime?.minutes && (
+            <Typography variant="body" classes={{ root: styles.bannerDetail }}>
+              {formattedTime?.prepTime?.minutes}
+              {formattedTime?.prepTime?.minutes === 0 ? " minute" : " minutes"}
             </Typography>
-            {formattedTime.cookTime.hours && (
-              <Typography
-                variant="body"
-                classes={{ root: styles.bannerDetail }}
-              >
-                {formattedTime.cookTime.hours}
-                {formattedTime.cookTime.hours === 0 ? " Hour," : " Hours,"}
-              </Typography>
-            )}
-            {formattedTime.cookTime.minutes && (
-              <Typography
-                variant="body"
-                classes={{ root: styles.bannerDetail }}
-              >
-                {formattedTime.cookTime.minutes}
-                {formattedTime.cookTime.minutes === 0 ? " minute" : " minutes"}
-              </Typography>
-            )}
-          </div>
-        )}
+          )}
+        </div>
+
+        <div
+          className={clsx(
+            styles.individualTimeWrapper,
+            !recipe?.time?.cookTime && styles.hide
+          )}
+        >
+          <Typography
+            variant="subtitle1"
+            classes={{ root: styles.bannerLabel }}
+          >
+            Cook Time:{" "}
+          </Typography>
+          {formattedTime?.cookTime?.hours && (
+            <Typography variant="body" classes={{ root: styles.bannerDetail }}>
+              {formattedTime?.cookTime?.hours}
+              {formattedTime?.cookTime?.hours === 0 ? " Hour," : " Hours,"}
+            </Typography>
+          )}
+          {formattedTime?.cookTime?.minutes && (
+            <Typography variant="body" classes={{ root: styles.bannerDetail }}>
+              {formattedTime?.cookTime?.minutes}
+              {formattedTime?.cookTime?.minutes === 0 ? " minute" : " minutes"}
+            </Typography>
+          )}
+        </div>
       </div>
       <Details_ActionSection recipe={recipe} />
     </div>

@@ -28,7 +28,8 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   transformContainer: {
-    transform: "translateX(-50%)",
+    // transform: "translateX(-50%)",
+    transform: "translateX(calc(-50% - 1.5rem))",
     zIndex: -100,
     opacity: 0,
     // backgroundColor: theme.palette.secondary.main,

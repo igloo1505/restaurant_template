@@ -22,7 +22,9 @@ handler.post(async (req, res) => {
   console.log(colors.bgBlue("Did run in route with...", req.body));
   const cookies = new Cookies(req, res);
   try {
-    const user = await User.findOne({ email: req.body.email });
+    let _email = req.body.email.toLowerCase();
+
+    const user = await User.findOne({ email: _email });
     console.log("User!!!:", user);
     if (!user) {
       return res.status(401).json({ msg: "User not found" });

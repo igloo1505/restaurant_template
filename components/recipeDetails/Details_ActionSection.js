@@ -2,6 +2,7 @@
 /* eslint-disable react/display-name */
 import React, { Fragment, useState, useEffect, forwardRef } from "react";
 import { connect, useDispatch } from "react-redux";
+import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import * as Types from "../../stateManagement/TYPES";
 import Typography from "@material-ui/core/Typography";
@@ -42,6 +43,22 @@ const useStyles = makeStyles((theme) => ({
       margin: "0.5rem",
     },
   },
+  actionIconDisabled: {
+    color: theme.palette.secondary.main,
+    margin: "0.75rem",
+    borderRadius: "50%",
+    height: "2.2rem",
+    width: "2.2rem",
+    minHeight: "2.2rem",
+    minWidth: "2.2rem",
+    [theme.breakpoints.down(1280)]: {
+      height: "1.5rem",
+      width: "1.5rem",
+      minHeight: "1.5rem",
+      minWidth: "1.5rem",
+      margin: "0.5rem",
+    },
+  },
   actionIconContainer: {
     borderRadius: "50%",
     padding: "0.25rem",
@@ -60,10 +77,34 @@ const useStyles = makeStyles((theme) => ({
       }),
     },
   },
+  actionIconContainerDisabled: {
+    borderRadius: "50%",
+    padding: "0.25rem",
+    background: "linear-gradient(145deg, #e7f8ff, #c2d1e2)",
+    // backgroundColor: "#a6b3c1",
+    backgroundColor: "purple !important",
+    boxShadow: "4px 4px 12px #a6b3c1, -4px -4px 12px #ffffff",
+    transition: theme.transitions.create(["box-shadow", "border"], {
+      duration: 150,
+    }),
+    border: "1px solid rgba(255, 255, 255, 0.3)",
+    "&:hover": {
+      cursor: "pointer",
+      boxShadow: "4px 4px 10px #a6b3c1, -4px -4px 10px #ffffff",
+      border: "1px solid rgba(255, 255, 255, 0.5)",
+      transition: theme.transitions.create(["box-shadow", "border"], {
+        duration: 250,
+      }),
+    },
+  },
 }));
 
 const Details_ActionSection = ({
   props: { recipe },
+  user: {
+    loggedIn,
+    self: { _id: userId },
+  },
   recipes: { myFavorites },
   handleFavorite,
 }) => {
@@ -80,20 +121,23 @@ const Details_ActionSection = ({
       },
       iconTrue: FavoritedIcon,
       iconFalse: NotFavoritedIcon,
+      protected: true,
     },
     {
       name: "rateMe",
       action: () => {
-        console.log("Dispatchting");
-        dispatch({ type: Types.SHOW_RECIPE_REVIEW_MODAL, payload: recipe._id });
+        dispatch({ type: Types.SHOW_RECIPE_REVIEW_MODAL, payload: recipe });
       },
       iconTrue: RateMeIcon,
+      protected: true,
     },
   ];
   const classes = useStyles();
   useEffect(() => {
-    setIsFavorited(Boolean(myFavorites?.includes(recipe._id)));
+    let isIncluded = myFavorites?.includes(recipe._id);
+    setIsFavorited(isIncluded);
   }, [myFavorites]);
+
   return (
     <div className={classes.outerContainer}>
       {actionArray.map((action, i) => (
@@ -102,6 +146,8 @@ const Details_ActionSection = ({
           key={`action-${i}`}
           classes={classes}
           isFavorited={isFavorited}
+          loggedIn={loggedIn}
+          userId={userId}
         />
       ))}
     </div>
@@ -110,6 +156,7 @@ const Details_ActionSection = ({
 
 const mapStateToProps = (state, props) => ({
   recipes: state.recipes,
+  user: state.user,
   props: props,
 });
 
@@ -117,8 +164,9 @@ export default connect(mapStateToProps, { handleFavorite })(
   Details_ActionSection
 );
 
-const ActionItem = ({ action, classes, isFavorited }) => {
+const ActionItem = ({ action, classes, isFavorited, loggedIn, userId }) => {
   const [Icon, setIcon] = useState(null);
+  const [disabled, setDisabled] = useState(false);
   useEffect(() => {
     let Action;
     if (action.name === "rateMe") {
@@ -130,14 +178,31 @@ const ActionItem = ({ action, classes, isFavorited }) => {
     }
     setIcon(Action);
   }, [isFavorited]);
+  useEffect(() => {
+    let shouldDisable = Boolean(loggedIn && userId);
+    console.log("shouldDisable: ", shouldDisable);
+    setDisabled(!shouldDisable);
+  }, [loggedIn, userId]);
 
   return (
     <div>
       <div
-        className={classes.actionIconContainer}
+        className={clsx(
+          classes.actionIconContainer,
+          disabled && classes.actionIconContainerDisabled
+        )}
         onClick={() => action.action()}
       >
-        {Icon && <Icon classes={{ root: classes.actionIcon }} />}
+        {Icon && (
+          <Icon
+            classes={{
+              root: clsx(
+                classes.actionIcon,
+                disabled && classes.actionIconDisabled
+              ),
+            }}
+          />
+        )}
       </div>
     </div>
   );

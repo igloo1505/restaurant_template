@@ -46,6 +46,7 @@ const initialState = {
   },
   recipeReviewModal: {
     isOpen: false,
+    relevantRecipe: null,
   },
 };
 
@@ -263,10 +264,20 @@ const modalReducer = createReducer(initialState, (builder) => {
       recipeReviewModal: {
         ...state.recipeReviewModal,
         isOpen: true,
+        relevantRecipe: action.payload,
       },
     };
   });
   builder.addCase(Types.HIDE_RECIPE_REVIEW_MODAL, (state, action) => {
+    return {
+      ...state,
+      recipeReviewModal: {
+        ...initialState.recipeReviewModal,
+        isOpen: false,
+      },
+    };
+  });
+  builder.addCase(Types.SUBMIT_RECIPE_REVIEW_SUCCESS, (state, action) => {
     return {
       ...state,
       recipeReviewModal: {

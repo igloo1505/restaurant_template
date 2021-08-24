@@ -226,6 +226,7 @@ export const handleFavorite = (fav) => async (dispatch) => {
       userId: userId,
     },
   });
+  console.log("res: ", res);
   switch (res.status) {
     case 200:
       return dispatch({
@@ -236,6 +237,30 @@ export const handleFavorite = (fav) => async (dispatch) => {
     default:
       return dispatch({
         type: Types.RECIPE_FAVORITE_ERROR,
+        payload: res.data,
+      });
+  }
+};
+
+export const submitRecipeReview = (review) => async (dispatch) => {
+  console.log("Sending Review: ", review);
+  let res = await useAxios({
+    method: "post",
+    url: `/api/portal/recipes/submitRecipeReview`,
+    data: {
+      review,
+    },
+  });
+  switch (res.status) {
+    case 200:
+      return dispatch({
+        type: Types.SUBMIT_RECIPE_REVIEW_SUCCESS,
+        payload: res.data,
+      });
+    case 401:
+    default:
+      return dispatch({
+        type: Types.SUBMIT_RECIPE_REVIEW_FAIL,
         payload: res.data,
       });
   }

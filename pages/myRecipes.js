@@ -146,6 +146,14 @@ export const getServerSideProps = wrapper.getServerSideProps(
       console.log("rememberMe: ", rememberMe);
       console.log("userId: ", userId);
       state.user.self._id;
+      if (!userId || !token) {
+        return {
+          redirect: {
+            destination: "/",
+            permanent: false,
+          },
+        };
+      }
       if (userId && token) {
         console.log("userId && token: ", userId, token, rememberMe);
         // connectDB().then(async (client) => {

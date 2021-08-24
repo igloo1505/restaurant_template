@@ -2,6 +2,28 @@ const Ingredient = require("./Ingredient");
 const mongoose = require("mongoose");
 const categoryArray = ["specialty", "side", "drink", "tacoIngredients"];
 
+const unitArray = [
+  "A pinch",
+  "A smidgen",
+  "A heap",
+  "just a little",
+  "A wee bit",
+  "A speckle",
+  "Teaspoons",
+  "Tablespoons",
+  "Cups",
+  "Quarts",
+  "Gallons",
+  "Milliliters",
+  "Cubic cm",
+  "liters",
+  "Pounds",
+  "Ounces",
+  "Grams",
+  "Kilograms",
+  "Stone",
+];
+
 const RecipeSchema = mongoose.Schema(
   {
     createdBy: {
@@ -49,6 +71,7 @@ const RecipeSchema = mongoose.Schema(
       },
       unit: {
         type: String,
+        enum: unitArray,
         required: [
           true,
           "Please fill out the serving information as accurately as you can.",
@@ -73,6 +96,12 @@ const RecipeSchema = mongoose.Schema(
     comments: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Comment",
+      unique: true,
+    },
+    recipeReviews: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "RecipeReviews",
+      unique: true,
     },
   },
   { timestamps: true }

@@ -47,7 +47,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   transformContainer: {
-    transform: "translateX(50%)",
+    // transform: "translateX(50%)",
+    transform: "translateX(calc(50% + 1.5rem))",
     zIndex: 100,
     // backgroundColor: theme.palette.secondary.main,
     transition: theme.transitions.create(["transform"], {
@@ -230,10 +231,6 @@ const StepTwoFormComponent = ({
       });
     }
   };
-
-  useEffect(() => {
-    console.log("typeof: ", typeof setHasMenuOpen);
-  }, []);
 
   const handleChange = (e) => {
     if (e.target.value.length === 3) {

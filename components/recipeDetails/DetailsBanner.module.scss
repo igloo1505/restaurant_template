@@ -105,6 +105,11 @@
   }
 }
 
+// I had to do this to get around the weirdest bug I've ever gotten when checking in JS.
+.hide {
+  display: none;
+}
+
 @media only screen and (max-width: 1280px) {
   .notBookmarkedIcon {
     right: 0 0.5rem;

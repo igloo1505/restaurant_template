@@ -32,12 +32,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "transparent",
     marginRight: theme.spacing(2),
     transform: "translateY(-20vh)",
-    // position: "absolute",
-    // left: "50vw",
-    // marginTop: "50%",
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     position: "relative !important",
-    [theme.breakpoints.down("lg")]: {
+    [theme.breakpoints.down("md")]: {
       position: "relative !important",
       top: "unset",
       left: "unset",
@@ -48,11 +45,10 @@ const useStyles = makeStyles((theme) => ({
     transform: "translate(calc(-50% + 120px), -50%)",
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     [theme.breakpoints.down("lg")]: {
-      // position: "relative !important",
-      transform: "translateX(120px)",
-      // top: "unset",
-      // left: "unset",
-      // transform: "unset",
+      transform: "translateY(-20vh)",
+    },
+    [theme.breakpoints.down("md")]: {
+      transform: "unset",
     },
   },
 

@@ -52,6 +52,7 @@ const recipeReducer = (state = initialState, action) => {
         ...state,
         recipeImageUpload: action.payload.progress,
       };
+    case Types.AUTO_LOGIN_SUCCESS:
     case Types.AUTHENTICATE_USER:
       return {
         ...state,
@@ -80,6 +81,16 @@ const recipeReducer = (state = initialState, action) => {
         myFavorites: state.myFavorites.filter(
           (_f) => _f !== action.payload.recipeId
         ),
+      };
+    case Types.SUBMIT_RECIPE_REVIEW_SUCCESS:
+      if (state?.myFavorites.includes(action.payload.review)) {
+        return;
+      }
+      // TODO handle user update and recipe update in those reducers in the mornong.
+      return {
+        ...state,
+        myRecipes: [],
+        myFavorites: [],
       };
     default:
       return state;
