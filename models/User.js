@@ -38,14 +38,17 @@ const UserSchema = mongoose.Schema(
     myFavorites: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Recipe",
+      unique: true,
     },
     myBookmarks: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Recipe",
+      unique: true,
     },
     reviewsWritten: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "RecipeReviews",
+      unique: true,
     },
   },
   { timestamps: true }

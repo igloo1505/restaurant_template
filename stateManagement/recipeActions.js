@@ -242,6 +242,49 @@ export const handleFavorite = (fav) => async (dispatch) => {
   }
 };
 
+export const handleBookmark = (mark) => async (dispatch) => {
+  let userId = getUserId();
+  if (!userId) {
+    return dispatch({
+      type: Types.SHOW_SNACKBAR,
+      payload: {
+        message: "You must be logged in to bookmark that.",
+        variant: "error",
+        vertical: "top",
+        horizontal: "center",
+        transitionDirection: "down",
+        hideIn: 2500,
+      },
+    });
+  }
+  let route = mark.method === "add" ? "addBookmark" : "removeBookmark";
+  let _type =
+    mark.method === "add"
+      ? Types.ADD_RECIPE_BOOKMARK
+      : Types.REMOVE_RECIPE_BOOKMARK;
+  let res = await useAxios({
+    method: "post",
+    url: `/api/portal/recipes/${route}`,
+    data: {
+      recipeId: mark.recipeId,
+      userId: userId,
+    },
+  });
+  switch (res.status) {
+    case 200:
+      return dispatch({
+        type: _type,
+        payload: res.data,
+      });
+    case 401:
+    default:
+      return dispatch({
+        type: Types.BOOKMARK_ERROR,
+        payload: res.data,
+      });
+  }
+};
+
 export const submitRecipeReview = (review) => async (dispatch) => {
   console.log("Sending Review: ", review);
   let res = await useAxios({

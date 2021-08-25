@@ -22,34 +22,37 @@ const useStyles = makeStyles((theme) => ({
   recipeDetailsOuterContainer: {
     height: "100%",
     width: "100%",
-    // display: "grid",
+    display: "grid",
+    gridTemplateColumns: "4fr 6fr",
     gridColumnGap: "10px",
+    maxWidth: 1920,
+    marginRight: "0px",
+    marginLeft: "auto",
+  },
+  leftWrapper: {
+    width: "100%",
     display: "flex",
     flexDirection: "column",
-    // gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
+    gap: "1rem",
+
+    marginLeft: "auto",
+    marginRight: 0,
   },
-  upperWrapper: {
+  rightWrapper: {
     width: "100%",
-    // minHeight: "40%",
+    height: "100%",
     display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  lowerWrapper: {
-    width: "100%",
-    height: "60%",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: "column",
   },
 }));
 
 const recipeDetailsById = ({
-  UI,
-  user,
-  recipe,
-  usersRecentRecipes,
-  hasUser,
+  props: { UI, user, recipe, usersRecentRecipes, hasUser },
+  user: {
+    loggedIn,
+    self: { _id: userId },
+  },
+  viewport: { width: deviceWidth },
 }) => {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -69,12 +72,12 @@ const recipeDetailsById = ({
           className={classes.recipeDetailsOuterContainer}
           id="details-outer-container"
         >
-          <div className={classes.upperWrapper}>
-            <Details_Gallery recipe={recipe} />
-            <Details_Banner recipe={recipe} />
-          </div>
-          <div className={classes.lowerWrapper}>
+          <div className={classes.leftWrapper}>
+            {recipe.imgUrl && <Details_Gallery recipe={recipe} />}
             <Details_Ingredients recipe={recipe} />
+          </div>
+          <div className={classes.rightWrapper}>
+            <Details_Banner recipe={recipe} />
             <Details_Directions recipe={recipe} />
           </div>
         </div>
@@ -86,7 +89,8 @@ const recipeDetailsById = ({
 const mapStateToProps = (state, props) => ({
   user: state.user,
   UI: state.UI,
-  // props: props,
+  viewport: state.UI.viewport,
+  props: props,
 });
 
 export default connect(mapStateToProps)(recipeDetailsById);
@@ -107,6 +111,7 @@ export const getServerSideProps = async (ctx) => {
   let hasUser = false;
   let rememberMe = cookies.get("rememberMe");
   let inCookies = Boolean(token && userId);
+
   _props.sendRequest = !inCookies;
   let recipe = await mongoose
     .connect(process.env.MONGO_URI, {
@@ -140,14 +145,7 @@ export const getServerSideProps = async (ctx) => {
   }
 
   console.log("_props: ", inCookies, _props);
-  if (!_props.usersRecentRecipes && !_props.recipe) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
+
   return {
     props: {
       recipe: JSON.parse(JSON.stringify(_props.recipe)) || null,

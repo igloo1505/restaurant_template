@@ -21,32 +21,20 @@ handler.post(async (req, res) => {
     }
     if (recipe && userId) {
       let _user = await User.findById(userId);
-      console.log("_user: ", _user);
-      let user;
-      console.log("_user.myFavorites: ", _user.myFavorites);
-      if (_user) {
-        user = await User.findByIdAndUpdate(
-          userId,
-          {
-            $push: { myFavorites: recipe._id },
-          },
-          { new: true }
-        );
+      if (_user && _user.myBookmarks) {
+        _user.myFavorites.pull(recipe._id);
         return res.json({
-          msg: "Recipe favorited successfully.",
+          msg: "Recipe bookmark removed successfully.",
           recipeId: recipe._id,
         });
       }
     }
     if (!recipe || !userId) {
-      return res.json({ msg: "Error favoriting that recipe." });
+      return res.json({ msg: "Error bookmarking that recipe." });
     }
   } catch (error) {
     res.statusCode = 500;
-    return res.json({
-      msg: "There was an error adding that favorite.",
-      error: error,
-    });
+    return res.json({ msg: "There was an error removing that bookmark." });
   }
 });
 

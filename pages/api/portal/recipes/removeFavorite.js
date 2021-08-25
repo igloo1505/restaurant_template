@@ -14,29 +14,29 @@ handler.post(async (req, res) => {
   console.log(colors.bgBlue.white(req.body));
   try {
     const recipe = await Recipe.findById(req.body.recipeId);
-    console.log("recipe: ", recipe);
     if (!recipe) {
       res.statusCode = 404;
       return res.json({ msg: "Invalid recipe Id" });
     }
     if (recipe && userId) {
       let _user = await User.findById(userId);
-      console.log("_user: ", _user);
-      console.log("_user.myFavorites: ", _user.myFavorites);
       if (_user && _user.myFavorites) {
         _user.myFavorites.pull(recipe._id);
         return res.json({
-          msg: "Recipe favorit removed successfully.",
+          msg: "Recipe favorite removed successfully.",
           recipeId: recipe._id,
         });
       }
     }
     if (!recipe || !userId) {
-      return res.json({ msg: "Error favoriting that recipe." });
+      return res.json({ msg: "Error removing that favorite." });
     }
   } catch (error) {
     res.statusCode = 500;
-    return res.json({ msg: "There was an error add that favorite." });
+    return res.json({
+      msg: "There was an error removing that favorite.",
+      error: error,
+    });
   }
 });
 

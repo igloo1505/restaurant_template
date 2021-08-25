@@ -1,6 +1,8 @@
 .bannerOuterContainer {
-  width: 66%;
-  height: 100%;
+  // width: 66%;
+  width: 100%;
+  // height: 100%;
+  height: fit-content;
   min-height: 20vh;
   display: grid;
   position: relative;
@@ -14,7 +16,7 @@
   margin-left: auto;
   margin-right: 0px;
   border-radius: 4px;
-  padding: 0.75rem;
+  padding: 0.75rem 0.75rem 0.75rem 3rem;
   background-color: rgba(81, 161, 255, 0.2);
   box-shadow: 4px 4px 12px #bdbdbd, -4px 4px 12px #e0e0e0;
   @media only screen and (max-width: 960px) {
@@ -23,10 +25,11 @@
 }
 
 .detailsContainer {
-  display: flex;
+  display: inline-table;
   flex-direction: column;
   justify-content: space-between;
   grid-area: details;
+  height: fit-content;
 }
 .individualTimeWrapper {
   display: flex;
@@ -55,6 +58,14 @@
     font-size: 1.2rem;
   }
 }
+.bannerDetailNoContent {
+  font-size: 1.4rem;
+  grid-area: details;
+  padding-left: 4.5rem;
+  @media only screen and (max-width: 1280px) {
+    font-size: 1.2rem;
+  }
+}
 
 .bannerContent {
   font-size: 1.4rem;
@@ -77,12 +88,9 @@
   z-index: 0;
   color: #eb6010;
   position: absolute;
-  right: 3.75rem;
-  top: -12px;
-  height: 3rem !important;
-  width: 3rem !important;
-  filter: drop-shadow(2px 1px 2px #4444dd);
-
+  height: 100% !important;
+  width: 100% !important;
+  filter: drop-shadow(3px 3px 2px #9e9e9e);
   &:hover {
     cursor: pointer;
     // Handle transition with JS to avoid weird transition back
@@ -92,16 +100,46 @@
   z-index: 0;
   color: #eb6010;
   position: absolute;
-  right: 3.75rem;
-  top: -12px;
-  height: 3rem !important;
-  width: 3rem !important;
+  // right: 3.75rem;
+  // top: -12px;
+  height: 100% !important;
+  width: 100% !important;
   // filter: drop-shadow(2px 1px 2px #4444dd);
   // filter: drop-shadow(2px 2px 2px #9e9e9e);
   filter: drop-shadow(3px 3px 2px #9e9e9e);
   &:hover {
     cursor: pointer;
     // Handle transition with JS to avoid weird transition back
+  }
+}
+
+.bookmarkIconContainer {
+  right: 3.75rem;
+  top: -12px;
+  height: 3rem;
+  width: 3rem;
+  position: absolute;
+  z-index: 99999;
+  &:hover {
+    cursor: pointer;
+  }
+}
+.bookmarkIconContainerDisabled {
+  right: 3.75rem;
+  top: -8px;
+  height: 3rem;
+  width: 3rem;
+  position: absolute;
+  z-index: 99999;
+  &:hover {
+    cursor: default !important;
+  }
+}
+.bookmarkIconDisabled {
+  filter: drop-shadow(1px 1px 2px #9e9e9e);
+  color: rgba(235, 96, 16, 0.5);
+  &:hover {
+    cursor: default !important;
   }
 }
 

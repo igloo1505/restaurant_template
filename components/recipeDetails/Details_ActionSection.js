@@ -230,7 +230,7 @@ const ActionItem = ({ action, classes, isFavorited, loggedIn, userId }) => {
                     disabled && classes.actionIconDisabled
                   ),
                 }}
-                onClick={() => triggerToolTip()}
+                onClick={() => disabled && triggerToolTip()}
               />
             </Tooltip>
           ) : (

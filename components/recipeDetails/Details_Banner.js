@@ -5,7 +5,9 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { getFormattedTimeIndividual } from "../../util/getFormattedTime";
-import BookmarkedIcon from "@material-ui/icons/BookmarkOutlined";
+import { handleBookmark } from "../../stateManagement/recipeActions";
+import BookmarkedIcon from "@material-ui/icons/Bookmark";
+// import BookmarkedIcon from "@material-ui/icons/BookmarkOutlined";
 import NotBookmarkedIcon from "@material-ui/icons/BookmarkBorderOutlined";
 import Details_ActionSection from "./Details_ActionSection";
 import styles from "./DetailsBanner.module.scss";
@@ -13,10 +15,35 @@ import styles from "./DetailsBanner.module.scss";
 const Details_Banner = ({
   recipe,
   recipes: { myBookmarks },
+  user: {
+    loggedIn,
+    self: { _id: userId },
+  },
   UI: {
     viewport: { width: deviceWidth, height: deviceHeight },
   },
+  handleBookmark,
 }) => {
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  useEffect(() => {
+    let shouldDisable = Boolean(loggedIn && userId);
+    setDisabled(!shouldDisable);
+  }, [loggedIn, userId]);
+  useEffect(() => {
+    console.log("myBookmarks: ", myBookmarks);
+    let shouldSet = true;
+    if (myBookmarks) {
+      myBookmarks.forEach((bookmark) => {
+        if (bookmark === recipe._id) {
+          shouldSet = false;
+          return setIsBookmarked(true);
+        }
+      });
+      shouldSet && setIsBookmarked(false);
+    }
+  }, [myBookmarks]);
+
   const [detailsHeight, setDetailsHeight] = useState({});
   useEffect(() => {
     let parentHeight = document
@@ -36,26 +63,48 @@ const Details_Banner = ({
 
   const { title } = recipe;
 
-  const handleFavoriteIconClick = (e) => {
-    console.log("Add to favorites here", recipe);
+  const handleBookmarkClick = (e) => {
+    handleBookmark({
+      recipeId: recipe._id,
+      method: isBookmarked ? "remove" : "add",
+    });
   };
 
   return (
     <div className={styles.bannerOuterContainer} id="recipe-banner">
-      {Boolean(myBookmarks && myBookmarks.includes(recipe._id)) ? (
-        <BookmarkedIcon
-          classes={{ root: styles.bookmarkedIcon }}
-          onClick={handleFavoriteIconClick}
-        />
-      ) : (
-        <NotBookmarkedIcon
-          classes={{ root: styles.notBookmarkedIcon }}
-          onClick={handleFavoriteIconClick}
-        />
-      )}
+      <div
+        className={clsx(
+          !disabled && styles.bookmarkIconContainer,
+          disabled && styles.bookmarkIconContainerDisabled
+        )}
+        onClick={handleBookmarkClick}
+      >
+        {isBookmarked ? (
+          <BookmarkedIcon
+            classes={{
+              root: clsx(
+                styles.bookmarkedIcon,
+                disabled && styles.bookmarkIconDisabled
+              ),
+            }}
+            onClick={handleBookmarkClick}
+          />
+        ) : (
+          <NotBookmarkedIcon
+            classes={{
+              root: clsx(
+                styles.notBookmarkedIcon,
+                disabled && styles.bookmarkIconDisabled
+              ),
+            }}
+            onClick={handleBookmarkClick}
+          />
+        )}
+      </div>
       <div className={styles.titleContainer}>
         <Typography variant="h3" classes={{ root: styles.titleText }}>
           {title}
+          isBookmarked: {isBookmarked}
         </Typography>
         {typeof window !== undefined && (
           <Typography variant="caption">
@@ -82,12 +131,7 @@ const Details_Banner = ({
           </div>
         )}
 
-        <div
-          className={clsx(
-            styles.individualTimeWrapper,
-            !recipe?.time?.prepTime && styles.hide
-          )}
-        >
+        <div className={clsx(styles.individualTimeWrapper)}>
           <Typography
             variant="subtitle1"
             classes={{ root: styles.bannerLabel }}
@@ -95,7 +139,15 @@ const Details_Banner = ({
             Prep Time:{" "}
           </Typography>
           {formattedTime?.prepTime?.hours && (
-            <Typography variant="body" classes={{ root: styles.bannerDetail }}>
+            <Typography
+              variant="body"
+              classes={{
+                root: clsx(
+                  styles.bannerDetail,
+                  !recipe?.time?.prepTime && styles.hide
+                ),
+              }}
+            >
               {formattedTime?.prepTime?.hours}
               {formattedTime?.prepTime?.hours === 0 ? " Hour," : " Hours,"}
             </Typography>
@@ -106,14 +158,19 @@ const Details_Banner = ({
               {formattedTime?.prepTime?.minutes === 0 ? " minute" : " minutes"}
             </Typography>
           )}
+          {Boolean(
+            !formattedTime?.prepTime?.minutes && !formattedTime?.prepTime?.hours
+          ) && (
+            <Typography
+              variant="body"
+              classes={{ root: styles.bannerDetailNoContent }}
+            >
+              - -
+            </Typography>
+          )}
         </div>
 
-        <div
-          className={clsx(
-            styles.individualTimeWrapper,
-            !recipe?.time?.cookTime && styles.hide
-          )}
-        >
+        <div className={clsx(styles.individualTimeWrapper)}>
           <Typography
             variant="subtitle1"
             classes={{ root: styles.bannerLabel }}
@@ -121,7 +178,15 @@ const Details_Banner = ({
             Cook Time:{" "}
           </Typography>
           {formattedTime?.cookTime?.hours && (
-            <Typography variant="body" classes={{ root: styles.bannerDetail }}>
+            <Typography
+              variant="body"
+              classes={{
+                root: clsx(
+                  styles.bannerDetail,
+                  !recipe?.time?.cookTime && styles.hide
+                ),
+              }}
+            >
               {formattedTime?.cookTime?.hours}
               {formattedTime?.cookTime?.hours === 0 ? " Hour," : " Hours,"}
             </Typography>
@@ -130,6 +195,16 @@ const Details_Banner = ({
             <Typography variant="body" classes={{ root: styles.bannerDetail }}>
               {formattedTime?.cookTime?.minutes}
               {formattedTime?.cookTime?.minutes === 0 ? " minute" : " minutes"}
+            </Typography>
+          )}
+          {Boolean(
+            !formattedTime?.cookTime?.minutes && !formattedTime?.cookTime?.hours
+          ) && (
+            <Typography
+              variant="body"
+              classes={{ root: styles.bannerDetailNoContent }}
+            >
+              - -
             </Typography>
           )}
         </div>
@@ -145,4 +220,4 @@ const mapStateToProps = (state, props) => ({
   recipes: state.recipes,
 });
 
-export default connect(mapStateToProps)(Details_Banner);
+export default connect(mapStateToProps, { handleBookmark })(Details_Banner);

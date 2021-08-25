@@ -82,6 +82,21 @@ const recipeReducer = (state = initialState, action) => {
           (_f) => _f !== action.payload.recipeId
         ),
       };
+    case Types.ADD_RECIPE_BOOKMARK:
+      let newBookmarks = state.myBookmarks
+        ? [...state.myBookmarks, action.payload.recipeId]
+        : [action.payload.recipeId];
+      return {
+        ...state,
+        myBookmarks: newBookmarks,
+      };
+    case Types.REMOVE_RECIPE_BOOKMARK:
+      return {
+        ...state,
+        myBookmarks: state.myBookmarks.filter(
+          (b) => b !== action.payload.recipeId
+        ),
+      };
     case Types.SUBMIT_RECIPE_REVIEW_SUCCESS:
       if (state?.myFavorites.includes(action.payload.review)) {
         return;
