@@ -64,10 +64,12 @@ const Details_Banner = ({
   const { title } = recipe;
 
   const handleBookmarkClick = (e) => {
-    handleBookmark({
-      recipeId: recipe._id,
-      method: isBookmarked ? "remove" : "add",
-    });
+    if (loggedIn && userId) {
+      handleBookmark({
+        recipeId: recipe._id,
+        method: isBookmarked ? "remove" : "add",
+      });
+    }
   };
 
   return (
@@ -104,17 +106,7 @@ const Details_Banner = ({
       <div className={styles.titleContainer}>
         <Typography variant="h3" classes={{ root: styles.titleText }}>
           {title}
-          isBookmarked: {isBookmarked}
         </Typography>
-        {typeof window !== undefined && (
-          <Typography variant="caption">
-            {`
-          delete later 
-          width: ${deviceWidth}px
-          height: ${deviceHeight}px
-          `}
-          </Typography>
-        )}
       </div>
       <div className={styles.detailsContainer} style={detailsHeight}>
         {recipe?.servings?.amount && (
@@ -165,7 +157,7 @@ const Details_Banner = ({
               variant="body"
               classes={{ root: styles.bannerDetailNoContent }}
             >
-              - -
+              -- : --
             </Typography>
           )}
         </div>
@@ -204,7 +196,7 @@ const Details_Banner = ({
               variant="body"
               classes={{ root: styles.bannerDetailNoContent }}
             >
-              - -
+              -- : --
             </Typography>
           )}
         </div>

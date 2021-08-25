@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { autoLoginOnFirstRequest } from "../../util/autoLoginOnFirstRequest";
 import * as Types from "../../stateManagement/TYPES";
 import Recipe from "../../models/Recipe";
+// import GroceryItem from "../../models/GroceryItem";
 import User from "../../models/User";
 import {
   UnderNavbar,
@@ -130,6 +131,7 @@ export const getServerSideProps = async (ctx) => {
           _id: 1,
         });
       if (rememberMe) {
+        console.log("rememberMe recipeId: ", rememberMe);
         hasUser = await autoLoginOnFirstRequest(ctx.req, ctx.res);
       }
       if (recipe) {
@@ -140,10 +142,6 @@ export const getServerSideProps = async (ctx) => {
         }
       }
     });
-  if (userId === _props?.recipe?._id) {
-    _props.isOwnRecipe = true;
-  }
-
   console.log("_props: ", inCookies, _props);
 
   return {

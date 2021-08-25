@@ -107,13 +107,14 @@ const AdjustForDrawerContainerComponent = ({
   }, [drawerIsOpen, navHeight, deviceWidth]);
 
   const getStyles = () => {
+    let _navHeight = navHeight === 0 ? 64 : navHeight;
     let _styles = {
-      height: `calc(100vh - ${navHeight}px)`,
+      height: `calc(100vh - ${_navHeight}px)`,
     };
-    if (navHeight >= 0) {
-      _styles.marginTop = `${navHeight}px`;
+    if (_navHeight >= 0) {
+      _styles.marginTop = `${_navHeight}px`;
     }
-    if (navHeight === 0) {
+    if (_navHeight === 0) {
       _styles.marginTop = "64px";
     }
     if (!overflowHidden) {

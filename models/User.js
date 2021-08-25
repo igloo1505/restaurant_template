@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-
+const GroceryItem = require("./GroceryItem");
 // const justLogShitAndDelete = () => {
 //   console.log(mongoose);
 // };
@@ -35,6 +35,11 @@ const UserSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    groceryList: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "GroceryItem",
+      autopopulate: true,
+    },
     myFavorites: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Recipe",
@@ -53,6 +58,8 @@ const UserSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
+UserSchema.plugin(require("mongoose-autopopulate"));
 
 UserSchema.pre("save", async function (next, done) {
   if (this.isModified("password")) {

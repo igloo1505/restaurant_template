@@ -1,21 +1,20 @@
-import {
-  AUTHENTICATE_USER,
-  LOGOUT,
-  AUTO_LOGIN_SUCCESS,
-  AUTO_LOGIN_FAIL,
-  AUTHENTICATION_ERROR,
-  REGISTER_NEW_USER,
-  GET_ALL_USERS,
-  USER_ERROR,
-  ERROR_WITH_DIALOGUE,
-  REMOVE_USER,
-  UPDATE_USER_INFO,
-  FORGOT_PASSWORD_SUCCESS,
-  FORGOT_PASSWORD_FAIL,
-} from "./TYPES";
+import * as Types from "./TYPES";
 import axios from "axios";
 import useAxios from "./useAxios";
 import cookie from "json-cookie";
+import store from "./store";
+
+const getUserId = () => {
+  let state = store.getState();
+  if (
+    typeof state.user?.self?._id !== "undefined" &&
+    typeof state.user?.self?._id !== null
+  ) {
+    return state.user.self._id;
+  } else {
+    return false;
+  }
+};
 
 const config = {
   headers: {
@@ -38,13 +37,13 @@ export const authenticateUser = (user) => async (dispatch) => {
   console.log("RES: ", res);
   if (res.status === 200) {
     dispatch({
-      type: AUTHENTICATE_USER,
+      type: Types.AUTHENTICATE_USER,
       payload: res.data,
     });
   }
   if (res.status !== 200) {
     dispatch({
-      type: AUTHENTICATION_ERROR,
+      type: Types.AUTHENTICATION_ERROR,
       payload: "User authentication error.",
     });
   }
@@ -64,14 +63,14 @@ export const tryAutoLogin = () => async (dispatch) => {
         });
         if (res.status === 200) {
           dispatch({
-            type: AUTO_LOGIN_SUCCESS,
+            type: Types.AUTO_LOGIN_SUCCESS,
             payload: res.data,
           });
           return res.data;
         }
         if (res.status !== 200) {
           dispatch({
-            type: AUTO_LOGIN_FAIL,
+            type: Types.AUTO_LOGIN_FAIL,
           });
           return res.data;
         }
@@ -89,14 +88,14 @@ export const addNewUser = (user) => async (dispatch) => {
   const res = await axios.post("/api/portal/newUser", user, config);
   if (res.status === 200) {
     dispatch({
-      type: REGISTER_NEW_USER,
+      type: Types.REGISTER_NEW_USER,
       payload: res.data,
     });
     return true;
   }
   if (res.status !== 200) {
     dispatch({
-      type: ERROR_WITH_DIALOGUE,
+      type: Types.ERROR_WITH_DIALOGUE,
       payload: {
         error,
         modalText:
@@ -114,12 +113,12 @@ export const getAllUsers = () => async (dispatch) => {
   // try {
   //   const res = await axios.get("/api/portal/", config);
   //   dispatch({
-  //     type: GET_ALL_USERS,
+  //     type: Types.GET_ALL_USERS,
   //     payload: res.data,
   //   });
   // } catch (error) {
   //   dispatch({
-  //     type: USER_ERROR,
+  //     type: Types.USER_ERROR,
   //     payload: error,
   //   });
   // }
@@ -129,12 +128,12 @@ export const removeUser = (userID) => async (dispatch) => {
   try {
     const res = await axios.post("/api/portal/removeUser/", userID, config);
     dispatch({
-      type: REMOVE_USER,
+      type: Types.REMOVE_USER,
       payload: res.data,
     });
   } catch (error) {
     dispatch({
-      type: USER_ERROR,
+      type: Types.USER_ERROR,
       payload: error,
     });
   }
@@ -144,13 +143,13 @@ export const updateUserInfo = (user) => async (dispatch) => {
   try {
     const res = await axios.post("api/portal/updateUserInfo", user, config);
     dispatch({
-      type: UPDATE_USER_INFO,
+      type: Types.UPDATE_USER_INFO,
       payload: res.data,
     });
     return true;
   } catch (error) {
     dispatch({
-      type: USER_ERROR,
+      type: Types.USER_ERROR,
       payload: error,
     });
   }
@@ -204,7 +203,7 @@ export const logOut = () => async (dispatch) => {
   cookie.delete("rememberMe");
   cookie.delete("userId");
   cookie.delete("token");
-  dispatch({ type: LOGOUT });
+  dispatch({ type: Types.LOGOUT });
   await axios.post("/api/clearLogin", config);
 };
 
@@ -213,8 +212,49 @@ export const forgotPassword = () => async (dispatch) => {
   console.log("Running forgotPassword");
   try {
     let res = await axios.post("/api/forgotPassword", props, config);
-    dispatch({ type: FORGOT_PASSWORD_SUCCESS, payload: res.data });
+    dispatch({ type: Types.FORGOT_PASSWORD_SUCCESS, payload: res.data });
   } catch (error) {
-    dispatch({ type: FORGOT_PASSWORD_FAIL });
+    dispatch({ type: Types.FORGOT_PASSWORD_FAIL });
+  }
+};
+
+export const handleGroceryItem = (item) => async (dispatch) => {
+  let userId = getUserId();
+  if (!userId) {
+    return dispatch({
+      type: Types.SHOW_SNACKBAR,
+      payload: {
+        message: "You must be logged in to add a grocery item.",
+        variant: "error",
+        vertical: "top",
+        horizontal: "center",
+        transitionDirection: "down",
+        hideIn: 2500,
+      },
+    });
+  }
+  let route = item.method === "add" ? "addGroceryItem" : "removeGroceryItem";
+  let _type =
+    item.method === "add" ? Types.ADD_GROCERY_ITEM : Types.REMOVE_GROCERY_ITEM;
+  let res = await useAxios({
+    method: "post",
+    url: `/api/portal/recipes/${route}`,
+    data: {
+      ingredientId: item.ingredientId,
+      userId: userId,
+    },
+  });
+  switch (res.status) {
+    case 200:
+      return dispatch({
+        type: _type,
+        payload: res.data,
+      });
+    case 401:
+    default:
+      return dispatch({
+        type: Types.GROCERY_ITEM_ERROR,
+        payload: res.data,
+      });
   }
 };

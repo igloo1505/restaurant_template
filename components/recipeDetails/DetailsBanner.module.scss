@@ -119,7 +119,7 @@
   height: 3rem;
   width: 3rem;
   position: absolute;
-  z-index: 99999;
+  z-index: 99;
   &:hover {
     cursor: pointer;
   }
@@ -130,7 +130,7 @@
   height: 3rem;
   width: 3rem;
   position: absolute;
-  z-index: 99999;
+  z-index: 99;
   &:hover {
     cursor: default !important;
   }

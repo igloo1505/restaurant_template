@@ -5,6 +5,7 @@ import { unitObject } from "../../../../util/appWideData";
 
 import Recipe from "../../../../models/Recipe";
 import Ingredient from "../../../../models/Ingredient";
+import User from "../../../../models/User";
 const colors = require("colors");
 
 const handler = nc();
@@ -34,6 +35,7 @@ handler.post(async (req, res) => {
       res.statusCode = 401;
       res.json({ error: "You must be logged in to add a recipe." });
     }
+
     let _ingredients = [];
     let _ingredientsToReturn = [];
 
@@ -94,10 +96,18 @@ handler.post(async (req, res) => {
     }
 
     let recipe = new Recipe(data);
+    let updatedUser = User.findByIdAndUpdate(
+      createdBy,
+      {
+        $push: { myRecipes: recipe._id },
+      },
+      { new: true }
+    );
     let returnRecipe = await recipe.save();
     return res.json({
       recipe: returnRecipe,
       ingredients: _ingredientsToReturn,
+      updatedUser: updatedUser,
     });
   } catch (error) {
     console.log("Return this error?", error);

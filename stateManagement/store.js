@@ -31,7 +31,7 @@ const store = configureStore({
     drawer: drawerReducer,
     alert: alertReducer,
     network: networkReducer,
-    myGroceries: myGroceryReducer,
+    groceries: myGroceryReducer,
   },
   devTools: () => withDevtools(),
 });

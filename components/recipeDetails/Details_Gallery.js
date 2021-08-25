@@ -7,14 +7,6 @@ import Typography from "@material-ui/core/Typography";
 import { getFormattedTimeIndividual } from "../../util/getFormattedTime";
 import styles from "./DetailsBanner.module.scss";
 
-const useStyles = makeStyles((theme) => ({
-  outerContainer: {
-    display: "flex",
-    width: "40%",
-    minWidth: "40%",
-  },
-}));
-
 const useImageClasses = makeStyles((theme) => ({
   outerContainerImage: {
     width: "100%",
@@ -26,7 +18,7 @@ const useImageClasses = makeStyles((theme) => ({
     marginTop: "2rem",
     borderRadius: "30px",
     zIndex: 10,
-    boxShadow: "12px 12px 20px #bababa, -12px -12px 20px #ffffff",
+    boxShadow: "12px 12px 15px #bababa",
   },
   innerContainer: {
     width: "100%",
