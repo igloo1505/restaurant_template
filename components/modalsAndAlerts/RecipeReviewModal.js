@@ -55,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
   dialogTextRoot: {
     marginBottom: "0px",
+    padding: "1rem 0px 0px 1rem",
   },
   dialogTextRootFocused: {
     marginBottom: "0px",
@@ -201,7 +202,7 @@ const RecipeReviewModal = ({
                 ),
               }}
             >
-              Add a Review:
+              Add a Comment:
             </DialogContentText>
             <TextField
               //   margin="dense"

@@ -87,6 +87,7 @@ export default function userReducer(state = initialState, action) {
         error: action.payload,
       };
     case REGISTER_NEW_USER:
+      // array of 10 users
       console.log("addnewUser in reducer", action.payload);
       return {
         ...state,

@@ -72,14 +72,14 @@ const Details_IngredientItem = ({
         let shouldSet = true;
         console.log(`gi: ${gi.ingredient.name}, item: ${item.name}`);
         if (
-          gi.ingredient.name.toLowerCase() === item.name.toLowerCase() &&
+          gi.ingredient.name.toLowerCase().trim() ===
+            item.name.toLowerCase().trim() &&
           !gi.completed
         ) {
           shouldSet = false;
           return setInGroceries(gi);
         }
         if (i === a.length - 1 && shouldSet) {
-          console.log("Setting false");
           setInGroceries(false);
         }
       });

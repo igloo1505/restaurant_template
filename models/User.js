@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const GroceryItem = require("./GroceryItem");
+const Recipe = require("./Recipe");
+const Ingredient = require("./Ingredient");
 // const justLogShitAndDelete = () => {
 //   console.log(mongoose);
 // };

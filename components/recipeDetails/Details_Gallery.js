@@ -4,6 +4,7 @@ import { connect, useDispatch } from "react-redux";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import Slide from "@material-ui/core/Slide";
 import { getFormattedTimeIndividual } from "../../util/getFormattedTime";
 import styles from "./DetailsBanner.module.scss";
 
@@ -60,28 +61,32 @@ const Details_Gallery = ({
         .getElementById(outerContainerId)
         .getBoundingClientRect().width;
       console.log("emWidth: ", emWidth);
-      let aspectHeight = (4 / 3) * emWidth;
       setAspectRatio({
         height: `${emWidth * 0.75}px`,
       });
     }
   }, [deviceWidth, deviceHeight]);
   return (
-    <div
-      id={outerContainerId}
-      className={imageClasses.outerContainerImage}
-      style={aspectRatio}
-    >
-      <div className={imageClasses.innerContainer}>
-        {recipe.imgUrl && (
-          <img
-            src={recipe.imgUrl}
-            alt={"Recipe Image"}
-            className={clsx(imageClasses.image, fadeIn && imageClasses.imageIn)}
-          />
-        )}
+    <Slide direction="right" in={true}>
+      <div
+        id={outerContainerId}
+        className={imageClasses.outerContainerImage}
+        style={aspectRatio}
+      >
+        <div className={imageClasses.innerContainer}>
+          {recipe.imgUrl && (
+            <img
+              src={recipe.imgUrl}
+              alt={"Recipe Image"}
+              className={clsx(
+                imageClasses.image,
+                fadeIn && imageClasses.imageIn
+              )}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </Slide>
   );
 };
 

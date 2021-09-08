@@ -20,6 +20,7 @@ import theme from "../styles/MUITheme";
 // import { tryAutoLogin } from "../stateManagement/userActions";
 import * as userActions from "../stateManagement/userActions";
 import setAuthToken from "../stateManagement/setAuth";
+import { sw } from "../util/serviceWorker-main";
 import {
   SET_VIEWPORT_DIMENSIONS,
   SET_NAV_HEIGHT,
@@ -45,6 +46,20 @@ function MyApp({ Component, pageProps, ...rest }) {
     const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles);
+    }
+  }, []);
+  useEffect(() => {
+    if (typeof window !== undefined && "serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("../util/serviceWorker-main.js", { scope: "./" })
+        .then((reg) => {
+          // registration worked
+          console.log("Registration succeeded. Scope is " + reg.scope);
+        })
+        .catch((error) => {
+          // registration failed
+          console.log("Registration failed with " + error);
+        });
     }
   }, []);
 

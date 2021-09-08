@@ -181,7 +181,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
                 createdAt: "descending",
               });
             console.log("recipes: ", _recipes);
-            // BUG An apparently pretty well known issue with mongo and getServerSideProps causing serialization errors. Come back to this and see if can figure out a hack.
+            // BUG An apparently pretty well known issue with mongo and getServerSideProps causing serialization errors. Come back to this and see if can figure out a hack later.
             // });
             return _recipes;
           });

@@ -118,4 +118,4 @@ RecipeSchema.methods.getUsersRecentRecipes = async function () {
 
 // module.exports = mongoose.model("Recipe", RecipeSchema);
 module.exports =
-  mongoose.models.Recipe || mongoose.model("Recipe", RecipeSchema);
+  mongoose.models?.Recipe || mongoose.model("Recipe", RecipeSchema);

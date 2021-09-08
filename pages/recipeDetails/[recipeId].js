@@ -57,7 +57,10 @@ const recipeDetailsById = ({
 }) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    if (hasUser) {
+    console.log("hasUser: ", hasUser);
+    console.log("usersRecipeRecipes: ", usersRecentRecipes);
+
+    if (hasUser && Boolean(!loggedIn || !userId)) {
       dispatch({
         type: Types.AUTO_LOGIN_SUCCESS,
         payload: hasUser,

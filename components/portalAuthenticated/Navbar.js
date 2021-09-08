@@ -10,6 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MyAccountIcon from "./AccountIcon";
 import MenuIcon from "@material-ui/icons/Menu";
 import BookmarkIcon from "@material-ui/icons/Bookmark";
+import GroceryIcon from "@material-ui/icons/LocalGroceryStore";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
@@ -40,8 +41,24 @@ const useStylesAppbar = makeStyles((theme) => ({
   accountIconRoot: {
     fill: theme.palette.secondary.main,
   },
-  favoriteIconButton: { marginLeft: "auto" },
-  favoriteIconButtonPermanent: { marginLeft: "auto" },
+  favoriteIconButton: { marginRight: "4px", "&:hover": { cursor: "default" } },
+  groceryIcon: {
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
+  bookmarkIcon: {
+    color: theme.palette.secondary.main,
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
+  groceryIconButton: {
+    marginLeft: "auto",
+    marginRight: "4px",
+    "&:hover": { cursor: "default" },
+  },
+  groceryIconButtonPermanent: { marginLeft: "auto" },
   favoriteIconButtonLabel: { color: "#fff", backgroundColor: "transparent" },
   hideMenuButton: {
     display: "none",
@@ -244,7 +261,28 @@ const Navbar = ({
           {loggedIn && (
             <IconButton
               color="secondary"
-              aria-controls="account-menu"
+              aria-haspopup="true"
+              id="groceryIconButton"
+              edge="end"
+              onClick={(e) => showFavorites()}
+              classes={{
+                root: clsx(
+                  !isPermanent
+                    ? appbarClasses.groceryIconButton
+                    : appbarClasses.groceryIconButtonPermanent
+                ),
+                label: appbarClasses.groceryIconButtonLabel,
+              }}
+            >
+              <GroceryIcon
+                fontSize="large"
+                classes={{ root: appbarClasses.groceryIcon }}
+              />
+            </IconButton>
+          )}
+          {loggedIn && (
+            <IconButton
+              color="secondary"
               aria-haspopup="true"
               id="favoriteIconButton"
               edge="end"
@@ -260,7 +298,7 @@ const Navbar = ({
             >
               <BookmarkIcon
                 fontSize="large"
-                classes={{ root: appbarClasses.accountIconRoot }}
+                classes={{ root: appbarClasses.bookmarkIcon }}
               />
             </IconButton>
           )}
