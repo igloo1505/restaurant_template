@@ -67,7 +67,7 @@ const useStylesAppbar = makeStyles((theme) => ({
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
     zIndex: 1299,
-    transition: "margin-left 225ms cubic-bezier(0, 0, 0.2, 1) 0ms",
+    // transition: "margin-left 225ms cubic-bezier(0, 0, 0.2, 1) 0ms",
     transition: "width 225ms cubic-bezier(0, 0, 0.2, 1) 0ms",
   },
   appbarLabelText: {
@@ -193,8 +193,14 @@ const Navbar = ({
     }
   };
 
-  // TODO Show favorites screen here
+  // TODO Show favorites and Bookmark menu here
   const showFavorites = () => console.log("SHOW FAVORITES HERE");
+  const showGroceries = () => {
+    console.log("dispatching");
+    dispatch({
+      type: Types.SHOW_GROCERY_MENU,
+    });
+  };
 
   const [isPermanent, setIsPermanent] = useState(false);
   const [shouldHideMenuButton, setShouldHideMenuButton] = useState(false);
@@ -262,9 +268,10 @@ const Navbar = ({
             <IconButton
               color="secondary"
               aria-haspopup="true"
+              aria-controls="grocery-menu"
               id="groceryIconButton"
               edge="end"
-              onClick={(e) => showFavorites()}
+              onClick={(e) => showGroceries()}
               classes={{
                 root: clsx(
                   !isPermanent

@@ -6,6 +6,9 @@ import {
   SET_VIEWPORT_DIMENSIONS,
   REGISTER_NEW_USER,
   GET_ALL_USERS,
+  SHOW_GROCERY_MENU,
+  DISPOSE_GROCERY_MENU,
+  SHOW_BOOKMARK_MENU,
   USER_ERROR,
   REMOVE_USER,
   SET_NAV_HEIGHT,
@@ -26,6 +29,14 @@ const initialState = {
     isSignUp: false,
   },
   accountMenu: {
+    el: null,
+    shouldBeVisible: false,
+  },
+  Grocery_navbarMenu: {
+    el: null,
+    shouldBeVisible: false,
+  },
+  Bookmarks_navbarMenu: {
     el: null,
     shouldBeVisible: false,
   },
@@ -303,10 +314,41 @@ export default function UIReducer(state = initialState, action) {
           shouldBeVisible: true,
         },
       };
+    case SHOW_GROCERY_MENU:
+      return {
+        ...state,
+        alert: { ...state.alert },
+        leftTab: { ...state.leftTab },
+        Grocery_navbarMenu: {
+          ...state.Grocery_navbarMenu,
+          el: action.payload,
+          shouldBeVisible: true,
+        },
+      };
+    case SHOW_BOOKMARK_MENU:
+      return {
+        ...state,
+        alert: { ...state.alert },
+        leftTab: { ...state.leftTab },
+        Bookmark_navbarMenu: {
+          ...state.Bookmark_navbarMenu,
+          el: action.payload,
+          shouldBeVisible: true,
+        },
+      };
     case DISPOSE_ACCOUNT_MENU:
       return {
         ...state,
         accountMenu: { ...state.accountMenu, el: null, shouldBeVisible: false },
+      };
+    case DISPOSE_GROCERY_MENU:
+      return {
+        ...state,
+        Grocery_navbarMenu: {
+          ...state.Grocery_navbarMenu,
+          el: null,
+          shouldBeVisible: false,
+        },
       };
     case TOGGLE_SIGNUP_FORM:
       return {

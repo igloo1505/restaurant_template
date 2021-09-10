@@ -4,6 +4,7 @@ import Navbar from "../components/portalAuthenticated/Navbar";
 import SnackbarSwitcher from "../components/modalsAndAlerts/SnackbarSwitcher";
 import SimpleBooleanSnackbar from "../components/SimpleBooleanSnackbar";
 import Alert from "../components/modalsAndAlerts/Modal";
+import Grocery_navbarMenu from "../components/portalAuthenticated/Grocery_navbarMenu";
 import RecipeReviewModal from "../components/modalsAndAlerts/RecipeReviewModal";
 import Drawer from "../components/portalAuthenticated/Drawer";
 import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
@@ -132,6 +133,7 @@ function MyApp({ Component, pageProps, ...rest }) {
           <Navbar />
           <Drawer />
           <RecipeReviewModal />
+          <Grocery_navbarMenu />
           <AccountIconMenu />
           <Alert />
           <SnackbarSwitcher />

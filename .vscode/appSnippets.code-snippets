@@ -69,5 +69,14 @@
   "}, [loggedIn, userId]);",
 		]
 	},
-
+	"makeStyles": {
+		"prefix": ["makeStyles"],
+		"description": "makeStyles",
+		"body": [
+			"const ${1:functionName} = makeStyles((theme)) => ({",
+    "$2",
+	"})"
+		]
+	},
+	
 }

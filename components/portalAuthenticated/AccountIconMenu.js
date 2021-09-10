@@ -35,7 +35,6 @@ const AccountIconMenuLocal = ({
   const dispatch = useDispatch();
   const [anchor, setAnchor] = useState(null);
   useEffect(() => {
-    console.log(shouldBeVisible);
     if (shouldBeVisible) {
       let menuAnchor = document.getElementById("accountIconButton");
       setAnchor(menuAnchor);
