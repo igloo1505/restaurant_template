@@ -94,7 +94,9 @@ const AdjustForDrawerContainerComponent = ({
 }) => {
   const classes = useStylesAdjustForDrawer();
   const [shifted, setShifted] = useState(deviceWidth > 1920);
-  const [styles, setStyles] = useState({});
+  const [styles, setStyles] = useState({
+    marginTop: "64px",
+  });
   useEffect(() => {
     // console.log(centerAll);
     let shouldShift = drawerIsOpen

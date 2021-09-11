@@ -125,8 +125,8 @@ const trimTitle = (title) => {
 const BookmarkMenuItem = ({ bi: { title, _id: recipeId }, i, a, classes }) => {
   const itemClasses = useMenuItemClasses();
   const dispatch = useDispatch();
+  const router = useRouter();
   const removeItem = () => {
-    console.log("remove bookmark");
     dispatch(
       handleBookmark({
         recipeId: recipeId,
@@ -134,6 +134,12 @@ const BookmarkMenuItem = ({ bi: { title, _id: recipeId }, i, a, classes }) => {
       })
     );
   };
+
+  const redirectToRecipe = () => {
+    router.push(`/recipeDetails/${recipeId}`);
+    dispatch({ type: Types.DISPOSE_BOOKMARK_MENU });
+  };
+
   return (
     <Fragment>
       <MenuItem
@@ -142,6 +148,7 @@ const BookmarkMenuItem = ({ bi: { title, _id: recipeId }, i, a, classes }) => {
             ? { root: itemClasses.itemRoot }
             : { root: itemClasses.hideItem }
         }
+        onClick={redirectToRecipe}
       >
         <CancelIcon
           classes={{ root: itemClasses.cancelIcon }}
