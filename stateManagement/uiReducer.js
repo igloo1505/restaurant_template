@@ -8,6 +8,7 @@ import {
   GET_ALL_USERS,
   SHOW_GROCERY_MENU,
   DISPOSE_GROCERY_MENU,
+  DISPOSE_BOOKMARK_MENU,
   SHOW_BOOKMARK_MENU,
   USER_ERROR,
   REMOVE_USER,
@@ -330,8 +331,8 @@ export default function UIReducer(state = initialState, action) {
         ...state,
         alert: { ...state.alert },
         leftTab: { ...state.leftTab },
-        Bookmark_navbarMenu: {
-          ...state.Bookmark_navbarMenu,
+        Bookmarks_navbarMenu: {
+          ...state.Bookmarks_navbarMenu,
           el: action.payload,
           shouldBeVisible: true,
         },
@@ -347,6 +348,14 @@ export default function UIReducer(state = initialState, action) {
         Grocery_navbarMenu: {
           ...state.Grocery_navbarMenu,
           el: null,
+          shouldBeVisible: false,
+        },
+      };
+    case DISPOSE_BOOKMARK_MENU:
+      return {
+        ...state,
+        Bookmarks_navbarMenu: {
+          ...initialState.Bookmarks_navbarMenu,
           shouldBeVisible: false,
         },
       };

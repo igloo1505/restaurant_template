@@ -192,11 +192,12 @@ const Navbar = ({
       });
     }
   };
-
-  // TODO Show favorites and Bookmark menu here
-  const showFavorites = () => console.log("SHOW FAVORITES HERE");
+  const handleBookmarkClick = () => {
+    dispatch({
+      type: Types.SHOW_BOOKMARK_MENU,
+    });
+  };
   const showGroceries = () => {
-    console.log("dispatching");
     dispatch({
       type: Types.SHOW_GROCERY_MENU,
     });
@@ -293,7 +294,7 @@ const Navbar = ({
               aria-haspopup="true"
               id="favoriteIconButton"
               edge="end"
-              onClick={(e) => showFavorites()}
+              onClick={handleBookmarkClick}
               classes={{
                 root: clsx(
                   !isPermanent

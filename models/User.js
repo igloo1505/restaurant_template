@@ -51,6 +51,7 @@ const UserSchema = mongoose.Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Recipe",
       unique: true,
+      autopopulate: true,
     },
     reviewsWritten: {
       type: [mongoose.Schema.Types.ObjectId],
