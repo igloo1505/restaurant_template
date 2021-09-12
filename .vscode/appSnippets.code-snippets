@@ -73,9 +73,9 @@
 		"prefix": ["makeStyles"],
 		"description": "makeStyles",
 		"body": [
-			"const ${1:functionName} = makeStyles((theme)) => ({",
+			"const ${1:functionName} = makeStyles((theme) => ({",
     "$2",
-	"})"
+	"}))"
 		]
 	},
 	

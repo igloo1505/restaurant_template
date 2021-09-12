@@ -31,8 +31,6 @@ const recipeReducer = (state = initialState, action) => {
         myRecipe: _myRecipes,
       };
     case Types.GET_OWN_RECIPES_SUCCESS:
-      console.log("initialState", state.myRecipes);
-      console.log("payload", action.payload);
       return {
         ...state,
         myRecipes: action.payload._myRecipes,

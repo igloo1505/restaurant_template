@@ -1,5 +1,6 @@
+const withPWA = require("next-pwa");
 const path = require("path");
-module.exports = {
+module.exports = withPWA({
   poweredByHeader: false,
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
@@ -20,4 +21,8 @@ module.exports = {
     rootUrl: process.env.ROOT_URL,
     // staticFolder: '/static',
   },
-};
+  pwa: {
+    dest: "public",
+    // disable: process.env.NODE_ENV === "development",
+  },
+});

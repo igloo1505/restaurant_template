@@ -45,6 +45,13 @@ export default class MyDocument extends Document {
             integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0"
             crossorigin="anonymous"
           ></link>
+          <link rel="manifest" href="/manifest.json" />
+          <link rel="icon" href="/favicon.ico" />
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/radish-icons/apple-touch-icon.png"
+          />
         </Head>
         <body>
           <div id="topLevelPortalContainer" />

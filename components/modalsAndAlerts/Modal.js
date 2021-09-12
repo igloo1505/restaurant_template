@@ -137,6 +137,15 @@ const GetDialogContent = ({ variant, isOpen, contentText, title }) => {
             title={title}
           />
         );
+      case "addProfileImage":
+        return (
+          <Modal_addRecipeImage
+            variant={variant}
+            isOpen={isOpen}
+            contentText={contentText}
+            title={title}
+          />
+        );
       default:
         <Default_Dialog_Content
           variant={variant}

@@ -37,6 +37,9 @@ const UserSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    profileImgUrl: {
+      type: String,
+    },
     groceryList: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "GroceryItem",

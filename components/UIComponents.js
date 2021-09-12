@@ -94,9 +94,11 @@ const AdjustForDrawerContainerComponent = ({
 }) => {
   const classes = useStylesAdjustForDrawer();
   const [shifted, setShifted] = useState(deviceWidth > 1920);
-  const [styles, setStyles] = useState({});
+  const [styles, setStyles] = useState({
+    marginTop: "64px",
+  });
   useEffect(() => {
-    // console.log(centerAll);
+    console.log("centerAll", centerAll);
     let shouldShift = drawerIsOpen
       ? drawerIsOpen
       : deviceWidth > 1920
@@ -127,6 +129,9 @@ const AdjustForDrawerContainerComponent = ({
       _styles.display = "flex";
       _styles.justifyContent = "center";
       _styles.alignItems = "center";
+    }
+    if (!centerAll) {
+      _styles.display = "block";
     }
     setStyles(_styles);
   };

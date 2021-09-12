@@ -71,7 +71,6 @@ const modalReducer = createReducer(initialState, (builder) => {
     };
   });
   builder.addCase(Types.SHOW_ADD_IMAGE_MODAL, (state, action) => {
-    console.log("Ran in reducer");
     return {
       ...state,
       dialog: {
@@ -83,6 +82,21 @@ const modalReducer = createReducer(initialState, (builder) => {
       addImageModal: {
         isOpen: true,
         relevantId: action.payload.recipeId,
+      },
+    };
+  });
+  builder.addCase(Types.SHOW_ADD_PROFILE_IMAGE_MODAL, (state, action) => {
+    return {
+      ...state,
+      dialog: {
+        isOpen: true,
+        variant: "addProfileImage",
+        title: "Select an Image:",
+        titleColor: "primary",
+      },
+      addImageModal: {
+        isOpen: true,
+        relevantId: action.payload.userId,
       },
     };
   });
