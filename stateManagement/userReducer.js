@@ -24,6 +24,7 @@ const initialState = {
     token: null,
     _id: null,
     userName: null,
+    profileImgUrl: null,
   },
   error: null,
 };

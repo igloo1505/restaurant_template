@@ -24,6 +24,12 @@ const initialState = {
   },
   addImageModal: {
     relevantId: null,
+    isOpen: false,
+  },
+  addProfileImageModal: {
+    relevantId: null,
+    isOpen: false,
+    userProfileImageUploadProgress: null,
   },
   snackbar: {
     isOpen: false,
@@ -94,7 +100,7 @@ const modalReducer = createReducer(initialState, (builder) => {
         title: "Select an Image:",
         titleColor: "primary",
       },
-      addImageModal: {
+      addProfileImageModal: {
         isOpen: true,
         relevantId: action.payload.userId,
       },

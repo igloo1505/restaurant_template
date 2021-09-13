@@ -7,6 +7,7 @@ import { connect, useDispatch } from "react-redux";
 import * as Types from "../../stateManagement/TYPES";
 import Default_Dialog_Content from "../modalContent/Default_Dialog_Content";
 import Modal_confirmDeleteRecipe from "../myRecipes/Modal_confirmDeleteRecipe";
+import Modal_addProfileImage from "../myProfile/Modal_addProfileImage";
 import Modal_addRecipeImage from "../myRecipes/Modal_addRecipeImage";
 import { FcHighPriority } from "react-icons/fc";
 
@@ -139,7 +140,7 @@ const GetDialogContent = ({ variant, isOpen, contentText, title }) => {
         );
       case "addProfileImage":
         return (
-          <Modal_addRecipeImage
+          <Modal_addProfileImage
             variant={variant}
             isOpen={isOpen}
             contentText={contentText}

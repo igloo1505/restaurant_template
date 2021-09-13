@@ -48,47 +48,52 @@ const useImageClasses = makeStyles((theme) => ({
 
 let outerContainerId = "gallery-main-outer-container";
 
-const Details_Gallery = ({
-  props: { recipe },
-  viewport: { width: deviceWidth, height: deviceHeight },
-}) => {
-  const [fadeIn, setFadeIn] = useState(true);
-  const [aspectRatio, setAspectRatio] = useState({});
-  const imageClasses = useImageClasses();
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      let emWidth = document
-        .getElementById(outerContainerId)
-        .getBoundingClientRect().width;
-      console.log("emWidth: ", emWidth);
-      setAspectRatio({
-        height: `${emWidth * 0.75}px`,
-      });
-    }
-  }, [deviceWidth, deviceHeight]);
-  return (
-    <Slide direction="right" in={true}>
-      <div
-        id={outerContainerId}
-        className={imageClasses.outerContainerImage}
-        style={aspectRatio}
-      >
-        <div className={imageClasses.innerContainer}>
-          {recipe.imgUrl && (
-            <img
-              src={recipe.imgUrl}
-              alt={"Recipe Image"}
-              className={clsx(
-                imageClasses.image,
-                fadeIn && imageClasses.imageIn
-              )}
-            />
-          )}
+const Details_Gallery = forwardRef(
+  (
+    {
+      props: { recipe },
+      viewport: { width: deviceWidth, height: deviceHeight },
+    },
+    ref
+  ) => {
+    const [fadeIn, setFadeIn] = useState(true);
+    const [aspectRatio, setAspectRatio] = useState({});
+    const imageClasses = useImageClasses();
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        let emWidth = document
+          .getElementById(outerContainerId)
+          .getBoundingClientRect().width;
+        console.log("emWidth: ", emWidth);
+        setAspectRatio({
+          height: `${emWidth * 0.75}px`,
+        });
+      }
+    }, [deviceWidth, deviceHeight]);
+    return (
+      <Slide direction="right" in={true} ref={ref}>
+        <div
+          id={outerContainerId}
+          className={imageClasses.outerContainerImage}
+          style={aspectRatio}
+        >
+          <div className={imageClasses.innerContainer}>
+            {recipe.imgUrl && (
+              <img
+                src={recipe.imgUrl}
+                alt={"Recipe Image"}
+                className={clsx(
+                  imageClasses.image,
+                  fadeIn && imageClasses.imageIn
+                )}
+              />
+            )}
+          </div>
         </div>
-      </div>
-    </Slide>
-  );
-};
+      </Slide>
+    );
+  }
+);
 
 const mapStateToProps = (state, props) => ({
   viewport: state.UI.viewport,

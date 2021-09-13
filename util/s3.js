@@ -17,6 +17,7 @@ const s3 = new S3({
 
 // POST RECIPE
 export const uploadImage = (file, fileName) => {
+  console.log("file: ", file, fileName);
   const fileStream = fs.createReadStream(file.path);
   console.log("bucketName: ", bucketName, region, accessKeyId, secretAccessKey);
   const uploadParams = {

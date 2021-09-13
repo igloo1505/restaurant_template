@@ -258,3 +258,44 @@ export const handleGroceryItem = (item) => async (dispatch) => {
       });
   }
 };
+
+const sendUploadProgress = (progress) => {
+  console.log("progress: ", progress);
+};
+
+export const addProfileImage = (formData) => async (dispatch) => {
+  // console.log("formData: ", formData);
+  let userId = getUserId();
+  if (!userId) {
+    return dispatch({
+      type: Types.SHOW_SNACKBAR,
+      payload: {
+        message:
+          "There was an error adding that image. Please try signing in again.",
+        variant: "error",
+        vertical: "top",
+        horizontal: "center",
+        transitionDirection: "down",
+        hideIn: 4000,
+      },
+    });
+  }
+  try {
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+      onUploadProgress: (event) => {
+        let progress = Math.round((event.loaded * 100) / event.total);
+        sendUploadProgress(progress);
+      },
+    };
+    const res = await axios.post(
+      "/api/portal/addProfileImage",
+      formData,
+      config
+    );
+
+    dispatch({ type: Types.ADD_PROFILE_IMAGE_SUCCESS, payload: res.data });
+  } catch (error) {
+    dispatch({ type: Types.ADD_PROFILE_IMAGE_FAIL, payload: error });
+  }
+};

@@ -116,7 +116,7 @@ const SignIn = ({
   });
 
   useEffect(() => {
-    router.prefetch("/index");
+    router.prefetch("/");
   }, []);
 
   const labelClasses = useLabelClasses();
@@ -278,6 +278,15 @@ const SignIn = ({
             classes={{ root: classes.textFieldRoot }}
             value={formData.password}
             onChange={(e) => handleChange(e)}
+            onKeyDown={(e) => {
+              if (
+                e.key === "Enter" &&
+                formData.email.length > 5 &&
+                formData.password.length > 8
+              ) {
+                handleSubmit();
+              }
+            }}
             // onClick={() =>
             //   setFocusState({
             //     ...initialFocusState,

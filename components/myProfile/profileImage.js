@@ -1,7 +1,11 @@
-import React, { useState, useEffect, Fragment } from "react";
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import AddPhotoIcon from "@material-ui/icons/AddAPhoto";
+import Slide from "@material-ui/core/Slide";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
+import clsx from "clsx";
 import * as Types from "../../stateManagement/TYPES";
 
 const useClasses = makeStyles((theme) => ({
@@ -22,18 +26,20 @@ const useClasses = makeStyles((theme) => ({
   },
 }));
 
-const profileImage = ({ self: { profileImgUrl, _id: userId } }) => {
+const ProfileImage = ({ self: { profileImgUrl, _id: userId } }, ref) => {
   const classes = useClasses();
   return (
-    <div>
-      <div className={classes.profileImageContainer}>
-        {profileImgUrl ? (
-          <UserProfileImage userId={userId} />
-        ) : (
-          <UserNoImage userId={userId} />
-        )}
+    <Slide direction="right" in={true}>
+      <div>
+        <div className={classes.profileImageContainer}>
+          {profileImgUrl ? (
+            <UserProfileImage userId={userId} imgUrl={profileImgUrl} />
+          ) : (
+            <UserNoImage userId={userId} />
+          )}
+        </div>
       </div>
-    </div>
+    </Slide>
   );
 };
 
@@ -42,10 +48,33 @@ const mapStateToProps = (state, props) => ({
   props: props,
 });
 
-export default connect(mapStateToProps)(profileImage);
+export default connect(mapStateToProps)(ProfileImage);
 
-const UserProfileImage = () => {
-  return <div> user image here</div>;
+const useImageClasses = makeStyles((theme) => ({
+  image: {
+    width: "90%",
+    height: "90%",
+    borderRadius: "50%",
+  },
+  imageRounded: {
+    borderRadius: "50%",
+  },
+}));
+
+const UserProfileImage = ({ imgUrl }) => {
+  const imageClasses = useImageClasses();
+  return (
+    <Fragment>
+      <img
+        src={imgUrl}
+        alt={"Profile Image"}
+        className={clsx(
+          imageClasses.image
+          // fadeIn && imageClasses.imageIn
+        )}
+      />
+    </Fragment>
+  );
 };
 
 const useNoImageClasses = makeStyles((theme) => ({
