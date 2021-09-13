@@ -5,8 +5,12 @@ import AddPhotoIcon from "@material-ui/icons/AddAPhoto";
 import Slide from "@material-ui/core/Slide";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 import clsx from "clsx";
 import * as Types from "../../stateManagement/TYPES";
+import { ClassNames } from "@emotion/react";
 
 const useClasses = makeStyles((theme) => ({
   profileImageContainer: {
@@ -15,29 +19,57 @@ const useClasses = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: "50%",
     // border: `1px solid ${theme.palette.secondary.light}`,
     // background: "linear-gradient(145deg, #f0f0f0, #cacaca)",
     // boxShadow: "6px 6px 54px #783108, -6px -6px 54px #ff8f18",
     // background: "linear-gradient(145deg, #d4560e, #fb6711)",
     background: "linear-gradient(145deg, #fb6711, #d4560e)",
     boxShadow: `4px 4px 24px ${theme.palette.grey[400]}, -4px -4px 24px ${theme.palette.grey[300]}`,
+    borderRadius: "4px",
     // boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff",
+    transition: theme.transitions.create(["border-radius"], {
+      duration: 500,
+    }),
+  },
+  roundedImage: {
+    borderRadius: "50%",
   },
 }));
 
 const ProfileImage = ({ self: { profileImgUrl, _id: userId } }, ref) => {
   const classes = useClasses();
+  const [roundedImage, setRoundedImage] = useState(false);
   return (
     <Slide direction="right" in={true}>
       <div>
-        <div className={classes.profileImageContainer}>
+        <div
+          className={clsx(
+            classes.profileImageContainer,
+            roundedImage && classes.roundedImage
+          )}
+        >
           {profileImgUrl ? (
-            <UserProfileImage userId={userId} imgUrl={profileImgUrl} />
+            <UserProfileImage
+              userId={userId}
+              imgUrl={profileImgUrl}
+              roundedImage={roundedImage}
+            />
           ) : (
             <UserNoImage userId={userId} />
           )}
         </div>
+        {profileImgUrl && (
+          <FormControlLabel
+            control={
+              <Switch
+                checked={roundedImage}
+                onChange={() => setRoundedImage(!roundedImage)}
+                name="roundedImage"
+              />
+            }
+            label="Rounded"
+          />
+        )}
       </div>
     </Slide>
   );
@@ -54,14 +86,18 @@ const useImageClasses = makeStyles((theme) => ({
   image: {
     width: "90%",
     height: "90%",
-    borderRadius: "50%",
+    // borderRadius: "50%",
+    borderRadius: "4px",
+    transition: theme.transitions.create(["border-radius"], {
+      duration: 500,
+    }),
   },
-  imageRounded: {
+  roundedImage: {
     borderRadius: "50%",
   },
 }));
 
-const UserProfileImage = ({ imgUrl }) => {
+const UserProfileImage = ({ imgUrl, roundedImage }) => {
   const imageClasses = useImageClasses();
   return (
     <Fragment>
@@ -69,7 +105,8 @@ const UserProfileImage = ({ imgUrl }) => {
         src={imgUrl}
         alt={"Profile Image"}
         className={clsx(
-          imageClasses.image
+          imageClasses.image,
+          roundedImage && imageClasses.roundedImage
           // fadeIn && imageClasses.imageIn
         )}
       />

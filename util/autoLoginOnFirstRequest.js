@@ -21,7 +21,6 @@ export const autoLoginOnFirstRequest = async (req, res) => {
     .then(async () => {
       let user = await User.findById(userId).select("-password -otp");
       console.log("user: ", user);
-      debugger;
       if (user) {
         let comparison = await user.handleOtp(cookies.get("_p"));
         console.log("user.oneTimePassword: ", user.oneTimePassword);
