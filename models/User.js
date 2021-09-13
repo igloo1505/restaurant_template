@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const GroceryItem = require("./GroceryItem");
 const Recipe = require("./Recipe");
+const { v4 } = require("uuid");
 const Ingredient = require("./Ingredient");
 // const justLogShitAndDelete = () => {
 //   console.log(mongoose);
@@ -79,16 +80,16 @@ UserSchema.pre("save", async function (next, done) {
   // next();
 });
 
-UserSchema.pre("save", async function (next) {
-  if (this.isModified("oneTimePassword")) {
-    console.log("Did modify oneTimePassword");
-    const salt = await bcrypt.genSalt(10);
-    this.oneTimePassword = await bcrypt.hash(this.oneTimePassword, salt);
-    next();
-  } else {
-    next(new Error("failed to encrypt oneTimePassword"));
-  }
-});
+// UserSchema.pre("save", async function (next) {
+//   if (this.isModified("oneTimePassword")) {
+//     console.log("Did modify oneTimePassword");
+//     const salt = await bcrypt.genSalt(10);
+//     this.oneTimePassword = await bcrypt.hash(this.oneTimePassword, salt);
+//     next();
+//   } else {
+//     next(new Error("failed to encrypt oneTimePassword"));
+//   }
+// });
 
 UserSchema.methods.comparePassword = async function (
   password,
@@ -110,6 +111,27 @@ UserSchema.methods.comparePassword = async function (
   } else {
     return {
       isMatch: true,
+      comparison: comparison,
+    };
+  }
+};
+
+// TODO MAKE SURE THIS IS HANDLED ON INITIAL LOGIN TO AVOID SYNC ISSUES BETWEEN CLIENT OTP AND HASHED ONETIMEPASSWORD
+UserSchema.methods.handleOtp = async function (password, next) {
+  let comparison = await bcrypt.compare(password, this.oneTimePassword);
+  if (comparison) {
+    let newOtp = [...v4()].filter((c) => /[a-zA-Z0-9]+/g.test(c));
+    console.log("newOtp: ", newOtp);
+    const salt = await bcrypt.genSalt(10);
+    this.oneTimePassword = await bcrypt.hash(newOtp.join(), salt);
+    return {
+      isMatch: true,
+      comparison: comparison,
+      newClientOtp: newOtp,
+    };
+  } else {
+    return {
+      isMatch: false,
       comparison: comparison,
     };
   }

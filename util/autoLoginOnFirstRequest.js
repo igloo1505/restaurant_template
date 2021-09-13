@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import * as Types from "../stateManagement/TYPES";
 import mongoose from "mongoose";
 import Cookies from "cookies";
@@ -19,11 +20,10 @@ export const autoLoginOnFirstRequest = async (req, res) => {
     })
     .then(async () => {
       let user = await User.findById(userId).select("-password -otp");
+      console.log("user: ", user);
+      debugger;
       if (user) {
-        let comparison = await bcrypt.compare(
-          cookies.get("_p"),
-          user.oneTimePassword
-        );
+        let comparison = await user.handleOtp(cookies.get("_p"));
         console.log("user.oneTimePassword: ", user.oneTimePassword);
         console.log('cookies.get("_p"),: ', cookies.get("_p"));
         console.log("comparison**: ", comparison);

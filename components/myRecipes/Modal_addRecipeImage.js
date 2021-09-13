@@ -134,7 +134,7 @@ const Modal_addRecipeImage = ({
     formData.append("recipeImage", image);
     formData.append("recipeId", relevantId);
     formData.append("userId", userId);
-    addRecipeImage(formData);
+    // addRecipeImage(formData);
   };
   const classes = useStyles();
   const deleteClasses = useDeleteButtonClasses();
