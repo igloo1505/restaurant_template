@@ -8,6 +8,8 @@ import * as Types from "../../stateManagement/TYPES";
 import Default_Dialog_Content from "../modalContent/Default_Dialog_Content";
 import Modal_confirmDeleteRecipe from "../myRecipes/Modal_confirmDeleteRecipe";
 import Modal_addProfileImage from "../myProfile/Modal_addProfileImage";
+import Modal_editLocation from "../myProfile/Modal_editLocation";
+import Modal_setSkill from "../myProfile/Modal_setSkill";
 import Modal_addRecipeImage from "../myRecipes/Modal_addRecipeImage";
 import { FcHighPriority } from "react-icons/fc";
 
@@ -90,7 +92,6 @@ const Alert = ({
             <ErrorOutlineIcon className={classes.warningIcon} />
           )}
         </DialogTitle>
-
         <GetDialogContent
           variant={variant}
           isOpen={isOpen}
@@ -141,6 +142,24 @@ const GetDialogContent = ({ variant, isOpen, contentText, title }) => {
       case "addProfileImage":
         return (
           <Modal_addProfileImage
+            variant={variant}
+            isOpen={isOpen}
+            contentText={contentText}
+            title={title}
+          />
+        );
+      case "editLocation":
+        return (
+          <Modal_editLocation
+            variant={variant}
+            isOpen={isOpen}
+            contentText={contentText}
+            title={title}
+          />
+        );
+      case "editSkillLevel":
+        return (
+          <Modal_setSkill
             variant={variant}
             isOpen={isOpen}
             contentText={contentText}

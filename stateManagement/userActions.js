@@ -299,3 +299,25 @@ export const addProfileImage = (formData) => async (dispatch) => {
     dispatch({ type: Types.ADD_PROFILE_IMAGE_FAIL, payload: error });
   }
 };
+
+export const updateProfileData = (profileData) => async (dispatch) => {
+  let res = await useAxios({
+    method: "post",
+    url: "/api/handleProfileData/updateProfileData",
+    data: profileData,
+  });
+  console.log("response", res);
+  if (res.status === 200) {
+    dispatch({
+      type: Types.UPDATE_PROFILE_DATA_SUCCESS,
+      payload: res.data,
+    });
+  }
+  if (res.status !== 200) {
+    console.log("Res.data", res.data);
+    dispatch({
+      type: Types.UPDATE_PROFILE_DATA_FAIL,
+      payload: "Error adding profile data",
+    });
+  }
+};

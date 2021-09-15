@@ -10,23 +10,23 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import clsx from "clsx";
 import * as Types from "../../stateManagement/TYPES";
+import { updateProfileData } from "../../stateManagement/userActions";
 import { ClassNames } from "@emotion/react";
 
 const useClasses = makeStyles((theme) => ({
   profileImageContainer: {
     height: "200px",
     width: "200px",
+    minHeight: "200px",
+    minWidth: "200px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // border: `1px solid ${theme.palette.secondary.light}`,
-    // background: "linear-gradient(145deg, #f0f0f0, #cacaca)",
-    // boxShadow: "6px 6px 54px #783108, -6px -6px 54px #ff8f18",
-    // background: "linear-gradient(145deg, #d4560e, #fb6711)",
     background: "linear-gradient(145deg, #fb6711, #d4560e)",
     boxShadow: `4px 4px 24px ${theme.palette.grey[400]}, -4px -4px 24px ${theme.palette.grey[300]}`,
     borderRadius: "4px",
-    // boxShadow: "20px 20px 60px #bebebe, -20px -20px 60px #ffffff",
+    // width: "100%",
+    // paddingTop: "100%",
     transition: theme.transitions.create(["border-radius"], {
       duration: 500,
     }),
@@ -34,14 +34,29 @@ const useClasses = makeStyles((theme) => ({
   roundedImage: {
     borderRadius: "50%",
   },
+  outerContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: "1rem",
+  },
 }));
 
-const ProfileImage = ({ self: { profileImgUrl, _id: userId } }, ref) => {
+const ProfileImage = ({
+  self: { profileImgUrl, _id: userId },
+  userProfile: { roundedImg: roundedImage },
+  updateProfileData,
+}) => {
   const classes = useClasses();
-  const [roundedImage, setRoundedImage] = useState(false);
+  // const dispatch = useDispatch()
+  const updateProfile = () => {
+    updateProfileData({
+      roundedImg: !roundedImage,
+    });
+  };
   return (
     <Slide direction="right" in={true}>
-      <div>
+      <div className={classes.outerContainer}>
         <div
           className={clsx(
             classes.profileImageContainer,
@@ -63,11 +78,11 @@ const ProfileImage = ({ self: { profileImgUrl, _id: userId } }, ref) => {
             control={
               <Switch
                 checked={roundedImage}
-                onChange={() => setRoundedImage(!roundedImage)}
+                onChange={updateProfile}
                 name="roundedImage"
               />
             }
-            label="Rounded"
+            label="Rounded Image"
           />
         )}
       </div>
@@ -77,10 +92,11 @@ const ProfileImage = ({ self: { profileImgUrl, _id: userId } }, ref) => {
 
 const mapStateToProps = (state, props) => ({
   self: state.user.self,
+  userProfile: state.userProfile,
   props: props,
 });
 
-export default connect(mapStateToProps)(ProfileImage);
+export default connect(mapStateToProps, { updateProfileData })(ProfileImage);
 
 const useImageClasses = makeStyles((theme) => ({
   image: {

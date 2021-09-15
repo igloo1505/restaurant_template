@@ -15,6 +15,7 @@ import { connectDB } from "../util/connectDB";
 import * as Types from "../stateManagement/TYPES";
 import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
 import ProfileImage from "../components/myProfile/profileImage";
+import MyProfile_primaryInfo from "../components/myProfile/myProfile_primaryInfo";
 
 const useProfileStyles = makeStyles((theme) => ({
   myProfileContainer: {
@@ -23,21 +24,50 @@ const useProfileStyles = makeStyles((theme) => ({
     transform: "translateX(-50%)",
     height: "100%",
   },
+  myProfileTopContainer: {
+    display: "flex",
+    flexDirection: "row",
+    gap: "1rem",
+    // justifyContent: "space-between",
+  },
 }));
 
-const myProfile = () => {
+const myProfile = ({
+  props: { hasUser },
+  user: {
+    loggedIn,
+    self: { _id },
+  },
+}) => {
   const classes = useProfileStyles();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (hasUser && Boolean(!loggedIn || !_id)) {
+      dispatch({
+        type: Types.AUTO_LOGIN_SUCCESS,
+        payload: hasUser,
+      });
+    }
+  }, [hasUser]);
   return (
     <AdjustForDrawerContainer centerAll={false}>
       <div className={classes.myProfileContainer}>
-        <ProfileImage />
+        <div className={classes.myProfileTopContainer}>
+          <ProfileImage />
+          <MyProfile_primaryInfo />
+        </div>
         <div>Profile page here</div>
       </div>
     </AdjustForDrawerContainer>
   );
 };
 
-export default myProfile;
+const mapStateToProps = (state, props) => ({
+  user: state.user,
+  props: props,
+});
+
+export default connect(mapStateToProps)(myProfile);
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
@@ -51,8 +81,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
       let rememberMe = cookies.get("rememberMe");
       console.log("rememberMe: ", rememberMe);
       console.log("userId: ", userId);
-      state.user.self._id;
-      if (!userId || !token) {
+
+      let isInState = Boolean(
+        state?.user?.self?._id && state?.user?.self?.token
+      );
+      if (Boolean(!userId || !token) && !isInState) {
         return {
           redirect: {
             destination: "/",
@@ -60,29 +93,20 @@ export const getServerSideProps = wrapper.getServerSideProps(
           },
         };
       }
-      if (userId && token) {
+      if (Boolean(userId && token) && !isInState) {
         console.log("userId && token: ", userId, token, rememberMe);
-        // connectDB().then(async (client) => {
         if (rememberMe) {
           hasUser = await autoLoginOnFirstRequest(req, res);
+          if (!hasUser) {
+            return {
+              redirect: {
+                destination: "/",
+                permanent: false,
+              },
+            };
+          }
           console.log("hasUser: ", hasUser);
         }
-        // console.log("client: ", client);
-        // console.log("ingredients: ", ingredients);
-        // let recipes = await mongoose
-        //   .connect(process.env.MONGO_URI, {
-        //     useNewUrlParser: true,
-        //     useCreateIndex: true,
-        //     useFindAndModify: false,
-        //     useUnifiedTopology: true,
-        //   })
-        //   .then(async () => {
-        //     let _user = await User.findById(userId)
-        //     console.log("recipes: ", _recipes);
-        //     // BUG An apparently pretty well known issue with mongo and getServerSideProps causing serialization errors. Come back to this and see if can figure out a hack later.
-        //     // });
-        //     return _recipes;
-        //   });
         return {
           props: {
             hasUser: hasUser,

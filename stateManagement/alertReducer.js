@@ -26,6 +26,14 @@ const initialState = {
     relevantId: null,
     isOpen: false,
   },
+  editLocationModal: {
+    relevantId: null,
+    isOpen: false,
+  },
+  skillLevelModal: {
+    relevantId: null,
+    isOpen: false,
+  },
   addProfileImageModal: {
     relevantId: null,
     isOpen: false,
@@ -103,6 +111,47 @@ const modalReducer = createReducer(initialState, (builder) => {
       addProfileImageModal: {
         isOpen: true,
         relevantId: action.payload.userId,
+      },
+    };
+  });
+  builder.addCase(Types.SHOW_EDIT_LOCATION_MODAL, (state, action) => {
+    return {
+      ...state,
+      dialog: {
+        isOpen: true,
+        variant: "editLocation",
+        title: "Current Location:",
+        titleColor: "primary",
+      },
+      editLocationModal: {
+        isOpen: true,
+        relevantId: action.payload.userId,
+      },
+    };
+  });
+  builder.addCase(Types.SHOW_EDIT_SKILL_MODAL, (state, action) => {
+    return {
+      ...state,
+      dialog: {
+        isOpen: true,
+        variant: "editSkillLevel",
+        title: "My Skill Level:",
+        titleColor: "primary",
+      },
+      skillLevelModal: {
+        isOpen: true,
+        relevantId: action.payload.userId,
+      },
+    };
+  });
+  builder.addCase(Types.UPDATE_PROFILE_DATA_SUCCESS, (state, action) => {
+    return {
+      ...state,
+      dialog: {
+        ...initialState.dialog,
+      },
+      editLocationModal: {
+        ...initialState.editLocationModal,
       },
     };
   });

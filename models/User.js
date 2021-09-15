@@ -4,6 +4,7 @@ const GroceryItem = require("./GroceryItem");
 const Recipe = require("./Recipe");
 const { v4 } = require("uuid");
 const Ingredient = require("./Ingredient");
+const ProfileData = require("./ProfileData");
 // const justLogShitAndDelete = () => {
 //   console.log(mongoose);
 // };
@@ -62,6 +63,11 @@ const UserSchema = mongoose.Schema(
       ref: "RecipeReviews",
       unique: true,
     },
+    userProfileData: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ProfileData",
+      autopopulate: true,
+    },
   },
   { timestamps: true }
 );
@@ -70,7 +76,6 @@ UserSchema.plugin(require("mongoose-autopopulate"));
 
 UserSchema.pre("save", async function (next, done) {
   if (this.isModified("password")) {
-    console.log("Did modify password");
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();

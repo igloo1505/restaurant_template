@@ -15,6 +15,7 @@ import uiReducer from "./uiReducer";
 import networkReducer from "./networkReducer";
 import recipeReducer from "./recipeReducer";
 import myGroceryReducer from "./myGroceryReducer";
+import userProfileReducer from "./userProfileReducer";
 
 const initialState = {};
 
@@ -26,6 +27,7 @@ const withDevtools = () => {
 const store = configureStore({
   reducer: {
     user: userReducer,
+    userProfile: userProfileReducer,
     recipes: recipeReducer,
     UI: uiReducer,
     drawer: drawerReducer,

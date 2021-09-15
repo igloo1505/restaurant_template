@@ -23,11 +23,15 @@ export const autoLoginOnFirstRequest = async (req, res) => {
       console.log("user: ", user);
       if (user) {
         let comparison = await user.handleOtp(cookies.get("_p"));
+        console.log("comparison: ", comparison);
         console.log("user.oneTimePassword: ", user.oneTimePassword);
         console.log('cookies.get("_p"),: ', cookies.get("_p"));
         console.log("comparison**: ", comparison);
         if (comparison) {
-          returnUser = user;
+          console.log(user);
+          let userToReturn = { ...user._doc };
+          delete userToReturn.oneTimePassword;
+          returnUser = userToReturn;
         }
         if (!comparison) {
           cookies.set("userId");
