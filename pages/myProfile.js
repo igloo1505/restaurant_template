@@ -7,15 +7,13 @@ import mongoose from "mongoose";
 import User from "../models/User";
 import { AdjustForDrawerContainer } from "../components/UIComponents";
 import { makeStyles } from "@material-ui/core/styles";
-import Slide from "@material-ui/core/Slide";
 import clsx from "clsx";
-import MyRecipes_leftSection from "../components/myRecipes/MyRecipes_leftSection";
-import MyRecipes_rightSection from "../components/myRecipes/MyRecipes_rightSection";
 import { connectDB } from "../util/connectDB";
 import * as Types from "../stateManagement/TYPES";
 import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
 import ProfileImage from "../components/myProfile/profileImage";
 import MyProfile_primaryInfo from "../components/myProfile/myProfile_primaryInfo";
+import MyProfile_aboutMe from "../components/myProfile/myProfile_aboutMe";
 
 const useProfileStyles = makeStyles((theme) => ({
   myProfileContainer: {
@@ -29,6 +27,9 @@ const useProfileStyles = makeStyles((theme) => ({
     flexDirection: "row",
     gap: "1rem",
     // justifyContent: "space-between",
+  },
+  aboutMeContainer: {
+    margin: "1rem",
   },
 }));
 
@@ -56,7 +57,9 @@ const myProfile = ({
           <ProfileImage />
           <MyProfile_primaryInfo />
         </div>
-        <div>Profile page here</div>
+        <div className={classes.aboutMeContainer}>
+          <MyProfile_aboutMe />
+        </div>
       </div>
     </AdjustForDrawerContainer>
   );

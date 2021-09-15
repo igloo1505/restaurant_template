@@ -5,13 +5,11 @@ import AddPhotoIcon from "@material-ui/icons/AddAPhoto";
 import Slide from "@material-ui/core/Slide";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import clsx from "clsx";
 import * as Types from "../../stateManagement/TYPES";
 import { updateProfileData } from "../../stateManagement/userActions";
-import { ClassNames } from "@emotion/react";
 
 const useClasses = makeStyles((theme) => ({
   profileImageContainer: {

@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core";
 import Slide from "@material-ui/core/Slide";
 import clsx from "clsx";
 import EditLocationIcon from "@material-ui/icons/EditLocation";
+import EditIcon from "@material-ui/icons/Edit";
 import { useDispatch } from "react-redux";
 import * as Types from "../../stateManagement/TYPES";
 import Typography from "@material-ui/core/Typography";
@@ -43,12 +44,19 @@ const useClasses = makeStyles((theme) => ({
       cursor: "pointer",
     },
   },
+  editIcon: {
+    color: "#fff",
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
   skillDiv: {
     display: "flex",
     flexDirection: "row",
     position: "absolute",
     top: "5px",
     right: "5px",
+    gap: "0.5rem",
   },
 }));
 
@@ -138,10 +146,7 @@ const myProfile_primaryInfo = ({
             >
               {skillLevel ? skillLevel : "Skill Level"}
             </Typography>
-            <EditLocationIcon
-              className={classes.locationIcon}
-              onClick={launchSkillModal}
-            />
+            <EditIcon className={classes.editIcon} onClick={launchSkillModal} />
           </div>
         </div>
       </div>

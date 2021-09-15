@@ -4,6 +4,7 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
   aboutMe: null,
+  inspiredBy: null,
   skillLevel: null,
   location: {
     city: null,

@@ -34,6 +34,9 @@ const ProfileDataSchema = mongoose.Schema(
     favoriteCuisine: {
       type: String,
     },
+    inspiredBy: {
+      type: String,
+    },
     roundedImg: {
       type: Boolean,
       default: false,
