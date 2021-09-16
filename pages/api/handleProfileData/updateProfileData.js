@@ -37,7 +37,6 @@ handler.post(async (req, res) => {
       { new: true }
     );
     // await user.save();
-    console.log("this far");
 
     await newPData.save();
     return res.json({ updatedUser: _user, profileData: newPData });

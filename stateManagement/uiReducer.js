@@ -7,6 +7,7 @@ import {
   REGISTER_NEW_USER,
   GET_ALL_USERS,
   SHOW_GROCERY_MENU,
+  SET_ABOUTME_DIALOG,
   DISPOSE_GROCERY_MENU,
   DISPOSE_BOOKMARK_MENU,
   SHOW_BOOKMARK_MENU,
@@ -42,6 +43,9 @@ const initialState = {
     shouldBeVisible: false,
   },
   mainDrawer: {
+    open: false,
+  },
+  aboutMeFullScreenDialog: {
     open: false,
   },
   viewport: {
@@ -97,7 +101,7 @@ export default function UIReducer(state = initialState, action) {
         isClient: true,
       };
 
-    case SET_VIEWPORT_DIMENSIONS:
+    case SET_VIEWPORT_DIMENSIONS: {
       let device = getDeviceType(action.payload.width);
       // console.log("Device type", device);
       return {
@@ -115,6 +119,7 @@ export default function UIReducer(state = initialState, action) {
         leftTab: { ...state.leftTab },
         accountMenu: { ...state.accountMenu },
       };
+    }
     case SET_NAV_HEIGHT:
       return {
         ...state,
@@ -123,6 +128,14 @@ export default function UIReducer(state = initialState, action) {
         alert: { ...state.alert },
         accountMenu: { ...state.accountMenu },
       };
+    case SET_ABOUTME_DIALOG:
+      return {
+        ...state,
+        aboutMeFullScreenDialog: {
+          open: action.payload,
+        },
+      };
+
     // case TRIGGER_ALERT:
     //   return {
     //     ...state,

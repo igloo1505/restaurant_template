@@ -301,10 +301,19 @@ export const addProfileImage = (formData) => async (dispatch) => {
 };
 
 export const updateProfileData = (profileData) => async (dispatch) => {
+  let userId = getUserId();
+  let data = profileData;
+  console.log("profileData: ", profileData);
+  if (userId) {
+    data = {
+      ...profileData,
+      userId: userId,
+    };
+  }
   let res = await useAxios({
     method: "post",
     url: "/api/handleProfileData/updateProfileData",
-    data: profileData,
+    data: data,
   });
   console.log("response", res);
   if (res.status === 200) {
