@@ -96,7 +96,7 @@ handler.post(async (req, res) => {
     }
 
     let recipe = new Recipe(data);
-    let updatedUser = User.findByIdAndUpdate(
+    let updatedUser = await User.findByIdAndUpdate(
       createdBy,
       {
         $push: { myRecipes: recipe._id },

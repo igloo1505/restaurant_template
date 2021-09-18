@@ -33,12 +33,16 @@ export default function userReducer(state = initialState, action) {
   switch (action.type) {
     case AUTO_LOGIN_SUCCESS:
     case AUTHENTICATE_USER:
+      let newPayload = { ...action.payload };
+      if (newPayload?.userProfileData) {
+        delete newPayload.userProfileData;
+      }
       return {
         ...state,
         loggedIn: true,
         triedAutoLogin: true,
         loading: false,
-        self: action.payload,
+        self: newPayload,
       };
     case LOGOUT:
       return initialState;

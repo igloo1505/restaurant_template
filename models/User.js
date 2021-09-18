@@ -42,6 +42,11 @@ const UserSchema = mongoose.Schema(
     profileImgUrl: {
       type: String,
     },
+    myRecipes: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Recipe",
+      unique: true,
+    },
     groceryList: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "GroceryItem",
@@ -66,6 +71,11 @@ const UserSchema = mongoose.Schema(
     userProfileData: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ProfileData",
+      autopopulate: true,
+    },
+    userSocialData: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SocialData",
       autopopulate: true,
     },
   },

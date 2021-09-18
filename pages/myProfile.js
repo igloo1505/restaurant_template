@@ -77,6 +77,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     async ({ req, res }) => {
       let state = store.getState();
       console.log("req: ", req);
+      // TODO add auth to this route to make sure only user that owns this profile can access this page.
       let cookies = new Cookies(req, res);
       let hasUser = false;
       let token = cookies.get("token") || state?.user?.self?.token;

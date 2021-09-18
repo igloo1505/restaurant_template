@@ -91,6 +91,7 @@ const myProfile_fullScreenDialog = ({
   };
 
   const handleSaveAboutMe = () => {
+    console.log("Running save aboutMe");
     updateProfileData({
       aboutMe: aboutMeFormData,
     });
@@ -157,7 +158,7 @@ const myProfile_fullScreenDialog = ({
             <CloseIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            About Me
+            About Me:
           </Typography>
         </Toolbar>
       </AppBar>
@@ -294,7 +295,9 @@ const mapStateToProps = (state, props) => ({
   props: props,
 });
 
-export default connect(mapStateToProps)(myProfile_fullScreenDialog);
+export default connect(mapStateToProps, { updateProfileData })(
+  myProfile_fullScreenDialog
+);
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
