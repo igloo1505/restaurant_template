@@ -120,6 +120,7 @@ const RecipeReviewModal = ({
   };
 
   const handleSubmitReview = () => {
+    let relevantId = relevantRecipe._id;
     if (!userId || !relevantId) {
       return;
     }

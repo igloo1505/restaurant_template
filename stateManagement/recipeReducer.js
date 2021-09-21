@@ -82,8 +82,8 @@ const recipeReducer = (state = initialState, action) => {
       };
     case Types.ADD_RECIPE_BOOKMARK:
       let newBookmarks = state.myBookmarks
-        ? [...state.myBookmarks, action.payload.recipeId]
-        : [action.payload.recipeId];
+        ? [...state.myBookmarks, action.payload.bookmarkedRecipe]
+        : [action.payload.bookmarkedRecipe];
       return {
         ...state,
         myBookmarks: newBookmarks,
@@ -92,7 +92,7 @@ const recipeReducer = (state = initialState, action) => {
       return {
         ...state,
         myBookmarks: state.myBookmarks.filter(
-          (b) => b !== action.payload.recipeId
+          (b) => b._id !== action.payload.recipeId
         ),
       };
     case Types.SUBMIT_RECIPE_REVIEW_SUCCESS:

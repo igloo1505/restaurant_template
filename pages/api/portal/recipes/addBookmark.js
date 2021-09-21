@@ -32,6 +32,7 @@ handler.post(async (req, res) => {
         return res.json({
           msg: "Recipe bookmarked successfully.",
           recipeId: recipe._id,
+          bookmarkedRecipe: recipe,
         });
       }
     }

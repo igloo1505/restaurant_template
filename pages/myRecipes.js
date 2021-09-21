@@ -52,10 +52,9 @@ const myRecipes = ({
   hasUser,
 }) => {
   const dispatch = useDispatch();
-
   useEffect(() => {
     console.log("_myRecipes: ", _myRecipes);
-    if (!myRecipes && _myRecipes) {
+    if (_myRecipes) {
       dispatch({
         type: Types.GET_OWN_RECIPES_SUCCESS,
         payload: { _myRecipes },

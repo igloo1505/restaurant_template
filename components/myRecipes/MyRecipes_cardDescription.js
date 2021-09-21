@@ -89,6 +89,7 @@ const useStyles = makeStyles((theme) => ({
   editButton: {},
 }));
 
+// TODO add functionality to edit button, and add edit functionality and UI to recipe and user Images.
 const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
   const router = useRouter();
   const [maxHeight, setMaxHeight] = useState({});
@@ -162,9 +163,5 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
 export default MyRecipes_cardDescription;
 
 const RecipeItem = ({ ingredient, classes }) => {
-  return ingredient?.name
-    .split(/\r?\n/)
-    .map((i) => (
-      <div className={classes.ingredientItem}>* {ingredient.name}</div>
-    ));
+  return <div className={classes.ingredientItem}>* {ingredient.name}</div>;
 };

@@ -35,7 +35,7 @@ const Details_Banner = ({
     let shouldSet = true;
     if (myBookmarks) {
       myBookmarks.forEach((bookmark) => {
-        if (bookmark === recipe._id) {
+        if (bookmark._id === recipe._id) {
           shouldSet = false;
           return setIsBookmarked(true);
         }
@@ -45,12 +45,15 @@ const Details_Banner = ({
   }, [myBookmarks]);
 
   const [detailsHeight, setDetailsHeight] = useState({});
+  const [minutesPadding, setMinutesPadding] = useState({
+    prepTime: { paddingLeft: "0.5rem" },
+    cookTime: { paddingLeft: "0.5rem" },
+  });
   useEffect(() => {
     let parentHeight = document
       .getElementById("recipe-banner")
       .getBoundingClientRect().height;
     let _padding = 0.75;
-
     console.log(
       "`${parentHeight - (16 + 32 * _padding)}px`: ",
       `${parentHeight - (16 + 32 * _padding)}px`
@@ -60,6 +63,35 @@ const Details_Banner = ({
     });
   }, [deviceWidth]);
   const formattedTime = getFormattedTimeIndividual(recipe);
+
+  useEffect(() => {
+    let newPadding = {
+      prepTime: {},
+      cookTime: {},
+    };
+    // if (!formattedTime?.prepTime?.hours) {
+    //   newPadding.prepTime = {
+    //     paddingLeft: "2.75rem",
+    //   };
+    // }
+    // if (!formattedTime?.cookTime?.hours) {
+    //   newPadding.cookTime = {
+    //     paddingLeft: "2.75rem",
+    //   };
+    // }
+    if (formattedTime?.prepTime?.hours) {
+      newPadding.prepTime = {
+        paddingLeft: "0.5rem",
+      };
+    }
+    if (formattedTime?.cookTime?.hours) {
+      newPadding.cookTime = {
+        paddingLeft: "0.5rem",
+      };
+    }
+    console.log("newPadding: ", newPadding);
+    setMinutesPadding(newPadding);
+  }, []);
 
   const { title } = recipe;
 
@@ -130,26 +162,32 @@ const Details_Banner = ({
           >
             Prep Time:{" "}
           </Typography>
-          {formattedTime?.prepTime?.hours && (
-            <Typography
-              variant="body"
-              classes={{
-                root: clsx(
-                  styles.bannerDetail,
-                  !recipe?.time?.prepTime && styles.hide
-                ),
-              }}
-            >
-              {formattedTime?.prepTime?.hours}
-              {formattedTime?.prepTime?.hours === 0 ? " Hour," : " Hours,"}
-            </Typography>
-          )}
-          {formattedTime?.prepTime?.minutes && (
-            <Typography variant="body" classes={{ root: styles.bannerDetail }}>
-              {formattedTime?.prepTime?.minutes}
-              {formattedTime?.prepTime?.minutes === 0 ? " minute" : " minutes"}
-            </Typography>
-          )}
+          <div>
+            {formattedTime?.prepTime?.hours && (
+              <Typography
+                variant="body"
+                classes={{
+                  root: clsx(
+                    styles.bannerDetail,
+                    !recipe?.time?.prepTime && styles.hide
+                  ),
+                }}
+              >
+                {formattedTime?.prepTime?.hours}
+                {formattedTime?.prepTime?.hours <= 1 ? " Hour," : " Hours,"}
+              </Typography>
+            )}
+            {formattedTime?.prepTime?.minutes && (
+              <Typography
+                variant="body"
+                classes={{ root: styles.bannerDetail }}
+                style={minutesPadding.prepTime}
+              >
+                {formattedTime?.prepTime?.minutes}
+                {formattedTime?.prepTime?.minutes <= 1 ? " minute" : " minutes"}
+              </Typography>
+            )}
+          </div>
           {Boolean(
             !formattedTime?.prepTime?.minutes && !formattedTime?.prepTime?.hours
           ) && (
@@ -161,7 +199,6 @@ const Details_Banner = ({
             </Typography>
           )}
         </div>
-
         <div className={clsx(styles.individualTimeWrapper)}>
           <Typography
             variant="subtitle1"
@@ -169,36 +206,47 @@ const Details_Banner = ({
           >
             Cook Time:{" "}
           </Typography>
-          {formattedTime?.cookTime?.hours && (
-            <Typography
-              variant="body"
-              classes={{
-                root: clsx(
-                  styles.bannerDetail,
-                  !recipe?.time?.cookTime && styles.hide
-                ),
-              }}
-            >
-              {formattedTime?.cookTime?.hours}
-              {formattedTime?.cookTime?.hours === 0 ? " Hour," : " Hours,"}
-            </Typography>
-          )}
-          {formattedTime?.cookTime?.minutes && (
-            <Typography variant="body" classes={{ root: styles.bannerDetail }}>
-              {formattedTime?.cookTime?.minutes}
-              {formattedTime?.cookTime?.minutes === 0 ? " minute" : " minutes"}
-            </Typography>
-          )}
-          {Boolean(
-            !formattedTime?.cookTime?.minutes && !formattedTime?.cookTime?.hours
-          ) && (
-            <Typography
-              variant="body"
-              classes={{ root: styles.bannerDetailNoContent }}
-            >
-              -- : --
-            </Typography>
-          )}
+          <div>
+            {formattedTime?.cookTime?.hours && (
+              <Typography
+                variant="body"
+                classes={{
+                  root: clsx(
+                    styles.bannerDetail,
+                    !recipe?.time?.cookTime && styles.hide
+                  ),
+                }}
+              >
+                {formattedTime?.cookTime?.hours}
+                {formattedTime?.cookTime?.hours === 0 ? " Hour," : " Hours,"}
+              </Typography>
+            )}
+            {formattedTime?.cookTime?.minutes && (
+              <Typography
+                variant="body"
+                classes={{
+                  root: styles.bannerDetail,
+                }}
+                style={minutesPadding.cookTime}
+              >
+                {formattedTime?.cookTime?.minutes}
+                {formattedTime?.cookTime?.minutes === 0
+                  ? " minute"
+                  : " minutes"}
+              </Typography>
+            )}
+            {Boolean(
+              !formattedTime?.cookTime?.minutes &&
+                !formattedTime?.cookTime?.hours
+            ) && (
+              <Typography
+                variant="body"
+                classes={{ root: styles.bannerDetailNoContent }}
+              >
+                -- : --
+              </Typography>
+            )}
+          </div>
         </div>
       </div>
       <Details_ActionSection recipe={recipe} />

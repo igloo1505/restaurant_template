@@ -71,7 +71,14 @@ const Bookmarks_navbarMenu = ({
             {myBookmarks?.map((bi, i, a) => (
               <BookmarkMenuItem bi={bi} i={i} a={a} classes={classes} />
             ))}
-            <MenuItem classes={{ root: classes.viewAll }}>View All</MenuItem>
+            {Boolean(myBookmarks?.length && myBookmarks.length > 0) && (
+              <MenuItem classes={{ root: classes.viewAll }}>View All</MenuItem>
+            )}
+            {Boolean(!myBookmarks?.length && myBookmarks.length === 0) && (
+              <MenuItem classes={{ root: classes.viewAll }} disabled>
+                No Bookmarks
+              </MenuItem>
+            )}
           </Menu>
         </ClientSidePortal>
       )}
@@ -116,7 +123,7 @@ const useMenuItemClasses = makeStyles((theme) => ({
 }));
 
 const trimTitle = (title) => {
-  if (title.length > 30) {
+  if (title?.length > 30) {
     return `${title.slice(0, 30)}...`;
   }
   return title;

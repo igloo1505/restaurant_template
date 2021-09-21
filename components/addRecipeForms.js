@@ -217,6 +217,14 @@ const StepOneFormComponent = ({
       });
     }
   };
+  const allowKeys = [
+    "Backspace",
+    "ArrowLeft",
+    "ArrowRight",
+    "ArrowUp",
+    "ArrowDown",
+    "Tab",
+  ];
   useEffect(() => {
     setFocusState({
       ...focusState,
@@ -267,7 +275,10 @@ const StepOneFormComponent = ({
               label="Recipe's title "
               onChange={handleFormChange}
               onKeyDown={(e) => {
-                if (formData?.title?.length >= 50 && e.key !== "Backspace") {
+                if (
+                  formData?.title?.length >= 50 &&
+                  !allowKeys.includes(e.key)
+                ) {
                   console.log("e: ", e);
                   e.preventDefault();
                   e.stopPropagation();

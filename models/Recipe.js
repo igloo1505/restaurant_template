@@ -55,6 +55,7 @@ const RecipeSchema = mongoose.Schema(
     ingredients: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Ingredient",
+      autopopulate: true,
     },
     time: {
       prepTime: { type: Number },
@@ -100,7 +101,7 @@ const RecipeSchema = mongoose.Schema(
     },
     recipeReviews: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "RecipeReviews",
+      ref: "RecipeReview",
       unique: true,
     },
   },
@@ -116,6 +117,7 @@ RecipeSchema.methods.getUsersRecentRecipes = async function () {
   return recipes;
 };
 
+RecipeSchema.plugin(require("mongoose-autopopulate"));
 // module.exports = mongoose.model("Recipe", RecipeSchema);
 module.exports =
   mongoose.models?.Recipe || mongoose.model("Recipe", RecipeSchema);

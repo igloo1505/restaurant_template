@@ -22,7 +22,15 @@ handler.post(async (req, res) => {
     if (recipe && userId) {
       let _user = await User.findById(userId);
       if (_user && _user.myBookmarks) {
-        _user.myFavorites.pull(recipe._id);
+        let newUser = await User.findByIdAndUpdate(
+          _user._id,
+          {
+            $pullAll: { myBookmarks: [recipe._id] },
+          },
+          { new: true }
+        );
+
+        console.log("newUser: ", newUser);
         return res.json({
           msg: "Recipe bookmark removed successfully.",
           recipeId: recipe._id,

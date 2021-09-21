@@ -22,7 +22,7 @@ const useClasses = makeStyles((theme) => ({
     gap: "0.25rem",
     backgroundColor: theme.palette.primary.light,
     transition: theme.transitions.create(["box-shadow"], {
-      duration: 350,
+      duration: 500,
     }),
   },
   transitionDiv: {
@@ -32,6 +32,16 @@ const useClasses = makeStyles((theme) => ({
   },
   addBoxShadow: {
     boxShadow: `6px 6px 12px ${theme.palette.grey[400]}, -6px 6px 12px ${theme.palette.grey[300]}`,
+    border: "1px solid #8cd2ff",
+    transition: theme.transitions.create(["box-shadow"], {
+      duration: 500,
+    }),
+    "&:hover": {
+      boxShadow: `5px 5px 11px ${theme.palette.grey[400]}, -5px 5px 11px ${theme.palette.grey[300]}`,
+      transition: theme.transitions.create(["box-shadow"], {
+        duration: 500,
+      }),
+    },
   },
   nameTypographyRoot: {
     color: "#fff",

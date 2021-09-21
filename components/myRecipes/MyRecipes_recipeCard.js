@@ -55,40 +55,20 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "rgba(255, 255, 255, 0.4)",
     borderRadius: "4px",
     zIndex: 1,
-    transition: theme.transitions.create(["color"], { duration: 250 }),
+    color: "rgba(0, 0, 0, 0.5)",
+    transition: theme.transitions.create(["color", "background-color"], {
+      duration: 250,
+    }),
     "&:hover": {
       cursor: "pointer",
-      color: theme.palette.grey[500],
-      transition: theme.transitions.create(["color"], { duration: 250 }),
+      color: "rgba(0, 0, 0, 1)",
+      backgroundColor: "rgba(255, 255, 255, 0.6)",
+      transition: theme.transitions.create(["color", "background-color"], {
+        duration: 250,
+      }),
     },
   },
 }));
-
-// EXAMPLE recipe object and embedded ingredient
-// {__v: 0
-// _id: "6116020737c12f29bf3727c6"
-// categories: [] (0)
-// comments: [] (0)
-// createdAt: "2021-08-13T05:24:23.567Z"
-// createdBy: "60ca3c4e89226b09e04ad70e"
-// description: "Some bomb ass recipe"
-// directions: ["Add stuff to pan", "Take stuff out of pan"] (2)
-// imgUrl: null
-// ingredients: [{
-// _id: "6116020737c12f29bf3727c0"
-// createdAt: "2021-08-13T05:24:23.567Z"
-// name: "Item One"
-// optional: false
-// quantity: 1
-// unit: "Tablespoons"
-// updatedAt: "2021-08-13T05:24:23.567Z"
-// }, Object, Object, Object, Object, Object] (6)
-// isGlutenFree: false
-// isHot: false
-// servings: {amount: 4, unit: "Cups"}
-// time: {prepTime: 12, cookTime: 16}
-// title: "Test Recipe One"
-// updatedAt: "2021-08-13T05:24:23.567Z"}
 
 export const MyRecipes_recipeCard = ({
   user,

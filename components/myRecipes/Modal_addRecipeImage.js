@@ -127,14 +127,16 @@ const Modal_addRecipeImage = ({
   const [image, setImage] = useState(false);
   const dispatch = useDispatch();
   const handleUpload = (e) => {
+    console.log("Sending Image");
     if (!image || !relevantId) {
+      console.log("returning without sending image");
       return;
     }
     const formData = new FormData();
     formData.append("recipeImage", image);
     formData.append("recipeId", relevantId);
     formData.append("userId", userId);
-    // addRecipeImage(formData);
+    addRecipeImage(formData);
   };
   const classes = useStyles();
   const deleteClasses = useDeleteButtonClasses();

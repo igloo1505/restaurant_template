@@ -9,7 +9,7 @@ const useClasses = makeStyles((theme) => ({
     marginTop: "1rem",
     width: "100%",
     display: "grid",
-    gridColumnGap: "10px",
+    gap: "10px",
     gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
   },
 }));

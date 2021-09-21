@@ -17,15 +17,20 @@ handler.post(async (req, res) => {
       ...req.body.review,
       recipeReference: req.body.review.recipeId,
     };
-    let CheckUniqueSubmission = await Recipe.findById(
-      req.body.review.submittedBy
-    );
+    let CheckUniqueSubmission = await Recipe.findById(req.body.review.recipeId)
+      .populate("recipeReviews")
+      .populate("submittedBy");
+    console.log("CheckUniqueSubmission: ", CheckUniqueSubmission);
     if (CheckUniqueSubmission) {
-      CheckUniqueSubmission.recipeReviews.forEach((r) => {
-        if (r.submittedBy === req.body.review.submittedBy) {
-          return res
-            .status(401)
-            .json({ error: "Each recipe can only be reviewed once." });
+      CheckUniqueSubmission.recipeReviews.forEach(async (r) => {
+        if (r.submittedBy._id.equals(req.body.review.submittedBy)) {
+          console.log("Deleting old RecipeReview");
+          await RecipeReview.findByIdAndDelete(r._id);
+          // let deleteOldReview = await RecipeReview.findByIdAndRemove(r._id);
+          // console.log("deleteOldReview: ", deleteOldReview);
+          // return res
+          //   .status(401)
+          //   .json({ error: "Each recipe can only be reviewed once." });
         }
       });
     }

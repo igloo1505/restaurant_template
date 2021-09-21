@@ -35,6 +35,8 @@ const RecipeReviewSchema = mongoose.Schema({
   },
 });
 
+// RecipeReviewSchema.plugin(require("mongoose-autopopulate"));
+
 module.exports =
   mongoose.models.RecipeReview ||
   mongoose.model("RecipeReview", RecipeReviewSchema);

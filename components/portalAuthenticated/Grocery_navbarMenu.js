@@ -76,7 +76,14 @@ const Grocery_navbarMenu = ({
             {myGroceries?.map((gi, i, a) => (
               <GroceryMenuItem gi={gi} i={i} a={a} classes={classes} />
             ))}
-            <MenuItem classes={{ root: classes.viewAll }}>View All</MenuItem>
+            {Boolean(myGroceries?.length && myGroceries?.length > 0) && (
+              <MenuItem classes={{ root: classes.viewAll }}>View All</MenuItem>
+            )}
+            {Boolean(!myGroceries?.length || myGroceries?.length === 0) && (
+              <MenuItem classes={{ root: classes.viewAll }} disabled>
+                No Items Added
+              </MenuItem>
+            )}
           </Menu>
         </ClientSidePortal>
       )}

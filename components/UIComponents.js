@@ -98,7 +98,6 @@ const AdjustForDrawerContainerComponent = ({
     marginTop: "64px",
   });
   useEffect(() => {
-    console.log("centerAll", centerAll);
     let shouldShift = drawerIsOpen
       ? drawerIsOpen
       : deviceWidth > 1920
