@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { autoLoginOnFirstRequest } from "../../util/autoLoginOnFirstRequest";
 import * as Types from "../../stateManagement/TYPES";
 import Recipe from "../../models/Recipe";
+import RecipeReview from "../../models/RecipeReview";
 // import GroceryItem from "../../models/GroceryItem";
 import User from "../../models/User";
 import {
@@ -16,12 +17,14 @@ import Details_Banner from "../../components/recipeDetails/Details_Banner";
 import Details_Directions from "../../components/recipeDetails/Details_Directions";
 import Details_Gallery from "../../components/recipeDetails/Details_Gallery";
 import Details_Ingredients from "../../components/recipeDetails/Details_Ingredients";
+import Details_RecipeReviews from "../../components/recipeDetails/Details_RecipeReviews";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Slide from "@material-ui/core/Slide";
 
 const useStyles = makeStyles((theme) => ({
   recipeDetailsOuterContainer: {
-    height: "100%",
+    // height: "100%",
     width: "100%",
     display: "grid",
     gridTemplateColumns: "4fr 6fr",
@@ -59,7 +62,6 @@ const recipeDetailsById = ({
   useEffect(() => {
     console.log("hasUser: ", hasUser);
     console.log("usersRecipeRecipes: ", usersRecentRecipes);
-
     if (hasUser && Boolean(!loggedIn || !userId)) {
       dispatch({
         type: Types.AUTO_LOGIN_SUCCESS,
@@ -84,6 +86,9 @@ const recipeDetailsById = ({
             <Details_Banner recipe={recipe} />
             <Details_Directions recipe={recipe} />
           </div>
+        </div>
+        <div className={classes.recipeReviewContainer}>
+          <Details_RecipeReviews recipeReviews={recipe.recipeReviews} />
         </div>
       </AdjustForDrawerContainer>
     </Fragment>
@@ -132,6 +137,19 @@ export const getServerSideProps = async (ctx) => {
           firstName: 1,
           lastName: 1,
           _id: 1,
+        })
+        .populate({
+          path: "recipeReviews",
+          options: {
+            limit: 10,
+            sort: { created: -1 },
+            // skip: req.params.pageIndex*10
+          },
+          populate: {
+            path: "submittedBy",
+            select:
+              "firstName lastName _id -groceryList -myBookmarks -userProfileData",
+          },
         });
       if (rememberMe) {
         console.log("rememberMe recipeId: ", rememberMe);

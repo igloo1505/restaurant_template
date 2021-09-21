@@ -375,7 +375,6 @@ const _RatingIcon = ({
   useEffect(() => {
     if (typeof window !== undefined) {
       let em = document.getElementById(starIconId).getBoundingClientRect();
-
       setClientRect(em);
     }
   }, [deviceWidth]);
@@ -458,13 +457,3 @@ const _mapStateToProps = (state, props) => ({
 });
 
 const RatingIcon = connect(_mapStateToProps)(_RatingIcon);
-
-// getBoudingClientRect
-// bottom: 647.5
-// height: 40
-// left: 725.5
-// right: 765.5
-// top: 607.5
-// width: 40
-// x: 725.5
-// y: 607.5

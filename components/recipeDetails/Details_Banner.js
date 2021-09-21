@@ -111,7 +111,6 @@ const Details_Banner = ({
           !disabled && styles.bookmarkIconContainer,
           disabled && styles.bookmarkIconContainerDisabled
         )}
-        onClick={handleBookmarkClick}
       >
         {isBookmarked ? (
           <BookmarkedIcon

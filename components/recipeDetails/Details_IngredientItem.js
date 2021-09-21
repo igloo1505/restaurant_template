@@ -70,15 +70,11 @@ const Details_IngredientItem = ({
   useEffect(() => {
     if (myGroceries) {
       let _myGroceries = [];
-      myGroceries.forEach((gi, i, a) => {
+      myGroceries.forEach((gi) => {
         _myGroceries.push(gi.ingredient.name.toLowerCase().trim());
       });
-      // if(_myGroceries.includes(item.name.toLowerCase().trim()))
       setInGroceries(_myGroceries.includes(item.name.toLowerCase().trim()));
     }
-    // if (!myGroceries) {
-    //   setInGroceries(false);
-    // }
   }, [myGroceries]);
   let itemUnit = item.unit;
   if (item.quantity <= 1 && itemUnit[itemUnit.length - 1] === "s") {

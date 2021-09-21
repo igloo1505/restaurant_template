@@ -136,6 +136,9 @@ const trimTitle = (title) => {
 };
 
 const BookmarkMenuItem = ({ bi: { title, _id: recipeId }, i, a, classes }) => {
+  useEffect(() => {
+    console.log("bookmarkArray: ", a);
+  }, []);
   const itemClasses = useMenuItemClasses();
   const dispatch = useDispatch();
   const router = useRouter();
