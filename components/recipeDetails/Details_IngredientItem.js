@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import React, { Fragment, useState, useEffect, forwardRef } from "react";
 import { connect, useDispatch } from "react-redux";
@@ -68,25 +69,16 @@ const Details_IngredientItem = ({
   const [inGroceries, setInGroceries] = useState(false);
   useEffect(() => {
     if (myGroceries) {
+      let _myGroceries = [];
       myGroceries.forEach((gi, i, a) => {
-        let shouldSet = true;
-        console.log(`gi: ${gi.ingredient.name}, item: ${item.name}`);
-        if (
-          gi.ingredient.name.toLowerCase().trim() ===
-            item.name.toLowerCase().trim() &&
-          !gi.completed
-        ) {
-          shouldSet = false;
-          return setInGroceries(gi);
-        }
-        if (i === a.length - 1 && shouldSet) {
-          setInGroceries(false);
-        }
+        _myGroceries.push(gi.ingredient.name.toLowerCase().trim());
       });
+      // if(_myGroceries.includes(item.name.toLowerCase().trim()))
+      setInGroceries(_myGroceries.includes(item.name.toLowerCase().trim()));
     }
-    if (!myGroceries) {
-      setInGroceries(false);
-    }
+    // if (!myGroceries) {
+    //   setInGroceries(false);
+    // }
   }, [myGroceries]);
   let itemUnit = item.unit;
   if (item.quantity <= 1 && itemUnit[itemUnit.length - 1] === "s") {

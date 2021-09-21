@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "transparent",
     transform: "translate(-30px, 30px)",
   },
+  list: {
+    paddingBottom: "0px",
+  },
   menuPaper: {
     // transform: "translateX(-50%) !important",
   },
@@ -76,7 +79,7 @@ const Grocery_navbarMenu = ({
             {myGroceries?.map((gi, i, a) => (
               <GroceryMenuItem gi={gi} i={i} a={a} classes={classes} />
             ))}
-            {Boolean(myGroceries?.length && myGroceries?.length > 0) && (
+            {Boolean(myGroceries?.length && myGroceries?.length > 5) && (
               <MenuItem classes={{ root: classes.viewAll }}>View All</MenuItem>
             )}
             {Boolean(!myGroceries?.length || myGroceries?.length === 0) && (

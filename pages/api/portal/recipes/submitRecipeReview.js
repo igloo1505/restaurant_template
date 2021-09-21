@@ -26,11 +26,6 @@ handler.post(async (req, res) => {
         if (r.submittedBy._id.equals(req.body.review.submittedBy)) {
           console.log("Deleting old RecipeReview");
           await RecipeReview.findByIdAndDelete(r._id);
-          // let deleteOldReview = await RecipeReview.findByIdAndRemove(r._id);
-          // console.log("deleteOldReview: ", deleteOldReview);
-          // return res
-          //   .status(401)
-          //   .json({ error: "Each recipe can only be reviewed once." });
         }
       });
     }
