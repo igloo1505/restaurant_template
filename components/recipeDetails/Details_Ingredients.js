@@ -21,12 +21,24 @@ const useClasses = makeStyles((theme) => ({
     boxShadow: `4px 4px 8px ${theme.palette.grey[400]}, -4px -4px 8px ${theme.palette.grey[300]}`,
     backgroundColor: theme.palette.secondary.main,
   },
+  ingredientsContainerNoImage: {
+    marginLeft: "2rem",
+    marginTop: "1rem",
+    padding: "0.75rem 2rem 0.75rem 0.75rem",
+    boxShadow: `4px 4px 8px ${theme.palette.grey[400]}, -4px -4px 8px ${theme.palette.grey[300]}`,
+    backgroundColor: theme.palette.secondary.main,
+  },
 }));
 
 const Details_Ingredients = ({ props: { recipe } }) => {
   const classes = useClasses();
   return (
-    <div className={classes.ingredientsContainer}>
+    <div
+      className={clsx(
+        classes.ingredientsContainer,
+        !recipe.imgUrl && classes.ingredientsContainerNoImage
+      )}
+    >
       <Typography classes={{ root: classes.ingredientsTitle }} variant="h4">
         Ingredients:
       </Typography>

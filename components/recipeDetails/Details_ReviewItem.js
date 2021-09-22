@@ -30,6 +30,7 @@ const useClasses = makeStyles((theme) => ({
     // margin: "0.75rem 0rem",
   },
   reviewSubmittedBy: {
+    fontSize: "1.1rem",
     "&:hover": {
       cursor: "pointer",
     },

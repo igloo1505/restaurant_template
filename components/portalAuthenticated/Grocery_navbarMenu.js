@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     transform: "translate(-30px, 30px)",
   },
   list: {
-    paddingBottom: "0px",
+    padding: "0px",
   },
   menuPaper: {
     // transform: "translateX(-50%) !important",

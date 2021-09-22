@@ -105,7 +105,13 @@ const Details_Banner = ({
   };
 
   return (
-    <div className={styles.bannerOuterContainer} id="recipe-banner">
+    <div
+      className={clsx(
+        styles.bannerOuterContainer,
+        !recipe.imgUrl && styles.bannerOuterContainerNoImage
+      )}
+      id="recipe-banner"
+    >
       <div
         className={clsx(
           !disabled && styles.bookmarkIconContainer,

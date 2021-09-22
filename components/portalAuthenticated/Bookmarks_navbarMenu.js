@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     transform: "translate(-30px, 30px)",
   },
   list: {
-    paddingBottom: "0px",
+    padding: "0px",
   },
   noneToDisplay: {
     paddingBottom: "14px",
@@ -136,9 +136,6 @@ const trimTitle = (title) => {
 };
 
 const BookmarkMenuItem = ({ bi: { title, _id: recipeId }, i, a, classes }) => {
-  useEffect(() => {
-    console.log("bookmarkArray: ", a);
-  }, []);
   const itemClasses = useMenuItemClasses();
   const dispatch = useDispatch();
   const router = useRouter();
