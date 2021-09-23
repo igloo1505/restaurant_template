@@ -3,6 +3,7 @@ import React, { Fragment, useState, useEffect, forwardRef } from "react";
 import { connect, useDispatch } from "react-redux";
 import Cookies from "cookies";
 import mongoose from "mongoose";
+import clsx from "clsx";
 import { autoLoginOnFirstRequest } from "../../util/autoLoginOnFirstRequest";
 import * as Types from "../../stateManagement/TYPES";
 import Recipe from "../../models/Recipe";
@@ -18,7 +19,6 @@ import Details_Directions from "../../components/recipeDetails/Details_Direction
 import Details_Gallery from "../../components/recipeDetails/Details_Gallery";
 import Details_Ingredients from "../../components/recipeDetails/Details_Ingredients";
 import Details_RecipeReviews from "../../components/recipeDetails/Details_RecipeReviews";
-
 import { makeStyles } from "@material-ui/core/styles";
 import Slide from "@material-ui/core/Slide";
 
@@ -29,8 +29,8 @@ const useStyles = makeStyles((theme) => ({
     display: "grid",
     gridTemplateColumns: "4fr 6fr",
     gridColumnGap: "10px",
-    maxWidth: 1920,
-    marginRight: "0px",
+    maxWidth: 1280,
+    marginRight: "auto",
     marginLeft: "auto",
   },
   leftWrapper: {
@@ -47,6 +47,11 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     display: "flex",
     flexDirection: "column",
+  },
+  recipeReviewContainer: {
+    maxWidth: 1280,
+    marginRight: "auto",
+    marginLeft: "auto",
   },
 }));
 

@@ -9,7 +9,7 @@
   grid-template-areas:
     "details details title title"
     "details details title title"
-    "details details actions actions";
+    "details details title title";
   grid-template-columns: repeat(4, 1fr);
   // grid-template-rows: repeat(3, 1fr);
   grid-template-rows: 1fr 1fr auto;
@@ -20,9 +20,9 @@
   // background-color: rgba(81, 161, 255, 0.2);
   background-color: #d8e8fb;
   box-shadow: 4px 4px 12px #bdbdbd, -4px 4px 12px #e0e0e0;
-  @media only screen and (max-width: 960px) {
-    width: 50%;
-  }
+  // @media only screen and (max-width: 960px) {
+  //   width: 50%;
+  // }
 }
 .bannerOuterContainerNoImage {
   // width: 66%;
@@ -37,8 +37,11 @@
     "details details title title"
     "details details actions actions";
   grid-template-columns: repeat(4, 1fr);
-  // grid-template-rows: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+
   grid-template-rows: 1fr 1fr auto;
+  display: flex;
+  flex-direction: row;
   margin-left: -2rem;
   // margin-top: 1rem;
   margin-right: 0px;
@@ -101,9 +104,18 @@
 }
 
 .titleContainer {
+  // grid-area: title;
+  padding-top: 0.75rem;
+  z-index: 1;
+}
+.rightBannerColumn {
   grid-area: title;
   padding-top: 0.75rem;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 
 .titleText {

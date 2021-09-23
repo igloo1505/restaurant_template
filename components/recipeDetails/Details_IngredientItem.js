@@ -71,9 +71,24 @@ const Details_IngredientItem = ({
     if (myGroceries) {
       let _myGroceries = [];
       myGroceries.forEach((gi) => {
-        _myGroceries.push(gi.ingredient.name.toLowerCase().trim());
+        let caseInsensitiveGroceryItem = {
+          ...gi,
+          name: gi.ingredient.name.toLowerCase().trim(),
+        };
+        _myGroceries.push(caseInsensitiveGroceryItem);
       });
-      setInGroceries(_myGroceries.includes(item.name.toLowerCase().trim()));
+      let setGroceries = _myGroceries.filter(
+        (gi) => gi.name.toLowerCase().trim() === item.name.toLowerCase().trim()
+      );
+      console.log("setGroceries: ", setGroceries);
+      if (setGroceries[0]) {
+        setInGroceries(setGroceries[0]);
+      }
+
+      if (setGroceries?.length === 0) {
+        console.log("Setting inGroceries false");
+        setInGroceries(false);
+      }
     }
   }, [myGroceries]);
   let itemUnit = item.unit;
@@ -85,6 +100,7 @@ const Details_IngredientItem = ({
   const classes = useClasses();
 
   const handleGroceryItemClick = () => {
+    console.log("inGroceries", inGroceries);
     if (loggedIn && userId) {
       console.log("Add here");
       if (inGroceries) {

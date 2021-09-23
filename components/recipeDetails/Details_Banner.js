@@ -50,17 +50,15 @@ const Details_Banner = ({
     cookTime: { paddingLeft: "0.5rem" },
   });
   useEffect(() => {
-    let parentHeight = document
-      .getElementById("recipe-banner")
-      .getBoundingClientRect().height;
-    let _padding = 0.75;
-    console.log(
-      "`${parentHeight - (16 + 32 * _padding)}px`: ",
-      `${parentHeight - (16 + 32 * _padding)}px`
-    );
-    setDetailsHeight({
-      height: `${parentHeight - (16 + 32 * _padding)}px`,
-    });
+    if (deviceWidth > 850) {
+      let parentHeight = document
+        .getElementById("recipe-banner")
+        .getBoundingClientRect().height;
+      let _padding = 0.75;
+      setDetailsHeight({
+        height: `${parentHeight - (16 + 32 * _padding)}px`,
+      });
+    }
   }, [deviceWidth]);
   const formattedTime = getFormattedTimeIndividual(recipe);
 
@@ -140,10 +138,13 @@ const Details_Banner = ({
           />
         )}
       </div>
-      <div className={styles.titleContainer}>
-        <Typography variant="h3" classes={{ root: styles.titleText }}>
-          {title}
-        </Typography>
+      <div className={styles.rightBannerColumn}>
+        <div className={styles.titleContainer}>
+          <Typography variant="h3" classes={{ root: styles.titleText }}>
+            {title}
+          </Typography>
+        </div>
+        <Details_ActionSection recipe={recipe} />
       </div>
       <div className={styles.detailsContainer} style={detailsHeight}>
         {recipe?.servings?.amount && (
@@ -154,7 +155,7 @@ const Details_Banner = ({
             >
               Makes About:
             </Typography>
-            <Typography variant="body" classes={{ root: styles.bannerDetail }}>
+            <Typography variant="body1" classes={{ root: styles.bannerDetail }}>
               {`${recipe.servings.amount} ${recipe.servings.unit}`}
             </Typography>
           </div>
@@ -170,7 +171,7 @@ const Details_Banner = ({
           <div>
             {formattedTime?.prepTime?.hours && (
               <Typography
-                variant="body"
+                variant="body1"
                 classes={{
                   root: clsx(
                     styles.bannerDetail,
@@ -184,7 +185,7 @@ const Details_Banner = ({
             )}
             {formattedTime?.prepTime?.minutes && (
               <Typography
-                variant="body"
+                variant="body1"
                 classes={{ root: styles.bannerDetail }}
                 style={minutesPadding.prepTime}
               >
@@ -197,7 +198,7 @@ const Details_Banner = ({
             !formattedTime?.prepTime?.minutes && !formattedTime?.prepTime?.hours
           ) && (
             <Typography
-              variant="body"
+              variant="body1"
               classes={{ root: styles.bannerDetailNoContent }}
             >
               -- : --
@@ -214,7 +215,7 @@ const Details_Banner = ({
           <div>
             {formattedTime?.cookTime?.hours && (
               <Typography
-                variant="body"
+                variant="body1"
                 classes={{
                   root: clsx(
                     styles.bannerDetail,
@@ -228,7 +229,7 @@ const Details_Banner = ({
             )}
             {formattedTime?.cookTime?.minutes && (
               <Typography
-                variant="body"
+                variant="body1"
                 classes={{
                   root: styles.bannerDetail,
                 }}
@@ -245,7 +246,7 @@ const Details_Banner = ({
                 !formattedTime?.cookTime?.hours
             ) && (
               <Typography
-                variant="body"
+                variant="body1"
                 classes={{ root: styles.bannerDetailNoContent }}
               >
                 -- : --
@@ -254,7 +255,6 @@ const Details_Banner = ({
           </div>
         </div>
       </div>
-      <Details_ActionSection recipe={recipe} />
     </div>
   );
 };

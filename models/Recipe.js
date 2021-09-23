@@ -1,6 +1,7 @@
 const Ingredient = require("./Ingredient");
 const mongoose = require("mongoose");
 const categoryArray = ["specialty", "side", "drink", "tacoIngredients"];
+const RecipeReview = require("./RecipeReview");
 
 const unitArray = [
   "A pinch",
@@ -104,9 +105,61 @@ const RecipeSchema = mongoose.Schema(
       ref: "RecipeReview",
       unique: true,
     },
+    averageRatings: {
+      kidFriendly: {
+        type: Number,
+        required: true,
+      },
+      dateFriendly: {
+        type: Number,
+        required: true,
+      },
+      quickSnack: {
+        type: Number,
+        required: true,
+      },
+      dietFriendly: {
+        type: Number,
+        required: true,
+      },
+    },
   },
   { timestamps: true }
 );
+
+RecipeSchema.pre("findOneAndUpdate", async function (next, done) {
+  // return next();
+  if (this?._update?.["$push"]?.recipeReviews) {
+    let averageReviews = {
+      kidFriendly: [],
+      dateFriendly: [],
+      quickSnack: [],
+      dietFriendly: [],
+    };
+    let allReviews = await mongoose
+      .model("RecipeReview")
+      .find({ recipeReference: this.getQuery()._id });
+    allReviews.forEach((review) => {
+      Object.keys(averageReviews).forEach((key) => {
+        averageReviews[key].push(review[key]);
+      });
+    });
+
+    Object.keys(averageReviews).forEach((finishedKey) => {
+      let newAverage = averageReviews[finishedKey].reduce((a, b) => {
+        return a + b;
+      }, 0);
+      averageReviews[finishedKey] =
+        newAverage / averageReviews[finishedKey].length;
+    });
+
+    this._update.averageRatings = averageReviews;
+
+    return next();
+  } else {
+    return next();
+  }
+});
 
 RecipeSchema.methods.getUsersRecentRecipes = async function () {
   let recipes = await mongoose
@@ -118,6 +171,6 @@ RecipeSchema.methods.getUsersRecentRecipes = async function () {
 };
 
 RecipeSchema.plugin(require("mongoose-autopopulate"));
-// module.exports = mongoose.model("Recipe", RecipeSchema);
+
 module.exports =
   mongoose.models?.Recipe || mongoose.model("Recipe", RecipeSchema);

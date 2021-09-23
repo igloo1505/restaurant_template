@@ -11,28 +11,50 @@ const colors = require("colors");
 const handler = nc();
 // handler.use(middleware);
 handler.post(async (req, res) => {
-  console.log(colors.bgBlue.white(req.body));
   try {
     let review = {
       ...req.body.review,
       recipeReference: req.body.review.recipeId,
     };
+
+    let recipe = await Recipe.findById(req.body?.review?.recipeId);
+
+    if (!recipe) {
+      res.statusCode = 500;
+      return res.json({ msg: "Failed to add review" });
+    }
+
     let CheckUniqueSubmission = await Recipe.findById(req.body.review.recipeId)
       .populate("recipeReviews")
       .populate("submittedBy");
-    console.log("CheckUniqueSubmission: ", CheckUniqueSubmission);
-    if (CheckUniqueSubmission) {
+
+    let hasRecipeReviews = Boolean(CheckUniqueSubmission?.recipeReviews);
+
+    if (hasRecipeReviews) {
       CheckUniqueSubmission.recipeReviews.forEach(async (r) => {
         if (r.submittedBy._id.equals(req.body.review.submittedBy)) {
-          console.log("Deleting old RecipeReview");
+          let newRecipe = await Recipe.findByIdAndUpdate(
+            req.body.review.recipeId,
+            {
+              $pullAll: { recipeReviews: [r._id] },
+            },
+            { new: true }
+          );
+          let removeRecipeFromUser = await User.findByIdAndUpdate(
+            req.body.review.submittedBy,
+            {
+              $pullAll: { reviewsWritten: [r._id] },
+            },
+            { new: true }
+          );
           await RecipeReview.findByIdAndDelete(r._id);
         }
       });
     }
 
     delete review.recipeId;
-    let newReview = new RecipeReview(review);
 
+    let newReview = new RecipeReview(review);
     let user = await User.findByIdAndUpdate(
       req.body.review.submittedBy,
       {
@@ -40,6 +62,11 @@ handler.post(async (req, res) => {
       },
       { new: true }
     );
+    if (!user) {
+      res.statusCode = 500;
+      return res.json({ msg: "Failed to add review" });
+    }
+
     let _recipe = await Recipe.findByIdAndUpdate(
       req.body?.review?.recipeId,
       {
@@ -50,17 +77,6 @@ handler.post(async (req, res) => {
 
     await newReview.save();
 
-    console.log(user, _recipe);
-
-    if (!user) {
-      res.statusCode = 500;
-      return res.json({ msg: "Failed to add review" });
-    }
-    let recipe = await Recipe.findById(req.body?.review?.recipeId);
-    if (!recipe) {
-      res.statusCode = 500;
-      return res.json({ msg: "Failed to add review" });
-    }
     return res.json({
       updatedUser: user,
       updatedRecipe: _recipe,

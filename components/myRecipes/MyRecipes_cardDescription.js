@@ -5,7 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useRouter } from "next/router";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import TimerIcon from "@material-ui/icons/Timer";
+
 import { connect } from "react-redux";
 
 const useDescriptionStyles = makeStyles((theme) => ({
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "0px 0.5rem",
   },
   ingredientItemsContainer: {
-    listStyleType: "disc",
+    // listStyleType: "disc",
 
     maxHeight: "calc(100% - 31px)",
     // Scroll here just looks super congested... as if cramming an entire recipe onto a 400 * 250px card will ever look great.
@@ -67,7 +67,8 @@ const useStyles = makeStyles((theme) => ({
   ingredientItem: {
     color: theme.palette.grey[800],
     paddingTop: "0.35rem",
-    display: "block",
+    display: "list-item",
+    listStyleType: "disc",
   },
   rightSideContainer: {
     minHeight: "calc(100% - 31px)",
@@ -123,11 +124,15 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
         <Typography classes={{ root: classes.IngredientTitle }}>
           Ingredients:
         </Typography>
-        <ul className={classes.ingredientItemsContainer}>
+        <ol className={classes.ingredientItemsContainer}>
           {recipe.ingredients.map((ingredient, i) => (
-            <RecipeItem ingredient={ingredient} classes={classes} />
+            <RecipeItem
+              ingredient={ingredient}
+              classes={classes}
+              key={`card-ingredient-${index}`}
+            />
           ))}
-        </ul>
+        </ol>
       </div>
       <div className={classes.rightSideContainer}>
         <Typography classes={descriptionClasses}>
@@ -163,5 +168,5 @@ const MyRecipes_cardDescription = ({ recipe, summaryOpen, index }) => {
 export default MyRecipes_cardDescription;
 
 const RecipeItem = ({ ingredient, classes }) => {
-  return <div className={classes.ingredientItem}>* {ingredient.name}</div>;
+  return <li className={classes.ingredientItem}>- {ingredient.name}</li>;
 };

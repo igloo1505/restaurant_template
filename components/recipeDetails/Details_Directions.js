@@ -106,6 +106,11 @@ const _DirectionItem = ({
             .getElementById(`directionItem-${index}`)
             .getBoundingClientRect().height
         }px`,
+        minWidth: `${
+          document
+            .getElementById(`directionItem-${index}`)
+            .getBoundingClientRect().height
+        }px`,
       });
     }
   }, [deviceHeight, deviceWidth]);
