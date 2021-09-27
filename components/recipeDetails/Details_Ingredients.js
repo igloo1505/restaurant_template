@@ -42,7 +42,7 @@ const Details_Ingredients = ({ props: { recipe } }) => {
       <Typography classes={{ root: classes.ingredientsTitle }} variant="h4">
         Ingredients:
       </Typography>
-      {recipe?.ingredients.map((ingredient, i) => (
+      {recipe?.ingredients?.map((ingredient, i) => (
         <Details_IngredientItem
           item={ingredient}
           recipeId={recipe._id}

@@ -330,3 +330,26 @@ export const updateProfileData = (profileData) => async (dispatch) => {
     });
   }
 };
+
+export const deleteReview = (data) => async (dispatch) => {
+  console.log(data);
+  let res = await useAxios({
+    method: "post",
+    url: "/api/userInteractions/removeRecipeReview",
+    data: data,
+  });
+  console.log("response", res);
+  if (res.status === 200) {
+    dispatch({
+      type: Types.REMOVE_RECIPE_REVIEW_SUCCESS,
+      payload: res.data,
+    });
+  }
+  if (res.status !== 200) {
+    console.log("Res.data", res.data);
+    dispatch({
+      type: Types.REMOVE_RECIPE_REVIEW_FAIL,
+      payload: "Error adding profile data",
+    });
+  }
+};

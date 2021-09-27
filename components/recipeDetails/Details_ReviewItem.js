@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { connect, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import Typography from "@material-ui/core/Typography";
 import StarHalfIcon from "@material-ui/icons/StarHalf";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import StarIcon from "@material-ui/icons/Star";
+import DeleteIcon from "@material-ui/icons/DeleteForever";
+import * as Types from "../../stateManagement/TYPES";
 
 const useClasses = makeStyles((theme) => ({
   reviewContainer: {
@@ -14,6 +17,7 @@ const useClasses = makeStyles((theme) => ({
     padding: "0.75rem",
     border: "1px solid red",
     borderRadius: "5px",
+    position: "relative",
   },
   innerReviewContainer: {
     display: "flex",
@@ -31,13 +35,34 @@ const useClasses = makeStyles((theme) => ({
   },
   reviewSubmittedBy: {
     fontSize: "1.1rem",
+    width: "fit-content",
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
+  deleteIcon: {
+    position: "absolute",
+    top: "5px",
+    right: "5px",
+    color: theme.palette.error.dark,
     "&:hover": {
       cursor: "pointer",
     },
   },
 }));
 
-const Details_ReviewItem = ({ review, index, array }) => {
+const Details_ReviewItem = ({
+  props: { review, index, array, recipeId },
+  user: {
+    loggedIn,
+    self: { _id: userId },
+  },
+}) => {
+  const [isOwnReview, setIsOwnReview] = useState(false);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    setIsOwnReview(userId === review?.submittedBy?._id);
+  }, [loggedIn, userId]);
   const classes = useClasses();
   const router = useRouter();
   const _reviewRatingIcons = {
@@ -58,7 +83,6 @@ const Details_ReviewItem = ({ review, index, array }) => {
     for (var i = arr.length; i < 5; i++) {
       arr.push(StarBorderIcon);
     }
-    console.log("arr: ", arr);
     return arr;
   };
 
@@ -78,8 +102,30 @@ const Details_ReviewItem = ({ review, index, array }) => {
     router.push(`/user/${review.submittedBy._id}`);
   };
 
+  const handleDeleteIconClick = () => {
+    if (isOwnReview) {
+      let modalPayload = {
+        isOpen: true,
+        title: "Delete Review?",
+        variant: "deleteReview",
+        relevantId: { reviewId: review._id, recipeId: recipeId },
+        titleColor: "error",
+      };
+      dispatch({
+        type: Types.SHOW_DELETE_REVIEW_MODAL,
+        payload: modalPayload,
+      });
+    }
+  };
+
   return (
     <div className={classes.reviewContainer} id={`recipeReview-${index}`}>
+      {isOwnReview && (
+        <DeleteIcon
+          classes={{ root: classes.deleteIcon }}
+          onClick={handleDeleteIconClick}
+        />
+      )}
       <Typography
         variant="subtitle2"
         onClick={redirectToUserProfile}
@@ -107,7 +153,12 @@ const Details_ReviewItem = ({ review, index, array }) => {
   );
 };
 
-export default Details_ReviewItem;
+const mapStateToProps = (state, props) => ({
+  user: state.user,
+  props: props,
+});
+
+export default connect(mapStateToProps)(Details_ReviewItem);
 
 const useRatingClasses = makeStyles((theme) => ({
   individualRatingContainer: {
@@ -121,7 +172,7 @@ const useRatingClasses = makeStyles((theme) => ({
   },
 }));
 
-const RatingWithIcons = ({ reviewKey, index, iconArray, key }) => {
+const RatingWithIcons = ({ reviewKey, index, iconArray }) => {
   const getReviewKey = (reviewKey) => {
     switch (reviewKey) {
       case "dateFriendly":

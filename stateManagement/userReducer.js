@@ -9,6 +9,7 @@ import {
   REMOVE_USER,
   RETURN_SINGLE_ITEM,
   UPDATE_USER_INFO,
+  REMOVE_RECIPE_REVIEW_SUCCESS,
   LOGOUT,
 } from "./TYPES";
 import { getAllRecipesFromUser } from "./recipeActions";
@@ -43,6 +44,14 @@ export default function userReducer(state = initialState, action) {
         triedAutoLogin: true,
         loading: false,
         self: newPayload,
+      };
+    case REMOVE_RECIPE_REVIEW_SUCCESS:
+      return {
+        ...state,
+        loggedIn: true,
+        triedAutoLogin: true,
+        loading: false,
+        self: action.payload.updatedUser,
       };
     case LOGOUT:
       return initialState;

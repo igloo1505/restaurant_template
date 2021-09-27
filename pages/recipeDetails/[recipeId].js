@@ -56,21 +56,34 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const recipeDetailsById = ({
-  props: { UI, user, recipe, usersRecentRecipes, hasUser },
+  props: { UI, user, recipe: getServerRecipe, usersRecentRecipes, hasUser },
   user: {
     loggedIn,
     self: { _id: userId },
   },
+  currentRecipe: { currentRecipeDetails },
   viewport: { width: deviceWidth },
 }) => {
+  console.log("getServerRecipe: ", getServerRecipe);
+  const [recipe, setRecipe] = useState(getServerRecipe);
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log("hasUser: ", hasUser);
-    console.log("usersRecipeRecipes: ", usersRecentRecipes);
+    console.log("currentRecipeDetails: ", currentRecipeDetails);
+    if (currentRecipeDetails) {
+      setRecipe(currentRecipeDetails);
+    }
+  }, [currentRecipeDetails]);
+  useEffect(() => {
     if (hasUser && Boolean(!loggedIn || !userId)) {
       dispatch({
         type: Types.AUTO_LOGIN_SUCCESS,
         payload: hasUser,
+      });
+    }
+    if (recipe) {
+      dispatch({
+        type: Types.SET_RECIPE_DETAILS_RECIPE,
+        payload: recipe,
       });
     }
   }, [hasUser]);
@@ -93,7 +106,10 @@ const recipeDetailsById = ({
           </div>
         </div>
         <div className={classes.recipeReviewContainer}>
-          <Details_RecipeReviews recipeReviews={recipe.recipeReviews} />
+          <Details_RecipeReviews
+            recipeReviews={recipe.recipeReviews}
+            recipeId={recipe._id}
+          />
         </div>
       </AdjustForDrawerContainer>
     </Fragment>
@@ -104,6 +120,7 @@ const mapStateToProps = (state, props) => ({
   user: state.user,
   UI: state.UI,
   viewport: state.UI.viewport,
+  currentRecipe: state.recipes,
   props: props,
 });
 

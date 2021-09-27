@@ -80,13 +80,10 @@ const Details_IngredientItem = ({
       let setGroceries = _myGroceries.filter(
         (gi) => gi.name.toLowerCase().trim() === item.name.toLowerCase().trim()
       );
-      console.log("setGroceries: ", setGroceries);
       if (setGroceries[0]) {
         setInGroceries(setGroceries[0]);
       }
-
       if (setGroceries?.length === 0) {
-        console.log("Setting inGroceries false");
         setInGroceries(false);
       }
     }

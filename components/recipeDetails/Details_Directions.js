@@ -22,7 +22,7 @@ const Details_Directions = ({ recipe }) => {
   const [_directions, setDirections] = useState([]);
   let __directions = [];
   useEffect(() => {
-    directions.map((d, i, a) => {
+    directions?.map((d, i, a) => {
       __directions.push({ string: d, checked: false });
       if (i === a.length - 1) {
         setDirections(__directions);

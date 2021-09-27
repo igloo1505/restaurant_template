@@ -75,6 +75,16 @@ const modalReducer = createReducer(initialState, (builder) => {
       },
     };
   });
+  builder.addCase(Types.SHOW_DELETE_REVIEW_MODAL, (state, action) => {
+    return {
+      ...state,
+      dialog: {
+        ...state.dialog,
+        ...action.payload,
+        isOpen: true,
+      },
+    };
+  });
   builder.addCase(Types.HIDE_ALERT, (state, action) => {
     return {
       ...state,

@@ -210,6 +210,7 @@ const RecipeReviewModal = ({
               type="text"
               value={formData.comment}
               fullWidth
+              multiline
               onKeyDown={(e) => {
                 if (e.key !== "Backspace" && formData.comment.length >= 200) {
                   e.preventDefault();

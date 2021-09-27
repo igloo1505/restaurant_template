@@ -14,19 +14,21 @@ const useClasses = makeStyles((theme) => ({
   },
 }));
 
-const Details_RecipeReviews = ({ recipeReviews }) => {
+const Details_RecipeReviews = ({ recipeReviews, recipeId }) => {
   console.log("recipeReviews: ", recipeReviews);
   const classes = useClasses();
   return (
     <div className={classes.outerContainer}>
-      {recipeReviews.map((review, index, array) => (
-        <Details_ReviewItem
-          review={review}
-          index={index}
-          array={array}
-          key={`recipeReview-${index}`}
-        />
-      ))}
+      {recipeReviews &&
+        recipeReviews?.map((review, index, array) => (
+          <Details_ReviewItem
+            review={review}
+            recipeId={recipeId}
+            index={index}
+            array={array}
+            key={`recipeReview-${index}`}
+          />
+        ))}
     </div>
   );
 };

@@ -16,6 +16,12 @@ const initialState = {
     results: [],
   },
   error: null,
+  // TODO use this to adjust state when reviews and whatnot are edited on recipeDetails page
+  currentRecipeDetails: {},
+};
+
+const filterById = (itemId, array) => {
+  return array.filter((item) => item._id === itemId);
 };
 
 const recipeReducer = (state = initialState, action) => {
@@ -34,6 +40,21 @@ const recipeReducer = (state = initialState, action) => {
       return {
         ...state,
         myRecipes: action.payload._myRecipes,
+      };
+    case Types.SET_RECIPE_DETAILS_RECIPE:
+      return {
+        ...state,
+        currentRecipeDetails: action.payload,
+      };
+    case Types.SUBMIT_RECIPE_REVIEW_SUCCESS:
+      return {
+        ...state,
+        currentRecipeDetails: action.payload.updatedRecipe,
+      };
+    case Types.REMOVE_RECIPE_REVIEW_SUCCESS:
+      return {
+        ...state,
+        currentRecipeDetails: action.payload.updatedRecipe,
       };
     case Types.ADD_RECIPE_IMAGE:
       return {

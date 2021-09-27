@@ -7,6 +7,7 @@ import { connect, useDispatch } from "react-redux";
 import * as Types from "../../stateManagement/TYPES";
 import Default_Dialog_Content from "../modalContent/Default_Dialog_Content";
 import Modal_confirmDeleteRecipe from "../myRecipes/Modal_confirmDeleteRecipe";
+import ConfirmDeleteReviewModal from "../recipeDetails/ConfirmDeleteReviewModal";
 import Modal_addProfileImage from "../myProfile/Modal_addProfileImage";
 import Modal_editLocation from "../myProfile/Modal_editLocation";
 import Modal_setSkill from "../myProfile/Modal_setSkill";
@@ -124,6 +125,15 @@ const GetDialogContent = ({ variant, isOpen, contentText, title }) => {
       case "deleteRecipe":
         return (
           <Modal_confirmDeleteRecipe
+            variant={variant}
+            isOpen={isOpen}
+            contentText={contentText}
+            title={title}
+          />
+        );
+      case "deleteReview":
+        return (
+          <ConfirmDeleteReviewModal
             variant={variant}
             isOpen={isOpen}
             contentText={contentText}

@@ -129,13 +129,20 @@ const RecipeSchema = mongoose.Schema(
 
 RecipeSchema.pre("findOneAndUpdate", async function (next, done) {
   // return next();
+  console.log("this", this);
   if (this?._update?.["$push"]?.recipeReviews) {
+    let latestReview = await RecipeReview.findById(
+      this._update["$push"].recipeReviews._id
+    );
+    console.log("latestReview: ", latestReview);
     let averageReviews = {
-      kidFriendly: [],
-      dateFriendly: [],
-      quickSnack: [],
-      dietFriendly: [],
+      kidFriendly: [latestReview.kidFriendly],
+      dateFriendly: [latestReview.dateFriendly],
+      quickSnack: [latestReview.quickSnack],
+      dietFriendly: [latestReview.dietFriendly],
     };
+    console.log("averageReviews: ", averageReviews);
+
     let allReviews = await mongoose
       .model("RecipeReview")
       .find({ recipeReference: this.getQuery()._id });
@@ -144,7 +151,6 @@ RecipeSchema.pre("findOneAndUpdate", async function (next, done) {
         averageReviews[key].push(review[key]);
       });
     });
-
     Object.keys(averageReviews).forEach((finishedKey) => {
       let newAverage = averageReviews[finishedKey].reduce((a, b) => {
         return a + b;
@@ -152,9 +158,8 @@ RecipeSchema.pre("findOneAndUpdate", async function (next, done) {
       averageReviews[finishedKey] =
         newAverage / averageReviews[finishedKey].length;
     });
-
+    console.log("averageReviews: ", averageReviews);
     this._update.averageRatings = averageReviews;
-
     return next();
   } else {
     return next();
