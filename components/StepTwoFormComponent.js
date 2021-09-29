@@ -6,6 +6,7 @@ import * as Types from "../stateManagement/TYPES";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/AddBoxOutlined";
 import CheckedIcon from "@material-ui/icons/DoneOutlined";
 import TextField from "@material-ui/core/TextField";
@@ -31,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
       duration: 500,
     }),
     minWidth: "300px",
+    position: "relative",
     [theme.breakpoints.down(960)]: {
       minWidth: "min(200px, 25vw)",
     },
@@ -141,7 +143,9 @@ const useStyles = makeStyles((theme) => ({
   },
   checkboxDisabled: {},
   checkboxLabel: { color: "#fff" },
-  checkBoxContainer: { paddingTop: "10px", float: "right" },
+  checkBoxContainer: {
+    float: "right",
+  },
   unitAndAmountContainer: {
     width: "100%",
     display: "grid",
@@ -178,6 +182,32 @@ const useStyles = makeStyles((theme) => ({
       duration: 500,
     }),
   },
+  bottomContainer: {
+    marginTop: "1rem",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  addSecondItemButtonContainer: {},
+  addSecondItemButton: {
+    backgroundColor: theme.palette.info.main,
+    // position: "absolute",
+    // bottom: 0,
+    // left: 0,
+    // scale: 0.1,
+    // opacity: 0.1,
+    "&:hover": {
+      backgroundColor: theme.palette.info.main,
+      boxShadow: "2px 2px 6px #cc540e, -2px -2px 6px #ff6c12",
+      transition: theme.transitions.create(["box-shadow"], {
+        duration: 350,
+      }),
+    },
+  },
+  addSecondItemButtonLabel: {
+    color: "#fff",
+  },
 }));
 
 const StepTwoFormComponent = ({
@@ -187,6 +217,9 @@ const StepTwoFormComponent = ({
   isShifted,
   hasMenuOpen,
   setHasMenuOpen,
+  addSecondItemButton,
+  setAddSecondItemButton,
+  handleAddSecondItem,
 }) => {
   const name = "ingredient";
   const [hasSentAlert, setHasSentAlert] = useState(getHasSentAlert());
@@ -213,7 +246,6 @@ const StepTwoFormComponent = ({
     },
   });
   const sendAddIngredientNotification = () => {
-    console.log("sending", hasSentAlert);
     if (!hasSentAlert) {
       if (localStorage) {
         localStorage.setItem("hasSentAlert-ingredients", true);
@@ -236,6 +268,11 @@ const StepTwoFormComponent = ({
     if (e.target.value.length === 3) {
       sendAddIngredientNotification();
     }
+
+    console.log("formData: ", formData);
+    if (formData.ingredients.length > 2) {
+      setAddSecondItemButton(true);
+    }
     if (e.target.name === "amount") {
       return setFormData({
         ...formData,
@@ -250,6 +287,9 @@ const StepTwoFormComponent = ({
   };
   // Go back and change this to use users last used unit
   const addIngredient = (unit) => {
+    if (formData.ingredients.length >= 1) {
+      setAddSecondItemButton(true);
+    }
     setFormData({
       ...formData,
       ingredients: [
@@ -492,30 +532,52 @@ const StepTwoFormComponent = ({
           />
         </div>
       </div>
-      <FormControlLabel
-        style={{ backgroundColor: "transparent" }}
-        classes={{
-          label: classes.checkboxLabel,
-          root: classes.checkBoxContainer,
-        }}
-        control={
-          <Checkbox
-            value={formData.ingredient.optional}
-            checked={formData.ingredient.optional}
-            name="ingredient"
-            onChange={handleChangeBoolean}
-            color="primary"
-            // disabled={Object.keys(validated).every((x) => x === true)}
-            checkedIcon={<CheckedIcon style={{ color: "#fff" }} />}
-            classes={{
-              root: classes.checkBoxRoot,
-              checked: classes.checkBoxChecked,
-              disabled: classes.checkboxDisabled,
-            }}
-          />
-        }
-        label="Optional"
-      />
+      <div className={classes.bottomContainer}>
+        <div className={classes.addSecondItemButtonContainer}>
+          {addSecondItemButton && (
+            <Button
+              onClick={handleAddSecondItem}
+              classes={{
+                root: clsx(
+                  classes.addSecondItemButton,
+                  hasMenuOpen && "hideButtons",
+                  "addSecondItemButtonAnimate"
+                ),
+                label: clsx(
+                  classes.addSecondItemButtonLabel,
+                  hasMenuOpen && "hideButtons"
+                ),
+              }}
+            >
+              Add Second Item
+            </Button>
+          )}
+        </div>
+        <FormControlLabel
+          style={{ backgroundColor: "transparent" }}
+          classes={{
+            label: classes.checkboxLabel,
+            root: classes.checkBoxContainer,
+          }}
+          control={
+            <Checkbox
+              value={formData.ingredient.optional}
+              checked={formData.ingredient.optional}
+              name="ingredient"
+              onChange={handleChangeBoolean}
+              color="primary"
+              // disabled={Object.keys(validated).every((x) => x === true)}
+              checkedIcon={<CheckedIcon style={{ color: "#fff" }} />}
+              classes={{
+                root: classes.checkBoxRoot,
+                checked: classes.checkBoxChecked,
+                disabled: classes.checkboxDisabled,
+              }}
+            />
+          }
+          label="Optional"
+        />
+      </div>
     </div>
   );
 };

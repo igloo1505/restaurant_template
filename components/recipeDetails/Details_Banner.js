@@ -50,7 +50,7 @@ const Details_Banner = ({
     cookTime: { paddingLeft: "0.5rem" },
   });
   useEffect(() => {
-    if (deviceWidth > 850) {
+    if (deviceWidth > 1280) {
       let parentHeight = document
         .getElementById("recipe-banner")
         .getBoundingClientRect().height;

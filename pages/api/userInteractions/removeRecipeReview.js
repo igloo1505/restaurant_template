@@ -55,7 +55,6 @@ handler.post(async (req, res) => {
         });
 
         const deleteReview = await Review.findByIdAndDelete(review._id);
-        console.log("updatedUser: ", updatedUser);
         return res.json({
           msg: "Recipe review removed successfully.",
           removedReviewId: review._id,

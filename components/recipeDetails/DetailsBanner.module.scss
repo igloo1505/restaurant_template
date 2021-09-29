@@ -3,16 +3,15 @@
   width: 100%;
   // height: 100%;
   height: fit-content;
-  min-height: 20vh;
+  // min-height: 20vh;
+  min-height: fit-content;
   display: grid;
   position: relative;
-  grid-template-areas:
-    "details details title title"
-    "details details title title"
-    "details details title title";
+  grid-template-areas: "details details title title";
   grid-template-columns: repeat(4, 1fr);
   // grid-template-rows: repeat(3, 1fr);
-  grid-template-rows: 1fr 1fr auto;
+  // grid-template-rows: 1fr 1fr auto;
+  grid-template-rows: 1fr;
   margin-left: auto;
   margin-right: 0px;
   border-radius: 4px;
@@ -20,9 +19,13 @@
   // background-color: rgba(81, 161, 255, 0.2);
   background-color: #d8e8fb;
   box-shadow: 4px 4px 12px #bdbdbd, -4px 4px 12px #e0e0e0;
-  // @media only screen and (max-width: 960px) {
-  //   width: 50%;
-  // }
+  @media only screen and (max-width: 1280px) {
+    min-height: fit-content;
+  }
+  @media only screen and (max-width: 960px) {
+    grid-template-columns: max-content 1fr auto;
+    // min-height: fit-content;
+  }
 }
 .bannerOuterContainerNoImage {
   // width: 66%;
@@ -61,6 +64,10 @@
   justify-content: space-between;
   grid-area: details;
   height: fit-content;
+  margin-bottom: 0.75rem;
+  @media only screen and (max-width: 960px) {
+    width: fit-content;
+  }
 }
 .individualTimeWrapper {
   display: flex;

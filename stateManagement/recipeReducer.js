@@ -16,7 +16,6 @@ const initialState = {
     results: [],
   },
   error: null,
-  // TODO use this to adjust state when reviews and whatnot are edited on recipeDetails page
   currentRecipeDetails: {},
 };
 

@@ -149,7 +149,7 @@ const DisplayItem = ({ item, text, removeItem, name, index }) => {
       >
         <div
           className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow")}
-          onClick={() => console.log("item: ", item)}
+          // onClick={() => console.log("item: ", item)}
         >
           <div
             className={clsx(

@@ -20,6 +20,11 @@ const useClasses = makeStyles((theme) => ({
         duration: 350,
       }
     ),
+    [theme.breakpoints.down(960)]: {
+      width: "min(500px, 80vw)",
+      display: "flex",
+      flexDirection: "column-reverse",
+    },
   },
   addBoxShadow: {
     boxShadow: `2px 2px 5px ${theme.palette.grey[400]}, -2px 2px 5px ${theme.palette.grey[300]}`,

@@ -67,7 +67,13 @@ const useTextFieldClasses = makeStyles((theme) => ({
     // boxShadow: "7px 7px 15px #d9d9d9, -7px -7px 15px #ffffff",
   },
   textFieldRootFocused: { boxShadow: "none", backgroundColor: "#fff" },
-  textFieldContainer: { marginTop: "2rem" },
+  textFieldContainer: {
+    marginTop: "2rem",
+    [theme.breakpoints.down(960)]: {
+      marginTop: "0rem",
+      marginBottom: "1rem",
+    },
+  },
 }));
 const MyRecipes_searchBar = () => {
   const [focusState, setFocusState] = useState({

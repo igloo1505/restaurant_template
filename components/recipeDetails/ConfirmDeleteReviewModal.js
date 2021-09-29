@@ -14,6 +14,12 @@ const useStyles = makeStyles((theme) => ({
   outerContainer: {
     padding: "0px 1rem 1rem 1rem",
   },
+  actionsContainer: {
+    padding: "0.5rem 0.5rem 0rem 0.5rem",
+  },
+  contentRoot: {
+    padding: "0.5rem 0.5rem 0.5rem 0.5rem",
+  },
   innerContainer: {
     minWidth: "300px",
     display: "flex",
@@ -79,14 +85,14 @@ const Modal_confirmDeleteReview = ({
   return (
     <div className={classes.outerContainer}>
       <div className={classes.innerContainer}>
-        <DialogContent>
+        <DialogContent classes={{ root: classes.contentRoot }}>
           <Typography classes={{ root: classes.confirmTextContainer }}>
             Are you sure?
           </Typography>
           <div className={classes.warningText}>This cannot be undone.</div>
         </DialogContent>
       </div>
-      <DialogActions>
+      <DialogActions classes={{ root: classes.actionsContainer }}>
         <Button
           onClick={() => handleDismiss()}
           color="primary"

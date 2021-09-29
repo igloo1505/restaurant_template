@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -9,6 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import Slide from "@material-ui/core/Slide";
 import Grow from "@material-ui/core/Grow";
 import Button from "@material-ui/core/Button";
+import { gsap } from "gsap";
 import {
   ConnectorComponent,
   StepIconComponent,
@@ -21,6 +23,8 @@ import {
   addNewRecipe,
   authenticateAddRecipeForm,
 } from "../stateManagement/recipeActions";
+
+// TODO add ability to use multiple 'ingredient' forms and have ingredients for multiple items: Salad and the dressing
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -146,12 +150,13 @@ const useStyles = makeStyles((theme) => ({
   buttons: {
     marginTop: "24px",
     display: "flex",
+    // justifyContent: "space-between",
     justifyContent: "flex-end",
   },
   backButton: {
     color: "#fff",
     backgroundColor: theme.palette.secondary.main,
-    padding: 0,
+    // padding: 0,
     boxShadow: "4px 4px 6px #cc540e, -4px -4px 6px #ff6c12",
     "&:hover": {
       boxShadow: "2px 2px 6px #cc540e, -2px -2px 6px #ff6c12",
@@ -232,10 +237,22 @@ const AddRecipeFormContainer = (
   ref
 ) => {
   const store = useStore();
+  const [addSecondItemButton, setAddSecondItemButton] = useState(false);
   const [hasMenuOpen, setHasMenuOpen] = useState(false);
   const [paperLifted, setPaperLifted] = useState(false);
+  useEffect(() => {
+    if (addSecondItemButton) {
+      // setTimeout(() => {
+      animateButtonEntrance();
+      // }, 200);
+    }
+  }, [addSecondItemButton]);
 
   const classes = useStyles();
+
+  const handleAddSecondItem = () => {
+    console.log("Add second item here");
+  };
 
   useEffect(() => {
     !paperLifted && setTimeout(() => setPaperLifted(true), 300);
@@ -316,48 +333,53 @@ const AddRecipeFormContainer = (
                 setPlaceHolder={setPlaceHolder}
                 hasMenuOpen={hasMenuOpen}
                 setHasMenuOpen={setHasMenuOpen}
+                addSecondItemButton={addSecondItemButton}
+                setAddSecondItemButton={setAddSecondItemButton}
+                handleAddSecondItem={handleAddSecondItem}
               />
             </div>
             <div className={classes.buttons}>
-              {activeStep !== 0 && (
+              <div className={classes.buttonRightContainer}>
+                {activeStep !== 0 && (
+                  <Button
+                    onClick={handleBack}
+                    // className={(classes.button, classes.backButton)}
+                    classes={{
+                      root: clsx(
+                        classes.backButton,
+                        hasMenuOpen && "hideButtons"
+                      ),
+                      label: clsx(
+                        classes.backButtonLabel,
+                        hasMenuOpen && "hideButtons"
+                      ),
+                    }}
+                  >
+                    Back
+                  </Button>
+                )}
                 <Button
-                  onClick={handleBack}
-                  // className={(classes.button, classes.backButton)}
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
                   classes={{
                     root: clsx(
-                      classes.backButton,
+                      classes.button,
+                      activeStep === steps.length - 1 &&
+                        classes.lastStepSubmitButton,
                       hasMenuOpen && "hideButtons"
                     ),
                     label: clsx(
-                      classes.backButtonLabel,
+                      classes.nextButton,
+                      activeStep === steps.length - 1 &&
+                        classes.lastStepSubmitButtonLabel,
                       hasMenuOpen && "hideButtons"
                     ),
                   }}
                 >
-                  Back
+                  {activeStep === steps.length - 1 ? "Submit Recipe" : "Next"}
                 </Button>
-              )}
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleNext}
-                classes={{
-                  root: clsx(
-                    classes.button,
-                    activeStep === steps.length - 1 &&
-                      classes.lastStepSubmitButton,
-                    hasMenuOpen && "hideButtons"
-                  ),
-                  label: clsx(
-                    classes.nextButton,
-                    activeStep === steps.length - 1 &&
-                      classes.lastStepSubmitButtonLabel,
-                    hasMenuOpen && "hideButtons"
-                  ),
-                }}
-              >
-                {activeStep === steps.length - 1 ? "Submit Recipe" : "Next"}
-              </Button>
+              </div>
             </div>
           </Fragment>
         </Fragment>
@@ -383,6 +405,9 @@ const GetStepContent = forwardRef(
       setPlaceHolder,
       hasMenuOpen,
       setHasMenuOpen,
+      addSecondItemButton,
+      setAddSecondItemButton,
+      handleAddSecondItem,
     },
     ref
   ) => {
@@ -412,6 +437,9 @@ const GetStepContent = forwardRef(
               setFormData={setFormData}
               hasMenuOpen={hasMenuOpen}
               setHasMenuOpen={setHasMenuOpen}
+              addSecondItemButton={addSecondItemButton}
+              setAddSecondItemButton={setAddSecondItemButton}
+              handleAddSecondItem={handleAddSecondItem}
             />
           </Grow>
         );
@@ -432,3 +460,13 @@ const GetStepContent = forwardRef(
     }
   }
 );
+
+const animateButtonEntrance = () => {
+  gsap.from(".addSecondItemButtonAnimate", {
+    scale: 0.1,
+    duration: 1.5,
+    opacity: 0.1,
+    // ease: "back.out(1.7)"
+    ease: "elastic.out(1, 0.3)",
+  });
+};

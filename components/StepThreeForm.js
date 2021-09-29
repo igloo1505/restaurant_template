@@ -4,6 +4,8 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import StepThreeDisplayComponent from "./StepThreeDisplayComponent";
 import StepThreeFormComponent from "./StepThreeFormComponent";
 
+// TODO: add snackbar to keyword "degrees" and suggest replacing with U+00B0 || &deg;
+
 const useStyles = makeStyles((theme) => ({
   container: {
     display: "grid",

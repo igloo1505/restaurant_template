@@ -44,6 +44,7 @@ const StepTwoDisplayComponent = ({
   formData,
   setFormData,
   formHeightLimit,
+  setAddSecondItemButton,
 }) => {
   const classes = useStyles();
   const removeItem = (e, item) => {
@@ -54,9 +55,15 @@ const StepTwoDisplayComponent = ({
     storedData.forEach((s, i) => (data[i] = s));
     localStorage.setItem("ingredients", JSON.stringify(data));
     console.log("storedData: ", data);
+    let filteredIngredients = formData?.ingredients.filter(
+      (i) => i.text !== item.text
+    );
+    if (filteredIngredients.length < 2) {
+      setAddSecondItemButton(false);
+    }
     setFormData({
       ...formData,
-      ingredients: formData?.ingredients.filter((i) => i.text !== item.text),
+      ingredients: filteredIngredients,
     });
   };
 

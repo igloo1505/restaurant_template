@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import StepTwoFormComponent from "./StepTwoFormComponent";
 import StepTwoDisplayComponent from "./StepTwoDisplayComponent";
+import gsap from "gsap";
 // import Stepper from "@material-ui/core/Stepper";
 // import Step from "@material-ui/core/Step";
 // import StepLabel from "@material-ui/core/StepLabel";

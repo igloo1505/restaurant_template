@@ -108,7 +108,7 @@ const Details_ActionSection = ({
     loggedIn,
     self: { _id: userId },
   },
-  recipes: { myFavorites },
+  recipes: { myFavorites, currentRecipeDetails },
   handleFavorite,
 }) => {
   const dispatch = useDispatch();
@@ -148,6 +148,9 @@ const Details_ActionSection = ({
   const classes = useStyles();
   useEffect(() => {
     let isIncluded = myFavorites?.includes(recipe._id);
+    if (currentRecipeDetails?._id && !isIncluded) {
+      isIncluded = myFavorites?.includes(currentRecipeDetails._id);
+    }
     setIsFavorited(isIncluded);
   }, [myFavorites]);
 

@@ -6,11 +6,10 @@ import Details_ReviewItem from "./Details_ReviewItem";
 const useClasses = makeStyles((theme) => ({
   outerContainer: {
     margin: "1rem 0rem",
-    // border: "1px solid red",
     width: "100%",
     display: "grid",
     gap: "10px",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(50%, 1fr))",
   },
 }));
 

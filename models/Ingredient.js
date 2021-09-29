@@ -2,15 +2,28 @@ import mongoose from "mongoose";
 
 // TODO adjust this to match front-end array, eventually use from same source to avoid errors.
 
-// const unitArray = Object.values(unitObject).filter((u) => !u.isKey);
-
-// const unitValidator = [
-//   validate({
-//     validator: "isIn",
-//     arguments: unitArray,
-//     message: "Unit needs to be one of accepted values.",
-//   }),
-// ];
+const unitArray = [
+  "A pinch",
+  "A smidgen",
+  "A heap",
+  "just a little",
+  "A wee bit",
+  "A speckle",
+  "Teaspoons",
+  "Tablespoons",
+  "Cups",
+  "Quarts",
+  "Gallons",
+  "Milliliters",
+  "Cubic cm",
+  "liters",
+  "Pounds",
+  "Ounces",
+  "Grams",
+  "Kilograms",
+  "Stone",
+  "People",
+];
 
 const Ingredient = mongoose.Schema(
   {
@@ -25,11 +38,13 @@ const Ingredient = mongoose.Schema(
     unit: {
       type: String,
       required: true,
-      // validate: unitValidator,
     },
     optional: {
       type: Boolean,
       default: false,
+    },
+    text: {
+      type: String,
     },
   },
   { timestamps: true }

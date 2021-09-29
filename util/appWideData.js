@@ -23,6 +23,7 @@ const unitObject = {
     { long: "just a little", short: "little", key: "Subjective" },
     { long: "A wee bit", short: "wee bit", key: "Subjective" },
     { long: "A speckle", short: "speck", key: "Subjective" },
+    { long: "People", short: "people", key: "Subjective" },
   ],
 };
 

@@ -1,6 +1,5 @@
 const Ingredient = require("./Ingredient");
 const mongoose = require("mongoose");
-const categoryArray = ["specialty", "side", "drink", "tacoIngredients"];
 const RecipeReview = require("./RecipeReview");
 
 const unitArray = [
@@ -23,6 +22,52 @@ const unitArray = [
   "Grams",
   "Kilograms",
   "Stone",
+  "People",
+  "Whole",
+];
+
+const healthKeyEnum = [
+  "gluten free",
+  "dairy free",
+  "vegan",
+  "vegetarian",
+  "paleo",
+  "keto",
+  "lactose free",
+  "low fat",
+  "low carb",
+  "low sodium",
+  "high protein",
+  "low cholesterol",
+  "high fiber",
+  "low sugar",
+];
+
+const cuisineEnum = [
+  "Italian",
+  "American",
+  "Chinese",
+  "Thai",
+  "Indian",
+  "Mexican",
+  "French",
+  "Salad",
+];
+
+const categoryEnum = [
+  "one pan",
+  "side",
+  "drink",
+  "condiment",
+  "dinner",
+  "snack",
+  "holiday",
+  "celebration",
+  "breakfast",
+  "on the go",
+  "affordable",
+  "health focused",
+  "Salad",
 ];
 
 const RecipeSchema = mongoose.Schema(
@@ -46,17 +91,23 @@ const RecipeSchema = mongoose.Schema(
     imgUrl: {
       type: String,
     },
+    cuisineType: {
+      type: [String],
+      default: [],
+    },
     description: {
       type: String,
-      required: [
-        true,
-        "Make sure people can find your recipe by giving it a description.",
-      ],
+      default: "",
     },
     ingredients: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Ingredient",
       autopopulate: true,
+    },
+    // TODO Add this functionality to add/remove favorite route to help with sorting search results
+    favoriteCount: {
+      type: Number,
+      default: 0,
     },
     time: {
       prepTime: { type: Number },
@@ -74,6 +125,7 @@ const RecipeSchema = mongoose.Schema(
       unit: {
         type: String,
         enum: unitArray,
+        default: "People",
         required: [
           true,
           "Please fill out the serving information as accurately as you can.",
@@ -87,13 +139,9 @@ const RecipeSchema = mongoose.Schema(
         "Please add some directions. Some of us need more help than others.",
       ],
     },
-    isHot: {
-      type: Boolean,
-      default: false,
-    },
-    isGlutenFree: {
-      type: Boolean,
-      default: false,
+    healthKeys: {
+      type: [String],
+      default: [],
     },
     comments: {
       type: [mongoose.Schema.Types.ObjectId],
@@ -108,19 +156,15 @@ const RecipeSchema = mongoose.Schema(
     averageRatings: {
       kidFriendly: {
         type: Number,
-        required: true,
       },
       dateFriendly: {
         type: Number,
-        required: true,
       },
       quickSnack: {
         type: Number,
-        required: true,
       },
       dietFriendly: {
         type: Number,
-        required: true,
       },
     },
   },

@@ -16,6 +16,10 @@ module.exports = withPWA({
     AWS_BUCKET_REGION: process.env.AWS_BUCKET_REGION,
     AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+    EDAMAM_RECIPE_APP_ID: process.env.EDAMAM_RECIPE_APP_ID,
+    EDAMAM_RECIPE_ACCESS_KEY: process.env.EDAMAM_RECIPE_ACCESS_KEY,
+    EDAMAM_FOOD_APP_ID: process.env.EDAMAM_FOOD_APP_ID,
+    EDAMAM_FOOD_ACCESS_KEY: process.env.EDAMAM_FOOD_ACCESS_KEY,
   },
   publicRuntimeConfig: {
     rootUrl: process.env.ROOT_URL,

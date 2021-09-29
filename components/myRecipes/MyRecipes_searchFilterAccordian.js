@@ -49,7 +49,12 @@ const useStyles = makeStyles((theme) => ({
       }),
     },
   },
-  outerContainer: { marginBottom: "16px" },
+  outerContainer: {
+    marginBottom: "16px",
+    [theme.breakpoints.down(960)]: {
+      marginBottom: "0px",
+    },
+  },
   addBoxShadow: {
     boxShadow: `4px 4px 9px ${theme.palette.grey[400]}, -4px -4px 9px ${theme.palette.grey[50]}`,
     transition: theme.transitions.create(["box-shadow"], {
