@@ -338,6 +338,10 @@ export default function UIReducer(state = initialState, action) {
           el: action.payload,
           shouldBeVisible: true,
         },
+        Bookmarks_navbarMenu: {
+          ...initialState.Bookmarks_navbarMenu,
+          shouldBeVisible: false,
+        },
       };
     case SHOW_BOOKMARK_MENU:
       return {
@@ -348,6 +352,12 @@ export default function UIReducer(state = initialState, action) {
           ...state.Bookmarks_navbarMenu,
           el: action.payload,
           shouldBeVisible: true,
+        },
+        accountMenu: { ...state.accountMenu, el: null, shouldBeVisible: false },
+        Grocery_navbarMenu: {
+          ...state.Grocery_navbarMenu,
+          el: null,
+          shouldBeVisible: false,
         },
       };
     case DISPOSE_ACCOUNT_MENU:

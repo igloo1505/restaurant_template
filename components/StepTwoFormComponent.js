@@ -192,11 +192,6 @@ const useStyles = makeStyles((theme) => ({
   addSecondItemButtonContainer: {},
   addSecondItemButton: {
     backgroundColor: theme.palette.info.main,
-    // position: "absolute",
-    // bottom: 0,
-    // left: 0,
-    // scale: 0.1,
-    // opacity: 0.1,
     "&:hover": {
       backgroundColor: theme.palette.info.main,
       boxShadow: "2px 2px 6px #cc540e, -2px -2px 6px #ff6c12",
@@ -207,6 +202,7 @@ const useStyles = makeStyles((theme) => ({
   },
   addSecondItemButtonLabel: {
     color: "#fff",
+    textTransform: "none",
   },
 }));
 
@@ -549,7 +545,7 @@ const StepTwoFormComponent = ({
                 ),
               }}
             >
-              Add Second Item
+              Add Separate Item
             </Button>
           )}
         </div>

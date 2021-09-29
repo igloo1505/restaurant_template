@@ -1,6 +1,7 @@
 const Ingredient = require("./Ingredient");
 const mongoose = require("mongoose");
 const RecipeReview = require("./RecipeReview");
+const SubRecipe = require("./SubRecipe");
 
 const unitArray = [
   "A pinch",
@@ -102,6 +103,11 @@ const RecipeSchema = mongoose.Schema(
     ingredients: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Ingredient",
+      autopopulate: true,
+    },
+    subRecipes: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "SubRecipe",
       autopopulate: true,
     },
     // TODO Add this functionality to add/remove favorite route to help with sorting search results
