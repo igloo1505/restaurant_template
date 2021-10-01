@@ -80,7 +80,7 @@ const DrawerContent = ({
     let style = {
       marginTop: `${navHeight}px`,
     };
-    console.log("Height, Width", navHeight, deviceWidth);
+
     if (navHeight !== 0 && deviceWidth >= 1920) {
       setHeightOffsetStyle(style);
     }

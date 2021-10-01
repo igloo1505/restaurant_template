@@ -71,7 +71,7 @@ const upperLimits = {
   XL: 2400,
 };
 const getDeviceType = (w) => {
-  // console.log("Wwwww", w);
+  //
   switch (true) {
     case w <= upperLimits.mobile:
       return "isMobile";
@@ -103,7 +103,7 @@ export default function UIReducer(state = initialState, action) {
 
     case SET_VIEWPORT_DIMENSIONS: {
       let device = getDeviceType(action.payload.width);
-      // console.log("Device type", device);
+      //
       return {
         ...state,
         alert: { ...state.alert },

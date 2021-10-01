@@ -110,7 +110,6 @@ const RecipeSchema = mongoose.Schema(
       ref: "SubRecipe",
       autopopulate: true,
     },
-    // teSttttt
     // TODO Add this functionality to add/remove favorite route to help with sorting search results
     favoriteCount: {
       type: Number,
@@ -180,19 +179,18 @@ const RecipeSchema = mongoose.Schema(
 
 RecipeSchema.pre("findOneAndUpdate", async function (next, done) {
   // return next();
-  console.log("this", this);
+
   if (this?._update?.["$push"]?.recipeReviews) {
     let latestReview = await RecipeReview.findById(
       this._update["$push"].recipeReviews._id
     );
-    console.log("latestReview: ", latestReview);
+
     let averageReviews = {
       kidFriendly: [latestReview.kidFriendly],
       dateFriendly: [latestReview.dateFriendly],
       quickSnack: [latestReview.quickSnack],
       dietFriendly: [latestReview.dietFriendly],
     };
-    console.log("averageReviews: ", averageReviews);
 
     let allReviews = await mongoose
       .model("RecipeReview")
@@ -209,7 +207,7 @@ RecipeSchema.pre("findOneAndUpdate", async function (next, done) {
       averageReviews[finishedKey] =
         newAverage / averageReviews[finishedKey].length;
     });
-    console.log("averageReviews: ", averageReviews);
+
     this._update.averageRatings = averageReviews;
     return next();
   } else {

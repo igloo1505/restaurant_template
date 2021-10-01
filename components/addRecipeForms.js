@@ -190,14 +190,12 @@ const StepOneFormComponent = ({
   const [focusState, setFocusState] = useState(initialFocusState);
   const [shouldShrinkDescription, setShouldShrinkDescription] = useState(true);
   useEffect(() => {
-    console.log(formData, formData.description);
     let shouldShrink = Boolean(formData?.description?.length !== 0);
-    console.log("shouldShrink: ", shouldShrink);
+
     setShouldShrinkDescription(shouldShrink);
     setPlaceHolder(!shouldShrink);
   }, []);
   const fauxListener = (title, type) => {
-    console.log(focusState);
     if (type === "blur") {
       setFocusState({
         ...focusState,
@@ -279,7 +277,6 @@ const StepOneFormComponent = ({
                   formData?.title?.length >= 50 &&
                   !allowKeys.includes(e.key)
                 ) {
-                  console.log("e: ", e);
                   e.preventDefault();
                   e.stopPropagation();
                 }

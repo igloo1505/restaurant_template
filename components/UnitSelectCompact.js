@@ -150,6 +150,10 @@ const UnitSelectCompact = (props) => {
     focusState,
     setFocusState,
     addIngredient,
+    isSubRecipe,
+    setIsSubRecipe,
+    subRecipeFormData,
+    setSubRecipeFormData,
   } = props;
   const [unitHelper, setUnitHelper] = useState("");
   useEffect(() => {
@@ -188,11 +192,10 @@ const UnitSelectCompact = (props) => {
         unitHelperHelper = `${unitHelperHelper} `;
       }
       if (m[m.length - 1] === " ") {
-        console.log("reached here@");
         unitHelperHelper = ` ${unitHelperHelper}`;
       }
     });
-    console.log("matches: ", matches);
+
     // let _matches = str.split(_regex);
     // let matches_ = str.split(regex_);
 
@@ -204,7 +207,6 @@ const UnitSelectCompact = (props) => {
     // }
     if (matches.length === option.long.length) {
       matches = [];
-      console.log("stop here");
     }
     matches.forEach((m, i, a) => {
       let o = {
@@ -214,8 +216,7 @@ const UnitSelectCompact = (props) => {
       parts.push(o);
       if (i !== a.length - 1) {
         let position = option.long.search(regex);
-        console.log("position: ", position);
-        console.log(unitHelper.slice(position, position + unitHelper.length));
+
         parts.push({
           text: option.long.slice(position, position + unitHelper.length),
           match: true,
@@ -227,19 +228,6 @@ const UnitSelectCompact = (props) => {
     }
     return parts;
   };
-  // const submitUnitChange = () => {
-  //   let validated = validateUnit(unitHelper);
-  //   console.log("validated: ", validated);
-  //   let _unit = getIngredientUnits().filter(
-  //     (u) => u.long.toLowerCase() === e.target.value.toLowerCase()
-  //   );
-  //   if (_unit) {
-  //     setFormData({
-  //       ...formData,
-  //       ingredient: { ...formData.ingredient, unit: _unit },
-  //     });
-  //   }
-  // };
 
   const handleKeyPress = (e) => {
     if (typeof window !== "undefined") {
@@ -258,16 +246,21 @@ const UnitSelectCompact = (props) => {
   };
 
   const handleChange = (e) => {
-    console.log("EEEE", e.target.id, e.target.value);
-
     if (typeof e.target?.value === "string") {
       let _unit = getIngredientUnits().filter(
         (u) => u.long.toLowerCase() === e.target.value.trim().toLowerCase()
       );
-      if (_unit) {
+
+      if (_unit && !isSubRecipe) {
         setFormData({
           ...formData,
           ingredient: { ...formData.ingredient, unit: _unit },
+        });
+      }
+      if (_unit && isSubRecipe) {
+        setSubRecipeFormData({
+          ...subRecipeFormData,
+          ingredient: { ...subRecipeFormData.ingredient, unit: _unit },
         });
       }
       setUnitHelper(e.target.value);
@@ -299,10 +292,16 @@ const UnitSelectCompact = (props) => {
       let unit_ = getIngredientUnits().filter(
         (u) => !u.isKey && u.long === option.long
       );
-      if (unit_) {
+      if (unit_ && !isSubRecipe) {
         setFormData({
           ...formData,
           ingredient: { ...formData.ingredient, unit: unit_[0] },
+        });
+      }
+      if (unit_ && isSubRecipe) {
+        setSubRecipeFormData({
+          ...subRecipeFormData,
+          ingredient: { ...subRecipeFormData.ingredient, unit: unit_[0] },
         });
       }
     } else if (e.target?.value) {
@@ -313,7 +312,7 @@ const UnitSelectCompact = (props) => {
           index = i;
           return u.long.toLowerCase() === e.target.value.toLowerCase();
         });
-      console.log(" _unit: ", _unit);
+
       if (_unit[0]) {
         setFormData({
           ...formData,
@@ -395,7 +394,6 @@ const UnitSelectCompact = (props) => {
                   "option-div",
                   unitHelper.length > 0 && classes.optionWithValue
                 )}
-                onFocus={(e) => console.log("did focus", e)}
                 value={option.long}
                 onClick={(e) => handleItemClick(e, option)}
               >

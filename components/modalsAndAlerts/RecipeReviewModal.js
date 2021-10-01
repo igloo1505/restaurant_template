@@ -381,7 +381,6 @@ const _RatingIcon = ({
   }, [deviceWidth]);
 
   const handleMouseMove = (e) => {
-    console.log("e: ", e);
     if (allowHover[name]) {
       let rValue = 0;
       let mouseXValue = e.pageX;
@@ -427,7 +426,6 @@ const _RatingIcon = ({
           id={starIconId}
           classes={{ root: ratingClasses.iconRoot }}
           onMouseMove={handleMouseMove}
-          onTouchStart={(e) => console.log("E", e)}
         />
       );
     case 1:
@@ -436,7 +434,6 @@ const _RatingIcon = ({
           id={starIconId}
           classes={{ root: ratingClasses.iconRoot }}
           onMouseMove={handleMouseMove}
-          onTouchStart={(e) => console.log("E", e)}
         />
       );
     case 0:
@@ -446,7 +443,6 @@ const _RatingIcon = ({
           id={starIconId}
           classes={{ root: ratingClasses.iconRoot }}
           onMouseMove={handleMouseMove}
-          onTouchStart={(e) => console.log("E", e)}
         />
       );
   }

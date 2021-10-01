@@ -109,9 +109,7 @@ const publicProfileRecipeCard = ({ recipe, index }) => {
       setAddBoxShadow(true);
     }, offset);
   }, []);
-  console.log("recipe in profile: ", recipe);
 
-  console.log("trimDescription(description): ", description);
   const redirectToRecipe = () => {
     router.push(`/recipeDetails/${_id}`);
   };

@@ -45,6 +45,10 @@ const StepTwoDisplayComponent = ({
   setFormData,
   formHeightLimit,
   setAddSecondItemButton,
+  isSubRecipe,
+  setIsSubRecipe,
+  subRecipeFormData,
+  setSubRecipeFormData,
 }) => {
   const classes = useStyles();
   const removeItem = (e, item) => {
@@ -54,17 +58,21 @@ const StepTwoDisplayComponent = ({
     storedData = Object.values(storedData).filter((s) => s !== item.text);
     storedData.forEach((s, i) => (data[i] = s));
     localStorage.setItem("ingredients", JSON.stringify(data));
-    console.log("storedData: ", data);
-    let filteredIngredients = formData?.ingredients.filter(
-      (i) => i.text !== item.text
-    );
+
+    let filteredIngredients = isSubRecipe
+      ? subRecipeFormData.ingredients.filter((i) => i.ingredient !== item.text)
+      : formData?.ingredients.filter((i) => i.text !== item.text);
     if (filteredIngredients.length < 2) {
       setAddSecondItemButton(false);
     }
-    setFormData({
-      ...formData,
-      ingredients: filteredIngredients,
-    });
+    if (isSubRecipe) {
+    }
+    if (!isSubRecipe) {
+      setFormData({
+        ...formData,
+        ingredients: filteredIngredients,
+      });
+    }
   };
 
   return (
@@ -77,17 +85,30 @@ const StepTwoDisplayComponent = ({
         maxHeight: `${formHeightLimit}px`,
       }}
     >
-      {formData?.ingredients.map((item, index, a) => (
-        <DisplayItem
-          item={item}
-          text={item.text}
-          index={index}
-          array={a}
-          name="ingredients"
-          key={`${item.text}-${index}`}
-          removeItem={removeItem}
-        />
-      ))}
+      {isSubRecipe &&
+        subRecipeFormData?.ingredients.map((item, index, a) => (
+          <DisplayItem
+            item={item}
+            text={item.ingredient}
+            index={index}
+            array={a}
+            name="ingredients-subRecipe"
+            key={`${item.text}-${index}`}
+            removeItem={removeItem}
+          />
+        ))}
+      {!isSubRecipe &&
+        formData?.ingredients.map((item, index, a) => (
+          <DisplayItem
+            item={item}
+            text={item.text}
+            index={index}
+            array={a}
+            name="ingredients"
+            key={`${item.text}-${index}`}
+            removeItem={removeItem}
+          />
+        ))}
     </div>
   );
 };

@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
+import React from "react";
+
 const DisplayItemContent = ({ item, text, removeItem, name, classes }) => {
-  console.log("item: ", item);
   const checkAmount = (amount, unit) => {
     if (parseFloat(amount) === 1) {
       if (unit.charAt(unit.length - 1).toLowerCase() === "s") {
-        console.log("Did reach here");
         return unit.slice(0, unit.length - 1);
       }
       return unit;
@@ -12,18 +13,18 @@ const DisplayItemContent = ({ item, text, removeItem, name, classes }) => {
     }
   };
   switch (name) {
-    case "ingredients":
-      const {
+    case "ingredients": {
+      let {
         amount,
-        optional,
-        // I don't know why this causes an issue in the other cases but don't change this text: Text bit.
         text: Text,
         unit: { short: unitShort, long: unitLong },
       } = item;
       return (
         <div className={classes.text}>
           {Text.split(/\r?\n/).map((i) => (
-            <span className={classes.textyText}>{i}</span>
+            <span className={classes.textyText} key={`${text}-${i}`}>
+              {i}
+            </span>
           ))}
           <span className={classes["text-subtitle"]}>{`${amount} ${checkAmount(
             amount,
@@ -31,6 +32,30 @@ const DisplayItemContent = ({ item, text, removeItem, name, classes }) => {
           )}`}</span>
         </div>
       );
+    }
+    case "ingredients-subRecipe": {
+      let {
+        amount: subRecipeAmount,
+        optional: subRecipeOptional,
+        ingredient: subRecipeText,
+        unit: { short: subRecipeUnitShort, long: subRecipeUnitLong },
+      } = item;
+      return (
+        <div className={classes.text}>
+          {subRecipeText.split(/\r?\n/).map((i) => (
+            <span className={classes.textyText} key={`${subRecipeText}-${i}`}>
+              {i}
+            </span>
+          ))}
+          <span
+            className={classes["text-subtitle"]}
+          >{`${subRecipeAmount} ${checkAmount(
+            subRecipeAmount,
+            subRecipeUnitLong
+          )}`}</span>
+        </div>
+      );
+    }
     case "directions":
     default:
       return (

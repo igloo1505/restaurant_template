@@ -90,16 +90,13 @@ const Details_IngredientItem = ({
   }, [myGroceries]);
   let itemUnit = item.unit;
   if (item.quantity <= 1 && itemUnit[itemUnit.length - 1] === "s") {
-    console.log("change here");
     itemUnit = itemUnit.slice(0, itemUnit.length - 1);
   }
-  console.log("item: ", item);
+
   const classes = useClasses();
 
   const handleGroceryItemClick = () => {
-    console.log("inGroceries", inGroceries);
     if (loggedIn && userId) {
-      console.log("Add here");
       if (inGroceries) {
         handleGroceryItem({
           ingredientId: inGroceries._id,

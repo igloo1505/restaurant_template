@@ -117,7 +117,7 @@ const superInefficientlyAvoidRepaint = (text, name, index) => {
   }
   if (storedData) {
     storedData = JSON.parse(storedData);
-    console.log("storedData: ", storedData);
+
     if (Object.values(storedData).indexOf(text) === -1) {
       // storedData[index] = text
       localStorage.setItem(
@@ -133,7 +133,7 @@ const superInefficientlyAvoidRepaint = (text, name, index) => {
 
 const DisplayItem = ({ item, text, removeItem, name, index }) => {
   let isInitial = superInefficientlyAvoidRepaint(text, name, index);
-  console.log("isInitial: ", text, isInitial);
+
   const classes = useItemStyles();
   const [shifted, setShifted] = useState(!isInitial);
   useEffect(() => {
@@ -149,7 +149,7 @@ const DisplayItem = ({ item, text, removeItem, name, index }) => {
       >
         <div
           className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow")}
-          // onClick={() => console.log("item: ", item)}
+          // onClick={() => }
         >
           <div
             className={clsx(
@@ -189,7 +189,6 @@ const DisplayItem = ({ item, text, removeItem, name, index }) => {
     return (
       <div
         className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow")}
-        onClick={() => console.log("item: ", item)}
       >
         <div
           className={clsx(

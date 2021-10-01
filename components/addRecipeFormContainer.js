@@ -250,9 +250,7 @@ const AddRecipeFormContainer = (
 
   const classes = useStyles();
 
-  const handleAddSecondItem = () => {
-    console.log("Add second item here");
-  };
+  const handleAddSecondItem = () => {};
 
   useEffect(() => {
     !paperLifted && setTimeout(() => setPaperLifted(true), 300);
@@ -272,16 +270,15 @@ const AddRecipeFormContainer = (
       data.directions.push(formData.direction);
       delete data.direction;
     }
-    console.log("Data => ", data);
+
     store.dispatch(addNewRecipe(data));
   };
 
   const handleNext = () => {
     // TODO validate before transition to next step
     if (activeStep === 2) {
-      console.log("firing now");
       handleRecipeSubmission();
-      return console.log("formData", formData);
+      return;
     }
     setActiveStep(activeStep + 1);
   };
@@ -411,7 +408,6 @@ const GetStepContent = forwardRef(
     },
     ref
   ) => {
-    console.log("props, ref: ", activeStep, ref);
     // step = 0
     switch (activeStep) {
       case 0:
@@ -464,9 +460,8 @@ const GetStepContent = forwardRef(
 const animateButtonEntrance = () => {
   gsap.from(".addSecondItemButtonAnimate", {
     scale: 0.1,
-    duration: 1.5,
+    duration: 1.2,
     opacity: 0.1,
-    // ease: "back.out(1.7)"
-    ease: "elastic.out(1, 0.3)",
+    ease: "elastic.out(1.2, 0.5)",
   });
 };

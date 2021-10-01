@@ -31,7 +31,6 @@ const Details_Banner = ({
     setDisabled(!shouldDisable);
   }, [loggedIn, userId]);
   useEffect(() => {
-    console.log("myBookmarks: ", myBookmarks);
     let shouldSet = true;
     if (myBookmarks) {
       myBookmarks.forEach((bookmark) => {
@@ -87,7 +86,7 @@ const Details_Banner = ({
         paddingLeft: "0.5rem",
       };
     }
-    console.log("newPadding: ", newPadding);
+
     setMinutesPadding(newPadding);
   }, []);
 

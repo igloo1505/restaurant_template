@@ -157,7 +157,6 @@ const Navbar = ({
     if (router.pathname === "/portal" && isSignUp) {
       dispatch({ type: Types.TOGGLE_SIGNUP_FORM });
     }
-    console.log("router", router);
   };
   const [shiftAppbar, setShiftAppbar] = useState(false);
   useEffect(() => {

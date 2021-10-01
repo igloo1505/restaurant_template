@@ -22,6 +22,10 @@ const initialState = {
       confirmAction: null,
     },
   },
+  subRecipe: {
+    titles: [],
+    title: "",
+  },
   addImageModal: {
     relevantId: null,
     isOpen: false,
@@ -362,6 +366,28 @@ const modalReducer = createReducer(initialState, (builder) => {
       recipeReviewModal: {
         ...initialState.recipeReviewModal,
         isOpen: false,
+      },
+    };
+  });
+  builder.addCase(Types.SET_SUB_RECIPE_TITLE, (state, action) => {
+    return {
+      ...state,
+      subRecipe: {
+        ...state.subRecipe,
+        title: action.payload,
+      },
+    };
+  });
+  builder.addCase(Types.SUBMIT_SUB_RECIPE_TITLE, (state, action) => {
+    return {
+      ...state,
+      subRecipe: {
+        ...state.subRecipe,
+        titles: [...state.subRecipe.titles, state.subRecipe.title],
+        title: "",
+      },
+      dialog: {
+        ...initialState.dialog,
       },
     };
   });

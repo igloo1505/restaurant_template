@@ -47,7 +47,7 @@ const AddAdornment = (
   text
 ) => {
   const namesToIgnoreReturn = ["ingredient"];
-  console.log("focusState: ", focused);
+
   const [showIcon, setShowIcon] = useState(false);
   const [shouldIgnoreReturn, setShouldIgnoreReturn] = useState(false);
   useEffect(() => {
@@ -58,7 +58,6 @@ const AddAdornment = (
 
   const classes = useAdornmentClasses();
   useEffect(() => {
-    console.log("name: ", name);
     if (!shouldIgnoreReturn) {
       if (!shiftPressed || !enabled) {
         setShowIcon(false);
@@ -75,7 +74,7 @@ const AddAdornment = (
       setEnabled(false);
     }
   }, [text]);
-  console.log("formData.ingredient: ", formData);
+
   if (!shouldIgnoreReturn && shiftPressed) {
     return (
       <Fragment>

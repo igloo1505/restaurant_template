@@ -64,7 +64,7 @@ const Details_Gallery = forwardRef(
         let emWidth = document
           .getElementById(outerContainerId)
           .getBoundingClientRect().width;
-        console.log("emWidth: ", emWidth);
+
         setAspectRatio({
           height: `${emWidth * 0.75}px`,
         });

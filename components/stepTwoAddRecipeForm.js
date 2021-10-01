@@ -28,11 +28,36 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+
 const StepTwoAddRecipeForm = (props) => {
   const [isShifted, setIsShifted] = useState(
     props.formData.ingredients.length !== 0
   );
   const [formHeightLimit, setFormHeightLimit] = useState(400);
+  const [isSubRecipe, setIsSubRecipe] = useState(false);
+  const [subRecipeFormData, setSubRecipeFormData] = useState({
+    title: "",
+    ingredients: [],
+    ingredient: {
+      ingredient: "",
+      optional: false,
+      amount: 1,
+      unit: { long: "Cups", short: "cups", key: "Volume" },
+    },
+  });
+
+  useEffect(() => {
+    console.log("props.formData: ", props.formData);
+  }, [props.formData]);
+
+  useEffect(() => {
+    console.log(
+      "subRecipeFormData, isSubRecipe: ",
+      subRecipeFormData,
+      isSubRecipe
+    );
+  }, [subRecipeFormData, isSubRecipe]);
+
   useEffect(() => {
     if (props.formData?.ingredients.length !== 0) {
       setIsShifted(true);
@@ -42,6 +67,7 @@ const StepTwoAddRecipeForm = (props) => {
     }
   }, [props.formData]);
   const classes = useStyles();
+
   return (
     <div className={clsx(classes.container)}>
       <StepTwoFormComponent
@@ -49,12 +75,20 @@ const StepTwoAddRecipeForm = (props) => {
         isShifted={isShifted}
         setIsShifted={setIsShifted}
         formHeightLimit={formHeightLimit}
+        isSubRecipe={isSubRecipe}
+        setIsSubRecipe={setIsSubRecipe}
+        subRecipeFormData={subRecipeFormData}
+        setSubRecipeFormData={setSubRecipeFormData}
       />
       <StepTwoDisplayComponent
         {...props}
         isShifted={isShifted}
         setIsShifted={setIsShifted}
         formHeightLimit={formHeightLimit}
+        isSubRecipe={isSubRecipe}
+        setIsSubRecipe={setIsSubRecipe}
+        subRecipeFormData={subRecipeFormData}
+        setSubRecipeFormData={setSubRecipeFormData}
       />
     </div>
   );

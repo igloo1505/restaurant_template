@@ -12,6 +12,7 @@ import Modal_addProfileImage from "../myProfile/Modal_addProfileImage";
 import Modal_editLocation from "../myProfile/Modal_editLocation";
 import Modal_setSkill from "../myProfile/Modal_setSkill";
 import Modal_addRecipeImage from "../myRecipes/Modal_addRecipeImage";
+import StepTwoSetSubRecipeModal from "../StepTwoSetSubRecipeModal";
 import { FcHighPriority } from "react-icons/fc";
 
 const useStyles = makeStyles((theme) => ({
@@ -143,6 +144,15 @@ const GetDialogContent = ({ variant, isOpen, contentText, title }) => {
       case "addRecipeImage":
         return (
           <Modal_addRecipeImage
+            variant={variant}
+            isOpen={isOpen}
+            contentText={contentText}
+            title={title}
+          />
+        );
+      case "setSubRecipeTitle":
+        return (
+          <StepTwoSetSubRecipeModal
             variant={variant}
             isOpen={isOpen}
             contentText={contentText}

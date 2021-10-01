@@ -216,8 +216,11 @@ const StepTwoFormComponent = ({
   addSecondItemButton,
   setAddSecondItemButton,
   handleAddSecondItem,
+  isSubRecipe,
+  setIsSubRecipe,
+  subRecipeFormData,
+  setSubRecipeFormData,
 }) => {
-  const name = "ingredient";
   const [hasSentAlert, setHasSentAlert] = useState(getHasSentAlert());
   const [shiftPressed, setShiftPressed] = useState(false);
   // useEffect(() => {
@@ -261,49 +264,81 @@ const StepTwoFormComponent = ({
   };
 
   const handleChange = (e) => {
+    console.log("e: ", e.target.name);
+    // nameArray = {
+    //   ingredient,
+    //   amount
+    //   handle unit in addIngredient
+    // }
+
     if (e.target.value.length === 3) {
       sendAddIngredientNotification();
     }
-
-    console.log("formData: ", formData);
     if (formData.ingredients.length > 2) {
       setAddSecondItemButton(true);
     }
-    if (e.target.name === "amount") {
-      return setFormData({
-        ...formData,
-        ingredient: { ...formData.ingredient, amount: e.target.value },
+    if (isSubRecipe) {
+      setSubRecipeFormData({
+        ...subRecipeFormData,
+        ingredient: {
+          ...subRecipeFormData.ingredient,
+          [e.target.name]: e.target.value,
+        },
       });
     }
-    // };
-    setFormData({
-      ...formData,
-      [e.target.name]: { ...formData[e.target.name], text: e.target.value },
-    });
+    if (!isSubRecipe) {
+      if (e.target.name === "amount") {
+        return setFormData({
+          ...formData,
+          ingredient: { ...formData.ingredient, amount: e.target.value },
+        });
+      }
+      if (e.target.name !== "amount") {
+        setFormData({
+          ...formData,
+          [e.target.name]: { ...formData[e.target.name], text: e.target.value },
+        });
+      }
+    }
   };
   // Go back and change this to use users last used unit
   const addIngredient = (unit) => {
     if (formData.ingredients.length >= 1) {
       setAddSecondItemButton(true);
     }
-    setFormData({
-      ...formData,
-      ingredients: [
-        ...formData.ingredients,
-        { ...formData.ingredient, unit: unit },
-      ],
-      ingredient: {
-        text: "",
-        optional: false,
-        amount: 1,
-        unit: { long: "cups", short: "cups" },
-      },
-    });
+    if (isSubRecipe) {
+      setSubRecipeFormData({
+        ...subRecipeFormData,
+        ingredients: [
+          ...subRecipeFormData.ingredients,
+          subRecipeFormData.ingredient,
+        ],
+        ingredient: {
+          ingredient: "",
+          optional: false,
+          amount: 1,
+          unit: { long: "Cups", short: "cups", key: "Volume" },
+        },
+      });
+    }
+    if (!isSubRecipe) {
+      setFormData({
+        ...formData,
+        ingredients: [
+          ...formData.ingredients,
+          { ...formData.ingredient, unit: unit },
+        ],
+        ingredient: {
+          text: "",
+          optional: false,
+          amount: 1,
+          unit: { long: "cups", short: "cups" },
+        },
+      });
+    }
   };
   const classes = useStyles();
   const fauxListener = (title, type) => {
-    console.log(focusState);
-
     if (title !== "unit") {
       if (type === "blur") {
         setFocusState({
@@ -325,26 +360,47 @@ const StepTwoFormComponent = ({
       }
     }
   };
+  const handleSubRecipeButtonClick = () => {
+    setIsSubRecipe(true);
+    dispatch({
+      type: Types.SHOW_ALERT,
+      payload: {
+        title: "Set A Title: Dressing? Sauce?",
+        variant: "setSubRecipeTitle",
+        titleColor: "primary",
+      },
+    });
+  };
   const checkUnit = () => {
     let unit = formData.ingredient?.unit?.long?.toLowerCase();
     let units = getIngredientUnits().filter((u) => !u.isKey);
     let indexOf = units.map((u) => u.long.toLowerCase()).indexOf(unit);
 
-    console.log(units, indexOf);
     return indexOf !== -1 ? units[indexOf] : false;
     // return
   };
   const keyObserver = (e) => {
-    console.log("e: ", e);
     if (!e.shiftKey && e.key === "Enter") {
       e.preventDefault();
-      let validated = {
-        text: Boolean(formData.ingredient.text.length >= 3),
-        amount: Boolean(
-          typeof parseFloat(formData.ingredient.amount) === "number"
-        ),
-        unit: checkUnit(),
-      };
+      let validated = false;
+      if (!isSubRecipe) {
+        validated = {
+          text: Boolean(formData.ingredient.text.length >= 3),
+          amount: Boolean(
+            typeof parseFloat(formData.ingredient.amount) === "number"
+          ),
+          unit: checkUnit(),
+        };
+      }
+      if (isSubRecipe) {
+        validated = {
+          text: Boolean(subRecipeFormData.ingredient.ingredient.length >= 3),
+          amount: Boolean(
+            typeof parseFloat(subRecipeFormData.ingredient.amount) === "number"
+          ),
+          unit: checkUnit(),
+        };
+      }
       if (Object.values(validated).every((i) => i)) {
         addIngredient(validated.unit);
       }
@@ -354,14 +410,24 @@ const StepTwoFormComponent = ({
     }
   };
   const handleChangeBoolean = (e) => {
-    console.log("event", e);
-    setFormData({
-      ...formData,
-      [e.target.name]: {
-        ...formData[e.target.name],
-        optional: !formData[e.target.name].optional,
-      },
-    });
+    if (isSubRecipe) {
+      setSubRecipeFormData({
+        ...subRecipeFormData,
+        ingredient: {
+          ...subRecipeFormData.ingredient,
+          optional: !subRecipeFormData.ingredient.optional,
+        },
+      });
+    }
+    if (!isSubRecipe) {
+      setFormData({
+        ...formData,
+        [e.target.name]: {
+          ...formData[e.target.name],
+          optional: !formData[e.target.name].optional,
+        },
+      });
+    }
   };
 
   return (
@@ -373,7 +439,7 @@ const StepTwoFormComponent = ({
     >
       <TextField
         id="recipeIngredientInput"
-        name={name}
+        name="ingredient"
         onFocus={() => fauxListener("ingredient", "focus")}
         onBlur={() => fauxListener("ingredient", "blur")}
         fullWidth
@@ -387,11 +453,28 @@ const StepTwoFormComponent = ({
             setShiftPressed(false);
           }
         }}
-        value={formData.ingredient.text}
+        value={
+          isSubRecipe
+            ? subRecipeFormData.ingredient.ingredient
+            : formData.ingredient.text
+        }
         focused={focusState.ingredient.focus}
         InputLabelProps={{
           focused: focusState.ingredient.focus,
-          shrink: Boolean(formData?.ingredient?.text?.length !== 0),
+          shrink: (() => {
+            console.log(
+              "subRecipeFormData.ingredient.ingredient.length: ",
+              subRecipeFormData.ingredient.ingredient.length
+            );
+            if (isSubRecipe) {
+              return Boolean(
+                subRecipeFormData.ingredient.ingredient.length !== 0
+              );
+            }
+            if (!isSubRecipe) {
+              return Boolean(formData?.ingredient?.text?.length !== 0);
+            }
+          })(),
           classes: {
             root: clsx(
               classes.inputLabelRoot,
@@ -443,7 +526,11 @@ const StepTwoFormComponent = ({
             onFocus={() => fauxListener("amount", "focus")}
             onBlur={() => fauxListener("amount", "blur")}
             onChange={handleChange}
-            value={formData.ingredient.amount}
+            value={
+              isSubRecipe
+                ? subRecipeFormData.ingredient.amount
+                : formData.ingredient.amount
+            }
             focused={focusState.amount.focus}
             InputLabelProps={{
               focused: focusState.amount.focus,
@@ -491,7 +578,15 @@ const StepTwoFormComponent = ({
             setFocusState={setFocusState}
             // Each item id format to send whole object to state
             // `unit-${index}`
-            selectedUnit={formData.ingredient.unit}
+            isSubRecipe={isSubRecipe}
+            setIsSubRecipe={setIsSubRecipe}
+            subRecipeFormData={subRecipeFormData}
+            setSubRecipeFormData={setSubRecipeFormData}
+            selectedUnit={
+              isSubRecipe
+                ? subRecipeFormData.ingredient.unit
+                : formData.ingredient.unit
+            }
             addIngredient={addIngredient}
             focused={focusState.unit.focus}
             setFormData={setFormData}
@@ -532,7 +627,7 @@ const StepTwoFormComponent = ({
         <div className={classes.addSecondItemButtonContainer}>
           {addSecondItemButton && (
             <Button
-              onClick={handleAddSecondItem}
+              onClick={handleSubRecipeButtonClick}
               classes={{
                 root: clsx(
                   classes.addSecondItemButton,
@@ -557,8 +652,16 @@ const StepTwoFormComponent = ({
           }}
           control={
             <Checkbox
-              value={formData.ingredient.optional}
-              checked={formData.ingredient.optional}
+              value={
+                isSubRecipe
+                  ? subRecipeFormData.ingredient.optional
+                  : formData.ingredient.optional
+              }
+              checked={
+                isSubRecipe
+                  ? subRecipeFormData.ingredient.optional
+                  : formData.ingredient.optional
+              }
               name="ingredient"
               onChange={handleChangeBoolean}
               color="primary"

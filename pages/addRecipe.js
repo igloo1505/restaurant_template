@@ -38,7 +38,8 @@ const useStyles = makeStyles((theme) => ({
       position: "relative !important",
       top: "unset",
       left: "unset",
-      transform: "unset",
+      // transform: "unset",
+      transform: "translateY(-4rem)",
     },
   },
   layoutShifted: {
@@ -48,7 +49,8 @@ const useStyles = makeStyles((theme) => ({
       transform: "translateY(-20vh)",
     },
     [theme.breakpoints.down("md")]: {
-      transform: "unset",
+      // transform: "unset",
+      transform: "translateY(-4rem)",
     },
   },
 
@@ -146,16 +148,13 @@ const AddRecipe = ({
 
   const [placeHolder, setPlaceHolder] = useState(false);
   const handleFormChange = (e) => {
-    console.log("event: ", e.target.name);
     if (e) {
-      if (e.target.name === "prepTime" || e.target.name === "cookTime") {
-        let _prepTime = document.getElementById("time-adornment-prepTime");
-        console.log("_prepTime: ", _prepTime);
-        let _cookTime = document.getElementById("time-adornment-cookTime");
-        console.log("_cookTime: ", _cookTime);
-        // let _value = parseFloat(e.target.value)
-      }
-      console.log("targets", e.target.name);
+      // if (e.target.name === "prepTime" || e.target.name === "cookTime") {
+      //   let _prepTime = document.getElementById("time-adornment-prepTime");
+
+      //   let _cookTime = document.getElementById("time-adornment-cookTime");
+      //   // let _value = parseFloat(e.target.value)
+      // }
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
   };
@@ -219,7 +218,6 @@ export default connect(mapStateToProps)(AddRecipe);
 // eslint-disable-next-line react/display-name
 const SlideComponent = forwardRef(
   (props, ref) => {
-    console.log("ref", ref);
     return (
       <Slide
         direction="right"
@@ -237,8 +235,8 @@ const SlideComponent = forwardRef(
 );
 
 // const _SlideComponent = ({ ...props }) => {
-//   // console.log("ref", props, ref);
-//   console.log("...props", props);
+//   //
+//
 //   return (
 //     <Slide
 //       direction="right"
