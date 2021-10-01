@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { useDispatch, connect } from "react-redux";
 import StepTwoFormComponent from "./StepTwoFormComponent";
 import StepTwoDisplayComponent from "./StepTwoDisplayComponent";
 import gsap from "gsap";
@@ -29,25 +30,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StepTwoAddRecipeForm = (props) => {
+const StepTwoAddRecipeForm = ({
+  alert: {
+    subRecipe: { titles: subRecipeTitles },
+  },
+  ...props
+}) => {
+  console.log("props: ", props);
   const [isShifted, setIsShifted] = useState(
     props.formData.ingredients.length !== 0
   );
   const [formHeightLimit, setFormHeightLimit] = useState(400);
-  const [isSubRecipe, setIsSubRecipe] = useState(false);
-  const [subRecipeFormData, setSubRecipeFormData] = useState({
-    title: "",
-    ingredients: [],
-    ingredient: {
-      ingredient: "",
-      optional: false,
-      amount: 1,
-      unit: { long: "Cups", short: "cups", key: "Volume" },
-    },
-  });
-
+  const [subRecipeFormData, setSubRecipeFormData] = useState([]);
+  const [isSubRecipe, setIsSubRecipe] = useState(-1);
+  // const [isSubRecipe, setIsSubRecipe] = useState(-1);
   useEffect(() => {
-    console.log("props.formData: ", props.formData);
+    console.log(
+      "props.formData: ",
+      props.formData,
+      isSubRecipe,
+      subRecipeTitles.length - 1
+    );
   }, [props.formData]);
 
   useEffect(() => {
@@ -94,4 +97,9 @@ const StepTwoAddRecipeForm = (props) => {
   );
 };
 
-export default StepTwoAddRecipeForm;
+const mapStateToProps = (state, props) => ({
+  alert: state.alert,
+  props: props,
+});
+
+export default connect(mapStateToProps)(StepTwoAddRecipeForm);

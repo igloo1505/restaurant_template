@@ -51,23 +51,38 @@ const StepTwoDisplayComponent = ({
   setSubRecipeFormData,
 }) => {
   const classes = useStyles();
-  const removeItem = (e, item) => {
+  const removeItem = (e, item, index) => {
     let data = {};
     let storedData = localStorage.getItem("ingredients");
     storedData = JSON.parse(storedData);
     storedData = Object.values(storedData).filter((s) => s !== item.text);
     storedData.forEach((s, i) => (data[i] = s));
     localStorage.setItem("ingredients", JSON.stringify(data));
-
-    let filteredIngredients = isSubRecipe
-      ? subRecipeFormData.ingredients.filter((i) => i.ingredient !== item.text)
-      : formData?.ingredients.filter((i) => i.text !== item.text);
+    console.log("item", item);
+    console.log("array", subRecipeFormData[isSubRecipe].ingredients);
+    let filteredIngredients =
+      isSubRecipe >= 0
+        ? subRecipeFormData[isSubRecipe].ingredients.filter(
+            (i) => i.ingredient !== item.ingredient
+          )
+        : formData?.ingredients.filter((i) => i.text !== item.text);
     if (filteredIngredients.length < 2) {
       setAddSecondItemButton(false);
     }
-    if (isSubRecipe) {
+    if (isSubRecipe >= 0) {
+      setSubRecipeFormData((prevState) => {
+        console.log("filteredIngredients: ", filteredIngredients);
+        return [
+          ...prevState.slice(0, isSubRecipe),
+          {
+            ...prevState[isSubRecipe],
+            ingredients: filteredIngredients,
+          },
+          ...prevState.slice(isSubRecipe + 1),
+        ];
+      });
     }
-    if (!isSubRecipe) {
+    if (isSubRecipe < 0) {
       setFormData({
         ...formData,
         ingredients: filteredIngredients,
@@ -85,8 +100,8 @@ const StepTwoDisplayComponent = ({
         maxHeight: `${formHeightLimit}px`,
       }}
     >
-      {isSubRecipe &&
-        subRecipeFormData?.ingredients.map((item, index, a) => (
+      {isSubRecipe >= 0 &&
+        subRecipeFormData[isSubRecipe]?.ingredients.map((item, index, a) => (
           <DisplayItem
             item={item}
             text={item.ingredient}
@@ -97,7 +112,7 @@ const StepTwoDisplayComponent = ({
             removeItem={removeItem}
           />
         ))}
-      {!isSubRecipe &&
+      {isSubRecipe < 0 &&
         formData?.ingredients.map((item, index, a) => (
           <DisplayItem
             item={item}

@@ -391,6 +391,22 @@ const modalReducer = createReducer(initialState, (builder) => {
       },
     };
   });
+  builder.addCase(Types.REMOVE_SUB_RECIPE_INDEX, (state, action) => {
+    return {
+      ...state,
+      subRecipe: {
+        ...state.subRecipe,
+        titles: [
+          ...state.subRecipe.titles.slice(0, action.payload),
+          ...state.subRecipe.titles.slice(action.payload + 1),
+        ],
+        title: "",
+      },
+      dialog: {
+        ...initialState.dialog,
+      },
+    };
+  });
 });
 
 export default modalReducer;

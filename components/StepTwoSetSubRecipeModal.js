@@ -85,6 +85,13 @@ const Modal_setSubRecipeTitle = ({
     });
   };
 
+  const handleRemoveSubRecipe = (index) => {
+    dispatch({
+      type: Types.REMOVE_SUB_RECIPE_INDEX,
+      payload: index,
+    });
+  };
+
   return (
     <div className={classes.outerContainer}>
       <div className={classes.innerContainer}>
@@ -120,7 +127,10 @@ const Modal_setSubRecipeTitle = ({
           {titles.map((title, index) => {
             return (
               <div key={index} className={classes.currentSubRecipeContainer}>
-                <CancelIcon classes={{ root: classes.iconRoot }} />
+                <CancelIcon
+                  classes={{ root: classes.iconRoot }}
+                  onClick={() => handleRemoveSubRecipe(index)}
+                />
                 <Typography
                   variant="body1"
                   classes={{ root: classes.itemTextRoot }}

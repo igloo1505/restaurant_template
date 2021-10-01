@@ -251,17 +251,25 @@ const UnitSelectCompact = (props) => {
         (u) => u.long.toLowerCase() === e.target.value.trim().toLowerCase()
       );
 
-      if (_unit && !isSubRecipe) {
+      if (_unit && isSubRecipe < 0) {
         setFormData({
           ...formData,
           ingredient: { ...formData.ingredient, unit: _unit },
         });
       }
-      if (_unit && isSubRecipe) {
-        setSubRecipeFormData({
-          ...subRecipeFormData,
-          ingredient: { ...subRecipeFormData.ingredient, unit: _unit },
-        });
+      if (_unit && isSubRecipe >= 0) {
+        let newSubRecData = [...subRecipeFormData];
+        newSubRecData[isSubRecipe] = {
+          ...newSubRecData[isSubRecipe],
+          ingredient: {
+            ...newSubRecData[isSubRecipe].ingredient,
+            ingredient: {
+              ...subRecipeFormData[isSubRecipe].ingredient,
+              unit: _unit,
+            },
+          },
+        };
+        setSubRecipeFormData(newSubRecData);
       }
       setUnitHelper(e.target.value);
       let filtered = filterData(e.target.value);
