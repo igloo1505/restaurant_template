@@ -4,6 +4,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { useDispatch, connect } from "react-redux";
 import StepTwoFormComponent from "./StepTwoFormComponent";
 import StepTwoDisplayComponent from "./StepTwoDisplayComponent";
+import * as Types from "../stateManagement/TYPES";
 import gsap from "gsap";
 // import Stepper from "@material-ui/core/Stepper";
 // import Step from "@material-ui/core/Step";
@@ -32,17 +33,25 @@ const useStyles = makeStyles((theme) => ({
 
 const StepTwoAddRecipeForm = ({
   alert: {
-    subRecipe: { titles: subRecipeTitles },
+    subRecipe: { titles: subRecipeTitles, isSubRecipe },
   },
   ...props
 }) => {
+  const dispatch = useDispatch();
   console.log("props: ", props);
   const [isShifted, setIsShifted] = useState(
     props.formData.ingredients.length !== 0
   );
   const [formHeightLimit, setFormHeightLimit] = useState(400);
   const [subRecipeFormData, setSubRecipeFormData] = useState([]);
-  const [isSubRecipe, setIsSubRecipe] = useState(-1);
+  const setIsSubRecipe = (data) => {
+    dispatch({
+      type: Types.SET_SUB_RECIPE_VALUE,
+      payload: data,
+    });
+
+    console.log("Data", data);
+  };
   // const [isSubRecipe, setIsSubRecipe] = useState(-1);
   useEffect(() => {
     console.log(

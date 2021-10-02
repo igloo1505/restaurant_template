@@ -225,12 +225,11 @@ const StepTwoFormComponent = ({
   addSecondItemButton,
   setAddSecondItemButton,
   handleAddSecondItem,
-  isSubRecipe,
   setIsSubRecipe,
   subRecipeFormData,
   setSubRecipeFormData,
   alert: {
-    subRecipe: { titles: subRecipeTitleArray },
+    subRecipe: { titles: subRecipeTitleArray, isSubRecipe },
   },
 }) => {
   const [hasSentAlert, setHasSentAlert] = useState(getHasSentAlert());
@@ -391,7 +390,8 @@ const StepTwoFormComponent = ({
           },
         },
       ]);
-      setIsSubRecipe(length);
+      console.log("length: ", length);
+      // setIsSubRecipe(length);
     }
   }, [subRecipeTitleArray]);
   const handleSubRecipeButtonClick = () => {
@@ -400,6 +400,7 @@ const StepTwoFormComponent = ({
       payload: {
         title: "Set A Title: Dressing? Sauce?",
         variant: "setSubRecipeTitle",
+        currentSubRecipeIndex: isSubRecipe,
         titleColor: "primary",
       },
     });
@@ -486,7 +487,7 @@ const StepTwoFormComponent = ({
             variant="h6"
             classes={{ root: classes.subRecipeTitleText }}
           >
-            {subRecipeFormData[isSubRecipe].title}
+            {subRecipeFormData[isSubRecipe]?.title}
           </Typography>
         </div>
       )}
@@ -716,7 +717,6 @@ const StepTwoFormComponent = ({
               name="ingredient"
               onChange={handleChangeBoolean}
               color="primary"
-              // disabled={Object.keys(validated).every((x) => x === true)}
               checkedIcon={<CheckedIcon style={{ color: "#fff" }} />}
               classes={{
                 root: classes.checkBoxRoot,

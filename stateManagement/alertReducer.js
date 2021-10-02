@@ -25,6 +25,7 @@ const initialState = {
   subRecipe: {
     titles: [],
     title: "",
+    isSubRecipe: -1,
   },
   addImageModal: {
     relevantId: null,
@@ -76,6 +77,12 @@ const modalReducer = createReducer(initialState, (builder) => {
         ...state.dialog,
         ...action.payload,
         isOpen: true,
+      },
+      subRecipe: {
+        ...state.subRecipe,
+        ...(action.payload?.currentSubRecipeIndex && {
+          currentSubRecipeIndex: action.payload.currentSubRecipeIndex,
+        }),
       },
     };
   });
@@ -379,31 +386,79 @@ const modalReducer = createReducer(initialState, (builder) => {
     };
   });
   builder.addCase(Types.SUBMIT_SUB_RECIPE_TITLE, (state, action) => {
+    let _newArray = [...state.subRecipe.titles, state.subRecipe.title];
     return {
       ...state,
       subRecipe: {
         ...state.subRecipe,
-        titles: [...state.subRecipe.titles, state.subRecipe.title],
+        titles: _newArray,
         title: "",
+        isSubRecipe: _newArray.length - 1,
       },
       dialog: {
         ...initialState.dialog,
       },
     };
   });
+
   builder.addCase(Types.REMOVE_SUB_RECIPE_INDEX, (state, action) => {
+    let newArray = [
+      ...state.subRecipe.titles.slice(0, action.payload),
+      ...state.subRecipe.titles.slice(action.payload + 1),
+    ];
     return {
       ...state,
       subRecipe: {
         ...state.subRecipe,
-        titles: [
-          ...state.subRecipe.titles.slice(0, action.payload),
-          ...state.subRecipe.titles.slice(action.payload + 1),
-        ],
+        titles: newArray,
         title: "",
+        isSubRecipe: newArray.length - 1,
       },
       dialog: {
         ...initialState.dialog,
+      },
+    };
+  });
+  builder.addCase(Types.SET_SUB_RECIPE_VALUE, (state, action) => {
+    return {
+      ...state,
+      subRecipe: {
+        ...state.subRecipe,
+        isSubRecipe: action.payload,
+      },
+    };
+  });
+  builder.addCase(Types.CLOSE_SUB_RECIPE_MODAL, (state, action) => {
+    return {
+      ...state,
+      dialog: {
+        ...state.dialog,
+        isOpen: false,
+      },
+    };
+  });
+  builder.addCase(Types.LOOP_THROUGH_SUB_RECIPES, (state, action) => {
+    let _isSubRecipe = 0;
+    if (action.payload === "leftKey") {
+      console.log("Sending left key");
+      _isSubRecipe =
+        state.subRecipe.isSubRecipe > -1
+          ? state.subRecipe.isSubRecipe - 1
+          : state.subRecipe.titles.length - 1;
+    }
+    if (action.payload === "rightKey") {
+      console.log("Sending right key");
+      _isSubRecipe =
+        state.subRecipe.isSubRecipe < state.subRecipe.titles.length - 1
+          ? state.subRecipe.isSubRecipe + 1
+          : -1;
+    }
+    console.log("_isSubRecipe: ", _isSubRecipe);
+    return {
+      ...state,
+      subRecipe: {
+        ...state.subRecipe,
+        isSubRecipe: _isSubRecipe,
       },
     };
   });
