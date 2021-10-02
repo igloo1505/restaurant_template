@@ -15,6 +15,7 @@ import Fade from "@material-ui/core/Fade";
 import AddAdornment from "./AddAdornment";
 import ingredientAdornment from "./ingredientUnitAdornment";
 import UnitSelectCompact from "./UnitSelectCompact";
+
 import { getIngredientUnits } from "../util/appWideData";
 import { validateStepTwo } from "../util/addRecipeFormValidate";
 
@@ -238,6 +239,7 @@ const StepTwoFormComponent = ({
   setSubRecipeFormData,
   alert: {
     subRecipe: { titles: subRecipeTitleArray, isSubRecipe, latestDirection },
+    keyboardShortcuts: {show: showKeyboardShortcuts},
   },
 }) => {
   const dispatch = useDispatch();
@@ -263,14 +265,23 @@ const StepTwoFormComponent = ({
   useEffect(() => {
     if(typeof window !== 'undefined') {
       window.addEventListener("keydown", (e) =>{
+        e.stopPropagation()
+        let cmdShift = e.shiftKey && e.metaKey;
+        console.log("ekey", e.key)
+        if(cmdShift && e.key === "k"){
+          console.log('showKeyboardShortcuts: ', showKeyboardShortcuts);
+          return dispatch({
+            type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
+          })
+        }
         if(subRecipeTitleArray.length > 0) {
-        if(e.shiftKey && e.metaKey && e.key === "ArrowRight"){
+        if(cmdShift && e.key === "ArrowRight"){
          dispatch({
            type: Types.LOOP_THROUGH_SUB_RECIPES,
            payload: "rightKey"
-         })
+          })
         }
-        if(e.shiftKey && e.metaKey && e.key === "ArrowLeft"){
+        if(cmdShift && e.key === "ArrowLeft"){
           dispatch({
             type: Types.LOOP_THROUGH_SUB_RECIPES,
             payload: "leftKey"

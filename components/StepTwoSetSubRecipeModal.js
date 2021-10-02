@@ -190,7 +190,7 @@ const Modal_setSubRecipeTitle = ({
       payload: index,
     });
   };
-  // RESUME restart here in the morning by switching 'add a subrecipe' button changes content if in a subRecipe, do the same with styles on the subRecipe  specific button styles and switch between those on click... including add one more button for "main" to jumpback to formdata.
+  
   return (
     <div className={classes.outerContainer}>
       <div className={classes.innerContainer}>
@@ -199,7 +199,7 @@ const Modal_setSubRecipeTitle = ({
           value={title}
           name="title"
           error={focusState.error}
-          // error={true}
+          autoFocus
           onKeyDown={toggleSubRecipeIndex}
           onChange={handleChange}
           classes={{ root: classes.textFieldRoot }}

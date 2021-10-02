@@ -4,14 +4,9 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import { FaBalanceScale as ScaleIcon } from "react-icons/fa";
 import Tooltip from "@material-ui/core/Tooltip";
+import { gsap } from 'gsap'
 import DisplayItem from "./formDisplayItem";
-// import FormControlLabel from "@material-ui/core/FormControlLabel";
-// import Checkbox from "@material-ui/core/Checkbox";
-// import Paper from "@material-ui/core/Paper";
-// import Collapse from "@material-ui/core/Collapse";
-// import Button from "@material-ui/core/Button";
-// import TextField from "@material-ui/core/TextField";
-// import Typography from "@material-ui/core/Typography";
+
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -51,6 +46,9 @@ const StepTwoDisplayComponent = ({
   setSubRecipeFormData,
 }) => {
   const classes = useStyles();
+  useEffect(() => {
+    staggerDisplayItemEntrance();
+  }, [isSubRecipe])
   const removeItem = (e, item, index) => {
     let data = {};
     let storedData = localStorage.getItem("ingredients");
@@ -129,3 +127,12 @@ const StepTwoDisplayComponent = ({
 };
 
 export default StepTwoDisplayComponent;
+
+export const staggerDisplayItemEntrance = () => {
+  gsap.from(".formDisplayItem", {
+    stagger: 0.15,
+    scaleY: 0.0001,
+    duration: 0.5,
+    ease: "elastic.out(1, 0.7)",
+  });
+};

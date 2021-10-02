@@ -22,6 +22,9 @@ const initialState = {
       confirmAction: null,
     },
   },
+  keyboardShortcuts: {
+    show: false
+  },
   subRecipe: {
     titles: [],
     title: "",
@@ -440,18 +443,15 @@ const modalReducer = createReducer(initialState, (builder) => {
   });
   builder.addCase(Types.LOOP_THROUGH_SUB_RECIPES, (state, action) => {
     let _isSubRecipe = 0;
-    let latestDirection = "right"
-    if(action.payload === "leftKey"){
-     latestDirection = "left"
-    }
-    if (action.payload === "leftKey") {
+    let latestDirection = action.payload === "leftKey" ? "right" : "left"
+    if (action.payload === "rightKey") {
       console.log("Sending left key");
       _isSubRecipe =
         state.subRecipe.isSubRecipe > -1
           ? state.subRecipe.isSubRecipe - 1
           : state.subRecipe.titles.length - 1;
     }
-    if (action.payload === "rightKey") {
+    if (action.payload === "leftKey") {
       console.log("Sending right key");
       _isSubRecipe =
         state.subRecipe.isSubRecipe < state.subRecipe.titles.length - 1
@@ -468,6 +468,16 @@ const modalReducer = createReducer(initialState, (builder) => {
       },
     };
   });
+builder.addCase(Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS, (state, action) => {
+  return {
+  ...state,
+  keyboardShortcuts: {
+    ...state.keyboardShortcuts,
+    show: action.payload === "hide" ? false : !state.keyboardShortcuts.show
+  }
+}
+  });
+
 });
 
 export default modalReducer;

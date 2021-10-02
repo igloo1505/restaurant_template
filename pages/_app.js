@@ -6,6 +6,7 @@ import SimpleBooleanSnackbar from "../components/SimpleBooleanSnackbar";
 import Alert from "../components/modalsAndAlerts/Modal";
 import Grocery_navbarMenu from "../components/portalAuthenticated/Grocery_navbarMenu";
 import Bookmarks_navbarMenu from "../components/portalAuthenticated/Bookmarks_navbarMenu";
+import AddRecipeKeyboardShortcuts from '../components/modalContent/AddRecipeKeyboardShortcuts';
 import RecipeReviewModal from "../components/modalsAndAlerts/RecipeReviewModal";
 import Drawer from "../components/portalAuthenticated/Drawer";
 import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
@@ -135,6 +136,7 @@ function MyApp({ Component, pageProps, ...rest }) {
           <Drawer />
           <RecipeReviewModal />
           <Grocery_navbarMenu />
+          <AddRecipeKeyboardShortcuts/>
           <Bookmarks_navbarMenu />
           <AccountIconMenu />
           <Alert />

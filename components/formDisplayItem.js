@@ -139,16 +139,10 @@ const DisplayItem = ({ item, text, removeItem, name, index }) => {
   useEffect(() => {
     setTimeout(() => setShifted(true), 250);
   }, []);
-
   if (isInitial) {
     return (
-      <Grow
-        in={true}
-        style={{ transformOrigin: "0 0 0" }}
-        {...(true ? { timeout: 350 } : {})}
-      >
         <div
-          className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow")}
+          className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow", true && "formDisplayItem")}
           // onClick={() => }
         >
           <div
@@ -182,13 +176,12 @@ const DisplayItem = ({ item, text, removeItem, name, index }) => {
             )}
           </div>
         </div>
-      </Grow>
     );
   }
   if (!isInitial) {
     return (
       <div
-        className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow")}
+        className={clsx(classes.itemWrapperOuter, true && "formDisplayItem", shifted && "addBoxShadow")}
       >
         <div
           className={clsx(

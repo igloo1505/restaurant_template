@@ -13,6 +13,7 @@ import Modal_editLocation from "../myProfile/Modal_editLocation";
 import Modal_setSkill from "../myProfile/Modal_setSkill";
 import Modal_addRecipeImage from "../myRecipes/Modal_addRecipeImage";
 import StepTwoSetSubRecipeModal from "../StepTwoSetSubRecipeModal";
+import AddRecipeKeyboardShortcuts from '../modalContent/AddRecipeKeyboardShortcuts';
 import { FcHighPriority } from "react-icons/fc";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,6 +21,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "rgba(0,0,0,0.2)",
   },
   dialogScrollPaper: {},
+  backdropPaper: {
+    width: "90vw"
+  },
   dialogContainer: { backgroundColor: "rgba(0,0,0,0.2)" },
   dialogScrollBody: {},
   title: {
@@ -81,6 +85,7 @@ const Alert = ({
           scrollPaper: classes.dialogScrollPaper,
           container: classes.dialogContainer,
           scrollBody: classes.dialogScrollBody,
+          paper: classes.backdropPaper
         }}
       >
         <DialogTitle
@@ -153,6 +158,15 @@ const GetDialogContent = ({ variant, isOpen, contentText, title }) => {
       case "setSubRecipeTitle":
         return (
           <StepTwoSetSubRecipeModal
+            variant={variant}
+            isOpen={isOpen}
+            contentText={contentText}
+            title={title}
+          />
+        );
+      case "addRecipeKeyboardShortcuts":
+        return (
+          <AddRecipeKeyboardShortcuts
             variant={variant}
             isOpen={isOpen}
             contentText={contentText}
