@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "0px  !important",
     boxShadow: `0px 0px 0px ${theme.palette.grey[400]}, 0px 0px 0px ${theme.palette.grey[300]}`,
     overflowY: "auto",
+    overflowX: "hidden",
     transform: "scale(1)",
     maxWidth: "1280px",
     [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {

@@ -26,6 +26,7 @@ const initialState = {
     titles: [],
     title: "",
     isSubRecipe: -1,
+    latestDirection: "right"
   },
   addImageModal: {
     relevantId: null,
@@ -69,7 +70,7 @@ const initialState = {
   },
 };
 
-const modalReducer = createReducer(initialState, (builder) => {
+const modalReducer = createReducer(initialState, (builder) => { 
   builder.addCase(Types.SHOW_ALERT, (state, action) => {
     return {
       ...state,
@@ -439,6 +440,10 @@ const modalReducer = createReducer(initialState, (builder) => {
   });
   builder.addCase(Types.LOOP_THROUGH_SUB_RECIPES, (state, action) => {
     let _isSubRecipe = 0;
+    let latestDirection = "right"
+    if(action.payload === "leftKey"){
+     latestDirection = "left"
+    }
     if (action.payload === "leftKey") {
       console.log("Sending left key");
       _isSubRecipe =
@@ -453,12 +458,13 @@ const modalReducer = createReducer(initialState, (builder) => {
           ? state.subRecipe.isSubRecipe + 1
           : -1;
     }
-    console.log("_isSubRecipe: ", _isSubRecipe);
+    console.log("latestDirection", latestDirection);
     return {
       ...state,
       subRecipe: {
         ...state.subRecipe,
         isSubRecipe: _isSubRecipe,
+        latestDirection: latestDirection
       },
     };
   });

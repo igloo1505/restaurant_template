@@ -158,9 +158,7 @@ const Modal_setSubRecipeTitle = ({
       handleSubmit();
     }
     let shiftKey = e.shiftKey;
-    console.log("key", shiftKey, e.key);
     if (shiftKey && e.key === "ArrowLeft") {
-      console.log("DIpsatching");
       dispatch({
         type: Types.LOOP_THROUGH_SUB_RECIPES,
         payload: "leftKey",

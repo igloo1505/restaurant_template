@@ -10,7 +10,7 @@ import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/AddBoxOutlined";
 import CheckedIcon from "@material-ui/icons/DoneOutlined";
 import TextField from "@material-ui/core/TextField";
-import ReturnIcon from "@material-ui/icons/KeyboardReturn";
+import Slide from "@material-ui/core/Slide";
 import Fade from "@material-ui/core/Fade";
 import AddAdornment from "./AddAdornment";
 import ingredientAdornment from "./ingredientUnitAdornment";
@@ -25,6 +25,9 @@ const getHasSentAlert = () => {
   return value ? value : false;
 };
 const useStyles = makeStyles((theme) => ({
+  hide: {
+    display: "none !important"
+  },
   container: {
     marginRight: "10px",
     transform: "translateX(0%)",
@@ -65,6 +68,9 @@ const useStyles = makeStyles((theme) => ({
       minWidth: "100%",
       width: "100%",
     },
+  },
+  topTextFieldRoot: {
+    // marginTop: "2rem"
   },
   inputRoot: {
     color: "#fff",
@@ -206,6 +212,8 @@ const useStyles = makeStyles((theme) => ({
   },
   subRecipeTitleTextContainer: {
     display: "flex",
+    zIndex: 100,
+    transform: "translateX(-50%)",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -229,9 +237,50 @@ const StepTwoFormComponent = ({
   subRecipeFormData,
   setSubRecipeFormData,
   alert: {
-    subRecipe: { titles: subRecipeTitleArray, isSubRecipe },
+    subRecipe: { titles: subRecipeTitleArray, isSubRecipe, latestDirection },
   },
 }) => {
+  const dispatch = useDispatch();
+  const [arrayWithMain, setArrayWithMain] = useState([])
+  useEffect(() => {
+    if(subRecipeTitleArray.length > 0) {
+    let newArray = [{
+      text: "Main",
+      thisIndex: -1
+    }]
+    subRecipeTitleArray.forEach((title, index) => {
+      newArray.push({
+        text: title,
+        thisIndex: index
+      })
+    });
+    setArrayWithMain(newArray)
+  }
+  if(subRecipeTitleArray.length === 0) {
+    setArrayWithMain([])
+  }
+  }, [subRecipeTitleArray])
+  useEffect(() => {
+    if(typeof window !== 'undefined') {
+      window.addEventListener("keydown", (e) =>{
+        if(subRecipeTitleArray.length > 0) {
+        if(e.shiftKey && e.metaKey && e.key === "ArrowRight"){
+         dispatch({
+           type: Types.LOOP_THROUGH_SUB_RECIPES,
+           payload: "rightKey"
+         })
+        }
+        if(e.shiftKey && e.metaKey && e.key === "ArrowLeft"){
+          dispatch({
+            type: Types.LOOP_THROUGH_SUB_RECIPES,
+            payload: "leftKey"
+          })
+        }
+      }
+      })
+    }
+  }, [subRecipeTitleArray])
+
   const [hasSentAlert, setHasSentAlert] = useState(getHasSentAlert());
   const [shiftPressed, setShiftPressed] = useState(false);
   // useEffect(() => {
@@ -240,7 +289,7 @@ const StepTwoFormComponent = ({
   //     setHasSentAlert(x);
   //   }
   // }, []);
-  const dispatch = useDispatch();
+  
   const [focusState, setFocusState] = useState({
     ingredient: {
       shrink: Boolean(formData?.ingredient?.text?.length !== 0),
@@ -481,22 +530,27 @@ const StepTwoFormComponent = ({
         !isShifted && classes.transformContainer
       )}
     >
-      {isSubRecipe >= 0 && (
-        <div className={classes.subRecipeTitleTextContainer}>
-          <Typography
-            variant="h6"
-            classes={{ root: classes.subRecipeTitleText }}
-          >
-            {subRecipeFormData[isSubRecipe]?.title}
-          </Typography>
-        </div>
-      )}
+      {arrayWithMain.length > 0 && 
+        arrayWithMain.map((title, index) => (
+          <SubRecipeBanner
+            classes={classes}
+            subRecipeFormData={subRecipeFormData}
+            isSubRecipe={isSubRecipe}
+            currentTitle={subRecipeTitleArray[isSubRecipe]}
+            thisTitle={title.text}
+            isIn={title.thisIndex === isSubRecipe}
+            latestDirection={latestDirection}
+            index={title.thisIndex}     
+        />
+        ))
+      }
       <TextField
         id="recipeIngredientInput"
         name="ingredient"
         onFocus={() => fauxListener("ingredient", "focus")}
         onBlur={() => fauxListener("ingredient", "blur")}
         fullWidth
+        classes={{root: classes.topTextFieldRoot}}
         autoFocus
         multiline
         label="Ingredient"
@@ -692,7 +746,9 @@ const StepTwoFormComponent = ({
                 ),
               }}
             >
-              Add Separate Item
+              {subRecipeTitleArray.length > 0
+                ? "Switch Items"
+                : "Add Separate Item"}
             </Button>
           )}
         </div>
@@ -736,5 +792,40 @@ const mapStateToProps = (state, props) => ({
   alert: state.alert,
   props: props,
 });
+
+
+const SubRecipeBanner = forwardRef(({
+classes,
+subRecipeFormData,
+isSubRecipe,
+currentTitle,
+thisTitle,
+isIn,
+index,
+latestDirection
+}) => {
+  const [_previousIndex, setPreviousIndex] = useState(0) 
+  const [_latestDirection, set_latestDirection] = useState("right")
+  useEffect(() => {
+    console.log('_latestDirection: ', _latestDirection);
+    setPreviousIndex(isSubRecipe)
+    set_latestDirection(latestDirection)
+  }, [isSubRecipe, latestDirection])
+  return (
+    <Slide in={isIn} direction={_latestDirection}>
+    <div className={clsx(classes.subRecipeTitleTextContainer, !isIn && classes.hide)}>
+          <Typography
+            variant="h6"
+            classes={{ root: classes.subRecipeTitleText }}
+          >
+            {thisTitle}
+          </Typography>
+        </div>
+        </Slide>
+  )
+})
+
+
+
 
 export default connect(mapStateToProps)(StepTwoFormComponent);

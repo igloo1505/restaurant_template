@@ -149,12 +149,6 @@ const AddRecipe = ({
   const [placeHolder, setPlaceHolder] = useState(false);
   const handleFormChange = (e) => {
     if (e) {
-      // if (e.target.name === "prepTime" || e.target.name === "cookTime") {
-      //   let _prepTime = document.getElementById("time-adornment-prepTime");
-
-      //   let _cookTime = document.getElementById("time-adornment-cookTime");
-      //   // let _value = parseFloat(e.target.value)
-      // }
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
   };
