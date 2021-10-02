@@ -129,10 +129,17 @@ const StepTwoDisplayComponent = ({
 export default StepTwoDisplayComponent;
 
 export const staggerDisplayItemEntrance = () => {
-  gsap.from(".formDisplayItem", {
+  gsap.fromTo(".formDisplayItem", {
     stagger: 0.15,
     scaleY: 0.0001,
     duration: 0.5,
     ease: "elastic.out(1, 0.7)",
-  });
+  },
+  {
+    stagger: 0.15,
+    scaleY: 1,
+    duration: 0.5,
+    ease: "elastic.out(1, 0.7)",
+  }
+  );
 };

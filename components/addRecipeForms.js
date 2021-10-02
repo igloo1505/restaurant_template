@@ -169,6 +169,7 @@ const StepOneFormComponent = ({
     setPlaceHolder,
     hasMenuOpen,
     setHasMenuOpen,
+    hasSetCommand
   },
 }) => {
   const classes = useStyles();
@@ -273,6 +274,13 @@ const StepOneFormComponent = ({
               label="Recipe's title "
               onChange={handleFormChange}
               onKeyDown={(e) => {
+                let disallowedKeys = ["a", "b", "n", "e"]
+                console.log('hasSetCommand && disallowedKeys.includes(e.key): ', hasSetCommand && disallowedKeys.includes(e.key));
+                // RESUME HERE fix issue with hasSetCommand not returning to false on redirect? Something not allowing b, a, n and e keys to be used after being used for shortcut.
+                if(hasSetCommand && disallowedKeys.includes(e.key)) {
+                  console.log("Preventing Default");
+                  return e.preventDefault()
+                }
                 if (
                   formData?.title?.length >= 50 &&
                   !allowKeys.includes(e.key)

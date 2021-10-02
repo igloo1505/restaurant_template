@@ -66,30 +66,23 @@ const useClasses = makeStyles((theme) => ({
 
 
 const AddRecipeKeyboardShortcuts = ({alert : {keyboardShortcuts: {show}}}) => {
-    const classes = useClasses()
-    const [highlights, setHighlights] = useState({
-        k: false,
-        shift: false,
-        arrowLeft: false,
-        arrowRight: false,
-        cmd: false
-    } )
+    const classes = useClasses()  
     const theme = useTheme()
     const dispatch = useDispatch()
     let standardIconStyle = {
         width: "1.2rem",
         height: "1.2rem",
         borderRadius: "8px",
-        // padding: "0.4rem",
         transition: theme.transitions.create(['box-shadow'], {
         duration: 350,
         }),
     }
     let standardTextIconStyle = {
         borderRadius: "4px",
-        // padding: "0.4rem",
         fontSize: "1.2rem",
         padding: "0px 4px",
+        minWidth: "1.2rem",
+        minHeight: "1.2rem",
         transition: theme.transitions.create(['box-shadow'], {
         duration: 350,
         }),
@@ -107,6 +100,7 @@ const AddRecipeKeyboardShortcuts = ({alert : {keyboardShortcuts: {show}}}) => {
         duration: 350,
         }),
     }
+    
     let hightLightedIconStyle = {
         width: "1.2rem",
         height: "1.2rem",
@@ -121,10 +115,12 @@ const AddRecipeKeyboardShortcuts = ({alert : {keyboardShortcuts: {show}}}) => {
     const [cmdIconStyles, setCmdIconStyles] = useState(standardIconStyle)
     const [shiftIconStyles, setShiftIconStyles] = useState(standardIconStyle)
     const [kIconStyles, setKIconStyles] = useState(standardTextIconStyle)
+    const [iIconStyles, setIIconStyles] = useState(standardTextIconStyle)
     const [arrowLeftIconStyles, setArrowLeftIconStyles] = useState(standardIconStyle)
     const [arrowRightIconStyles, setArrowRightIconStyles] = useState(standardIconStyle)
     useEffect(() => {
         if(show){
+            setIIconStyles(standardTextIconStyle)
             setKIconStyles(standardTextIconStyle)
             setCmdIconStyles(standardIconStyle)
             setShiftIconStyles(standardIconStyle)
@@ -145,6 +141,9 @@ const AddRecipeKeyboardShortcuts = ({alert : {keyboardShortcuts: {show}}}) => {
                 if(e.key === "k"){
                     setKIconStyles(highlightTextIconStyle)
                 }
+                if(e.key === "i"){
+                    setIIconStyles(highlightTextIconStyle)
+                }
                 if(e.key === "Shift"){
                     setShiftIconStyles(hightLightedIconStyle)
                 }
@@ -161,6 +160,9 @@ const AddRecipeKeyboardShortcuts = ({alert : {keyboardShortcuts: {show}}}) => {
             document.addEventListener("keyup", (e) => {      
                 if(e.key === "k"){
                     setKIconStyles(standardTextIconStyle)
+                }
+                if(e.key === "i"){
+                    setIIconStyles(standardTextIconStyle)
                 }
                 if(e.key === "Shift"){
                     setShiftIconStyles(standardIconStyle)
@@ -211,6 +213,14 @@ const AddRecipeKeyboardShortcuts = ({alert : {keyboardShortcuts: {show}}}) => {
                     <LetterIcon letter="K" iconStyle={kIconStyles}/>
                 <Typography variant="h6" classes={{root: classes.shortcutText}}>
                     Show Keyboard Shortcuts
+                </Typography>
+                </div>
+                <div className={classes.shortcutItem}>
+                    <CmdIcon iconStyle={cmdIconStyles}/>
+                    <ShiftIcon iconStyle={shiftIconStyles}/>
+                    <LetterIcon letter="i" iconStyle={iIconStyles}/>
+                <Typography variant="h6" classes={{root: classes.shortcutText}}>
+                    Add sub-recipe
                 </Typography>
                 </div>
                 <div className={classes.shortcutItem}>

@@ -237,6 +237,7 @@ const StepTwoFormComponent = ({
   setIsSubRecipe,
   subRecipeFormData,
   setSubRecipeFormData,
+  hasSetCommand,
   alert: {
     subRecipe: { titles: subRecipeTitleArray, isSubRecipe, latestDirection },
     keyboardShortcuts: {show: showKeyboardShortcuts},
@@ -265,7 +266,13 @@ const StepTwoFormComponent = ({
   useEffect(() => {
     if(typeof window !== 'undefined') {
       window.addEventListener("keydown", (e) =>{
-        e.stopPropagation()
+        let disallowedKeys = ["a", "b", "n", "e"]
+        console.log('hasSetCommand: ', hasSetCommand);
+
+        // if(hasSetCommand && disallowedKeys.includes(e.key)) {
+        //   e.preventDefault()
+        //   e.stopPropagation()
+        // }
         let cmdShift = e.shiftKey && e.metaKey;
         console.log("ekey", e.key)
         if(cmdShift && e.key === "k"){
@@ -432,7 +439,7 @@ const StepTwoFormComponent = ({
       }
     }
   };
-
+  
   useEffect(() => {
     if (subRecipeTitleArray.length > 0) {
       console.log("Setting subRecipe array");
@@ -458,13 +465,31 @@ const StepTwoFormComponent = ({
     dispatch({
       type: Types.SHOW_ALERT,
       payload: {
-        title: "Set A Title: Dressing? Sauce?",
+        title: "Sub-Recipe Title",
         variant: "setSubRecipeTitle",
         currentSubRecipeIndex: isSubRecipe,
         titleColor: "primary",
       },
     });
   };
+  useEffect(() => {
+    if(typeof window !== 'undefined'){
+      let hasShownModal = window.localStorage.getItem("hasShownKeyboardModal")
+      if(!hasShownModal){
+       dispatch({
+          type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
+        })
+        window.localStorage.setItem("hasShownKeyboardModal", true)
+      }
+      document.addEventListener("keydown", (e) => {
+        if(e.metaKey && e.shiftKey && e.key === "i"){
+          handleSubRecipeButtonClick();
+        }
+      })
+    }
+  }, [])
+
+
   const checkUnit = () => {
     let unit = formData.ingredient?.unit?.long?.toLowerCase();
     let units = getIngredientUnits().filter((u) => !u.isKey);

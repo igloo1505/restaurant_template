@@ -1,5 +1,6 @@
 import {
   OPEN_DRAWER,
+  SET_ADD_RECIPE_SHORTCUT,
   CLOSE_DRAWER,
   TOGGLE_EDIT_STATE,
   AUTHENTICATION_ERROR,
@@ -18,6 +19,7 @@ import {
   SHOW_ACCOUNT_MENU,
   IS_CLIENT,
   TOGGLE_SIGNUP_FORM,
+  SET_ADD_RECIPE_STEP
 } from "./TYPES";
 
 const initialState = {
@@ -26,6 +28,17 @@ const initialState = {
     alertText: "",
     alertType: "",
     isOpen: false,
+  },
+  addRecipe: {
+    activeStep: 0,
+    shortcut: {
+      e: false,
+      a: false,
+      b: false,
+      n: false,
+      Meta: false,
+      Shift: false,
+    }
   },
   login: {
     isSignUp: false,
@@ -85,6 +98,17 @@ const getDeviceType = (w) => {
       return null;
   }
 };
+
+const toggleShortcut = (_shortcut) => {
+  let returnShortcut = {};
+  Object.keys(_shortcut).forEach(_key => {
+    returnShortcut[_key] = false
+  });
+  return {
+    type: SET_ADD_RECIPE_SHORTCUT,
+    payload: returnShortcut,
+  };
+}
 
 export default function UIReducer(state = initialState, action) {
   switch (action.type) {
@@ -387,7 +411,47 @@ export default function UIReducer(state = initialState, action) {
         ...state,
         login: { ...state.login, isSignUp: !state.login.isSignUp },
       };
-    default:
+    case SET_ADD_RECIPE_STEP: {
+      let _newStep = 0
+      if(action.payload === "increase"){
+        _newStep = state.addRecipe.activeStep < 2 ? state.addRecipe.activeStep + 1 : 2
+      }
+      if(action.payload === "decrease"){
+        _newStep = state.addRecipe.activeStep > 0 ? state.addRecipe.activeStep - 1 : 0
+      }
+      if(parseInt(action.payload) >= 0){
+        _newStep = parseInt(action.payload)
+      }
+      console.log('_newStep: ', _newStep);
+      return {
+        ...state,
+        addRecipe: {
+          ...state.addRecipe,
+          activeStep: _newStep
+        }
+      };
+    }
+    case SET_ADD_RECIPE_SHORTCUT: {
+      let newShortcuts = {
+        ...state.addRecipe.shortcuts,
+        ...action.payload
+      }
+      console.log('newShortcuts: ', newShortcuts);
+      // RESUME Toggle not working yet... everything stays set to true after first setting
+      setTimeout(() => {
+        toggleShortcut(action.payload)
+      }, 1000);
+      return {
+        ...state,
+        addRecipe: {
+          ...state.addRecipe,
+          shortcuts: {
+            ...newShortcuts
+          }
+        }
+      };
+    }
+      default:
       return state;
   }
 }

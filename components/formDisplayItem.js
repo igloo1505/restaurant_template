@@ -37,6 +37,9 @@ const useItemStyles = makeStyles((theme) => ({
     // },
   },
   itemWrapperInnerShifted: { transform: "scaleX(1)" },
+  badWayToGetRidOfBug: {
+    transform: "scaleX(1) !important",
+  },
   itemWrapperOuter: {
     // border: "1px solid red",
     // boxShadow: "5px 5px 8px #cc540e,-5px -5px 8px #ff6c12",
@@ -136,13 +139,15 @@ const DisplayItem = ({ item, text, removeItem, name, index }) => {
 
   const classes = useItemStyles();
   const [shifted, setShifted] = useState(!isInitial);
+  const [makeFullHeight, setMakeFullHeight] = useState(false)
   useEffect(() => {
     setTimeout(() => setShifted(true), 250);
+    setTimeout(() => setMakeFullHeight(true), 750);
   }, []);
   if (isInitial) {
     return (
         <div
-          className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow", true && "formDisplayItem")}
+          className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow", true && "formDisplayItem", makeFullHeight && classes.badWayToGetRidOfBug)}
           // onClick={() => }
         >
           <div

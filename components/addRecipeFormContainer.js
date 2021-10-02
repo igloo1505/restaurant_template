@@ -2,7 +2,7 @@
 import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { connect, useStore } from "react-redux";
+import { connect, useStore, useDispatch } from "react-redux";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -10,6 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import Slide from "@material-ui/core/Slide";
 import Grow from "@material-ui/core/Grow";
 import Button from "@material-ui/core/Button";
+import * as Types from '../stateManagement/TYPES';
 import { gsap } from "gsap";
 import {
   ConnectorComponent,
@@ -66,6 +67,14 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: `6px 6px 12px ${theme.palette.grey[400]}, -6px 6px 12px ${theme.palette.grey[300]}`,
     transition:
       "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
+  },
+  shortcutButtonLabel: {
+    color: "#fff"
+  },
+  shortcutButton: {
+    backgroundColor: theme.palette.info.main,
+    margin: "0px 0.75rem",
+    boxShadow: "4px 4px 6px #cc540e, -4px -4px 6px #ff6c12",
   },
   button: {
     color: "#fff",
@@ -234,10 +243,11 @@ const AddRecipeFormContainer = (
     placeHolder,
     setPlaceHolder,
     setActiveStep,
+    hasSetCommand
   },
   ref
 ) => {
-  const store = useStore();
+  const dispatch = useDispatch()
   const [addSecondItemButton, setAddSecondItemButton] = useState(false);
   const [hasMenuOpen, setHasMenuOpen] = useState(false);
   const [paperLifted, setPaperLifted] = useState(false);
@@ -272,8 +282,15 @@ const AddRecipeFormContainer = (
       delete data.direction;
     }
 
-    store.dispatch(addNewRecipe(data));
+    dispatch(addNewRecipe(data));
   };
+
+  const showKeyboardShortcuts = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
+    })
+  }
 
   const handleNext = () => {
     // TODO validate before transition to next step
@@ -281,10 +298,16 @@ const AddRecipeFormContainer = (
       handleRecipeSubmission();
       return;
     }
-    setActiveStep(activeStep + 1);
+    dispatch({
+      type: Types.SET_ADD_RECIPE_STEP,
+      payload: "increase"
+    })
   };
   const handleBack = () => {
-    setActiveStep(activeStep - 1);
+    dispatch({
+      type: Types.SET_ADD_RECIPE_STEP,
+      payload: "decrease"
+    })
   };
   return (
     <div>
@@ -328,6 +351,7 @@ const AddRecipeFormContainer = (
                 setFormData={setFormData}
                 handleFormChange={handleFormChange}
                 placeHolder={placeHolder}
+                hasSetCommand={hasSetCommand}
                 setPlaceHolder={setPlaceHolder}
                 hasMenuOpen={hasMenuOpen}
                 setHasMenuOpen={setHasMenuOpen}
@@ -338,6 +362,24 @@ const AddRecipeFormContainer = (
             </div>
             <div className={classes.buttons}>
               <div className={classes.buttonRightContainer}>
+                {activeStep === 1 && (
+                  <Button
+                    onClick={showKeyboardShortcuts}
+                    // className={(classes.button, classes.backButton)}
+                    classes={{
+                      root: clsx(
+                        classes.shortcutButton,
+                        hasMenuOpen && "hideButtons"
+                      ),
+                      label: clsx(
+                        classes.shortcutButtonLabel,
+                        hasMenuOpen && "hideButtons"
+                      ),
+                    }}
+                  >
+                    Shortcuts
+                  </Button>
+                )}
                 {activeStep !== 0 && (
                   <Button
                     onClick={handleBack}
@@ -406,6 +448,7 @@ const GetStepContent = forwardRef(
       addSecondItemButton,
       setAddSecondItemButton,
       handleAddSecondItem,
+      hasSetCommand
     },
     ref
   ) => {
@@ -420,6 +463,7 @@ const GetStepContent = forwardRef(
               setFormData={setFormData}
               placeHolder={placeHolder}
               setPlaceHolder={setPlaceHolder}
+              hasSetCommand={hasSetCommand}
               // hasMenuOpen={hasMenuOpen}
               // setHasMenuOpen={setHasMenuOpen}
             />
@@ -437,6 +481,7 @@ const GetStepContent = forwardRef(
               addSecondItemButton={addSecondItemButton}
               setAddSecondItemButton={setAddSecondItemButton}
               handleAddSecondItem={handleAddSecondItem}
+              hasSetCommand={hasSetCommand}
             />
           </Grow>
         );
@@ -449,6 +494,7 @@ const GetStepContent = forwardRef(
               setFormData={setFormData}
               hasMenuOpen={hasMenuOpen}
               setHasMenuOpen={setHasMenuOpen}
+              hasSetCommand={hasSetCommand}
             />
           </Grow>
         );
