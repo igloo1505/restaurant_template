@@ -246,11 +246,11 @@ const UnitSelectCompact = (props) => {
   };
 
   const handleChange = (e) => {
+    
     if (typeof e.target?.value === "string") {
       let _unit = getIngredientUnits().filter(
         (u) => u.long.toLowerCase() === e.target.value.trim().toLowerCase()
       );
-
       if (_unit && isSubRecipe < 0) {
         setFormData({
           ...formData,
@@ -404,6 +404,7 @@ const UnitSelectCompact = (props) => {
                 )}
                 value={option.long}
                 onClick={(e) => handleItemClick(e, option)}
+                // TODO make sure this clickItem function or something similar is handled on select or whatever method is called when you press Enter
               >
                 {parts.map((part, index, array) => (
                   <span

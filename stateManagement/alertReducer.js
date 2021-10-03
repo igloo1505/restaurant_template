@@ -1,6 +1,8 @@
 import * as Types from "./TYPES";
 import store from "./store";
 import { createReducer } from "@reduxjs/toolkit";
+import authMiddleware from '../util/authMiddleware';
+import {defaultShortcutArray} from './keyboardShortcutArray'
 
 const useHorriblePracticeToResetStateAndAvoidTransitionIssue = () => {
   setTimeout(() => {
@@ -23,7 +25,10 @@ const initialState = {
     },
   },
   keyboardShortcuts: {
-    show: false
+    show: false,
+    shortcutMenuValue: "",
+    shortCutArray: defaultShortcutArray,
+    filteredShortcutArray: null,
   },
   subRecipe: {
     titles: [],
@@ -477,7 +482,46 @@ builder.addCase(Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS, (state, action) => {
   }
 }
   });
-
+  builder.addCase(Types.SET_SHORTCUT_MODAL_SEARCH_VALUE, (state, action) => {
+  return {
+  ...state,
+  keyboardShortcuts: {
+    ...state.keyboardShortcuts,
+    searchValue: action.payload
+  }
+  };
+  });
+  builder.addCase(Types.FILTER_KEYBOARD_SHORTCUTS, (state, action) => {
+    console.log('Running filter');
+    let _r = {}
+    let allScs = (() => {
+      let _allScs = [];
+      state.keyboardShortcuts.shortCutArray.forEach(sc => {
+        sc.scs.forEach((st) => {
+            _allScs.push({t: st, key: sc.key})
+        })
+      });
+      console.log('_allScs: ', _allScs);
+      return _allScs;
+    })();
+    let _regex = new RegExp(action.payload, "gi");
+    let _newFilteredArray = allScs.filter((sc) => _regex.test(sc.t)) .filter((sc) => {
+      let shouldSet = !_r[sc.key]
+      _r[sc.key] = true;
+      return shouldSet;
+     } )
+     .map((sc) => defaultShortcutArray.filter(dsc => dsc.key === sc.key)[0]) 
+     if (_newFilteredArray.length === defaultShortcutArray.length) {
+      _newFilteredArray.length = 0
+     }
+  return {
+  ...state,
+  keyboardShortcuts: {
+    ...state.keyboardShortcuts,
+    filteredShortcutArray: _newFilteredArray.length === 0 ? null : _newFilteredArray
+  }
+  };
+  });
 });
 
 export default modalReducer;

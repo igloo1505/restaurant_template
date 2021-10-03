@@ -124,88 +124,7 @@ const AddRecipe = ({
       unit: { long: "Cups", short: "cups", key: "Volume" },
     },
   });
-const [hasSetControl, setHasSetControl] = useState(false)
-const [hasSetCommand, setHasSetCommand] = useState(false)
-// RESUME move all this to redux... mostly finished before I fell asleep.
-const [hasSetN, setHasSetN] = useState(false)
-const [hasSetE, setHasSetE] = useState(false)
-const [hasSetB, setHasSetB] = useState(false)
-const [hasSetA, setHasSetA] = useState(false)
-useEffect(() => {
-  setHasSetCommand(false)
-  setHasSetA(false)
-  setHasSetB(false)
-  setHasSetN(false)
-  setHasSetE(false)
-}, [activeStep])
-  useEffect(() => {
-    if(typeof window !== "undefined") {
-      document.addEventListener("keydown", (e) => {
-        let _newShortcuts = {}
-        if(e.key === "Meta"){
-          setHasSetCommand(true)
-          _newShortcuts.Meta = true
-          setTimeout(() => {
-            setHasSetCommand(false)
-            _newShortcuts.Meta = false
-          }, 1000);
-        }
-        if(e.key === "a"){
-          setHasSetA(true)
-          _newShortcuts.a = true
-          setTimeout(() => {
-            setHasSetA(false)
-          }, 1000);
-        }
-        if(e.key === "b"){
-          setHasSetB(true)
-          _newShortcuts.b = true
-          setTimeout(() => {
-            setHasSetB(false)
-          }, 1000);
-        }
-        if(e.key === "n"){
-          setHasSetN(true)
-          _newShortcuts.n = true
-          setTimeout(() => {
-            setHasSetN(false)
-          }, 1000);
-        }
-        if(e.key === "e"){
-          _newShortcuts.e = true
-          setHasSetE(true)
-          setTimeout(() => {
-            setHasSetE(false)
-          }, 1000);
-        }
-        dispatch({
-          type: Types.SET_ADD_RECIPE_SHORTCUT,
-          payload: _newShortcuts
-        })
-      })
-    }
-  }, [])
-  useEffect(() => {
-    if(hasSetCommand && hasSetB && hasSetA){
-      dispatch({
-        type: Types.SET_ADD_RECIPE_STEP,
-        payload: "decrease"
-      })
-    }
-    if(hasSetCommand && hasSetN && hasSetE){
-      dispatch({
-        type: Types.SET_ADD_RECIPE_STEP,
-        payload: "increase"
-      })
-    }
-    setTimeout(() => {
-      setHasSetCommand(false)
-      setHasSetA(false)
-      setHasSetB(false)
-      setHasSetN(false)
-      setHasSetE(false)
-    }, 1000);
-  }, [hasSetA, hasSetB, hasSetN, hasSetE])
+
   const setActiveStep = (step) => {
     dispatch({
       type: Types.SET_ADD_RECIPE_STEP,
@@ -273,7 +192,7 @@ useEffect(() => {
               <AddRecipeFormContainer
                 activeStep={activeStep}
                 steps={steps}
-                hasSetCommand={hasSetCommand}
+                
                 setActiveStep={setActiveStep}
                 formData={formData}
                 setFormData={setFormData}

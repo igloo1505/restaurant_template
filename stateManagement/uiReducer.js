@@ -99,16 +99,6 @@ const getDeviceType = (w) => {
   }
 };
 
-const toggleShortcut = (_shortcut) => {
-  let returnShortcut = {};
-  Object.keys(_shortcut).forEach(_key => {
-    returnShortcut[_key] = false
-  });
-  return {
-    type: SET_ADD_RECIPE_SHORTCUT,
-    payload: returnShortcut,
-  };
-}
 
 export default function UIReducer(state = initialState, action) {
   switch (action.type) {
@@ -431,27 +421,11 @@ export default function UIReducer(state = initialState, action) {
         }
       };
     }
-    case SET_ADD_RECIPE_SHORTCUT: {
-      let newShortcuts = {
-        ...state.addRecipe.shortcuts,
-        ...action.payload
-      }
-      console.log('newShortcuts: ', newShortcuts);
-      // RESUME Toggle not working yet... everything stays set to true after first setting
-      setTimeout(() => {
-        toggleShortcut(action.payload)
-      }, 1000);
-      return {
-        ...state,
-        addRecipe: {
-          ...state.addRecipe,
-          shortcuts: {
-            ...newShortcuts
-          }
-        }
-      };
-    }
+    
       default:
       return state;
   }
 }
+
+
+
