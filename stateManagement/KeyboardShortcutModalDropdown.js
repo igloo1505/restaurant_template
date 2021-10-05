@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react'
 import { connect, useDispatch } from 'react-redux';
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { useRouter } from "next/router"
 import Dialog from "@material-ui/core/Dialog";
 import { gsap } from 'gsap';
 import Divider from '@material-ui/core/Divider';
@@ -24,6 +25,7 @@ import DialogContent from "@material-ui/core/DialogContent"
 import { BsCommand, BsShift } from "react-icons/bs"
 import { ImArrowLeft, ImArrowRight } from "react-icons/im"
 import ClientSidePortal from '../components/portalAuthenticated/ClientSidePortal';
+import ReturnIcon from "@material-ui/icons/KeyboardReturnOutlined"
 
 
 const useClasses = makeStyles((theme) => ({
@@ -46,9 +48,18 @@ const useClasses = makeStyles((theme) => ({
 }))
 
 
-const KeyboardShortcutModalDropdown = ({ alert: { keyboardShortcuts: { filteredShortcutArray } } }) => {
+const KeyboardShortcutModalDropdown = ({ alert: { keyboardShortcuts: { filteredShortcutArray } }, selectedItemIndex, setSelectedItemIndex,
+}) => {
+    const router = useRouter()
     const classes = useClasses()
     const [dropdownIsOpen, setDropdownIsOpen] = useState(false)
+    const [currentHighlightedIndex, setCurrentHighlightedIndex] = useState(selectedItemIndex)
+
+    useEffect(() => {
+        console.log('router: ', router);
+        setCurrentHighlightedIndex(selectedItemIndex)
+    }, [selectedItemIndex])
+
     useEffect(() => {
         setDropdownIsOpen(Boolean(filteredShortcutArray?.length > 0))
         animateDropdownMenuChange()
@@ -57,7 +68,7 @@ const KeyboardShortcutModalDropdown = ({ alert: { keyboardShortcuts: { filteredS
     return (
         <Paper classes={{ root: clsx(classes.outerContainer, !dropdownIsOpen && classes.hide) }}>
             <MenuList classes={{ root: classes.menuListRoot }}>
-                {filteredShortcutArray && filteredShortcutArray?.map((shortcut, index, array) => <ShortCutDropdownItem shortcut={shortcut} index={index} array={array} />)}
+                {filteredShortcutArray && filteredShortcutArray?.map((shortcut, index, array) => <ShortCutDropdownItem shortcut={shortcut} index={index} array={array} isHighlighted={Boolean(currentHighlightedIndex === index)} selectedItemIndex={selectedItemIndex} />)}
             </MenuList>
         </Paper>
     )
@@ -78,24 +89,101 @@ const useMenuItemClasses = makeStyles((theme) => ({
         flexDirection: "row",
         justifyContent: "flex-end",
         alignItems: "center",
-    }
-}))
+    },
+    typography: {
+        transition: theme.transitions.create(['color'], {
+            duration: 250,
+        }),
+    },
+    typographyHighlighted: {
+        color: theme.palette.primary.main,
+        transition: theme.transitions.create(['color'], {
+            duration: 250,
+        }),
+    },
+    listItemIconRoot: {
+        marginLeft: "0.75rem",
+        color: theme.palette.primary.dark,
+    },
+    iconRoot: {
+        width: "auto",
+        height: "2.1rem",
+    },
+    iconHighlighted: {},
+    minWidth: "unset",
+    menuItemHighlighted: {}
+}
+))
 
-const ShortCutDropdownItem = ({ shortcut, index, array }) => {
+const ShortCutDropdownItem = ({ shortcut, index, array, isHighlighted: _isHighlighted, selectedItemIndex }) => {
     const classes = useMenuItemClasses()
+    const [isHighlighted, setIsHighlighted] = useState(_isHighlighted)
+    useEffect(() => {
+        setIsHighlighted(selectedItemIndex === index)
+        if (selectedItemIndex === index) {
+            console.log('selectedItemIndex === index: ', shortcut.displayText, selectedItemIndex === index);
+        }
+    }, [_isHighlighted, selectedItemIndex])
     return (
         <Fragment>
-            <MenuItem classes={{ root: clsx(classes.menuItemRoot, "shortcutDropdownMenuItem") }}>
-                <ListItemIcon>
-                    <SomeIcon fontSize="small" />
-                </ListItemIcon>
-                <Typography variant="h4" color="text.secondary">
+            <MenuItem classes={{ root: clsx(classes.menuItemRoot, "shortcutDropdownMenuItem", isHighlighted && classes.menuItemHighlighted) }}>
+                <Typography variant="h4" color="text.secondary" classes={{ root: clsx(classes.typography, isHighlighted && classes.typographyHighlighted, `shortcutTypographyFocused-${index}`) }}>
                     {shortcut.displayText}
                 </Typography>
+                {
+                    selectedItemIndex === index && <AnimatedReturnIcon classes={classes} index={index} selectedItemIndex={selectedItemIndex} />
+                }
             </MenuItem>
             {index !== array.length - 1 && <Divider />}
         </Fragment>
     )
+}
+
+
+
+
+const AnimatedReturnIcon = ({ classes, index, selectedItemIndex }) => {
+    const [isHighlighted, setIsHighlighted] = useState(false)
+    useEffect(() => {
+        setIsHighlighted(selectedItemIndex === index)
+        animateReturnIcon(index, selectedItemIndex)
+    }, [index, selectedItemIndex])
+    return (
+        <ListItemIcon classes={{ root: clsx(classes.listItemIconRoot, `shortcutListItemFocused-${index}`) }}>
+            <ReturnIcon fontSize="small" className={clsx(classes.iconRoot, isHighlighted && classes.iconHighlighted)} />
+        </ListItemIcon>
+    )
+
+}
+
+
+const animateReturnIcon = (index, selectedItemIndex) => {
+    gsap.fromTo(`.shortcutListItemFocused-${index}`, {
+        scaleX: 0.0001,
+        x: 50,
+        duration: 0.75,
+        // ease: "elastic.out(1, 0.3)",
+        ease: "bounce.out",
+    },
+        {
+            scaleX: 1,
+            x: 0,
+            duration: 0.75,
+            // ease: "elastic.out(1, 0.3)",
+            ease: "bounce.out",
+        }
+    );
+    gsap.fromTo(`.shortcutTypographyFocused-${index}`, {
+        x: 50,
+        duration: 0.7,
+        ease: "elastic.out(1.7, 0.3)",
+    },
+        {
+            x: 0,
+            duration: 0.7,
+            ease: "elastic.out(1.7, 0.3)",
+        }
+    );
 }
 
 

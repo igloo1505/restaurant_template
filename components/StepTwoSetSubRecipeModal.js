@@ -18,6 +18,18 @@ const useClasses = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "space-between",
   },
+  inputRoot: {
+
+  },
+  inputInput: {
+    fontSize: "2rem",
+  },
+  inputLabelRoot: {
+    fontSize: "1.7rem",
+  },
+  inputLabelShrink: {
+    fontSize: "1rem",
+  },
   textFieldRoot: {
     maxWidth: "100% !important",
     minWidth: "190px",
@@ -38,7 +50,7 @@ const useClasses = makeStyles((theme) => ({
   currentSubRecipeContainer: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
     padding: "0.75rem 0.5rem",
     gap: "0.5rem",
@@ -60,7 +72,7 @@ const useClasses = makeStyles((theme) => ({
   currentSubRecipeContainerSelected: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
     // padding: "0.75rem 0.75rem 0.75rem 0.5rem",
     padding: "0.75rem 0.5rem",
@@ -76,20 +88,23 @@ const useClasses = makeStyles((theme) => ({
   buttonLabel: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
-    // color: "#fff",
     color: theme.palette.grey[200],
-    gap: "0.25rem",
+    padding: "1rem 0.5rem",
+    // gap: "0.25rem",
     textTransform: "none",
   },
   buttonLabelSelected: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
     color: "#fff",
     gap: "0.25rem",
+  },
+  typographyContainer: {
+
   },
   iconRoot: {
     width: "1rem",
@@ -103,17 +118,20 @@ const useClasses = makeStyles((theme) => ({
     fontWeight: "bold",
   },
   itemTextRootSelected: {
-    // TODO finish this in the morning as actual button from mui instead of doing it this way... use the same one from skills modal.
-    // RESUME finish this in the morning as actual button from mui instead of doing it this way... use the same one from skills modal.
     // color: theme.palette.secondary.main,
     color: "#ffffff",
     fontWeight: "bold",
+  },
+  buttonRoot: {
+    padding: "0.5rem 0.8rem",
+    // fontSize: "1.1rem",
   },
   buttonContainer: {
     margin: "0.75rem 0.75rem 0rem 0rem",
     display: "flex",
     flexDirection: "row",
     justifyContent: "flex-end",
+    gap: "0.75rem"
   },
 }));
 
@@ -124,7 +142,7 @@ const Modal_setSubRecipeTitle = ({
 }) => {
   const classes = useClasses();
   const dispatch = useDispatch();
-  const [textFieldWidth, setTextFieldWidth] = useState({ width: "200px" });
+
   const [_titles, set_titles] = useState([]);
   useEffect(() => {
     set_titles(titles);
@@ -138,9 +156,7 @@ const Modal_setSubRecipeTitle = ({
 
   const handleChange = (e) => {
     let _error = Boolean(e.target.value.length >= 40);
-    setTextFieldWidth({
-      width: `${e.target.value.length * 0.5}rem`,
-    });
+
     setFocusState({
       ...focusState,
       shrink: Boolean(e.target.value.length !== 0),
@@ -157,21 +173,22 @@ const Modal_setSubRecipeTitle = ({
       e.preventDefault();
       handleSubmit();
     }
-    let shiftKey = e.shiftKey;
-    if (shiftKey && e.key === "ArrowLeft") {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      e.stopPropagation();
       dispatch({
         type: Types.LOOP_THROUGH_SUB_RECIPES,
         payload: "leftKey",
       });
     }
-    if (shiftKey && e.key === "ArrowRight") {
-      dispatch({
-        type: Types.LOOP_THROUGH_SUB_RECIPES,
-        payload: "rightKey",
-      });
-    }
-    // }
+
   };
+
+  const closeNoSubmit = (e) => {
+    dispatch({
+      type: Types.CLOSE_SUB_RECIPE_MODAL,
+    });
+  }
 
   const handleSubmit = () => {
     if (title.length >= 3) {
@@ -190,12 +207,12 @@ const Modal_setSubRecipeTitle = ({
       payload: index,
     });
   };
-  
+
   return (
     <div className={classes.outerContainer}>
       <div className={classes.innerContainer}>
         <TextField
-          label={focusState.error ? "Too Long!" : "Add sub-title"}
+          label={focusState.error ? "Too Long!" : focusState.shrink ? "Add sub-title" : "Dressing? Secret Sauce?"}
           value={title}
           name="title"
           error={focusState.error}
@@ -203,10 +220,20 @@ const Modal_setSubRecipeTitle = ({
           onKeyDown={toggleSubRecipeIndex}
           onChange={handleChange}
           classes={{ root: classes.textFieldRoot }}
-          style={textFieldWidth}
+          fullWidth
+          InputProps={{
+            classes: {
+              root: classes.inputRoot,
+              input: classes.inputInput,
+            }
+          }}
           InputLabelProps={{
             focused: focusState.focused,
             shrink: focusState.shrink,
+            classes: {
+              root: classes.inputLabelRoot,
+              shrink: classes.inputLabelShrink,
+            }
           }}
           onFocus={() => {
             setFocusState({
@@ -224,6 +251,17 @@ const Modal_setSubRecipeTitle = ({
           }}
         />
         <div className={classes.currentSubRecipes}>
+          {_titles.length > 0 &&
+            (
+              <SubRecipeButton
+                index={-1}
+                classes={classes}
+                handleRemoveSubRecipe={handleRemoveSubRecipe}
+                currentSubRecipeIndex={currentSubRecipeIndex}
+                title={"Main"}
+              />
+            )
+          }
           {_titles.map((title, index) => {
             return (
               <SubRecipeButton
@@ -239,8 +277,11 @@ const Modal_setSubRecipeTitle = ({
         </div>
       </div>
       <div className={classes.buttonContainer}>
-        <Button color="primary" onClick={handleSubmit}>
+        <Button classes={{ root: classes.buttonRoot }} onClick={closeNoSubmit} variant="contained" color="warning" >
           Close
+        </Button>
+        <Button classes={{ root: classes.buttonRoot }} color="primary" onClick={handleSubmit} variant="contained">
+          Save
         </Button>
       </div>
     </div>
@@ -269,6 +310,7 @@ const _SubRecipeButton = ({
     Boolean(index === currentSubRecipeIndex)
   );
   useEffect(() => {
+    console.log('isSubRecipe: ', isSubRecipe);
     setIsSelected(Boolean(index === isSubRecipe));
   }, [index, currentSubRecipeIndex, isSubRecipe]);
   const handleItemClick = (e) => {
@@ -294,21 +336,19 @@ const _SubRecipeButton = ({
       }}
       onClick={handleItemClick}
     >
-      <CancelIcon
-        classes={{ root: classes.iconRoot }}
-        onClick={() => handleRemoveSubRecipe(index)}
-      />
-      <Typography
-        variant="body1"
-        classes={{
-          root: clsx(
-            classes.itemTextRoot,
-            index === currentSubRecipeIndex && classes.itemTextRootSelected
-          ),
-        }}
-      >
-        {title}
-      </Typography>
+      <div className={classes.typographyContainer}>
+        <Typography
+          variant="body1"
+          classes={{
+            root: clsx(
+              classes.itemTextRoot,
+              index === currentSubRecipeIndex && classes.itemTextRootSelected
+            ),
+          }}
+        >
+          {title}
+        </Typography>
+      </div>
     </Button>
   );
 };

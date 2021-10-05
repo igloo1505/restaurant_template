@@ -90,7 +90,7 @@ const AdjustForDrawerContainerComponent = ({
     mainDrawer: { open: drawerIsOpen },
     viewport: { navHeight, width: deviceWidth },
   },
-  props: { children, centerAll, overflowHidden },
+  props: { children, centerAll, overflowHidden, customStyles },
 }) => {
   const classes = useStylesAdjustForDrawer();
   const [shifted, setShifted] = useState(deviceWidth > 1920);
@@ -101,8 +101,8 @@ const AdjustForDrawerContainerComponent = ({
     let shouldShift = drawerIsOpen
       ? drawerIsOpen
       : deviceWidth > 1920
-      ? true
-      : false;
+        ? true
+        : false;
     setShifted(shouldShift);
     getStyles();
   }, [drawerIsOpen, navHeight, deviceWidth]);
@@ -132,7 +132,10 @@ const AdjustForDrawerContainerComponent = ({
     if (!centerAll) {
       _styles.display = "block";
     }
-    setStyles(_styles);
+    setStyles({
+      ..._styles,
+      ...customStyles
+    });
   };
 
   return (

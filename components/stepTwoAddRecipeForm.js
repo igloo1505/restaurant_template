@@ -5,7 +5,6 @@ import { useDispatch, connect } from "react-redux";
 import StepTwoFormComponent from "./StepTwoFormComponent";
 import StepTwoDisplayComponent from "./StepTwoDisplayComponent";
 import * as Types from "../stateManagement/TYPES";
-import gsap from "gsap";
 // import Stepper from "@material-ui/core/Stepper";
 // import Step from "@material-ui/core/Step";
 // import StepLabel from "@material-ui/core/StepLabel";
@@ -35,49 +34,51 @@ const StepTwoAddRecipeForm = ({
   alert: {
     subRecipe: { titles: subRecipeTitles, isSubRecipe },
   },
+  UI: {
+    addRecipe: {
+      formData
+    }
+  },
   ...props
 }) => {
   const dispatch = useDispatch();
   console.log("props: ", props);
   const [isShifted, setIsShifted] = useState(
-    props.formData.ingredients.length !== 0
+    formData.ingredients.length !== 0
   );
   const [formHeightLimit, setFormHeightLimit] = useState(400);
-  const [subRecipeFormData, setSubRecipeFormData] = useState([]);
+
+  const setSubRecipeFormData = (newData) => {
+    dispatch({
+      type: Types.SET_ADD_RECIPE_FORM_DATA,
+      payload: {
+        ...formData,
+        subRecipes: newData,
+      }
+    })
+  }
   const setIsSubRecipe = (data) => {
     dispatch({
       type: Types.SET_SUB_RECIPE_VALUE,
       payload: data,
     });
-
     console.log("Data", data);
   };
-  // const [isSubRecipe, setIsSubRecipe] = useState(-1);
-  useEffect(() => {
-    console.log(
-      "props.formData: ",
-      props.formData,
-      isSubRecipe,
-      subRecipeTitles.length - 1
-    );
-  }, [props.formData]);
+
+
 
   useEffect(() => {
-    console.log(
-      "subRecipeFormData, isSubRecipe: ",
-      subRecipeFormData,
-      isSubRecipe
-    );
-  }, [subRecipeFormData, isSubRecipe]);
-
-  useEffect(() => {
-    if (props.formData?.ingredients.length !== 0) {
+    () => {
+      // let lengths = 
+    }
+    // TODO toggle here based on each specific active subrecipe length rather than only ingredients.
+    if (formData?.ingredients.length !== 0) {
       setIsShifted(true);
     }
-    if (props.formData?.ingredients.length === 0) {
+    if (formData?.ingredients.length === 0) {
       setIsShifted(false);
     }
-  }, [props.formData]);
+  }, [formData]);
   const classes = useStyles();
 
   return (
@@ -89,7 +90,6 @@ const StepTwoAddRecipeForm = ({
         formHeightLimit={formHeightLimit}
         isSubRecipe={isSubRecipe}
         setIsSubRecipe={setIsSubRecipe}
-        subRecipeFormData={subRecipeFormData}
         setSubRecipeFormData={setSubRecipeFormData}
       />
       <StepTwoDisplayComponent
@@ -97,9 +97,6 @@ const StepTwoAddRecipeForm = ({
         isShifted={isShifted}
         setIsShifted={setIsShifted}
         formHeightLimit={formHeightLimit}
-        isSubRecipe={isSubRecipe}
-        setIsSubRecipe={setIsSubRecipe}
-        subRecipeFormData={subRecipeFormData}
         setSubRecipeFormData={setSubRecipeFormData}
       />
     </div>
@@ -108,6 +105,7 @@ const StepTwoAddRecipeForm = ({
 
 const mapStateToProps = (state, props) => ({
   alert: state.alert,
+  UI: state.UI,
   props: props,
 });
 

@@ -1,7 +1,8 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState, useRef } from "react";
 import clsx from "clsx";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
+import * as Types from '../stateManagement/TYPES';
 import UnitSelectDestructed from "./UnitSelectDestructured";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -163,29 +164,47 @@ const useStyles = makeStyles((theme) => ({
 const StepOneFormComponent = ({
   props: {
     handleFormChange,
-    formData,
-    setFormData,
     placeHolder,
     setPlaceHolder,
     hasMenuOpen,
     setHasMenuOpen,
     hasSetCommand
   },
+  UI: {
+    addRecipe: {
+      activeStep,
+      formData
+    }
+  }
 }) => {
+  const titleInputRef = useRef()
+  const dispatch = useDispatch()
   const classes = useStyles();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const setFormData = (newFormData) => {
+    dispatch({
+      type: Types.SET_ADD_RECIPE_FORM_DATA,
+      payload: newFormData
+    })
+  }
+  useEffect(() => {
+    if (activeStep === 0) {
+      titleInputRef.current.focus()
+    }
+  }, [activeStep])
   const initialFocusState = {
     title: {
       focus: false,
-      shrink: Boolean(formData.title.length !== 0),
+      shrink: Boolean(formData?.title?.length !== 0),
     },
     servings: {
       focus: false,
-      shrink: Boolean(formData.servings.length !== 0),
+      shrink: Boolean(formData?.servings?.length !== 0),
     },
     description: {
       focus: false,
-      shrink: Boolean(formData.description.length !== 0),
+      shrink: Boolean(formData?.description?.length !== 0),
     },
   };
   const [focusState, setFocusState] = useState(initialFocusState);
@@ -260,7 +279,7 @@ const StepOneFormComponent = ({
               classes.textFieldWrapper,
               focusState?.title?.focus && classes.textFieldWrapperFocused,
               Boolean(formData?.title?.length !== 0) &&
-                classes.textFieldWrapperShrunk
+              classes.textFieldWrapperShrunk
             )}
           >
             <TextField // required
@@ -271,9 +290,10 @@ const StepOneFormComponent = ({
               fullWidth
               autoFocus
               multiline
+              inputRef={titleInputRef}
               label="Recipe's title "
               onChange={handleFormChange}
-              value={formData.title}
+              value={formData?.title}
               focusState={focusState}
               focused={focusState.title.focus}
               formData={formData}
@@ -330,7 +350,7 @@ const StepOneFormComponent = ({
                 e.preventDefault();
               }
             }}
-            value={formData.servings}
+            value={formData?.servings}
             classes={{
               root: classes.textFieldRoot,
             }}
@@ -342,7 +362,7 @@ const StepOneFormComponent = ({
                   classes.inputLabelRoot,
                   focusState.servings.focus && classes.inputLabelFocused,
                   formData?.servings?.length !== 0 &&
-                    classes.inputLabelWithValue
+                  classes.inputLabelWithValue
                 ),
                 required: classes.inputLabelRequired,
               },
@@ -387,13 +407,13 @@ const StepOneFormComponent = ({
               setShouldShrinkDescription(true);
             }}
             onBlur={() => {
-              if (formData.description === "") {
+              if (formData?.description === "") {
                 fauxListener("description", "blur");
                 setPlaceHolder(true);
                 setShouldShrinkDescription(false);
               }
             }}
-            value={formData.description}
+            value={formData?.description}
             classes={{
               root: classes.textFieldRoot,
             }}
@@ -404,7 +424,7 @@ const StepOneFormComponent = ({
                 root: clsx(
                   classes.descriptionLabelRoot,
                   shouldShrinkDescription &&
-                    classes.descriptionInputLabelFocused
+                  classes.descriptionInputLabelFocused
                 ),
                 required: classes.inputLabelRequired,
               },
@@ -443,6 +463,7 @@ const StepOneFormComponent = ({
 const mapStateToProps = (state, props) => ({
   network: state.network,
   user: state.user,
+  UI: state.UI,
   props: props,
 });
 

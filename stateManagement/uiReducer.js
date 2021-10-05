@@ -1,5 +1,7 @@
 import {
   OPEN_DRAWER,
+  HIDE_SHORTCUT_MENU,
+  SET_ADD_RECIPE_FORM_DATA,
   SET_ADD_RECIPE_SHORTCUT,
   CLOSE_DRAWER,
   TOGGLE_EDIT_STATE,
@@ -19,7 +21,8 @@ import {
   SHOW_ACCOUNT_MENU,
   IS_CLIENT,
   TOGGLE_SIGNUP_FORM,
-  SET_ADD_RECIPE_STEP
+  SET_ADD_RECIPE_STEP,
+  SET_ALLOW_SUB_RECIPE
 } from "./TYPES";
 
 const initialState = {
@@ -31,6 +34,8 @@ const initialState = {
   },
   addRecipe: {
     activeStep: 0,
+    allowSubRecipe: false,
+    formData: {},
     shortcut: {
       e: false,
       a: false,
@@ -403,13 +408,13 @@ export default function UIReducer(state = initialState, action) {
       };
     case SET_ADD_RECIPE_STEP: {
       let _newStep = 0
-      if(action.payload === "increase"){
+      if (action.payload === "increase") {
         _newStep = state.addRecipe.activeStep < 2 ? state.addRecipe.activeStep + 1 : 2
       }
-      if(action.payload === "decrease"){
+      if (action.payload === "decrease") {
         _newStep = state.addRecipe.activeStep > 0 ? state.addRecipe.activeStep - 1 : 0
       }
-      if(parseInt(action.payload) >= 0){
+      if (parseInt(action.payload) >= 0) {
         _newStep = parseInt(action.payload)
       }
       console.log('_newStep: ', _newStep);
@@ -417,12 +422,30 @@ export default function UIReducer(state = initialState, action) {
         ...state,
         addRecipe: {
           ...state.addRecipe,
-          activeStep: _newStep
+          activeStep: _newStep,
         }
       };
     }
-    
-      default:
+    case SET_ALLOW_SUB_RECIPE: {
+      console.log('action.payload: ', action.payload);
+      return {
+        ...state,
+        addRecipe: {
+          ...state.addRecipe,
+          allowSubRecipe: action.payload
+        }
+      }
+    }
+    case SET_ADD_RECIPE_FORM_DATA: {
+      return {
+        ...state,
+        addRecipe: {
+          ...state.addRecipe,
+          formData: action.payload
+        }
+      }
+    }
+    default:
       return state;
   }
 }

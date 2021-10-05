@@ -2,6 +2,8 @@ import React, { useEffect, useState, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
+import * as Types from '../stateManagement/TYPES';
+import { connect, useDispatch } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import MUIMenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
@@ -139,23 +141,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const UnitSelectCompact = (props) => {
+const UnitSelectCompact = ({
+  UI: {
+    addRecipe: {
+      allowSubRecipe: addSecondItemButton,
+      activeStep,
+      formData
+    }
+  },
+  props
+}) => {
   const {
     InputLabelProps,
     focused,
     label,
     selectedUnit,
-    setFormData,
-    formData,
     focusState,
     setFocusState,
     addIngredient,
     isSubRecipe,
     setIsSubRecipe,
-    subRecipeFormData,
-    setSubRecipeFormData,
   } = props;
   const [unitHelper, setUnitHelper] = useState("");
+  const dispatch = useDispatch()
   useEffect(() => {
     if (formData.ingredient?.unit?.long) {
       setUnitHelper(formData.ingredient.unit.long);
@@ -195,16 +203,6 @@ const UnitSelectCompact = (props) => {
         unitHelperHelper = ` ${unitHelperHelper}`;
       }
     });
-
-    // let _matches = str.split(_regex);
-    // let matches_ = str.split(regex_);
-
-    // if (_matches.length === matches.length) {
-    //   matches = _matches;
-    // }
-    // if (matches_.length === matches.length) {
-    //   matches = matches_;
-    // }
     if (matches.length === option.long.length) {
       matches = [];
     }
@@ -239,14 +237,34 @@ const UnitSelectCompact = (props) => {
           formData.ingredient.text.length >= 3 &&
           typeof parseFloat(formData.ingredient.amount) === "number"
         ) {
+          console.log("DIspatch addIngredient", addIngredient)
           addIngredient(daUnit);
         }
       }
     }
   };
 
+
+  const setFormData = (newFormData) => {
+    dispatch({
+      type: Types.SET_ADD_RECIPE_FORM_DATA,
+      payload: newFormData
+    })
+  }
+
+
+  const setSubRecipeFormData = (value) => {
+    dispatch({
+      type: Types.SET_ADD_RECIPE_FORM_DATA,
+      payload: {
+        ...formData,
+        subRecipes: value
+      }
+    })
+  }
+
   const handleChange = (e) => {
-    
+    console.log("Setting", e)
     if (typeof e.target?.value === "string") {
       let _unit = getIngredientUnits().filter(
         (u) => u.long.toLowerCase() === e.target.value.trim().toLowerCase()
@@ -258,13 +276,13 @@ const UnitSelectCompact = (props) => {
         });
       }
       if (_unit && isSubRecipe >= 0) {
-        let newSubRecData = [...subRecipeFormData];
+        let newSubRecData = [...formData?.subRecipes];
         newSubRecData[isSubRecipe] = {
           ...newSubRecData[isSubRecipe],
           ingredient: {
             ...newSubRecData[isSubRecipe].ingredient,
             ingredient: {
-              ...subRecipeFormData[isSubRecipe].ingredient,
+              ...newSubRecData[isSubRecipe].ingredient,
               unit: _unit,
             },
           },
@@ -282,20 +300,7 @@ const UnitSelectCompact = (props) => {
     }
   };
   const handleItemClick = (e, option) => {
-    // let _string = "";
-    // if (typeof value === "string") {
-    //   _string = value;
-    // } else {
-    //   value.forEach((item) => {
-    //     _string += item.text;
-    //   });
-    // }
-    console.log(
-      "inside handleItemClick: ",
-      e.target.id,
-      e.target.value,
-      option
-    );
+
     if (typeof option === "object") {
       let unit_ = getIngredientUnits().filter(
         (u) => !u.isKey && u.long === option.long
@@ -404,7 +409,7 @@ const UnitSelectCompact = (props) => {
                 )}
                 value={option.long}
                 onClick={(e) => handleItemClick(e, option)}
-                // TODO make sure this clickItem function or something similar is handled on select or whatever method is called when you press Enter
+              // TODO make sure this clickItem function or something similar is handled on select or whatever method is called when you press Enter
               >
                 {parts.map((part, index, array) => (
                   <span
@@ -457,4 +462,10 @@ const UnitSelectCompact = (props) => {
     </FormControl>
   );
 };
-export default UnitSelectCompact;
+
+const mapStateToProps = (state, props) => ({
+  UI: state.UI,
+  props: props
+});
+export default connect(mapStateToProps)(UnitSelectCompact);
+

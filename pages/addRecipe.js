@@ -15,6 +15,7 @@ import Slide from "@material-ui/core/Slide";
 import Copyright from "../components/Copyright";
 import Loader from "../components/Loader";
 import * as Types from '../stateManagement/TYPES';
+import { setKeyboardListener } from '../stateManagement/userActions';
 import AddRecipeFormContainer from "../components/addRecipeFormContainer";
 import {
   UnderNavbar,
@@ -32,26 +33,28 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     backgroundColor: "transparent",
     marginRight: theme.spacing(2),
-    transform: "translateY(-20vh)",
-    transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+    // transform: "translateY(-20vh)",
+    // transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     position: "relative !important",
     [theme.breakpoints.down("md")]: {
       position: "relative !important",
       top: "unset",
       left: "unset",
       // transform: "unset",
-      transform: "translateY(-4rem)",
+      // transform: "translateY(-4rem)",
     },
   },
   layoutShifted: {
-    transform: "translate(calc(-50% + 120px), -50%)",
+    // transform: "translate(-50%, -50%)",
     transition: "transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     [theme.breakpoints.down("lg")]: {
-      transform: "translateY(-20vh)",
+      // transform: "translateY(-20vh)"
+      // transform: "translate(-50%, -50%)",
     },
     [theme.breakpoints.down("md")]: {
       // transform: "unset",
-      transform: "translateY(-4rem)",
+      // transform: "translateY(-4rem)",
+      // transform: "translate(-50%, -50%)",
     },
   },
 
@@ -103,27 +106,16 @@ const AddRecipe = ({
   const router = useRouter();
   //!!! The only reason half of this form state isn't in Redux is because I installed Apple's beta OS on my macbook and now Chrome just about starts it on fire... and Safari doesn't have **** for devtools.
   // TODO Add character limit to title!!
-  const [formData, setFormData] = useState({
-    categories: [],
-    title: "",
-    imgUrl: null,
-    description: "",
-    prepTime: "12",
-    cookTime: "16",
-    prepTimeUnit: { long: "Minutes", short: "mins" },
-    cookTimeUnit: { long: "Minutes", short: "mins" },
-    servings: "4",
-    servingUnit: "Cups",
-    directions: [],
-    direction: "",
-    ingredients: [],
-    ingredient: {
-      text: "",
-      optional: false,
-      amount: 1,
-      unit: { long: "Cups", short: "cups", key: "Volume" },
-    },
-  });
+  const [formData, setFormData] = useState(initialFormData);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // let y = window.localStorage.setItem("recentAddRecipeForm", JSON.stringify(formData));
+      dispatch({
+        type: Types.SET_ADD_RECIPE_FORM_DATA,
+        payload: formData
+      })
+    }
+  }, [formData])
 
   const setActiveStep = (step) => {
     dispatch({
@@ -132,7 +124,15 @@ const AddRecipe = ({
     })
   }
   useEffect(() => {
-    setFormData(initialFormData);
+    let _initialFormData = initialFormData
+    if (typeof window !== 'undefined') {
+      let hasStoredData = window.localStorage.getItem("recentAddRecipeForm");
+      console.log('hasStoredData: ', JSON.parse(hasStoredData));
+      // if (hasStoredData) {
+      //   _initialFormData = JSON.parse(hasStoredData);
+      // }
+    }
+    setFormData(_initialFormData);
     setActiveStep(0);
   }, [resetFormData]);
   useEffect(() => {
@@ -169,10 +169,13 @@ const AddRecipe = ({
     if (!loggedIn) {
       router.push("/");
     }
+    if (loggedIn) {
+      setKeyboardListener();
+    }
   }, [loggedIn, token]);
 
   const classes = useStyles();
-  
+
   if (isLoading || !loggedIn) {
     return <Loader type="circular" />;
   }
@@ -180,7 +183,7 @@ const AddRecipe = ({
     return (
       <Fragment>
         <CssBaseline />
-        <AdjustForDrawerContainer centerAll>
+        <AdjustForDrawerContainer centerAll customStyles={{ justifyContent: "center", alignItems: "flex-start" }}>
           <main
             className={clsx(
               classes.layout,
@@ -192,7 +195,7 @@ const AddRecipe = ({
               <AddRecipeFormContainer
                 activeStep={activeStep}
                 steps={steps}
-                
+
                 setActiveStep={setActiveStep}
                 formData={formData}
                 setFormData={setFormData}

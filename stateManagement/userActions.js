@@ -353,3 +353,21 @@ export const deleteReview = (data) => async (dispatch) => {
     });
   }
 };
+
+
+
+export const setKeyboardListener = () => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener("keydown", (e) => {
+      let cmdShift = e.shiftKey && e.metaKey;
+      if (cmdShift && e.key === "k") {
+        return store.dispatch({
+          type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
+          payload: {
+            src: "global"
+          }
+        })
+      }
+    })
+  }
+}

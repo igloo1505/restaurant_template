@@ -19,38 +19,48 @@
 		"prefix": "runMiddleware",
 		"body": [
 			"const ${1:functionName} = (req, res, fn) => {",
-				"return new Promise((resolve, reject) => {",
-				  "fn(req, res, (result) => {",
-					"if (result instanceof Error) {",
-					  "return reject(result);",
-					"}",
-					"return resolve(result);",
-				  "});",
-				"});",
-			  "};",
+			"return new Promise((resolve, reject) => {",
+			"fn(req, res, (result) => {",
+			"if (result instanceof Error) {",
+			"return reject(result);",
+			"}",
+			"return resolve(result);",
+			"});",
+			"});",
+			"};",
 		]
 	},
 	"autoGrid": {
-		"prefix": ["autoGrid", "autogrid", "RAM"],
+		"prefix": [
+			"autoGrid",
+			"autogrid",
+			"RAM"
+		],
 		"description": "One line autofit grid",
 		"body": [
-	"width: '100%',",
-    "display: 'grid',",
-    "gridColumnGap: '10px',",
-    "gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',",
+			"width: '100%',",
+			"display: 'grid',",
+			"gridColumnGap: '10px',",
+			"gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',",
 		]
 	},
 	"transition": {
-		"prefix": ["transition", "muiTransition"],
+		"prefix": [
+			"transition",
+			"muiTransition"
+		],
 		"description": "MUI Transition",
 		"body": [
-				"transition: theme.transitions.create(['$2'], {",
-				"duration: $1,",
-			  "}),",
+			"transition: theme.transitions.create(['$2'], {",
+			"duration: $1,",
+			"}),",
 		]
 	},
 	"breakPoint": {
-		"prefix": ["breakPoint", "break-point"],
+		"prefix": [
+			"breakPoint",
+			"break-point"
+		],
 		"description": "MUI Breakpoint",
 		"body": [
 			"[theme.breakpoints.down($1)]: {",
@@ -59,24 +69,43 @@
 		]
 	},
 	"checkDisabled": {
-		"prefix": ["checkDisabled", "disabled"],
+		"prefix": [
+			"checkDisabled",
+			"disabled"
+		],
 		"description": "check if should be disabled",
 		"body": [
 			"const [disabled, setDisabled] = useState(false)",
-  "useEffect(() => {",
-    "let shouldDisable = Boolean(loggedIn && userId);",
-    "setDisabled(!shouldDisable);",
-  "}, [loggedIn, userId]);",
+			"useEffect(() => {",
+			"let shouldDisable = Boolean(loggedIn && userId);",
+			"setDisabled(!shouldDisable);",
+			"}, [loggedIn, userId]);",
 		]
 	},
 	"makeStyles": {
-		"prefix": ["makeStyles"],
+		"prefix": [
+			"makeStyles"
+		],
 		"description": "makeStyles",
 		"body": [
 			"const ${1:functionName} = makeStyles((theme) => ({",
-    "$2",
-	"}))"
+			"$2",
+			"}))"
 		]
 	},
-	
+	"_currentMapStateToProps": {
+		"prefix": [
+			"_currentMapState"
+		],
+		"description": "_current_mapState",
+		"body": [
+			"const mapStateToProps = (state, props) => ({",
+			"	UI: state.UI,",
+			"	user: state.user,",
+			"	alert: state.alert,",
+			"	props: props",
+			"  });",
+			"}))"
+		]
+	},
 }

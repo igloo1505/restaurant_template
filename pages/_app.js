@@ -9,6 +9,7 @@ import Bookmarks_navbarMenu from "../components/portalAuthenticated/Bookmarks_na
 import AddRecipeKeyboardShortcuts from '../components/modalContent/AddRecipeKeyboardShortcuts';
 import RecipeReviewModal from "../components/modalsAndAlerts/RecipeReviewModal";
 import Drawer from "../components/portalAuthenticated/Drawer";
+import ReviewRecipeBeforeSubmission from '../components/modalsAndAlerts/ReviewRecipeBeforeSubmission';
 import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
 import Head from "next/head";
 import "../styles/globals.css";
@@ -136,9 +137,10 @@ function MyApp({ Component, pageProps, ...rest }) {
           <Drawer />
           <RecipeReviewModal />
           <Grocery_navbarMenu />
-          <AddRecipeKeyboardShortcuts/>
+          <AddRecipeKeyboardShortcuts />
           <Bookmarks_navbarMenu />
           <AccountIconMenu />
+          <ReviewRecipeBeforeSubmission />
           <Alert />
           <SnackbarSwitcher />
           <SimpleBooleanSnackbar />

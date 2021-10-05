@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, forwardRef } from "react";
+import React, { useState, useRef, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { useDispatch, connect } from "react-redux";
@@ -225,89 +225,104 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const StepTwoFormComponent = ({
-  formData,
   handleFormChange,
-  setFormData,
   isShifted,
   hasMenuOpen,
   setHasMenuOpen,
-  addSecondItemButton,
-  setAddSecondItemButton,
   handleAddSecondItem,
   setIsSubRecipe,
-  subRecipeFormData,
-  setSubRecipeFormData,
   hasSetCommand,
   alert: {
     subRecipe: { titles: subRecipeTitleArray, isSubRecipe, latestDirection },
-    keyboardShortcuts: {show: showKeyboardShortcuts},
+    keyboardShortcuts: { show: showKeyboardShortcuts },
   },
+  UI: {
+    addRecipe: {
+      allowSubRecipe: addSecondItemButton,
+      activeStep,
+      formData
+    }
+  }
 }) => {
   const dispatch = useDispatch();
   const [arrayWithMain, setArrayWithMain] = useState([])
+  const ingredientInputRef = useRef(null);
+
+
+  const setSubRecipeFormData = (subRecData) => {
+    dispatch({
+      type: Types.SET_ADD_RECIPE_FORM_DATA,
+      payload: {
+        ...formData,
+        subRecipes: subRecData
+      }
+    })
+  }
+
+  const setFormData = (newFormData) => {
+    dispatch({
+      type: Types.SET_ADD_RECIPE_FORM_DATA,
+      payload: newFormData
+    })
+  }
+
   useEffect(() => {
-    if(subRecipeTitleArray.length > 0) {
-    let newArray = [{
-      text: "Main",
-      thisIndex: -1
-    }]
-    subRecipeTitleArray.forEach((title, index) => {
-      newArray.push({
-        text: title,
-        thisIndex: index
-      })
-    });
-    setArrayWithMain(newArray)
-  }
-  if(subRecipeTitleArray.length === 0) {
-    setArrayWithMain([])
-  }
+    if (activeStep === 1) {
+      ingredientInputRef.current.focus()
+    }
+  }, [activeStep])
+
+  useEffect(() => {
+    dispatch({
+      type: Types.SET_ALLOW_SUB_RECIPE,
+      payload: formData.ingredients.length > 2
+    })
+  }, [formData])
+  useEffect(() => {
+    if (subRecipeTitleArray.length > 0) {
+      let newArray = [{
+        text: "Main",
+        thisIndex: -1
+      }]
+      subRecipeTitleArray.forEach((title, index) => {
+        newArray.push({
+          text: title,
+          thisIndex: index
+        })
+      });
+      setArrayWithMain(newArray)
+    }
+    if (subRecipeTitleArray.length === 0) {
+      setArrayWithMain([])
+    }
   }, [subRecipeTitleArray])
   useEffect(() => {
-    if(typeof window !== 'undefined') {
-      window.addEventListener("keydown", (e) =>{
-        let disallowedKeys = ["a", "b", "n", "e"]
-        console.log('hasSetCommand: ', hasSetCommand);
-
-        // if(hasSetCommand && disallowedKeys.includes(e.key)) {
-        //   e.preventDefault()
-        //   e.stopPropagation()
-        // }
+    if (typeof window !== 'undefined') {
+      window.addEventListener("keydown", (e) => {
         let cmdShift = e.shiftKey && e.metaKey;
-        console.log("ekey", e.key)
-        if(cmdShift && e.key === "k"){
-          console.log('showKeyboardShortcuts: ', showKeyboardShortcuts);
-          return dispatch({
-            type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
-          })
+        if (subRecipeTitleArray.length > 0) {
+          if (cmdShift && e.key === "ArrowRight") {
+            dispatch({
+              type: Types.LOOP_THROUGH_SUB_RECIPES,
+              payload: "rightKey"
+            })
+          }
+          if (cmdShift && e.key === "ArrowLeft") {
+            dispatch({
+              type: Types.LOOP_THROUGH_SUB_RECIPES,
+              payload: "leftKey"
+            })
+          }
         }
-        if(subRecipeTitleArray.length > 0) {
-        if(cmdShift && e.key === "ArrowRight"){
-         dispatch({
-           type: Types.LOOP_THROUGH_SUB_RECIPES,
-           payload: "rightKey"
-          })
-        }
-        if(cmdShift && e.key === "ArrowLeft"){
-          dispatch({
-            type: Types.LOOP_THROUGH_SUB_RECIPES,
-            payload: "leftKey"
-          })
-        }
-      }
       })
     }
   }, [subRecipeTitleArray])
 
   const [hasSentAlert, setHasSentAlert] = useState(getHasSentAlert());
   const [shiftPressed, setShiftPressed] = useState(false);
-  // useEffect(() => {
-  //   let x = getHasSentAlert();
-  //   if (x !== hasSentAlert) {
-  //     setHasSentAlert(x);
-  //   }
-  // }, []);
-  
+
+
+
   const [focusState, setFocusState] = useState({
     ingredient: {
       shrink: Boolean(formData?.ingredient?.text?.length !== 0),
@@ -342,17 +357,12 @@ const StepTwoFormComponent = ({
   };
 
   const handleChange = (e) => {
-    console.log("e: ", e.target.name, isSubRecipe, subRecipeFormData);
-
     if (e.target.value.length === 3) {
       sendAddIngredientNotification();
     }
-    if (formData.ingredients.length > 2) {
-      setAddSecondItemButton(true);
-    }
     if (isSubRecipe >= 0) {
       console.log("isSubRecipe: ", isSubRecipe);
-      let newSubRecData = [...subRecipeFormData];
+      let newSubRecData = [...formData?.subRecipes];
       newSubRecData[isSubRecipe] = {
         ...newSubRecData[isSubRecipe],
         ingredient: {
@@ -360,7 +370,6 @@ const StepTwoFormComponent = ({
           [e.target.name]: e.target.value,
         },
       };
-      console.log("newSubRecData: ", newSubRecData);
       setSubRecipeFormData(newSubRecData);
     }
     if (isSubRecipe < 0) {
@@ -380,11 +389,12 @@ const StepTwoFormComponent = ({
   };
   // Go back and change this to use users last used unit
   const addIngredient = (unit) => {
-    if (formData.ingredients.length >= 1) {
-      setAddSecondItemButton(true);
-    }
+    console.log('unit: ', unit);
+    // if (formData.ingredients.length >= 1) {
+    //   setAddSecondItemButton(true);
+    // }
     if (isSubRecipe >= 0) {
-      let newSubRecData = [...subRecipeFormData];
+      let newSubRecData = [...formData?.subRecipes];
       newSubRecData[isSubRecipe] = {
         ...newSubRecData[isSubRecipe],
         ingredients: [
@@ -439,13 +449,13 @@ const StepTwoFormComponent = ({
       }
     }
   };
-  
+
   useEffect(() => {
     if (subRecipeTitleArray.length > 0) {
       console.log("Setting subRecipe array");
       let length = subRecipeTitleArray.length - 1;
       setSubRecipeFormData([
-        ...subRecipeFormData,
+        ...formData?.subRecipes,
         {
           title: subRecipeTitleArray[subRecipeTitleArray.length - 1],
           ingredients: [],
@@ -473,16 +483,16 @@ const StepTwoFormComponent = ({
     });
   };
   useEffect(() => {
-    if(typeof window !== 'undefined'){
+    if (typeof window !== 'undefined') {
       let hasShownModal = window.localStorage.getItem("hasShownKeyboardModal")
-      if(!hasShownModal){
-       dispatch({
+      if (!hasShownModal) {
+        dispatch({
           type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
         })
         window.localStorage.setItem("hasShownKeyboardModal", true)
       }
       document.addEventListener("keydown", (e) => {
-        if(e.metaKey && e.shiftKey && e.key === "i"){
+        if (e.metaKey && e.shiftKey && e.key === "i") {
           handleSubRecipeButtonClick();
         }
       })
@@ -518,11 +528,11 @@ const StepTwoFormComponent = ({
       if (isSubRecipe >= 0) {
         validated = {
           text: Boolean(
-            subRecipeFormData[isSubRecipe].ingredient.ingredient.length >= 3
+            formData?.subRecipes?.[isSubRecipe].ingredient.ingredient.length >= 3
           ),
           amount: Boolean(
             typeof parseFloat(
-              subRecipeFormData[isSubRecipe].ingredient.amount
+              formData?.subRecipes?.[isSubRecipe].ingredient.amount
             ) === "number"
           ),
           unit: checkUnit(),
@@ -538,7 +548,7 @@ const StepTwoFormComponent = ({
   };
   const handleChangeBoolean = (e) => {
     if (isSubRecipe >= 0) {
-      let newSubRecData = [...subRecipeFormData];
+      let newSubRecData = [...formData?.subRecipes];
       newSubRecData[isSubRecipe] = {
         ...newSubRecData[isSubRecipe],
         ingredient: {
@@ -566,18 +576,19 @@ const StepTwoFormComponent = ({
         !isShifted && classes.transformContainer
       )}
     >
-      {arrayWithMain.length > 0 && 
+      {arrayWithMain.length > 0 &&
         arrayWithMain.map((title, index) => (
           <SubRecipeBanner
             classes={classes}
-            subRecipeFormData={subRecipeFormData}
-            isSubRecipe={isSubRecipe}
+            subRecipeIndex={index}
             currentTitle={subRecipeTitleArray[isSubRecipe]}
             thisTitle={title.text}
             isIn={title.thisIndex === isSubRecipe}
             latestDirection={latestDirection}
-            index={title.thisIndex}     
-        />
+            index={title.thisIndex}
+            subRecipeFormData={formData?.subRecipes}
+            isSubRecipe={isSubRecipe}
+          />
         ))
       }
       <TextField
@@ -586,9 +597,10 @@ const StepTwoFormComponent = ({
         onFocus={() => fauxListener("ingredient", "focus")}
         onBlur={() => fauxListener("ingredient", "blur")}
         fullWidth
-        classes={{root: classes.topTextFieldRoot}}
+        classes={{ root: classes.topTextFieldRoot }}
         autoFocus
         multiline
+        inputRef={ingredientInputRef}
         label="Ingredient"
         onChange={handleChange}
         onKeyDown={keyObserver}
@@ -599,7 +611,7 @@ const StepTwoFormComponent = ({
         }}
         value={
           isSubRecipe >= 0
-            ? subRecipeFormData[isSubRecipe]?.ingredient?.ingredient
+            ? formData?.subRecipes?.[isSubRecipe]?.ingredient?.ingredient
             : formData.ingredient.text
         }
         // value={isSubRecipe}
@@ -609,7 +621,7 @@ const StepTwoFormComponent = ({
           shrink: (() => {
             if (isSubRecipe >= 0) {
               return Boolean(
-                subRecipeFormData[isSubRecipe]?.ingredient?.ingredient
+                formData?.subRecipes?.[isSubRecipe]?.ingredient?.ingredient
                   ?.length !== 0
               );
             }
@@ -622,7 +634,7 @@ const StepTwoFormComponent = ({
               classes.inputLabelRoot,
               focusState.ingredient.focus && classes.inputLabelFocused,
               formData?.ingredient?.text?.length !== 0 &&
-                classes.inputLabelWithValue
+              classes.inputLabelWithValue
             ),
             required: classes.inputLabelRequired,
           },
@@ -670,7 +682,7 @@ const StepTwoFormComponent = ({
             onChange={handleChange}
             value={
               isSubRecipe >= 0
-                ? subRecipeFormData[isSubRecipe]?.ingredient?.amount
+                ? formData?.subRecipes?.[isSubRecipe]?.ingredient?.amount
                 : formData.ingredient.amount
             }
             focused={focusState.amount.focus}
@@ -682,7 +694,7 @@ const StepTwoFormComponent = ({
                   classes.inputLabelRoot,
                   focusState.amount.focus && classes.inputLabelFocused,
                   formData?.ingredient.amount?.length !== 0 &&
-                    classes.inputLabelWithValue
+                  classes.inputLabelWithValue
                 ),
                 required: classes.inputLabelRequired,
               },
@@ -720,19 +732,13 @@ const StepTwoFormComponent = ({
             setFocusState={setFocusState}
             // Each item id format to send whole object to state
             // `unit-${index}`
-            isSubRecipe={isSubRecipe}
-            setIsSubRecipe={setIsSubRecipe}
-            subRecipeFormData={subRecipeFormData}
-            setSubRecipeFormData={setSubRecipeFormData}
             selectedUnit={
               isSubRecipe >= 0
-                ? subRecipeFormData[isSubRecipe]?.ingredient?.unit
+                ? formData?.subRecipes?.[isSubRecipe]?.ingredient?.unit
                 : formData.ingredient.unit
             }
             addIngredient={addIngredient}
             focused={focusState.unit.focus}
-            setFormData={setFormData}
-            formData={formData}
             InputLabelProps={{
               focused: focusState.unit.focus,
               shrink: Boolean(formData?.ingredient.unit.long?.length !== 0),
@@ -741,7 +747,7 @@ const StepTwoFormComponent = ({
                   classes.inputLabelRoot,
                   focusState.unit.focus && classes.inputLabelFocused,
                   formData?.ingredient.unit.long?.length !== 0 &&
-                    classes.inputLabelWithValue
+                  classes.inputLabelWithValue
                 ),
                 required: classes.inputLabelRequired,
               },
@@ -756,7 +762,7 @@ const StepTwoFormComponent = ({
                 focused: classes.inputFocused,
               },
             }}
-            // onKeyDown={keyObserver}
+            onKeyDown={keyObserver}
             onKeyUp={(e) => {
               if (!e.shiftKey) {
                 setShiftPressed(false);
@@ -798,12 +804,12 @@ const StepTwoFormComponent = ({
             <Checkbox
               value={
                 isSubRecipe >= 0
-                  ? subRecipeFormData[isSubRecipe]?.ingredient?.optional
+                  ? formData?.subRecipes?.[isSubRecipe]?.ingredient?.optional
                   : formData.ingredient.optional
               }
               checked={
                 isSubRecipe >= 0
-                  ? subRecipeFormData[isSubRecipe]?.ingredient?.optional
+                  ? formData?.subRecipes?.[isSubRecipe]?.ingredient?.optional
                   : formData.ingredient.optional
               }
               name="ingredient"
@@ -826,42 +832,47 @@ const StepTwoFormComponent = ({
 
 const mapStateToProps = (state, props) => ({
   alert: state.alert,
+  UI: state.UI,
   props: props,
 });
 
 
 const SubRecipeBanner = forwardRef(({
-classes,
-subRecipeFormData,
-isSubRecipe,
-currentTitle,
-thisTitle,
-isIn,
-index,
-latestDirection
+  classes,
+  isSubRecipe,
+  currentTitle,
+  thisTitle,
+  isIn,
+  index,
+  latestDirection,
+  subRecipeIndex
 }) => {
-  const [_previousIndex, setPreviousIndex] = useState(0) 
+  const [_previousIndex, setPreviousIndex] = useState(0)
   const [_latestDirection, set_latestDirection] = useState("right")
   useEffect(() => {
-    console.log('_latestDirection: ', _latestDirection);
+    console.log('Set direction this way', isSubRecipe, index, subRecipeIndex)
     setPreviousIndex(isSubRecipe)
     set_latestDirection(latestDirection)
   }, [isSubRecipe, latestDirection])
+  console.log('latestDirection: ', latestDirection);
+  console.log('_latestDirection: ', _latestDirection);
   return (
-    <Slide in={isIn} direction={_latestDirection}>
-    <div className={clsx(classes.subRecipeTitleTextContainer, !isIn && classes.hide)}>
-          <Typography
-            variant="h6"
-            classes={{ root: classes.subRecipeTitleText }}
-          >
-            {thisTitle}
-          </Typography>
-        </div>
-        </Slide>
+    <Slide in={isIn} direction={latestDirection ? latestDirection : _latestDirection}>
+      <div className={clsx(classes.subRecipeTitleTextContainer, !isIn && classes.hide)}>
+        <Typography
+          variant="h6"
+          classes={{ root: clsx(classes.subRecipeTitleText, `testClass-${index}`) }}
+        >
+          {thisTitle}
+        </Typography>
+      </div>
+    </Slide>
   )
 })
 
-
+const animateTitleEntrance = ({ index }) => {
+  let titleDiv = document.getElementById()
+}
 
 
 export default connect(mapStateToProps)(StepTwoFormComponent);

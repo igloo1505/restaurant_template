@@ -1,11 +1,14 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react'
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useStore } from 'react-redux';
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
+import { useRouter } from 'next/router';
 import clsx from 'clsx'
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { returnFilteredShortcutArray } from '../../stateManagement/keyboardShortcutArray';
 import Typography from "@material-ui/core/Typography";
 import Popover from "@material-ui/core/Popover";
+import * as Types from '../../stateManagement/TYPES';
 import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Input from "@material-ui/core/Input";
@@ -15,10 +18,11 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import DialogContent from "@material-ui/core/DialogContent"
 import { BsCommand, BsShift } from "react-icons/bs"
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa"
 import { ImArrowLeft, ImArrowRight } from "react-icons/im"
 import ClientSidePortal from '../portalAuthenticated/ClientSidePortal';
 import KeyboardShortcutModalDropdown from '../../stateManagement/KeyboardShortcutModalDropdown';
-import * as Types from '../../stateManagement/TYPES';
+import { ArrowLeft } from '@material-ui/icons';
 import { MenuList } from '@material-ui/core';
 
 // TODO Turn this into something resembling alphred that autoSelects a autoComplete textField with array of commands  
@@ -56,6 +60,12 @@ const useClasses = makeStyles((theme) => ({
         backgroundColor: "rgba(0,0,0,0.2)"
     },
     dialogScrollBody: {},
+    inputIconRightContainer: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-end",
+    },
     title: {
         fontSize: "1.1rem",
         display: "flex",
@@ -94,12 +104,16 @@ const useClasses = makeStyles((theme) => ({
     },
 }))
 
-
+const initialSpecialKeyState = {
+    ArrowLeft: 0,
+    ArrowRight: 0
+}
 
 const AddRecipeKeyboardShortcuts = ({ alert: { keyboardShortcuts: { show, shortcutMenuValue, filteredShortcutArray } } }) => {
     const classes = useClasses()
     const theme = useTheme()
     const dispatch = useDispatch()
+    const store = useStore()
     let standardIconStyle = {
         width: "1.2rem",
         height: "1.2rem",
@@ -144,6 +158,7 @@ const AddRecipeKeyboardShortcuts = ({ alert: { keyboardShortcuts: { show, shortc
         // boxShadow: `6px 6px 12px ${theme.palette.grey[400]}, -6px 6px 12px ${theme.palette.grey[300]}`,
     }
     const [searchFieldCurrentValue, setSearchFieldCurrentValue] = useState("")
+
     const [cmdIconStyles, setCmdIconStyles] = useState(standardIconStyle)
     const [shiftIconStyles, setShiftIconStyles] = useState(standardIconStyle)
     const [kIconStyles, setKIconStyles] = useState(standardTextIconStyle)
@@ -153,6 +168,7 @@ const AddRecipeKeyboardShortcuts = ({ alert: { keyboardShortcuts: { show, shortc
     const [dropdownIsOpen, setDropdownIsOpen] = useState(false)
     const [selectedItemIndex, setSelectedItemIndex] = useState(0)
 
+    const [specialKeysState, setSpecialKeysState] = useState(initialSpecialKeyState)
 
     useEffect(() => {
         setDropdownIsOpen(filteredShortcutArray?.length > 0)
@@ -229,13 +245,7 @@ const AddRecipeKeyboardShortcuts = ({ alert: { keyboardShortcuts: { show, shortc
             }
         })
     }
-    // const handleChange = (e) => {
-    //     setSearchFieldCurrentValue(e.target.value)
-    //     dispatch({
-    //         type: Types.SET_SHORTCUT_MODAL_SEARCH_VALUE,
-    //         payload: e.target.value
-    //     })
-    // }
+
     const handleDialogClose = (e) => {
         dispatch({
             type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
@@ -262,12 +272,22 @@ const AddRecipeKeyboardShortcuts = ({ alert: { keyboardShortcuts: { show, shortc
                 disableTypography
             >
                 <ModalSearchField selectedItemIndex={selectedItemIndex}
+                    filteredShortcutArray={filteredShortcutArray}
+                    specialKeysState={specialKeysState}
+                    setSpecialKeysState={setSpecialKeysState}
                     setSelectedItemIndex={setSelectedItemIndex} />
+                <SpecialKeyIcons
+                    specialKeysState={specialKeysState}
+                    setSpecialKeysState={setSpecialKeysState}
+                    classes={classes}
+                />
             </DialogTitle>
             <DialogContent classes={{ root: classes.dialogContentRoot }} id="dialogContentMain">
                 <KeyboardShortcutModalDropdown
                     selectedItemIndex={selectedItemIndex}
                     setSelectedItemIndex={setSelectedItemIndex}
+                    specialKeysState={specialKeysState}
+                    setSpecialKeysState={setSpecialKeysState}
                 />
                 <div className={classes.shortcutItem}>
                     <CmdIcon iconStyle={cmdIconStyles} />
@@ -380,6 +400,9 @@ const useSearchFieldClasses = makeStyles((theme) => ({
         },
     },
     inputDisabled: {},
+    hide: {
+        opacity: 0
+    },
     input_root: {
         color: "#fff",
         fontSize: "2.5rem",
@@ -389,11 +412,10 @@ const useSearchFieldClasses = makeStyles((theme) => ({
     },
 }))
 
-const ModalSearchField = ({ selectedItemIndex, setSelectedItemIndex }) => {
+const ModalSearchField = ({ selectedItemIndex, filteredShortcutArray, setSelectedItemIndex, specialKeysState, setSpecialKeysState }) => {
     const classes = useSearchFieldClasses()
     const inputRef = useRef(null)
     const [keyboardShortcutSearchValue, setKeyboardShortcutSearchValue] = useState("")
-
     const [focusState, setFocusState] = useState({
         focus: true,
         shrink: true
@@ -402,10 +424,56 @@ const ModalSearchField = ({ selectedItemIndex, setSelectedItemIndex }) => {
         inputRef.current.focus()
         inputRef.current.select()
     }, [])
+
+    const [showHelperText, setShowHelperText] = useState(false)
     const dispatch = useDispatch()
     const [helperText, setHelperText] = useState("Search for a shortcut")
+    const router = useRouter()
+
+    const resetSpecialKeyState = (e) => {
+        setTimeout(() => {
+            setSpecialKeysState({
+                ...specialKeysState,
+                ...(specialKeysState[e.key] > 0 && { [e.key]: specialKeysState[e.key] - 1 })
+            })
+        }, 1000);
+    }
+
+    const highjackArrowKeys = (e) => {
+        let preventKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter", "Tab"]
+        if (preventKeys.includes(e.key) && e.target.value === "") {
+            setSpecialKeysState({
+                ...initialSpecialKeyState,
+                ...(specialKeysState[e.key] < 2 && { [e.key]: specialKeysState[e.key] + 1 })
+            })
+            resetSpecialKeyState(e)
+            e.stopPropagation()
+            e.preventDefault()
+        }
+        if (filteredShortcutArray) {
+            if (e.key === "ArrowUp") {
+                let newIndex = selectedItemIndex > 0 ? selectedItemIndex - 1 : filteredShortcutArray.length - 1
+                return setSelectedItemIndex(newIndex)
+            }
+            if (e.key === "ArrowDown" || e.key === "Tab") {
+                let newIndex = selectedItemIndex < filteredShortcutArray.length - 1 ? selectedItemIndex + 1 : 0
+                return setSelectedItemIndex(newIndex)
+            }
+            if (e.key === "Enter") {
+                console.log("Should send: ", filteredShortcutArray[selectedItemIndex])
+                if (typeof filteredShortcutArray[selectedItemIndex]?.action === "function") {
+                    filteredShortcutArray[selectedItemIndex].action()
+                }
+            }
+        }
+    }
     const handleChange = (e) => {
         console.log('e: ', e);
+        if (e.target.value.length <= 0) {
+            dispatch({
+                type: Types.HIDE_SHORTCUT_MENU,
+            })
+        }
         if (e.target.value.length > 0) {
             setFocusState({
                 ...focusState,
@@ -420,9 +488,17 @@ const ModalSearchField = ({ selectedItemIndex, setSelectedItemIndex }) => {
             setHelperText("Search for a shortcut")
         }
         setKeyboardShortcutSearchValue(e.target.value)
+        console.log('router.pathname: ', router.pathname);
+        const _state = store.getState()
+        console.log('_state: ', _state);
+        let newShortcutArray = returnFilteredShortcutArray({
+            searchString: e.target.value,
+            currentState: _state,
+            currentPath: router.pathname
+        })
         dispatch({
             type: Types.FILTER_KEYBOARD_SHORTCUTS,
-            payload: e.target.value
+            payload: newShortcutArray
         })
     }
     return (
@@ -439,7 +515,7 @@ const ModalSearchField = ({ selectedItemIndex, setSelectedItemIndex }) => {
                 onFocus={() => setFocusState({ focus: true, shrink: keyboardShortcutSearchValue.length > 0 ? true : false })}
                 onBlur={() => setFocusState({ focus: false, shrink: keyboardShortcutSearchValue.length > 0 ? true : false })}
             >Search for a shortcut</InputLabel>
-            <Input autoFocus={true} id="keyboard-shortcut-input" inputRef={inputRef} aria-describedby="keyboard-shortcut-helper-text" classes={{
+            <Input autoFocus={true} id="keyboard-shortcut-input" inputRef={inputRef} autocomplete="off" aria-describedby="keyboard-shortcut-helper-text" classes={{
                 root: classes.inputRoot,
                 error: classes.inputError,
                 input: classes.input_root,
@@ -447,10 +523,47 @@ const ModalSearchField = ({ selectedItemIndex, setSelectedItemIndex }) => {
                 disabled: classes.inputDisabled
             }}
                 onChange={handleChange}
+                onKeyDown={highjackArrowKeys}
             />
-            <FormHelperText id="keyboard-shortcut-helper-text" classes={{ root: classes.formHelperText }}>{helperText}</FormHelperText>
+            <FormHelperText id="keyboard-shortcut-helper-text" classes={{ root: clsx(classes.formHelperText, !showHelperText && classes.hide) }}>{helperText}</FormHelperText>
         </FormControl>
     )
 }
 
 
+const SpecialKeyIcons = ({ specialKeysState, setSpecialKeysState, classes }) => {
+    const [iconArrays, setIconArrays] = useState({ ArrowLeft: [], ArrowRight: [] })
+
+    useEffect(() => {
+        let newIconArrays = {
+            ArrowLeft: [],
+            ArrowRight: []
+        }
+        let _icons = {
+            ArrowLeft: FaArrowLeft,
+            ArrowRight: FaArrowRight,
+        }
+        Object.keys(specialKeysState).forEach((_key) => {
+            for (let i = 0; i < specialKeysState[_key]; i++) {
+                newIconArrays[_key].push(_icons[_key])
+            }
+        })
+        setIconArrays(newIconArrays)
+    }, [specialKeysState])
+
+
+    return (
+        <div className={classes.inputIconRightContainer}>
+            {
+                Object.keys(iconArrays).map((_key) => {
+                    return iconArrays[_key].map((_icon) => {
+                        let ThisIcon = _icon
+                        console.log('_icon: ', _icon);
+                        return <ThisIcon />
+                    }
+                    )
+                })
+            }
+        </div>
+    )
+}

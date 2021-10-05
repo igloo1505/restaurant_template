@@ -2,7 +2,7 @@ import * as Types from "./TYPES";
 import store from "./store";
 import { createReducer } from "@reduxjs/toolkit";
 import authMiddleware from '../util/authMiddleware';
-import {defaultShortcutArray} from './keyboardShortcutArray'
+import { returnShortcutArray, returnFilteredShortcutArray } from './keyboardShortcutArray'
 
 const useHorriblePracticeToResetStateAndAvoidTransitionIssue = () => {
   setTimeout(() => {
@@ -10,6 +10,9 @@ const useHorriblePracticeToResetStateAndAvoidTransitionIssue = () => {
     store.dispatch({ type: Types.RESET_SNACKBAR });
   }, 500);
 };
+
+
+
 
 const initialState = {
   dialog: {
@@ -24,10 +27,14 @@ const initialState = {
       confirmAction: null,
     },
   },
+  fullScreenRecipeSummary: {
+    showRecipeSummary: false,
+    relevantRecipe: null,
+  },
   keyboardShortcuts: {
     show: false,
     shortcutMenuValue: "",
-    shortCutArray: defaultShortcutArray,
+    shortCutArray: [],
     filteredShortcutArray: null,
   },
   subRecipe: {
@@ -78,7 +85,7 @@ const initialState = {
   },
 };
 
-const modalReducer = createReducer(initialState, (builder) => { 
+const modalReducer = createReducer(initialState, (builder) => {
   builder.addCase(Types.SHOW_ALERT, (state, action) => {
     return {
       ...state,
@@ -93,6 +100,10 @@ const modalReducer = createReducer(initialState, (builder) => {
           currentSubRecipeIndex: action.payload.currentSubRecipeIndex,
         }),
       },
+      keyboardShortcuts: {
+        ...state.keyboardShortcuts,
+        show: false,
+      }
     };
   });
   builder.addCase(Types.SHOW_DELETE_REVIEW_MODAL, (state, action) => {
@@ -249,7 +260,7 @@ const modalReducer = createReducer(initialState, (builder) => {
     };
   });
   builder.addCase(Types.ADD_NEW_RECIPE_SUCCESS, (state, action) => {
-    console.log("action: ", action);
+
     return {
       ...state,
       booleanSnackbar: {
@@ -266,7 +277,7 @@ const modalReducer = createReducer(initialState, (builder) => {
     };
   });
   builder.addCase(Types.ADD_NEW_RECIPE_ERROR, (state, action) => {
-    console.log("action: ", action);
+
     return {
       ...state,
       snackbar: {
@@ -282,7 +293,7 @@ const modalReducer = createReducer(initialState, (builder) => {
     };
   });
   builder.addCase(Types.ADD_RECIPE_IMAGE_ERROR, (state, action) => {
-    console.log("action: ", action);
+
     return {
       ...state,
       snackbar: {
@@ -297,7 +308,7 @@ const modalReducer = createReducer(initialState, (builder) => {
     };
   });
   builder.addCase(Types.ADD_RECIPE_IMAGE, (state, action) => {
-    console.log("action: ", action);
+
     return {
       ...state,
       addImageModal: {
@@ -450,20 +461,20 @@ const modalReducer = createReducer(initialState, (builder) => {
     let _isSubRecipe = 0;
     let latestDirection = action.payload === "leftKey" ? "right" : "left"
     if (action.payload === "rightKey") {
-      console.log("Sending left key");
+
       _isSubRecipe =
         state.subRecipe.isSubRecipe > -1
           ? state.subRecipe.isSubRecipe - 1
           : state.subRecipe.titles.length - 1;
     }
     if (action.payload === "leftKey") {
-      console.log("Sending right key");
+
       _isSubRecipe =
         state.subRecipe.isSubRecipe < state.subRecipe.titles.length - 1
           ? state.subRecipe.isSubRecipe + 1
           : -1;
     }
-    console.log("latestDirection", latestDirection);
+
     return {
       ...state,
       subRecipe: {
@@ -473,55 +484,75 @@ const modalReducer = createReducer(initialState, (builder) => {
       },
     };
   });
-builder.addCase(Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS, (state, action) => {
-  return {
-  ...state,
-  keyboardShortcuts: {
-    ...state.keyboardShortcuts,
-    show: action.payload === "hide" ? false : !state.keyboardShortcuts.show
-  }
-}
+  builder.addCase(Types.SET_ADD_RECIPE_STEP, (state, action) => {
+    return {
+      ...state,
+      keyboardShortcuts: {
+        ...initialState.keyboardShortcuts,
+        show: false,
+      }
+    };
+  });
+  builder.addCase(Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS, (state, action) => {
+    let _shouldShowShortcutModal = action.payload === "hide" ? false : !state.keyboardShortcuts.show
+    if (action.payload?.src === "global" && typeof window !== "undefined") {
+      window.sessionStorage.setItem("globalScListener", true)
+    }
+    if (typeof window !== "undefined" && window.sessionStorage.getItem("globalScListener") === "true" && action.payload?.src !== "global") {
+      _shouldShowShortcutModal = false
+    }
+    return {
+      ...state,
+      keyboardShortcuts: {
+        ...state.keyboardShortcuts,
+        show: _shouldShowShortcutModal,
+        ...(!_shouldShowShortcutModal && { ...initialState.keyboardShortcuts }),
+        ...(!_shouldShowShortcutModal && { filteredShortcutArray: null }),
+      }
+    }
   });
   builder.addCase(Types.SET_SHORTCUT_MODAL_SEARCH_VALUE, (state, action) => {
-  return {
-  ...state,
-  keyboardShortcuts: {
-    ...state.keyboardShortcuts,
-    searchValue: action.payload
-  }
-  };
+    return {
+      ...state,
+      keyboardShortcuts: {
+        ...state.keyboardShortcuts,
+        searchValue: action.payload
+      }
+    };
   });
   builder.addCase(Types.FILTER_KEYBOARD_SHORTCUTS, (state, action) => {
-    console.log('Running filter');
-    let _r = {}
-    let allScs = (() => {
-      let _allScs = [];
-      state.keyboardShortcuts.shortCutArray.forEach(sc => {
-        sc.scs.forEach((st) => {
-            _allScs.push({t: st, key: sc.key})
-        })
-      });
-      console.log('_allScs: ', _allScs);
-      return _allScs;
-    })();
-    let _regex = new RegExp(action.payload, "gi");
-    let _newFilteredArray = allScs.filter((sc) => _regex.test(sc.t)) .filter((sc) => {
-      let shouldSet = !_r[sc.key]
-      _r[sc.key] = true;
-      return shouldSet;
-     } )
-     .map((sc) => defaultShortcutArray.filter(dsc => dsc.key === sc.key)[0]) 
-     if (_newFilteredArray.length === defaultShortcutArray.length) {
-      _newFilteredArray.length = 0
-     }
-  return {
-  ...state,
-  keyboardShortcuts: {
-    ...state.keyboardShortcuts,
-    filteredShortcutArray: _newFilteredArray.length === 0 ? null : _newFilteredArray
-  }
-  };
+    return {
+      ...state,
+      keyboardShortcuts: {
+        ...state.keyboardShortcuts,
+        filteredShortcutArray: action.payload
+      }
+    };
   });
+  builder.addCase(Types.HIDE_SHORTCUT_MENU, (state, action) => {
+    return {
+      ...state,
+      keyboardShortcuts: {
+        ...initialState.keyboardShortcuts,
+        show: state.keyboardShortcuts.show,
+      }
+    };
+  });
+  builder.addCase(Types.SHOW_RECIPE_SUMMARY_FULLSCREEN_MODAL, (state, action) => {
+    return {
+      ...state,
+      // keyboardShortcuts: {
+      //   ...initialState.keyboardShortcuts,
+      // },
+      fullScreenRecipeSummary: {
+        ...state.fullScreenRecipeSummary,
+        ...action?.payload,
+        ...(!action?.payload?.showRecipeSummary && { showRecipeSummary: !state.fullScreenRecipeSummary.showRecipeSummary }),
+      },
+    };
+  });
+
+
 });
 
 export default modalReducer;

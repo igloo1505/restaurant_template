@@ -30,10 +30,13 @@ const initialState = {
   error: null,
 };
 
+
+
 export default function userReducer(state = initialState, action) {
   switch (action.type) {
     case AUTO_LOGIN_SUCCESS:
     case AUTHENTICATE_USER:
+
       let newPayload = { ...action.payload };
       if (newPayload?.userProfileData) {
         delete newPayload.userProfileData;

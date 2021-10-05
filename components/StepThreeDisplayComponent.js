@@ -2,6 +2,8 @@ import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import DisplayItem from "./formDisplayItem";
+import { connect, useDispatch } from 'react-redux';
+import * as Types from '../stateManagement/TYPES';
 
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
@@ -22,13 +24,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const StepThreeDisplayComponent = ({
-  isShifted,
-  setIsShifted,
-  formHeightLimit,
-  formData,
-  setFormData,
+  props: {
+
+    isShifted,
+    setIsShifted,
+  },
+  UI: {
+    addRecipe: {
+      formData
+    }
+  }
 }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const setFormData = (newFormData) => {
+    dispatch({
+      type: Types.SET_ADD_RECIPE_FORM_DATA,
+      payload: newFormData
+    })
+  }
   const removeItem = (e, item, text) => {
     setFormData({
       ...formData,
@@ -58,4 +72,12 @@ const StepThreeDisplayComponent = ({
   );
 };
 
-export default StepThreeDisplayComponent;
+
+const mapStateToProps = (state, props) => ({
+  UI: state.UI,
+  user: state.user,
+  alert: state.alert,
+  props: props
+});
+
+export default connect(mapStateToProps)(StepThreeDisplayComponent)

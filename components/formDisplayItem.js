@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
+import { connect, useDispatch } from 'react-redux';
 import NotWhatThisWasIntendedForButItsMoreVisible from "@material-ui/icons/Exposure";
 import { FaBalanceScale as ScaleIcon } from "react-icons/fa";
 import { PrimaryTooltip } from "./tooltip";
@@ -14,7 +15,7 @@ const useItemStyles = makeStyles((theme) => ({
   itemWrapperInner: {
     width: "calc(100% - 8px)",
     height: "calc(100% - 8px)",
-    padding: "4px 6px",
+    padding: "0.5rem 0.75rem",
     display: "flex",
     margin: "2px 4px",
     boxShadow: "3px 3px 6px #cc540e, -3px -3px 6px #ff6c12",
@@ -40,13 +41,18 @@ const useItemStyles = makeStyles((theme) => ({
   badWayToGetRidOfBug: {
     transform: "scaleX(1) !important",
   },
+  fullWidthLi: {
+    width: "100%",
+  },
   itemWrapperOuter: {
     // border: "1px solid red",
     // boxShadow: "5px 5px 8px #cc540e,-5px -5px 8px #ff6c12",
     padding: "1px 0px",
     zIndex: 999,
     marginBottom: "7px",
-    minWidth: "150px",
+    height: "fit-content",
+    minWidth: "50%",
+    // minWidth: "150px",
     transition: theme.transitions.create(["box-shadow"], {
       duration: 500,
     }),
@@ -134,59 +140,81 @@ const superInefficientlyAvoidRepaint = (text, name, index) => {
   return false;
 };
 
-const DisplayItem = ({ item, text, removeItem, name, index }) => {
+const DisplayItem = ({ props: { item, text, removeItem, name, index }, UI: { addRecipe: { formData, activeStep } }, alert: { subRecipe: { isSubRecipe } } }) => {
   let isInitial = superInefficientlyAvoidRepaint(text, name, index);
-
   const classes = useItemStyles();
   const [shifted, setShifted] = useState(!isInitial);
   const [makeFullHeight, setMakeFullHeight] = useState(false)
+  const [shouldBeFullWidth, setShouldBeFullWidth] = useState(false)
+  useEffect(() => {
+    let _shouldBeFullWidth = false;
+    if (activeStep !== 1) {
+      return setShouldBeFullWidth(true)
+    }
+    if (isSubRecipe >= 0) {
+      _shouldBeFullWidth = formData.subRecipes[isSubRecipe].ingredients.length <= 5
+    }
+    if (isSubRecipe < 0) {
+      _shouldBeFullWidth = formData.ingredients.length <= 5
+    }
+    let oddLength = isSubRecipe >= 0 ? formData?.subRecipes?.[isSubRecipe]?.ingredients?.length % 2 === 1 : formData?.ingredients?.length % 2 === 1;
+    if (index === formData.subRecipes?.[isSubRecipe]?.ingredients?.length - 1 && oddLength) {
+      _shouldBeFullWidth = true
+    }
+    if (isSubRecipe === -1 && index === formData?.ingredients?.length - 1 && oddLength) {
+      console.log('index: ', index);
+      _shouldBeFullWidth = true
+    }
+    console.log('_shouldBeFullWidth: ', _shouldBeFullWidth);
+    setShouldBeFullWidth(_shouldBeFullWidth);
+  }, [isSubRecipe, formData])
+
   useEffect(() => {
     setTimeout(() => setShifted(true), 250);
-    setTimeout(() => setMakeFullHeight(true), 750);
   }, []);
   if (isInitial) {
     return (
+      <div
+        className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow", true && "formDisplayItem", shouldBeFullWidth && classes.fullWidthLi)}
+      // onClick={() => }
+      >
         <div
-          className={clsx(classes.itemWrapperOuter, shifted && "addBoxShadow", true && "formDisplayItem", makeFullHeight && classes.badWayToGetRidOfBug)}
-          // onClick={() => }
+          className={clsx(
+            classes.itemWrapperInner,
+            shifted && classes.itemWrapperInnerShifted
+          )}
         >
-          <div
-            className={clsx(
-              classes.itemWrapperInner,
-              shifted && classes.itemWrapperInnerShifted
-            )}
-          >
-            <div className={clsx(classes.icon, shifted && "addBoxShadow")}>
-              <CloseIcon
-                classes={{
-                  root: clsx(classes.iconRoot, shifted && "addBoxShadow"),
-                }}
-                fontSize="small"
-                onClick={(e) => removeItem(e, item, text)}
-              />
-            </div>
-            <DisplayItemContent
-              item={item}
-              text={text}
-              removeItem={removeItem}
-              name={name}
-              classes={classes}
+          <div className={clsx(classes.icon, shifted && "addBoxShadow")}>
+            <CloseIcon
+              classes={{
+                root: clsx(classes.iconRoot, shifted && "addBoxShadow"),
+              }}
+              fontSize="small"
+              onClick={(e) => removeItem(e, item, text)}
             />
-            {item?.optional && (
-              <PrimaryTooltip title="Optional">
-                <div className={classes.optionalText}>
-                  <NotWhatThisWasIntendedForButItsMoreVisible />
-                </div>
-              </PrimaryTooltip>
-            )}
           </div>
+          <DisplayItemContent
+            item={item}
+            text={text}
+            removeItem={removeItem}
+            name={name}
+            classes={classes}
+          />
+          {item?.optional && (
+            <PrimaryTooltip title="Optional">
+              <div className={classes.optionalText}>
+                <NotWhatThisWasIntendedForButItsMoreVisible />
+              </div>
+            </PrimaryTooltip>
+          )}
         </div>
+      </div>
     );
   }
   if (!isInitial) {
     return (
       <div
-        className={clsx(classes.itemWrapperOuter, true && "formDisplayItem", shifted && "addBoxShadow")}
+        className={clsx(classes.itemWrapperOuter, true && "formDisplayItem", shifted && "addBoxShadow", shouldBeFullWidth && classes.fullWidthLi)}
       >
         <div
           className={clsx(
@@ -223,4 +251,10 @@ const DisplayItem = ({ item, text, removeItem, name, index }) => {
   }
 };
 
-export default DisplayItem;
+const mapStateToProps = (state, props) => ({
+  UI: state.UI,
+  alert: state.alert,
+  props: props
+});
+
+export default connect(mapStateToProps)(DisplayItem)

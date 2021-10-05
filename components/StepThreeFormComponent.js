@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { useDispatch } from "react-redux";
+import { useDispatch, connect } from "react-redux";
 import * as Types from "../stateManagement/TYPES";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -135,17 +135,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 const StepThreeFormComponent = ({
-  isShifted,
-  setIsShifted,
-  formHeightLimit,
-  formData,
-  setFormData,
-  hasMenuOpen,
-  setHasMenuOpen,
+  UI: {
+    addRecipe: {
+      formData
+    }
+  },
+  props: {
+    isShifted,
+    setIsShifted,
+    formHeightLimit,
+    hasMenuOpen,
+    setHasMenuOpen
+  }
 }) => {
   const dispatch = useDispatch();
   const name = "direction";
   const classes = useStyles();
+  const setFormData = (newFormData) => {
+    dispatch({
+      type: Types.SET_ADD_RECIPE_FORM_DATA,
+      payload: newFormData
+    })
+  }
+
   const [hasSentAlert, setHasSentAlert] = useState(getHasSentAlert());
   const [shiftPressed, setShiftPressed] = useState(false);
   const [focusState, setFocusState] = useState({
@@ -338,7 +350,7 @@ const StepThreeFormComponent = ({
                     classes.inputLabelRoot,
                     focusState.prepTime.focus && classes.inputLabelFocused,
                     formData?.prepTime?.length !== 0 &&
-                      classes.inputLabelWithValue
+                    classes.inputLabelWithValue
                   ),
                   required: classes.inputLabelRequired,
                 },
@@ -405,7 +417,7 @@ const StepThreeFormComponent = ({
                     classes.inputLabelRoot,
                     focusState.cookTime.focus && classes.inputLabelFocused,
                     formData?.cookTime?.length !== 0 &&
-                      classes.inputLabelWithValue
+                    classes.inputLabelWithValue
                   ),
                   required: classes.inputLabelRequired,
                 },
@@ -448,4 +460,11 @@ const StepThreeFormComponent = ({
   );
 };
 
-export default StepThreeFormComponent;
+const mapStateToProps = (state, props) => ({
+  UI: state.UI,
+  user: state.user,
+  alert: state.alert,
+  props: props
+});
+
+export default connect(mapStateToProps)(StepThreeFormComponent)

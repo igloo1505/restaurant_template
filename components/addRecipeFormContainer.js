@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
@@ -41,15 +42,18 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "1280px",
     [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
       marginTop: theme.spacing(6),
+      // marginTop: 
       marginBottom: theme.spacing(6),
       padding: theme.spacing(3),
     },
     [theme.breakpoints.up("md")]: {
-      transform: "translateY(-50%)",
+      // transform: "translateY(-50%)",
+      // marginTop: "50%",
       display: "grid",
       gridTemplateAreas: '"banner" "stepper" "form"',
     },
-    maxHeight: "calc(90vh - 64px)",
+    // maxHeight: "calc(90vh - 64px)",
+    maxHeight: "calc(90% - 64px)",
     [theme.breakpoints.down(600)]: {},
     // transition: theme.transitions.create(
     //   ["box-shadow", "transform", "background"],
@@ -63,6 +67,14 @@ const useStyles = makeStyles((theme) => ({
       //   "box-shadow 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background 1500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
     },
   },
+  //   addSecondColumn: {
+  //     .item:nth-child(3n+1) { order: 1; }
+  // .item:nth-child(3n+2) { order: 2; }
+  // .item:nth-child(3n)   { order: 3; }
+
+  // /* Force new columns */
+
+  // },
   addBoxShadow: {
     boxShadow: `6px 6px 12px ${theme.palette.grey[400]}, -6px 6px 12px ${theme.palette.grey[300]}`,
     transition:
@@ -236,32 +248,52 @@ const useStyles = makeStyles((theme) => ({
 const AddRecipeFormContainer = (
   {
     activeStep,
-    steps,
-    formData,
-    setFormData,
+    dispatch,
     handleFormChange,
     placeHolder,
-    setPlaceHolder,
+    props,
     setActiveStep,
-    hasSetCommand
+    setPlaceHolder,
+    steps,
+    style,
+    // eslint-disable-next-line react/prop-types
+    UI: {
+      addRecipe: {
+        allowSubRecipe,
+        formData
+      }
+    },
+    alert: {
+      subRecipe: {
+        isSubRecipe,
+      }
+    }
   },
-  ref
+  ref,
 ) => {
-  const dispatch = useDispatch()
-  const [addSecondItemButton, setAddSecondItemButton] = useState(false);
+  // const dispatch = useDispatch()
+
   const [hasMenuOpen, setHasMenuOpen] = useState(false);
   const [paperLifted, setPaperLifted] = useState(false);
+  const [addSecondColumn, setAddSecondColumn] = useState(false)
   useEffect(() => {
-    if (addSecondItemButton) {
+    let _secondColumn = false;
+    if (!isSubRecipe || isSubRecipe < 0) {
+      _secondColumn = formData?.ingredients?.length > 3;
+    }
+    setAddSecondColumn(_secondColumn)
+  }, [formData, isSubRecipe])
+  useEffect(() => {
+    if (allowSubRecipe) {
       // setTimeout(() => {
       animateButtonEntrance();
       // }, 200);
     }
-  }, [addSecondItemButton]);
+  }, [allowSubRecipe]);
 
   const classes = useStyles();
 
-  const handleAddSecondItem = () => {};
+  const handleAddSecondItem = () => { };
 
   useEffect(() => {
     !paperLifted && setTimeout(() => setPaperLifted(true), 300);
@@ -310,136 +342,134 @@ const AddRecipeFormContainer = (
     })
   };
   return (
-    <div>
-      <Paper
-        className={clsx(
-          classes.paper,
-          paperLifted && classes.addBoxShadow,
-          "addBoxShadow"
-        )}
-        ref={ref}
+    <Paper
+      className={clsx(
+        classes.paper,
+        paperLifted && classes.addBoxShadow,
+        "addBoxShadow",
+        addSecondColumn && classes.addSecondColumn,
+      )}
+      ref={ref}
+    >
+      <FormBanner>Add Recipe</FormBanner>
+      <Stepper
+        alternativeLabel
+        activeStep={activeStep}
+        connector={<ConnectorComponent activeStep={activeStep} />}
+        classes={{ root: classes.stepperRoot }}
       >
-        <FormBanner>Add Recipe</FormBanner>
-        <Stepper
-          alternativeLabel
-          activeStep={activeStep}
-          connector={<ConnectorComponent activeStep={activeStep} />}
-          classes={{ root: classes.stepperRoot }}
-        >
-          {steps.map((label, index) => (
-            <Step key={label}>
-              <StepLabel
-                StepIconComponent={StepIconComponent}
-                StepIconProps={{ index, activeStep }}
-                classes={{
-                  label: classes.stepLabelRoot,
-                  completed: classes.stepLabelCompleted,
-                  active: classes.stepLabelActive,
-                }}
-              >
-                {label}
-              </StepLabel>
-            </Step>
-          ))}
-        </Stepper>
+        {steps.map((label, index) => (
+          <Step key={label}>
+            <StepLabel
+              StepIconComponent={StepIconComponent}
+              StepIconProps={{ index, activeStep }}
+              classes={{
+                label: classes.stepLabelRoot,
+                completed: classes.stepLabelCompleted,
+                active: classes.stepLabelActive,
+              }}
+            >
+              {label}
+            </StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      <Fragment>
         <Fragment>
-          <Fragment>
-            <div className={classes.formWrapper}>
-              <GetStepContent
-                activeStep={activeStep}
-                formData={formData}
-                setFormData={setFormData}
-                handleFormChange={handleFormChange}
-                placeHolder={placeHolder}
-                hasSetCommand={hasSetCommand}
-                setPlaceHolder={setPlaceHolder}
-                hasMenuOpen={hasMenuOpen}
-                setHasMenuOpen={setHasMenuOpen}
-                addSecondItemButton={addSecondItemButton}
-                setAddSecondItemButton={setAddSecondItemButton}
-                handleAddSecondItem={handleAddSecondItem}
-              />
-            </div>
-            <div className={classes.buttons}>
-              <div className={classes.buttonRightContainer}>
-                {activeStep === 1 && (
-                  <Button
-                    onClick={showKeyboardShortcuts}
-                    // className={(classes.button, classes.backButton)}
-                    classes={{
-                      root: clsx(
-                        classes.shortcutButton,
-                        hasMenuOpen && "hideButtons"
-                      ),
-                      label: clsx(
-                        classes.shortcutButtonLabel,
-                        hasMenuOpen && "hideButtons"
-                      ),
-                    }}
-                  >
-                    Shortcuts
-                  </Button>
-                )}
-                {activeStep !== 0 && (
-                  <Button
-                    onClick={handleBack}
-                    // className={(classes.button, classes.backButton)}
-                    classes={{
-                      root: clsx(
-                        classes.backButton,
-                        hasMenuOpen && "hideButtons"
-                      ),
-                      label: clsx(
-                        classes.backButtonLabel,
-                        hasMenuOpen && "hideButtons"
-                      ),
-                    }}
-                  >
-                    Back
-                  </Button>
-                )}
+          <div className={classes.formWrapper}>
+            <GetStepContent
+              activeStep={activeStep}
+
+
+              handleFormChange={handleFormChange}
+              placeHolder={placeHolder}
+              setPlaceHolder={setPlaceHolder}
+              hasMenuOpen={hasMenuOpen}
+              setHasMenuOpen={setHasMenuOpen}
+              handleAddSecondItem={handleAddSecondItem}
+            />
+          </div>
+          <div className={classes.buttons}>
+            <div className={classes.buttonRightContainer}>
+              {activeStep === 1 && (
                 <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleNext}
+                  onClick={showKeyboardShortcuts}
+                  // className={(classes.button, classes.backButton)}
                   classes={{
                     root: clsx(
-                      classes.button,
-                      activeStep === steps.length - 1 &&
-                        classes.lastStepSubmitButton,
+                      classes.shortcutButton,
                       hasMenuOpen && "hideButtons"
                     ),
                     label: clsx(
-                      classes.nextButton,
-                      activeStep === steps.length - 1 &&
-                        classes.lastStepSubmitButtonLabel,
+                      classes.shortcutButtonLabel,
                       hasMenuOpen && "hideButtons"
                     ),
                   }}
                 >
-                  {activeStep === steps.length - 1 ? "Submit Recipe" : "Next"}
+                  Shortcuts
                 </Button>
-              </div>
+              )}
+              {activeStep !== 0 && (
+                <Button
+                  onClick={handleBack}
+                  // className={(classes.button, classes.backButton)}
+                  classes={{
+                    root: clsx(
+                      classes.backButton,
+                      hasMenuOpen && "hideButtons"
+                    ),
+                    label: clsx(
+                      classes.backButtonLabel,
+                      hasMenuOpen && "hideButtons"
+                    ),
+                  }}
+                >
+                  Back
+                </Button>
+              )}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                classes={{
+                  root: clsx(
+                    classes.button,
+                    activeStep === steps.length - 1 &&
+                    classes.lastStepSubmitButton,
+                    hasMenuOpen && "hideButtons"
+                  ),
+                  label: clsx(
+                    classes.nextButton,
+                    activeStep === steps.length - 1 &&
+                    classes.lastStepSubmitButtonLabel,
+                    hasMenuOpen && "hideButtons"
+                  ),
+                }}
+              >
+                {activeStep === steps.length - 1 ? "Submit Recipe" : "Next"}
+              </Button>
             </div>
-          </Fragment>
+          </div>
         </Fragment>
-      </Paper>
-    </div>
+      </Fragment>
+    </Paper>
   );
 };
 
 const mapStateToProps = (state, props) => ({
   props: props,
+  alert: state.alert,
+  UI: state.UI
 });
 
-export default forwardRef(AddRecipeFormContainer);
+
+// I have no idea why I had to wrap the component in forwardRef  and use the forwardRef option but it works
+export default connect(mapStateToProps, null, null, { forwardRef: true })(forwardRef(AddRecipeFormContainer));
 
 const GetStepContent = forwardRef(
   (
     {
       activeStep,
-      formData,
-      setFormData,
       handleFormChange,
       placeHolder,
       setPlaceHolder,
@@ -458,14 +488,12 @@ const GetStepContent = forwardRef(
         return (
           <Grow in={true}>
             <StepOneForm
-              formData={formData}
               handleFormChange={handleFormChange}
-              setFormData={setFormData}
               placeHolder={placeHolder}
               setPlaceHolder={setPlaceHolder}
               hasSetCommand={hasSetCommand}
-              // hasMenuOpen={hasMenuOpen}
-              // setHasMenuOpen={setHasMenuOpen}
+            // hasMenuOpen={hasMenuOpen}
+            // setHasMenuOpen={setHasMenuOpen}
             />
           </Grow>
         );
@@ -473,9 +501,7 @@ const GetStepContent = forwardRef(
         return (
           <Grow in={true}>
             <StepTwoForm
-              formData={formData}
               handleFormChange={handleFormChange}
-              setFormData={setFormData}
               hasMenuOpen={hasMenuOpen}
               setHasMenuOpen={setHasMenuOpen}
               addSecondItemButton={addSecondItemButton}
@@ -489,9 +515,7 @@ const GetStepContent = forwardRef(
         return (
           <Grow in={true}>
             <StepThreeForm
-              formData={formData}
               handleFormChange={handleFormChange}
-              setFormData={setFormData}
               hasMenuOpen={hasMenuOpen}
               setHasMenuOpen={setHasMenuOpen}
               hasSetCommand={hasSetCommand}

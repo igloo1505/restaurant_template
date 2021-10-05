@@ -2,7 +2,9 @@ import React, { useState, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import StepThreeDisplayComponent from "./StepThreeDisplayComponent";
+import { connect, useDispatch } from 'react-redux';
 import StepThreeFormComponent from "./StepThreeFormComponent";
+
 
 // TODO: add snackbar to keyword "degrees" and suggest replacing with U+00B0 || &deg;
 
@@ -19,27 +21,26 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-const StepThreeForm = (props) => {
+const StepThreeForm = ({ props: { ...props }, UI: { addRecipe: { formData } } }) => {
   const classes = useStyles();
   const [isShifted, setIsShifted] = useState(
-    props.formData.directions.length !== 0
+    formData.directions.length !== 0
   );
-  const [formHeightLimit, setFormHeightLimit] = useState(400);
+
   useEffect(() => {
-    if (props.formData?.directions.length !== 0) {
+    if (formData?.directions.length !== 0) {
       setIsShifted(true);
     }
-    if (props.formData?.directions.length === 0) {
+    if (formData?.directions.length === 0) {
       setIsShifted(false);
     }
-  }, [props.formData]);
+  }, [formData]);
   return (
     <div className={classes.container}>
       <StepThreeFormComponent
         {...props}
         isShifted={isShifted}
         setIsShifted={setIsShifted}
-        formHeightLimit={formHeightLimit}
       />
       <StepThreeDisplayComponent
         {...props}
@@ -50,4 +51,10 @@ const StepThreeForm = (props) => {
   );
 };
 
-export default StepThreeForm;
+const mapStateToProps = (state, props) => ({
+  UI: state.UI,
+  alert: state.alert,
+  props: props
+});
+
+export default connect(mapStateToProps)(StepThreeForm)
