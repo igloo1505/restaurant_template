@@ -11,6 +11,7 @@ import AddIcon from "@material-ui/icons/AddBoxOutlined";
 import CheckedIcon from "@material-ui/icons/DoneOutlined";
 import TextField from "@material-ui/core/TextField";
 import Slide from "@material-ui/core/Slide";
+import { isMobile } from 'mobile-device-detect';
 import Fade from "@material-ui/core/Fade";
 import AddAdornment from "./AddAdornment";
 import ingredientAdornment from "./ingredientUnitAdornment";
@@ -405,7 +406,8 @@ const StepTwoFormComponent = ({
           ingredient: "",
           optional: false,
           amount: 1,
-          unit: { long: "Cups", short: "cups", key: "Volume" },
+          // unit: newSubRecData[isSubRecipe].ingredient.unit
+          unit: unit
         },
       };
       setSubRecipeFormData(newSubRecData);
@@ -484,18 +486,21 @@ const StepTwoFormComponent = ({
   };
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      let hasShownModal = window.localStorage.getItem("hasShownKeyboardModal")
-      if (!hasShownModal) {
-        dispatch({
-          type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
+      if (!isMobile) {
+        // let hasShownModal = window.localStorage.getItem("hskm")
+        //   if (!hasShownModal) {
+        //     dispatch({
+        //       type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
+        //     })
+        //     window.localStorage.setItem("hskm", true)
+        //   }
+        // }
+        document.addEventListener("keydown", (e) => {
+          if (e.metaKey && e.shiftKey && e.key === "i") {
+            handleSubRecipeButtonClick();
+          }
         })
-        window.localStorage.setItem("hasShownKeyboardModal", true)
       }
-      document.addEventListener("keydown", (e) => {
-        if (e.metaKey && e.shiftKey && e.key === "i") {
-          handleSubRecipeButtonClick();
-        }
-      })
     }
   }, [])
 
@@ -509,6 +514,34 @@ const StepTwoFormComponent = ({
     // return
   };
   const keyObserver = (e) => {
+
+    let theseEms = document.querySelectorAll("[data-focus='true']");
+    let hasDataFocus = theseEms.length > 0;
+    console.log('theseEms: ', theseEms);
+    let HAS_SELECTED_INGREDIENT = false
+    let selectedOption = theseEms.forEach((em) => {
+      console.log("FOUND ITTTT", em.classList)
+      if (em.classList.contains('autocomplete-unit-option')) {
+        console.log("HAS DATA FOCUS")
+        console.log("czacva", em.childNodes);
+        let hasClass = em?.childNodes?.forEach((child) => {
+
+          if (child?.classList?.contains('unit-autocomplete-option')) {
+            HAS_SELECTED_INGREDIENT =
+              getIngredientUnits().filter((i) => {
+                console.log('i: ', i.long.toLowerCase() === child.textContent.toLowerCase());
+                console.log('child.textContent: ', child.textContent);
+                return child.textContent.toLowerCase() === i?.long?.toLowerCase()
+              })?.[0]
+          }
+        }
+        )
+        console.log('hasClass: ', hasClass);
+      }
+      return false
+    })
+    console.log('selectedOption: ', selectedOption);
+
     if (!e.shiftKey && e.key === "Enter") {
       e.preventDefault();
       let validated = false;
@@ -518,10 +551,11 @@ const StepTwoFormComponent = ({
           amount: Boolean(
             typeof parseFloat(formData.ingredient.amount) === "number"
           ),
-          unit: checkUnit(),
+          unit: HAS_SELECTED_INGREDIENT ? HAS_SELECTED_INGREDIENT : checkUnit(),
         };
 
         if (Object.values(validated).every((i) => i)) {
+          console.log("Adding ingredient to main recipe", validated.unit);
           addIngredient(validated.unit);
         }
       }
@@ -535,9 +569,12 @@ const StepTwoFormComponent = ({
               formData?.subRecipes?.[isSubRecipe].ingredient.amount
             ) === "number"
           ),
-          unit: checkUnit(),
+          unit: HAS_SELECTED_INGREDIENT ? HAS_SELECTED_INGREDIENT : checkUnit(),
         };
         if (Object.values(validated).every((i) => i)) {
+          console.log("Adding ingredient", validated.unit);
+          // RESUME add check here to make sure unit is currently selected one if dropdown is open rather than the text content of the textField
+
           addIngredient(validated.unit);
         }
       }

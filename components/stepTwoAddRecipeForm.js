@@ -42,7 +42,7 @@ const StepTwoAddRecipeForm = ({
   ...props
 }) => {
   const dispatch = useDispatch();
-  console.log("props: ", props);
+
   const [isShifted, setIsShifted] = useState(
     formData.ingredients.length !== 0
   );
@@ -62,7 +62,7 @@ const StepTwoAddRecipeForm = ({
       type: Types.SET_SUB_RECIPE_VALUE,
       payload: data,
     });
-    console.log("Data", data);
+
   };
 
 

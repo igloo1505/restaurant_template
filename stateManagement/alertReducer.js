@@ -498,9 +498,6 @@ const modalReducer = createReducer(initialState, (builder) => {
     if (action.payload?.src === "global" && typeof window !== "undefined") {
       window.sessionStorage.setItem("globalScListener", true)
     }
-    if (typeof window !== "undefined" && window.sessionStorage.getItem("globalScListener") === "true" && action.payload?.src !== "global") {
-      _shouldShowShortcutModal = false
-    }
     return {
       ...state,
       keyboardShortcuts: {

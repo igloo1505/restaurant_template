@@ -171,6 +171,52 @@ const UnitSelectCompact = ({
   }, [formData]);
 
   const [options, setOptions] = useState([]);
+
+
+  const setFormData = (newFormData) => {
+    dispatch({
+      type: Types.SET_ADD_RECIPE_FORM_DATA,
+      payload: newFormData
+    })
+  }
+
+
+  const setSubRecipeFormData = (value) => {
+    dispatch({
+      type: Types.SET_ADD_RECIPE_FORM_DATA,
+      payload: {
+        ...formData,
+        subRecipes: value
+      }
+    })
+  }
+
+  useEffect(() => {
+    if (options.length === 1) {
+      let _unit = options[0];
+      console.log('_unit: ', _unit);
+      if (_unit && isSubRecipe < 0) {
+        setFormData({
+          ...formData,
+          ingredient: { ...formData.ingredient, unit: _unit },
+        });
+      }
+      if (_unit && isSubRecipe >= 0) {
+        let newSubRecData = [...formData?.subRecipes];
+        newSubRecData[isSubRecipe] = {
+          ...newSubRecData[isSubRecipe],
+          ingredient: {
+            ...newSubRecData[isSubRecipe].ingredient,
+            ingredient: {
+              ...newSubRecData[isSubRecipe].ingredient,
+              unit: _unit,
+            },
+          },
+        };
+        setSubRecipeFormData(newSubRecData);
+      }
+    }
+  }, [options])
   const theme = useTheme();
   const classes = useStyles();
   useEffect(() => {
@@ -245,34 +291,54 @@ const UnitSelectCompact = ({
   };
 
 
-  const setFormData = (newFormData) => {
-    dispatch({
-      type: Types.SET_ADD_RECIPE_FORM_DATA,
-      payload: newFormData
-    })
-  }
 
-
-  const setSubRecipeFormData = (value) => {
-    dispatch({
-      type: Types.SET_ADD_RECIPE_FORM_DATA,
-      payload: {
-        ...formData,
-        subRecipes: value
-      }
-    })
-  }
 
   const handleChange = (e) => {
-    console.log("Setting", e)
+    console.log('e: ', e);
+    if (e.key === "Enter") {
+
+      let theseEms = document.querySelectorAll("[data-focus='true']");
+      theseEms.forEach((em) => {
+        console.log("FOUND ITTTT", em.classList)
+        if (em.classList.contains('autocomplete-unit-option')) {
+          console.log("FOUND ITTTT HERE TOO", em.classList)
+          let _unit = getIngredientUnits().filter(
+            (u) => u.long.toLowerCase() === em.textContent.trim().toLowerCase()
+          );
+          console.log('_unit: ', _unit);
+          if (_unit && isSubRecipe < 0) {
+            console.log("setting formData ", _unit)
+            setFormData({
+              ...formData,
+              ingredient: { ...formData.ingredient, unit: _unit[0] },
+            });
+          }
+          if (_unit && isSubRecipe >= 0) {
+            let newSubRecData = [...formData?.subRecipes];
+            newSubRecData[isSubRecipe] = {
+              ...newSubRecData[isSubRecipe],
+              ingredient: {
+                ...newSubRecData[isSubRecipe].ingredient,
+                ingredient: {
+                  ...newSubRecData[isSubRecipe].ingredient,
+                  unit: _unit[0],
+                },
+              },
+            };
+            setSubRecipeFormData(newSubRecData);
+          }
+        }
+      })
+    }
     if (typeof e.target?.value === "string") {
+      console.log("DID FIRE EVEN AS STRING")
       let _unit = getIngredientUnits().filter(
         (u) => u.long.toLowerCase() === e.target.value.trim().toLowerCase()
       );
       if (_unit && isSubRecipe < 0) {
         setFormData({
           ...formData,
-          ingredient: { ...formData.ingredient, unit: _unit },
+          ingredient: { ...formData.ingredient, unit: _unit[0] },
         });
       }
       if (_unit && isSubRecipe >= 0) {
@@ -283,7 +349,7 @@ const UnitSelectCompact = ({
             ...newSubRecData[isSubRecipe].ingredient,
             ingredient: {
               ...newSubRecData[isSubRecipe].ingredient,
-              unit: _unit,
+              unit: _unit[0],
             },
           },
         };
@@ -354,7 +420,7 @@ const UnitSelectCompact = ({
         {...defaultProps}
         id="unit-select-autocomplete"
         fullWidth
-        autoSelect
+        // autoSelect
         autoComplete
         getOptionDisabled={(option) => option.isKey}
         onChange={handleChange}
@@ -370,7 +436,7 @@ const UnitSelectCompact = ({
           noOptions: classes.noOptions,
           groupLabel: classes.groupLabel,
           groupUl: classes.groupUl,
-          option: classes.autoCompleteOption,
+          option: clsx(classes.autoCompleteOption, "autocomplete-unit-option"),
           inputFocused: props.InputProps.classes.focused,
           input: props.InputProps.classes.input,
           inputRoot: props.InputProps.classes.root,
@@ -404,14 +470,16 @@ const UnitSelectCompact = ({
               <div
                 className={clsx(
                   classes.option,
-                  "option-div",
+                  "unit-autocomplete-option",
                   unitHelper.length > 0 && classes.optionWithValue
                 )}
                 value={option.long}
                 onClick={(e) => handleItemClick(e, option)}
+                onSelect={(e) => console.log("Selected", option.long)}
+                onFocus={(e) => console.log("Selected", option.long)}
               // TODO make sure this clickItem function or something similar is handled on select or whatever method is called when you press Enter
               >
-                {parts.map((part, index, array) => (
+                {parts.map((part, index) => (
                   <span
                     key={index}
                     style={{

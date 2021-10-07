@@ -294,9 +294,7 @@ const StepOneFormComponent = ({
               label="Recipe's title "
               onChange={handleFormChange}
               value={formData?.title}
-              focusState={focusState}
               focused={focusState.title.focus}
-              formData={formData}
               InputLabelProps={{
                 focused: focusState.title.focus,
                 shrink: Boolean(formData?.title?.length !== 0),
