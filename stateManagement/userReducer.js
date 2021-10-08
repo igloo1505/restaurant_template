@@ -1,17 +1,4 @@
-import {
-  AUTHENTICATE_USER,
-  AUTO_LOGIN_SUCCESS,
-  AUTHENTICATION_ERROR,
-  REGISTER_NEW_USER,
-  GET_ALL_USERS,
-  AUTO_LOGIN_FAIL,
-  USER_ERROR,
-  REMOVE_USER,
-  RETURN_SINGLE_ITEM,
-  UPDATE_USER_INFO,
-  REMOVE_RECIPE_REVIEW_SUCCESS,
-  LOGOUT,
-} from "./TYPES";
+import * as Types from "./TYPES"
 import { getAllRecipesFromUser } from "./recipeActions";
 import store from "./store";
 
@@ -27,6 +14,43 @@ const initialState = {
     userName: null,
     profileImgUrl: null,
   },
+  userSettings: {
+    allowKeyboardShortcuts: true,
+    allowNotifications: true,
+    allowRecipeReviews: true,
+    keyboardShortcuts: [
+      {
+        key: "Shift",
+        code: "ShiftLeft",
+        keyCode: 16,
+        isSpecialKey: true,
+        isActive: false
+
+      },
+      {
+        key: "Meta",
+        code: "MetaLeft",
+        keyCode: 91,
+        isSpecialKey: true,
+        isActive: false
+      },
+      {
+        key: "i",
+        code: "KeyI",
+        keyCode: 73,
+        isSpecialKey: false,
+        isActive: false
+      },
+    ],
+    isSettingShortcuts: false,
+    currentActiveKeys: [],
+    skListeners: {
+      shiftKey: false,
+      ctrlKey: false,
+      metaKey: false,
+      altKey: false,
+    }
+  },
   error: null,
 };
 
@@ -34,8 +58,8 @@ const initialState = {
 
 export default function userReducer(state = initialState, action) {
   switch (action.type) {
-    case AUTO_LOGIN_SUCCESS:
-    case AUTHENTICATE_USER:
+    case Types.AUTO_LOGIN_SUCCESS:
+    case Types.AUTHENTICATE_USER:
 
       let newPayload = { ...action.payload };
       if (newPayload?.userProfileData) {
@@ -48,7 +72,7 @@ export default function userReducer(state = initialState, action) {
         loading: false,
         self: newPayload,
       };
-    case REMOVE_RECIPE_REVIEW_SUCCESS:
+    case Types.REMOVE_RECIPE_REVIEW_SUCCESS:
       return {
         ...state,
         loggedIn: true,
@@ -56,9 +80,9 @@ export default function userReducer(state = initialState, action) {
         loading: false,
         self: action.payload.updatedUser,
       };
-    case LOGOUT:
+    case Types.LOGOUT:
       return initialState;
-    case AUTO_LOGIN_FAIL:
+    case Types.AUTO_LOGIN_FAIL:
       return {
         ...state,
         loggedIn: false,
@@ -66,19 +90,19 @@ export default function userReducer(state = initialState, action) {
         loading: false,
       };
 
-    case RETURN_SINGLE_ITEM:
+    case Types.RETURN_SINGLE_ITEM:
       return {
         ...state,
         self: { ...state.self },
         filtered: state.allUsers.filter((u) => u._id === action.payload._id),
       };
-    case GET_ALL_USERS:
+    case Types.GET_ALL_USERS:
       return {
         ...state,
         self: { ...state.self },
         allUsers: action.payload.user,
       };
-    case UPDATE_USER_INFO:
+    case Types.UPDATE_USER_INFO:
       const filteredUsers = state.allUsers.filter(
         (u) => u._id !== action.payload._id
       );
@@ -88,7 +112,7 @@ export default function userReducer(state = initialState, action) {
         self: { ...state.self },
         allUsers: filteredUsers,
       };
-    case REMOVE_USER:
+    case Types.REMOVE_USER:
       let filter = state.allUsers.filter(
         (u) => u._id !== action.payload.user._id
       );
@@ -97,15 +121,15 @@ export default function userReducer(state = initialState, action) {
         self: { ...state.self },
         allUsers: filter,
       };
-    case USER_ERROR:
+    case Types.USER_ERROR:
       return {
         ...state,
         self: { ...state.self },
         error: action.payload,
       };
-    case REGISTER_NEW_USER:
+    case Types.REGISTER_NEW_USER:
       // array of 10 users
-      console.log("addnewUser in reducer", action.payload);
+
       return {
         ...state,
         loggedIn: true,
@@ -113,8 +137,7 @@ export default function userReducer(state = initialState, action) {
         allUsers: [...state.allUsers, action.payload._doc],
         self: action.payload,
       };
-    case AUTHENTICATION_ERROR:
-      console.log(action.payload);
+    case Types.AUTHENTICATION_ERROR:
       return {
         ...state,
         // loggedIn: false,
@@ -122,6 +145,35 @@ export default function userReducer(state = initialState, action) {
         loading: false,
         self: { ...state.self },
         error: action.payload,
+      };
+    case Types.SET_CURRENT_ACTIVE_KEYS:
+      return {
+        ...state,
+        userSettings: {
+          ...state.userSettings,
+          currentActiveKeys: !state.userSettings.isSettingShortcuts ? [] : action?.payload?.map((key) => {
+            delete key.icon
+            return key
+          })
+        }
+      };
+    case Types.SET_LISTENER_KEY:
+      console.log("Setting set_listener_key with: ", action.payload);
+      let eventData = action?.payload?._e
+
+      console.log('eventData: ', eventData);
+
+      eventData && delete action.payload._e
+
+      return {
+        ...state,
+        userSettings: {
+          ...state.userSettings,
+          skListeners: {
+            ...state.userSettings.skListeners,
+            ...action.payload
+          }
+        }
       };
     default:
       return state;

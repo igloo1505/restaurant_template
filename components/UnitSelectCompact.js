@@ -436,7 +436,7 @@ const UnitSelectCompact = ({
           noOptions: classes.noOptions,
           groupLabel: classes.groupLabel,
           groupUl: classes.groupUl,
-          option: clsx(classes.autoCompleteOption, "autocomplete-unit-option"),
+          option: classes.autoCompleteOption,
           inputFocused: props.InputProps.classes.focused,
           input: props.InputProps.classes.input,
           inputRoot: props.InputProps.classes.root,

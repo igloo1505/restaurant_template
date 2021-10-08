@@ -4,6 +4,7 @@ import Slide from "@material-ui/core/Slide";
 import clsx from "clsx";
 import EditLocationIcon from "@material-ui/icons/EditLocation";
 import EditIcon from "@material-ui/icons/Edit";
+import SettingsIcon from "@material-ui/icons/Settings"
 import { useDispatch } from "react-redux";
 import * as Types from "../../stateManagement/TYPES";
 import Typography from "@material-ui/core/Typography";
@@ -32,6 +33,15 @@ const useClasses = makeStyles((theme) => ({
   },
   nameTypographyRoot: {
     color: "#fff",
+  },
+  settingsIconContainer: {
+    position: "absolute",
+    right: "8px",
+    bottom: "8px",
+    color: "#fff",
+    "&:hover": {
+      cursor: "pointer",
+    }
   },
   locationDiv: {
     display: "flex",
@@ -94,6 +104,12 @@ const myProfile_primaryInfo = ({
       },
     });
   };
+  const handleSettingsClick = () => {
+    dispatch({
+      type: Types.TOGGLE_SETTINGS_MODAL,
+    });
+  };
+
 
   return (
     <Slide in={true} direction="left">
@@ -147,6 +163,9 @@ const myProfile_primaryInfo = ({
               {skillLevel ? skillLevel : "Skill Level"}
             </Typography>
             <EditIcon className={classes.editIcon} onClick={launchSkillModal} />
+          </div>
+          <div className={classes.settingsIconContainer}>
+            <SettingsIcon onClick={handleSettingsClick} />
           </div>
         </div>
       </div>

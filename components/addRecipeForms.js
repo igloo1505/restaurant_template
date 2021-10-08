@@ -294,6 +294,9 @@ const StepOneFormComponent = ({
               label="Recipe's title "
               onChange={handleFormChange}
               value={formData?.title}
+              onKeyDown={(e) => {
+                console.log("eventtttt", e)
+              }}
               focused={focusState.title.focus}
               InputLabelProps={{
                 focused: focusState.title.focus,
@@ -338,6 +341,7 @@ const StepOneFormComponent = ({
               pattern: "\\d*",
             }}
             onKeyDown={(e) => {
+
               // All of this to avoid Safari's shadow user agent
               let allowed = false;
               let regex = /^\d+$/;

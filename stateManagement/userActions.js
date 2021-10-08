@@ -357,17 +357,21 @@ export const deleteReview = (data) => async (dispatch) => {
 
 
 export const setKeyboardListener = () => {
-  if (typeof window !== 'undefined') {
-    window.addEventListener("keydown", (e) => {
-      let cmdShift = e.shiftKey && e.metaKey;
-      if (cmdShift && e.key === "k") {
-        return store.dispatch({
-          type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
-          payload: {
-            src: "global"
-          }
-        })
-      }
-    })
+  let state = store.getState()
+  // if (typeof window !== 'undefined' && state?.user?.userSettings?.allowKeyboardShortcuts && state?.user?.userSettings?.keyboardShortcuts?.length === 3) {
+  window.addEventListener("keydown", (e) => {
+    console.log('Global keydown listener: ', e);
+    let cmdShift = e.shiftKey && e.metaKey;
+
+    //     if (cmdShift && Boolean(e.keyCode === state?.user?.userSettings?.keyboardShortcuts?.filter((s) => !s.specialKey)?.[0].keyCode))) ) {
+    //     return store.dispatch({
+    //       type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
+    //       payload: {
+    //         src: "global"
+    //       }
+    //     })
+    //   }
   }
+  )
+  // }
 }

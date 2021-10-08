@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, forwardRef } from "react";
+import React, { useState, useRef, useEffect, Fragment, forwardRef } from "react";
 import clsx from "clsx";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { useDispatch, connect } from "react-redux";
@@ -137,7 +137,8 @@ const useStyles = makeStyles((theme) => ({
 const StepThreeFormComponent = ({
   UI: {
     addRecipe: {
-      formData
+      formData,
+      activeStep
     }
   },
   props: {
@@ -151,6 +152,12 @@ const StepThreeFormComponent = ({
   const dispatch = useDispatch();
   const name = "direction";
   const classes = useStyles();
+  const thisInputRef = useRef();
+  useEffect(() => {
+    if (activeStep === 2) {
+      thisInputRef.current.focus();
+    }
+  }, [activeStep])
   const setFormData = (newFormData) => {
     dispatch({
       type: Types.SET_ADD_RECIPE_FORM_DATA,
@@ -249,6 +256,7 @@ const StepThreeFormComponent = ({
         id="recipeDirectionInput"
         label="Direction"
         fullWidth
+        inputRef={thisInputRef}
         autoFocus
         multiline
         onFocus={() => fauxListener("direction", "focus")}

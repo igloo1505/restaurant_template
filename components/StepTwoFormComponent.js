@@ -362,7 +362,7 @@ const StepTwoFormComponent = ({
       sendAddIngredientNotification();
     }
     if (isSubRecipe >= 0) {
-      console.log("isSubRecipe: ", isSubRecipe);
+
       let newSubRecData = [...formData?.subRecipes];
       newSubRecData[isSubRecipe] = {
         ...newSubRecData[isSubRecipe],
@@ -390,7 +390,7 @@ const StepTwoFormComponent = ({
   };
   // Go back and change this to use users last used unit
   const addIngredient = (unit) => {
-    console.log('unit: ', unit);
+
     // if (formData.ingredients.length >= 1) {
     //   setAddSecondItemButton(true);
     // }
@@ -411,6 +411,8 @@ const StepTwoFormComponent = ({
         },
       };
       setSubRecipeFormData(newSubRecData);
+      document.getElementById("recipeIngredientInput").focus()
+      document.getElementById("recipeIngredientInput").select()
     }
     if (isSubRecipe < 0) {
       setFormData({
@@ -426,6 +428,8 @@ const StepTwoFormComponent = ({
           unit: { long: "cups", short: "cups" },
         },
       });
+      document.getElementById("recipeIngredientInput").focus()
+      document.getElementById("recipeIngredientInput").select()
     }
   };
   const classes = useStyles();
@@ -454,7 +458,7 @@ const StepTwoFormComponent = ({
 
   useEffect(() => {
     if (subRecipeTitleArray.length > 0) {
-      console.log("Setting subRecipe array");
+
       let length = subRecipeTitleArray.length - 1;
       setSubRecipeFormData([
         ...formData?.subRecipes,
@@ -469,7 +473,7 @@ const StepTwoFormComponent = ({
           },
         },
       ]);
-      console.log("length: ", length);
+
       // setIsSubRecipe(length);
     }
   }, [subRecipeTitleArray]);
@@ -496,7 +500,7 @@ const StepTwoFormComponent = ({
         //   }
         // }
         document.addEventListener("keydown", (e) => {
-          if (e.metaKey && e.shiftKey && e.key === "i") {
+          if (e.metaKey && e.shiftKey && e.key === "i" && formData?.ingredients?.length > 3) {
             handleSubRecipeButtonClick();
           }
         })
@@ -517,30 +521,26 @@ const StepTwoFormComponent = ({
 
     let theseEms = document.querySelectorAll("[data-focus='true']");
     let hasDataFocus = theseEms.length > 0;
-    console.log('theseEms: ', theseEms);
+
     let HAS_SELECTED_INGREDIENT = false
     let selectedOption = theseEms.forEach((em) => {
-      console.log("FOUND ITTTT", em.classList)
+
       if (em.classList.contains('autocomplete-unit-option')) {
-        console.log("HAS DATA FOCUS")
-        console.log("czacva", em.childNodes);
+
+
         let hasClass = em?.childNodes?.forEach((child) => {
 
           if (child?.classList?.contains('unit-autocomplete-option')) {
             HAS_SELECTED_INGREDIENT =
               getIngredientUnits().filter((i) => {
-                console.log('i: ', i.long.toLowerCase() === child.textContent.toLowerCase());
-                console.log('child.textContent: ', child.textContent);
                 return child.textContent.toLowerCase() === i?.long?.toLowerCase()
               })?.[0]
           }
         }
         )
-        console.log('hasClass: ', hasClass);
       }
       return false
     })
-    console.log('selectedOption: ', selectedOption);
 
     if (!e.shiftKey && e.key === "Enter") {
       e.preventDefault();
@@ -555,7 +555,7 @@ const StepTwoFormComponent = ({
         };
 
         if (Object.values(validated).every((i) => i)) {
-          console.log("Adding ingredient to main recipe", validated.unit);
+
           addIngredient(validated.unit);
         }
       }
@@ -572,7 +572,7 @@ const StepTwoFormComponent = ({
           unit: HAS_SELECTED_INGREDIENT ? HAS_SELECTED_INGREDIENT : checkUnit(),
         };
         if (Object.values(validated).every((i) => i)) {
-          console.log("Adding ingredient", validated.unit);
+
           // RESUME add check here to make sure unit is currently selected one if dropdown is open rather than the text content of the textField
 
           addIngredient(validated.unit);
@@ -887,12 +887,12 @@ const SubRecipeBanner = forwardRef(({
   const [_previousIndex, setPreviousIndex] = useState(0)
   const [_latestDirection, set_latestDirection] = useState("right")
   useEffect(() => {
-    console.log('Set direction this way', isSubRecipe, index, subRecipeIndex)
+
     setPreviousIndex(isSubRecipe)
     set_latestDirection(latestDirection)
   }, [isSubRecipe, latestDirection])
-  console.log('latestDirection: ', latestDirection);
-  console.log('_latestDirection: ', _latestDirection);
+
+
   return (
     <Slide in={isIn} direction={latestDirection ? latestDirection : _latestDirection}>
       <div className={clsx(classes.subRecipeTitleTextContainer, !isIn && classes.hide)}>

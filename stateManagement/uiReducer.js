@@ -1,29 +1,4 @@
-import {
-  OPEN_DRAWER,
-  HIDE_SHORTCUT_MENU,
-  SET_ADD_RECIPE_FORM_DATA,
-  SET_ADD_RECIPE_SHORTCUT,
-  CLOSE_DRAWER,
-  TOGGLE_EDIT_STATE,
-  AUTHENTICATION_ERROR,
-  SET_VIEWPORT_DIMENSIONS,
-  REGISTER_NEW_USER,
-  GET_ALL_USERS,
-  SHOW_GROCERY_MENU,
-  SET_ABOUTME_DIALOG,
-  DISPOSE_GROCERY_MENU,
-  DISPOSE_BOOKMARK_MENU,
-  SHOW_BOOKMARK_MENU,
-  USER_ERROR,
-  REMOVE_USER,
-  SET_NAV_HEIGHT,
-  DISPOSE_ACCOUNT_MENU,
-  SHOW_ACCOUNT_MENU,
-  IS_CLIENT,
-  TOGGLE_SIGNUP_FORM,
-  SET_ADD_RECIPE_STEP,
-  SET_ALLOW_SUB_RECIPE
-} from "./TYPES";
+import * as Types from "./TYPES";
 
 const initialState = {
   isClient: false,
@@ -51,6 +26,10 @@ const initialState = {
   accountMenu: {
     el: null,
     shouldBeVisible: false,
+  },
+  settingsModal: {
+    isOpen: false,
+    settingKeysBackdrop: false,
   },
   Grocery_navbarMenu: {
     el: null,
@@ -114,13 +93,13 @@ export default function UIReducer(state = initialState, action) {
     //     accountMenu: { ...state.accountMenu },
     //     leftTab: { ...state.leftTab },
     //   };
-    case IS_CLIENT:
+    case Types.IS_CLIENT:
       return {
         ...state,
         isClient: true,
       };
 
-    case SET_VIEWPORT_DIMENSIONS: {
+    case Types.SET_VIEWPORT_DIMENSIONS: {
       let device = getDeviceType(action.payload.width);
       //
       return {
@@ -139,7 +118,7 @@ export default function UIReducer(state = initialState, action) {
         accountMenu: { ...state.accountMenu },
       };
     }
-    case SET_NAV_HEIGHT:
+    case Types.SET_NAV_HEIGHT:
       return {
         ...state,
         viewport: { ...state.viewport, navHeight: action.payload },
@@ -147,7 +126,7 @@ export default function UIReducer(state = initialState, action) {
         alert: { ...state.alert },
         accountMenu: { ...state.accountMenu },
       };
-    case SET_ABOUTME_DIALOG:
+    case Types.SET_ABOUTME_DIALOG:
       return {
         ...state,
         aboutMeFullScreenDialog: {
@@ -155,14 +134,14 @@ export default function UIReducer(state = initialState, action) {
         },
       };
 
-    // case TRIGGER_ALERT:
+    // case Types.TRIGGER_ALERT:
     //   return {
     //     ...state,
     //     leftTab: { ...state.leftTab },
     //     alert: action.payload,
     //     accountMenu: { ...state.accountMenu },
     //   };
-    // case DISPOSE_ALERT:
+    // case Types.DISPOSE_ALERT:
     //   return {
     //     ...state,
     //     modal: { ...state.modal },
@@ -170,7 +149,7 @@ export default function UIReducer(state = initialState, action) {
     //     alert: initialState.alert,
     //     accountMenu: { ...state.accountMenu },
     //   };
-    // case SET_MODAL_INSTANCE:
+    // case Types.SET_MODAL_INSTANCE:
     //   return {
     //     ...state,
     //     modal: {
@@ -183,7 +162,7 @@ export default function UIReducer(state = initialState, action) {
     //     leftTab: { ...state.leftTab },
     //     accountMenu: { ...state.accountMenu },
     //   };
-    // case MODAL_DISMISSED:
+    // case Types.MODAL_DISMISSED:
     //   return {
     //     ...state,
     //     modal: {
@@ -196,7 +175,7 @@ export default function UIReducer(state = initialState, action) {
     //     leftTab: { ...state.leftTab },
     //     accountMenu: { ...state.accountMenu },
     //   };
-    // case MODAL_CONFIRMED:
+    // case Types.MODAL_CONFIRMED:
     //   return {
     //     ...state,
     //     modal: {
@@ -210,7 +189,7 @@ export default function UIReducer(state = initialState, action) {
     //     accountMenu: { ...state.accountMenu },
     //   };
 
-    // case UPDATE_USER_INFO:
+    // case Types.UPDATE_USER_INFO:
     //   return {
     //     ...state,
     //     modal: { ...state.modal },
@@ -223,7 +202,7 @@ export default function UIReducer(state = initialState, action) {
     //     isEditing: !state.isEditing,
     //     accountMenu: { ...state.accountMenu },
     //   };
-    // case EDIT_MENU_ITEM:
+    // case Types.EDIT_MENU_ITEM:
     //   return {
     //     ...state,
     //     modal: { ...state.modal },
@@ -237,7 +216,7 @@ export default function UIReducer(state = initialState, action) {
     //     accountMenu: { ...state.accountMenu },
     //   };
     // !! DO NOT DELETE BELOW.
-    case AUTHENTICATION_ERROR:
+    case Types.AUTHENTICATION_ERROR:
       return {
         ...state,
         letTab: { ...state.leftTab },
@@ -249,7 +228,7 @@ export default function UIReducer(state = initialState, action) {
         isEditing: false,
         accountMenu: { ...state.accountMenu },
       };
-    case USER_ERROR:
+    case Types.USER_ERROR:
       return {
         ...state,
         letTab: { ...state.leftTab },
@@ -261,7 +240,7 @@ export default function UIReducer(state = initialState, action) {
         isEditing: false,
         accountMenu: { ...state.accountMenu },
       };
-    case REGISTER_NEW_USER:
+    case Types.REGISTER_NEW_USER:
       return {
         ...state,
         letTab: { ...state.leftTab },
@@ -273,7 +252,7 @@ export default function UIReducer(state = initialState, action) {
         isEditing: false,
         accountMenu: { ...state.accountMenu },
       };
-    case REMOVE_USER:
+    case Types.REMOVE_USER:
       return {
         ...state,
         letTab: { ...state.leftTab },
@@ -286,7 +265,7 @@ export default function UIReducer(state = initialState, action) {
         accountMenu: { ...state.accountMenu },
       };
 
-    case TOGGLE_EDIT_STATE:
+    case Types.TOGGLE_EDIT_STATE:
       return {
         ...state,
         letTab: { ...state.leftTab },
@@ -296,7 +275,7 @@ export default function UIReducer(state = initialState, action) {
       };
     // !! DO NOT DELETE ABOVE.
 
-    // case TOGGLE_MODAL:
+    // case Types.TOGGLE_MODAL:
     //   return {
     //     ...state,
     //     modal: {
@@ -309,8 +288,8 @@ export default function UIReducer(state = initialState, action) {
     //     leftTab: { ...state.leftTab },
     //     accountMenu: { ...state.accountMenu },
     //   };
-    // case TRIGGER_MODAL:
-    // case ERROR_WITH_MODAL:
+    // case Types.TRIGGER_MODAL:
+    // case Types.ERROR_WITH_MODAL:
     //   return {
     //     ...state,
     //     modal: {
@@ -326,17 +305,17 @@ export default function UIReducer(state = initialState, action) {
     //     leftTab: { ...state.leftTab },
     //     accountMenu: { ...state.accountMenu },
     //   };
-    case OPEN_DRAWER:
+    case Types.OPEN_DRAWER:
       return {
         ...state,
         mainDrawer: { ...state.drawer, open: true },
       };
-    case CLOSE_DRAWER:
+    case Types.CLOSE_DRAWER:
       return {
         ...state,
         mainDrawer: { ...state.drawer, open: false },
       };
-    case SHOW_ACCOUNT_MENU:
+    case Types.SHOW_ACCOUNT_MENU:
       return {
         ...state,
         alert: { ...state.alert },
@@ -347,7 +326,7 @@ export default function UIReducer(state = initialState, action) {
           shouldBeVisible: true,
         },
       };
-    case SHOW_GROCERY_MENU:
+    case Types.SHOW_GROCERY_MENU:
       return {
         ...state,
         alert: { ...state.alert },
@@ -362,7 +341,7 @@ export default function UIReducer(state = initialState, action) {
           shouldBeVisible: false,
         },
       };
-    case SHOW_BOOKMARK_MENU:
+    case Types.SHOW_BOOKMARK_MENU:
       return {
         ...state,
         alert: { ...state.alert },
@@ -379,12 +358,12 @@ export default function UIReducer(state = initialState, action) {
           shouldBeVisible: false,
         },
       };
-    case DISPOSE_ACCOUNT_MENU:
+    case Types.DISPOSE_ACCOUNT_MENU:
       return {
         ...state,
         accountMenu: { ...state.accountMenu, el: null, shouldBeVisible: false },
       };
-    case DISPOSE_GROCERY_MENU:
+    case Types.DISPOSE_GROCERY_MENU:
       return {
         ...state,
         Grocery_navbarMenu: {
@@ -393,7 +372,7 @@ export default function UIReducer(state = initialState, action) {
           shouldBeVisible: false,
         },
       };
-    case DISPOSE_BOOKMARK_MENU:
+    case Types.DISPOSE_BOOKMARK_MENU:
       return {
         ...state,
         Bookmarks_navbarMenu: {
@@ -401,12 +380,12 @@ export default function UIReducer(state = initialState, action) {
           shouldBeVisible: false,
         },
       };
-    case TOGGLE_SIGNUP_FORM:
+    case Types.TOGGLE_SIGNUP_FORM:
       return {
         ...state,
         login: { ...state.login, isSignUp: !state.login.isSignUp },
       };
-    case SET_ADD_RECIPE_STEP: {
+    case Types.SET_ADD_RECIPE_STEP: {
       let _newStep = 0
       if (action.payload === "increase") {
         _newStep = state.addRecipe.activeStep < 2 ? state.addRecipe.activeStep + 1 : 2
@@ -417,7 +396,7 @@ export default function UIReducer(state = initialState, action) {
       if (parseInt(action.payload) >= 0) {
         _newStep = parseInt(action.payload)
       }
-      console.log('_newStep: ', _newStep);
+
       return {
         ...state,
         addRecipe: {
@@ -426,8 +405,8 @@ export default function UIReducer(state = initialState, action) {
         }
       };
     }
-    case SET_ALLOW_SUB_RECIPE: {
-      console.log('action.payload: ', action.payload);
+    case Types.SET_ALLOW_SUB_RECIPE: {
+
       return {
         ...state,
         addRecipe: {
@@ -436,7 +415,7 @@ export default function UIReducer(state = initialState, action) {
         }
       }
     }
-    case SET_ADD_RECIPE_FORM_DATA: {
+    case Types.SET_ADD_RECIPE_FORM_DATA: {
       return {
         ...state,
         addRecipe: {
@@ -445,6 +424,27 @@ export default function UIReducer(state = initialState, action) {
         }
       }
     }
+    case Types.TOGGLE_SETTINGS_MODAL: {
+      return {
+        ...state,
+        settingsModal: {
+          ...state.settingsModal,
+          isOpen: !state.settingsModal.isOpen,
+          ...(action?.payload?.isOpen && { isOpen: action.payload.isOpen })
+        }
+      }
+    }
+    case Types.TOGGLE_SET_KEYS_BACKDROP: {
+      return {
+        ...state,
+        settingsModal: {
+          ...state.settingsModal,
+          settingKeysBackdrop: !state.settingsModal.settingKeysBackdrop,
+          ...(action?.payload?.settingKeysBackdrop && { settingKeysBackdrop: action.payload.settingKeysBackdrop })
+        }
+      }
+    }
+
     default:
       return state;
   }
