@@ -29,9 +29,9 @@ const initialState = {
   },
   settingsModal: {
     isOpen: false,
-    settingKeysBackdrop: true,
     // TODO reset this 
-    // settingKeysBackdrop: false,
+    // settingKeysBackdrop: true,
+    settingKeysBackdrop: false,
   },
   Grocery_navbarMenu: {
     el: null,

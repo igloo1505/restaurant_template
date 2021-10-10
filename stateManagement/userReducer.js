@@ -20,6 +20,7 @@ const initialState = {
     allowNotifications: true,
     allowRecipeReviews: true,
     skString: "setting",
+    // RESUME link this to handleEventListener in settingShortcutsListeners after getting currentActiveKeys working properly
     keyboardShortcuts: [
       {
         key: "Shift",
@@ -27,7 +28,6 @@ const initialState = {
         keyCode: 16,
         isSpecialKey: true,
         isActive: false
-
       },
       {
         key: "Meta",
@@ -149,15 +149,15 @@ export default function userReducer(state = initialState, action) {
       };
     case Types.SET_CURRENT_ACTIVE_KEYS:
       console.log("Setting current active keys with: ", action.payload);
-      console.log("Setting current active keys with: ", getNewCurrentKeys(action.payload));
       return {
         ...state,
         userSettings: {
           ...state.userSettings,
-          // currentActiveKeys: getNewCurrentKeys(action.payload),
+          currentActiveKeys: action.payload?.currentActiveKeys
         }
       };
     case Types.SET_LISTENER_KEY:
+      // TODO filter currentActiveKeys here based on metaKey changes
       return {
         ...state,
         userSettings: {

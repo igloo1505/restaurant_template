@@ -63,38 +63,9 @@ const SetKeyboardShortcutBackdrop = ({
     useEffect(() => {
         // BUG remove this... just reintroduced this to mess with the UI for now.
         console.log('SpecialKeys: ', SpecialKeys);
-        SpecialKeys().setSpecialKeys("reset")
+        // SpecialKeys().setSpecialKeys("reset")
     }, [])
 
-    const handleKeyDown = (e) => {
-        e.preventDefault()
-        if (e.repeat) {
-            return
-        };
-        if (SpecialKeys()[e.key]) {
-            SpecialKeys()[e.key].setPressed(true)
-        }
-        if (!SpecialKeys()[e.key]) {
-            if (disallowKeys.includes(e.key) || e.key === "" || e.key.length > 1) {
-                return;
-            }
-            let forSomeReasonINeedThis = [...specialKeys].filter((sk) => sk.keyCode === e.keyCode)
-            if (forSomeReasonINeedThis.length > 0) {
-                return
-            }
-        }
-        SpecialKeys().setSpecialKeys(e)
-    }
-    const handleKeyUp = (e) => {
-        e.preventDefault()
-        if (e.repeat) {
-            return
-        };
-        if (SpecialKeys()[e.key]) {
-            SpecialKeys()[e.key].setPressed(false)
-        }
-        SpecialKeys().setSpecialKeys(e)
-    }
 
     useEffect(() => {
         console.log('settingKeysBackdrop: ', settingKeysBackdrop);

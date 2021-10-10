@@ -13,6 +13,19 @@ const allowKeys = (state) => {
 }
 
 
+class ShortcutKey {
+    constructor({ e, icon, isActive, isSpecialKey, booleanCheck }) {
+        this.key = e.key
+        this.icon = icon
+        this.keyCode = e.keyCode
+        this.isActive = isActive || true
+        this.code = e.code
+        this.booleanCheck = booleanCheck || false,
+            this.isSpecialKey = isSpecialKey || false
+    }
+}
+
+
 const disallowKeys = [
     "CapsLock",
     "Tab",
@@ -20,96 +33,180 @@ const disallowKeys = [
 ]
 
 export const _specialKeys = {
-    "Shift": {
+    "Shift": new ShortcutKey({
         booleanCheck: "shiftKey",
         icon: KeyIcons.ShiftIcon,
         isSpecialKey: true,
-        isActive: false
-    },
-    "Alt": {
+        isActive: false,
+        e: {
+            key: "Shift",
+            keyCode: 16,
+            code: "ShiftLeft",
+        }
+    }),
+    "Alt": new ShortcutKey({
         booleanCheck: "altKey",
         icon: KeyIcons.AltIcon,
         isActive: false,
         isSpecialKey: true,
-    },
-    "Meta": {
+        e: {
+            key: "Alt",
+            keyCode: 18,
+            code: "AltLeft"
+        }
+    }),
+    "Meta": new ShortcutKey({
         booleanCheck: "metaKey",
         icon: KeyIcons.CommandIcon,
         isActive: false,
         isSpecialKey: true,
-    },
-    "Control": {
+        e: {
+            key: "Meta",
+            keyCode: 91,
+            code: "MetaLeft"
+        }
+    }),
+    "Control": new ShortcutKey({
         booleanCheck: "ctrlKey",
         icon: KeyIcons.ControlIcon,
         isActive: false,
         isSpecialKey: true,
-    },
+        e: {
+            key: "Control",
+            keyCode: 17,
+            code: "ControlLeft"
+        }
+    }),
 }
 
 
 
-export const SpecialKeys = (_localState) => {
-    let state = store.getState();
-    let currentKeys = state?.user?.userSettings?.currentActiveKeys
-    let _currentKeys = _localState?.user?.userSettings?.currentActiveKeys
-    // console.log('state.user.userSettings.currentActiveKeys: ', state.user.userSettings.currentActiveKeys);
-    console.log('currentKeys: ', currentKeys);
-    console.log('localState currentKeys: ', _currentKeys);
 
-    const setSpecialKeys = (event) => {
-        let newActiveKeys = getNewCurrentKeys(event, state)
-        store.dispatch({
-            type: Types.SET_CURRENT_ACTIVE_KEYS,
-            payload: newActiveKeys,
-        })
-    }
-    return {
-        "Shift": {
-            pressed: state?.user?.userSettings?.skListeners?.shiftPressed,
+
+class SpecialKeysClass {
+    constructor(_localState) {
+        this._localState = _localState
+        this.state = store.getState();
+        this.Shift = {
+            pressed: this.state?.user?.userSettings?.skListeners?.shiftPressed,
             setPressed: (newValue, event) => {
                 store.dispatch({
                     type: Types.SET_LISTENER_KEY,
                     payload: { shiftKey: newValue }
                 })
-                setSpecialKeys(_specialKeys.Shift)
+                this.setSpecialKeys(event)
             }
         },
-        "Alt": {
-            pressed: state?.user?.userSettings?.skListeners?.altPressed,
-            setPressed: (newValue, event) => {
+            this.Alt = {
+                pressed: this.state?.user?.userSettings?.skListeners?.altPressed,
+                setPressed: (newValue, event) => {
+                    store.dispatch({
+                        type: Types.SET_LISTENER_KEY,
+                        payload: { altKey: newValue }
+                    })
+                    this.setSpecialKeys(event)
+                }
+            },
+            this.Meta = {
+                pressed: this.state?.user?.userSettings?.skListeners?.metaPressed,
+                setPressed: (newValue, event) => {
+                    store.dispatch({
+                        type: Types.SET_LISTENER_KEY,
+                        payload: { metaKey: newValue }
+                    })
+                    this.setSpecialKeys(event)
+                }
+            },
+            this.Control = {
+                pressed: this.state?.user?.userSettings?.skListeners?.controlPressed,
+                setPressed: (newValue, event) => {
+                    store.dispatch({
+                        type: Types.SET_LISTENER_KEY,
+                        payload: { ctrlKey: newValue }
+                    })
+                    this.setSpecialKeys(event)
+                }
+            },
+            // setSpecialKeys: (newKey) => {
+            //     setSpecialKeys(newKey)
+            // }
+            this.setSpecialKeys = function (event) {
+                console.log('event sending to getNewCurrentKeys: ', event);
+                if (!event) {
+                    console.trace("this.setSpecialKeys: ")
+                }
+                let newActiveKeys = getNewCurrentKeys({ event, state: this?.state })
                 store.dispatch({
-                    type: Types.SET_LISTENER_KEY,
-                    payload: { altKey: newValue }
+                    type: Types.SET_CURRENT_ACTIVE_KEYS,
+                    payload: {
+                        currentActiveKeys: newActiveKeys
+                    }
                 })
-                setSpecialKeys(_specialKeys.Alt)
             }
-        },
-        "Meta": {
-            pressed: state?.user?.userSettings?.skListeners?.metaPressed,
-            setPressed: (newValue, event) => {
-                store.dispatch({
-                    type: Types.SET_LISTENER_KEY,
-                    payload: { metaKey: newValue }
-                })
-                setSpecialKeys(_specialKeys.Meta)
-            }
-        },
-        "Control": {
-            pressed: state?.user?.userSettings?.skListeners?.controlPressed,
-            setPressed: (newValue, event) => {
-                store.dispatch({
-                    type: Types.SET_LISTENER_KEY,
-                    payload: { ctrlKey: newValue }
-                })
-
-                setSpecialKeys(_specialKeys.Control)
-            }
-        },
-        setSpecialKeys: (newKey) => {
-            setSpecialKeys(newKey)
-        }
     }
 }
+export const SpecialKeys = (_localState) => {
+    return new SpecialKeysClass(_localState)
+}
+
+
+// export const SpecialKeys = (_localState) => {
+//     let state = store.getState();
+
+//     return {
+//         "Shift": {
+//             pressed: state?.user?.userSettings?.skListeners?.shiftPressed,
+//             setPressed: (newValue, event) => {
+//                 store.dispatch({
+//                     type: Types.SET_LISTENER_KEY,
+//                     payload: { shiftKey: newValue }
+//                 })
+//                 this.setSpecialKeys(event)
+//             }
+//         },
+//         "Alt": {
+//             pressed: state?.user?.userSettings?.skListeners?.altPressed,
+//             setPressed: (newValue, event) => {
+//                 store.dispatch({
+//                     type: Types.SET_LISTENER_KEY,
+//                     payload: { altKey: newValue }
+//                 })
+//                 this.setSpecialKeys(event)
+//             }
+//         },
+//         "Meta": {
+//             pressed: state?.user?.userSettings?.skListeners?.metaPressed,
+//             setPressed: (newValue, event) => {
+//                 store.dispatch({
+//                     type: Types.SET_LISTENER_KEY,
+//                     payload: { metaKey: newValue }
+//                 })
+//                 this.setSpecialKeys(event)
+//             }
+//         },
+//         "Control": {
+//             pressed: state?.user?.userSettings?.skListeners?.controlPressed,
+//             setPressed: (newValue, event) => {
+//                 store.dispatch({
+//                     type: Types.SET_LISTENER_KEY,
+//                     payload: { ctrlKey: newValue }
+//                 })
+//                 this.setSpecialKeys(event)
+//             }
+//         },
+//         // setSpecialKeys: (newKey) => {
+//         //     setSpecialKeys(newKey)
+//         // }
+//         setSpecialKeys: (event) => {
+//             let newActiveKeys = getNewCurrentKeys({ event, state })
+//             console.log('newActiveKeys up here: ', newActiveKeys);
+//             store.dispatch({
+//                 type: Types.SET_CURRENT_ACTIVE_KEYS,
+//                 payload: newActiveKeys,
+//             })
+//         }
+//     }
+// }
 
 
 export const settingKeysKeydown = (e) => {
@@ -124,36 +221,19 @@ export const settingKeysKeydown = (e) => {
         return
     };
     if (SpecialKeys(state)[e.key]) {
-        SpecialKeys(state)[e.key].setPressed(true)
+        SpecialKeys(state)[e.key].setPressed(true, e)
     }
 
     if (!SpecialKeys(state)[e.key]) {
         if (disallowKeys.includes(e.key) || e.key === "" || e.key.length > 1) {
             return;
         }
-        let newSpecialKeys = state?.user?.userSettings?.currentActiveKeys?.filter((sk) => sk.isSpecialKey)
-        console.log('newSpecialKeys state: ', state);
-        console.log('newSpecialKeys: p-b', state.user.userSettings.currentActiveKeys);
-        console.log('newSpecialKeys factors: ', state?.user?.userSettings?.currentActiveKeys);
-        console.log('state', state);
-        console.log('sks', state?.user?.userSettings.skListeners, e.repeat);
-        let forSomeReasonINeedThis = state?.user?.userSettings?.currentActiveKeys?.filter((sk) => sk.keyCode === e.keyCode)
-        console.log('forSomeReasonINeedThis: ', forSomeReasonINeedThis);
-        if (forSomeReasonINeedThis?.length > 0 || newSpecialKeys?.length >= 2) {
-            return
-        }
+        let newSpecialKeys = getNewCurrentKeys({ event: e, state })
         store.dispatch({
             type: Types.SET_CURRENT_ACTIVE_KEYS,
-            payload: [
-                // ...newSpecialKeys,
-                {
-                    keyCode: e.keyCode,
-                    key: e.key,
-                    code: e.code,
-                    isActive: true,
-                    isSpecialKey: false,
-                }
-            ]
+            payload: {
+                currentActiveKeys: newSpecialKeys
+            }
         })
 
     }
@@ -179,12 +259,41 @@ export const settingKeysKeyup = (e) => {
 
 
 
-export const getNewCurrentKeys = (event, state) => {
-    console.log("event", event)
-    if (event === "reset") {
+export const getNewCurrentKeys = ({ event, reset, state, metaKeys, ...rest }) => {
+    if (reset) {
         return []
     }
-    let currentKeys = state?.user?.userSettings?.currentActiveKeys
+    console.log('getNewCurrentKeys state, metaKeys, ...rest: gnk', state, metaKeys, rest);
+    let isSpecialKey = Object.keys(_specialKeys).includes(event?.key)
+    let currentKeys = state?.user?.userSettings?.currentActiveKeys || []
+    const newKey = new ShortcutKey({
+        e: event,
+        isActive: true,
+        ...(Boolean(_specialKeys[event.key]) && { isSpecialKey: true }),
+        ...(Boolean(_specialKeys[event.key]) && { booleanCheck: _specialKeys[event.key].booleanCheck }),
+    })
+    if (event.type === "keydown") {
+        let rKeys = [newKey]
+        if (!newKey.isSpecialKey) {
+            rKeys = [...currentKeys.filter((ck) => ck.isSpecialKey), newKey]
+        }
+        if (newKey.isSpecialKey) {
+            console.log('currentKeys: gnk', currentKeys);
+            let nsk = currentKeys.filter((ck) => !ck?.isSpecialKey)?.[0]
+            nsk && rKeys.push(nsk)
+            if (currentKeys.filter(ck => ck?.isSpecialKey).length <= 1) {
+                let osk = currentKeys.find(ck => ck?.isSpecialKey)
+                osk && rKeys.push(osk)
+                console.log('osk: gnk ', rKeys);
+            }
+        }
+        console.log('rKeys: gnk ', rKeys);
+        return rKeys
+    }
+    if (event.type === "keyup") {
+        return currentKeys.filter((sk) => sk?.keyCode !== event.keyCode)
+    }
+    return currentKeys
 }
 
 
@@ -201,13 +310,13 @@ export const clearListeners = () => {
 }
 
 
-const handleKeyDown = (e) => {
-    console.log('handleKeyDown: ', handleKeyDown);
-}
+// const handleKeyDown = (e) => {
+//     console.log('handleKeyDown: ', handleKeyDown);
+// }
 
-const handleKeyUp = (e) => {
-    console.log('handleKeyUp: ', handleKeyUp);
-}
+// const handleKeyUp = (e) => {
+//     console.log('handleKeyUp: ', handleKeyUp);
+// }
 const Listeners = {
     settingKeyDownListener: (e) => {
         let localState = store.getState();
@@ -220,36 +329,19 @@ const Listeners = {
             return
         };
         if (SpecialKeys(localState)[e.key]) {
-            SpecialKeys(localState)[e.key].setPressed(true)
+            SpecialKeys(localState)[e.key].setPressed(true, e)
         }
 
         if (!SpecialKeys(localState)[e.key]) {
             if (disallowKeys.includes(e.key) || e.key === "" || e.key.length > 1) {
                 return;
             }
-            let newSpecialKeys = localState?.user?.userSettings?.currentActiveKeys?.filter((sk) => sk.isSpecialKey)
-            console.log('newSpecialKeys: p-b', localState.user.userSettings.currentActiveKeys);
-            console.log('newSpecialKeys factors: ', localState?.user?.userSettings?.currentActiveKeys);
-            console.log('localState', localState);
-            console.log('sks', localState?.user?.userSettings.skListeners, e.repeat);
-            let forSomeReasonINeedThis = localState?.user?.userSettings?.currentActiveKeys?.filter((sk) => sk.keyCode === e.keyCode)
-            console.log('forSomeReasonINeedThis: ', forSomeReasonINeedThis);
-            if (forSomeReasonINeedThis?.length > 0 || newSpecialKeys?.length >= 2) {
-                return
-            }
-            console.log('Types.SET_CURRENT_ACTIVE_KEYS: 245', Types.SET_CURRENT_ACTIVE_KEYS);
+            let newSpecialKeys = getNewCurrentKeys({ event: e, state: localState })
             store.dispatch({
                 type: Types.SET_CURRENT_ACTIVE_KEYS,
-                payload: [
-                    // ...newSpecialKeys,
-                    {
-                        keyCode: e.keyCode,
-                        key: e.key,
-                        code: e.code,
-                        isActive: true,
-                        isSpecialKey: false,
-                    }
-                ]
+                payload: {
+                    currentActiveKeys: newSpecialKeys
+                }
             })
         }
     },
@@ -271,6 +363,12 @@ export const handleEventListeners = () => {
     let state = store.getState();
     console.log('state: ', state);
     if (typeof window !== undefined) {
+        if (state?.user?.userSettings?.allowKeyboardShortcuts) {
+            document.addEventListener("keydown", (e) => {
+                console.log("Logging this: ", e)
+                // if(e)
+            })
+        }
         if (state?.UI?.settingsModal?.settingKeysBackdrop) {
             console.log('window: ', window.location);
             document.addEventListener("keydown", Listeners[`${state?.user?.userSettings?.skString}KeyDownListener`]);
