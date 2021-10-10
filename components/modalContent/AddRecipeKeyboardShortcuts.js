@@ -188,7 +188,6 @@ const AddRecipeKeyboardShortcuts = ({ alert: { keyboardShortcuts: { show, shortc
     useEffect(() => {
         if (typeof window !== "undefined") {
             document.addEventListener("keydown", (e) => {
-
                 if (e.key === "Escape") {
                     dispatch({
                         type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,

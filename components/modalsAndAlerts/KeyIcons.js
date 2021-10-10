@@ -69,8 +69,8 @@ const useIconClasses = makeStyles((theme) => ({
 
 
 
-export const ShiftIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className }) => {
-    const classes = useIconClasses()
+export const ShiftIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles }) => {
+    const classes = ownStyles ? ownStyles() : useIconClasses()
     return (
         <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={showSetKeysBackdrop}
             style={styles}
@@ -79,8 +79,8 @@ export const ShiftIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _c
         </div>
     )
 }
-export const AltIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className }) => {
-    const classes = useIconClasses()
+export const AltIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles }) => {
+    const classes = ownStyles ? ownStyles() : useIconClasses()
     return (
         <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={showSetKeysBackdrop}
             style={styles}
@@ -89,8 +89,8 @@ export const AltIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _cla
         </div>
     )
 }
-export const ControlIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className }) => {
-    const classes = useIconClasses()
+export const ControlIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles }) => {
+    const classes = ownStyles ? ownStyles() : useIconClasses()
     return (
         <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={showSetKeysBackdrop}
             style={styles}
@@ -101,8 +101,8 @@ export const ControlIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, 
 }
 
 
-export const CommandIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className }) => {
-    const classes = useIconClasses()
+export const CommandIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles }) => {
+    const classes = ownStyles ? ownStyles() : useIconClasses()
     return (
         <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={showSetKeysBackdrop}
             style={styles}
@@ -141,7 +141,7 @@ export const KeyIcon = ({ settingKeysBackdrop, keyData, showSetKeysBackdrop, sty
         // setIsActive(shouldShow)
     }, [shouldShow])
     return (
-        <div className={clsx(classes.iconContainer, isActive && classes.iconContainerActive, _className?.container && _aclassName.container, "shortcut-icon-animated", _className?.container)} onClick={showSetKeysBackdrop}
+        <div className={clsx(classes.iconContainer, isActive && classes.iconContainerActive, _className?.container && _className.container, "shortcut-icon-animated", _className?.container)} onClick={showSetKeysBackdrop}
             style={styles}
             id={_id}
         >

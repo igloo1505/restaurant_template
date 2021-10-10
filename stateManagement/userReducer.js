@@ -1,5 +1,6 @@
 import * as Types from "./TYPES"
 import { getAllRecipesFromUser } from "./recipeActions";
+import { getNewCurrentKeys } from "../util/SettingShortcutsListeners"
 import store from "./store";
 
 const initialState = {
@@ -18,6 +19,7 @@ const initialState = {
     allowKeyboardShortcuts: true,
     allowNotifications: true,
     allowRecipeReviews: true,
+    skString: "setting",
     keyboardShortcuts: [
       {
         key: "Shift",
@@ -42,7 +44,6 @@ const initialState = {
         isActive: false
       },
     ],
-    isSettingShortcuts: false,
     currentActiveKeys: [],
     skListeners: {
       shiftKey: false,
@@ -147,28 +148,21 @@ export default function userReducer(state = initialState, action) {
         error: action.payload,
       };
     case Types.SET_CURRENT_ACTIVE_KEYS:
+      console.log("Setting current active keys with: ", action.payload);
+      console.log("Setting current active keys with: ", getNewCurrentKeys(action.payload));
       return {
         ...state,
         userSettings: {
           ...state.userSettings,
-          currentActiveKeys: !state.userSettings.isSettingShortcuts ? [] : action?.payload?.map((key) => {
-            delete key.icon
-            return key
-          })
+          // currentActiveKeys: getNewCurrentKeys(action.payload),
         }
       };
     case Types.SET_LISTENER_KEY:
-      console.log("Setting set_listener_key with: ", action.payload);
-      let eventData = action?.payload?._e
-
-      console.log('eventData: ', eventData);
-
-      eventData && delete action.payload._e
-
       return {
         ...state,
         userSettings: {
           ...state.userSettings,
+          // currentActiveKeys: getNewCurrentKeys(action.payload),
           skListeners: {
             ...state.userSettings.skListeners,
             ...action.payload

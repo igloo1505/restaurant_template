@@ -9,6 +9,12 @@ import { gsap } from 'gsap'
 import Backdrop from "@material-ui/core/Backdrop";
 import * as KeyIcons from "./KeyIcons"
 import { ClassNames } from "@emotion/react";
+import {
+    _specialKeys,
+    SpecialKeys,
+    settingKeysKeydown,
+    settingKeysKeyup,
+} from "../../util/SettingShortcutsListeners"
 
 const useClasses = makeStyles((theme) => ({
     backdropRoot: {
@@ -21,40 +27,6 @@ const useClasses = makeStyles((theme) => ({
     }
 }))
 
-
-const disallowKeys = [
-    "CapsLock",
-    "Tab",
-    "Enter",
-]
-// TODO MAKE SURE TO FILTER OUT e.SHIFTPRESSED AND META AND CONTROL FOR !SPECIALKEYS  
-// TODO add arrow key icons or disallow arrow keys
-const _specialKeys = {
-    "Shift": {
-        booleanCheck: "shiftKey",
-        icon: KeyIcons.ShiftIcon,
-        isSpecialKey: true,
-        isActive: false
-    },
-    "Alt": {
-        booleanCheck: "altKey",
-        icon: KeyIcons.AltIcon,
-        isActive: false,
-        isSpecialKey: true,
-    },
-    "Meta": {
-        booleanCheck: "metaKey",
-        icon: KeyIcons.CommandIcon,
-        isActive: false,
-        isSpecialKey: true,
-    },
-    "Control": {
-        booleanCheck: "ctrlKey",
-        icon: KeyIcons.ControlIcon,
-        isActive: false,
-        isSpecialKey: true,
-    },
-}
 
 
 
@@ -79,141 +51,53 @@ const SetKeyboardShortcutBackdrop = ({
     const [controlPressed, setControlPressed] = useState(false)
     const [metaPressed, setMetaPressed] = useState(false)
     const [altPressed, setAltPressed] = useState(false)
-    const [shiftPressed, setShiftPressed] = useState(false)
-
-    const setSpecialKeys = (sk) => {
-        dispatch({
-            type: Types.SET_CURRENT_ACTIVE_KEYS,
-            payload: sk
-        })
-    }
 
 
 
 
-    const SpecialKeys = {
-        "Shift": {
-            pressed: shiftPressed,
-            setPressed: (newValue) => {
-                setShiftPressed(newValue)
 
-                let newKeys = [...specialKeys].filter((sk) => !sk?.isSpecialKey)?.slice(newKeys?.length - 2, newKeys?.length)
-                if (newKeys?.length >= 2) {
-                    newKeys = newKeys?.splice(newKeys?.length - 1, 1)
-                }
-                delete _specialKeys.Shift.icon
-                setSpecialKeys([
-                    _specialKeys.Shift
-                ]
-                )
-            }
-        },
-        "Alt": {
-            pressed: altPressed,
-            setPressed: (newValue) => {
-                setAltPressed(newValue)
 
-                let newKeys = [...specialKeys].filter((sk) => !sk?.isSpecialKey)?.slice(newKeys?.length - 2, newKeys?.length)
-                if (newKeys?.length >= 2) {
-                    newKeys = newKeys?.splice(newKeys?.length - 1, 1)
-                }
-                cons
-                delete _specialKeys.Alt.icon
 
-                setSpecialKeys([
-                    _specialKeys.Alt
-                ]
-                )
-            }
-        },
-        "Meta": {
-            pressed: metaPressed,
-            setPressed: (newValue) => {
-                setMetaPressed(newValue)
 
-                let newKeys = [...specialKeys].filter((sk) => !sk?.isSpecialKey)?.slice(newKeys?.length - 2, newKeys?.length)
-                if (newKeys?.length >= 2) {
-                    newKeys = newKeys.splice(newKeys.length - 1, 1)
-                }
-                delete _specialKeys.Meta.icon
-                setSpecialKeys([
-                    _specialKeys.Meta
-                ]
-                )
-            }
-        },
-        "Control": {
-            pressed: controlPressed,
-            setPressed: (newValue) => {
-                setControlPressed(newValue)
-                let newKeys = [...specialKeys].filter((sk) => !sk?.isSpecialKey)?.slice(newKeys?.length - 2, newKeys?.length)
-                if (newKeys?.length >= 2) {
-                    newKeys = newKeys?.splice(newKeys?.length - 1, 1)
-                }
-                delete _specialKeys.Control.icon
-                setSpecialKeys([
-                    _specialKeys.Control
-                ]
-                )
-            }
-        },
-    }
+
     useEffect(() => {
         // BUG remove this... just reintroduced this to mess with the UI for now.
-        setSpecialKeys(currentShortcuts)
-    }, [currentShortcuts])
+        console.log('SpecialKeys: ', SpecialKeys);
+        SpecialKeys().setSpecialKeys("reset")
+    }, [])
 
     const handleKeyDown = (e) => {
         e.preventDefault()
         if (e.repeat) {
             return
         };
-        if (SpecialKeys[e.key]) {
-            SpecialKeys[e.key].setPressed(true)
+        if (SpecialKeys()[e.key]) {
+            SpecialKeys()[e.key].setPressed(true)
         }
-
-        if (!SpecialKeys[e.key]) {
-            console.log('e!!!: ', e);
+        if (!SpecialKeys()[e.key]) {
             if (disallowKeys.includes(e.key) || e.key === "" || e.key.length > 1) {
                 return;
             }
-            let newSpecialKeys = [...specialKeys].filter((sk) => sk.isSpecialKey)
-            console.log('newSpecialKeys: ', newSpecialKeys);
-            console.log('specialKeys right above filter: ', specialKeys);
             let forSomeReasonINeedThis = [...specialKeys].filter((sk) => sk.keyCode === e.keyCode)
-            console.log('forSomeReasonINeedThis: ', forSomeReasonINeedThis);
             if (forSomeReasonINeedThis.length > 0) {
-
                 return
             }
-            setSpecialKeys([
-                ...newSpecialKeys,
-                {
-                    keyCode: e.keyCode,
-                    key: e.key,
-                    code: e.code,
-                    isActive: true,
-                    isSpecialKey: false,
-                }
-            ])
         }
+        SpecialKeys().setSpecialKeys(e)
     }
     const handleKeyUp = (e) => {
         e.preventDefault()
         if (e.repeat) {
             return
         };
-        if (SpecialKeys[e.key]) {
-            SpecialKeys[e.key].setPressed(false)
+        if (SpecialKeys()[e.key]) {
+            SpecialKeys()[e.key].setPressed(false)
         }
-        if (!SpecialKeys[e.key]) {
-            let newKeys = [...specialKeys].filter((sk) => sk.key !== e.key)
-            // TODO add this back in once UI looks good.
-            setSpecialKeys(newKeys)
-        }
+        SpecialKeys().setSpecialKeys(e)
     }
 
     useEffect(() => {
+        console.log('settingKeysBackdrop: ', settingKeysBackdrop);
         setIsOpen(settingKeysBackdrop);
     }, [settingKeysBackdrop])
     const handleBackdropClick = (e) => {
@@ -229,26 +113,13 @@ const SetKeyboardShortcutBackdrop = ({
 
     return (
         <ClientOnlyPortal selector="#topLevelPortalContainer">
-            <Backdrop classes={{ root: classes.backdropRoot }} open={isOpen} onClick={handleBackdropClick} id="set-shortcuts-backdrop">
+            <Backdrop classes={{ root: classes.backdropRoot }} open={isOpen} onClick={handleBackdropClick} id="set-shortcuts-backdrop"  >
                 <IconContainer
                     specialKeys={specialKeys}
-                    controlPressed={controlPressed}
-                    setControlPressed={setControlPressed}
-                    metaPressed={metaPressed}
-                    setMetaPressed={setMetaPressed}
-                    altPressed={altPressed}
-                    setAltPressed={setAltPressed}
-                    shiftPressed={shiftPressed}
-                    setShiftPressed={setShiftPressed}
                     SpecialKeys={SpecialKeys}
-
                 />
                 <LowerIconContainer
                     SpecialKeys={SpecialKeys}
-                    controlPressed={controlPressed}
-                    metaPressed={metaPressed}
-                    altPressed={altPressed}
-                    shiftPressed={shiftPressed}
                 />
             </Backdrop>
         </ClientOnlyPortal>
@@ -282,11 +153,15 @@ const useIconContainerClasses = makeStyles((theme) => ({
     lowerContainer: {
         display: "flex",
         flexDirection: "row",
-        width: "min(980px, 85vw)",
+        width: "min(1280px, 85vw)",
         justifyContent: "space-between",
         gap: "1rem",
         position: "absolute",
-        top: "calc(50vh + 2.5rem)"
+        top: "calc(50vh + 2.5rem)",
+        border: `1px solid ${theme.palette.grey[800]}`,
+        borderRadius: "10px",
+        padding: "1.5rem",
+        backgroundColor: "#393939"
     },
     iconContainerActive: {
         display: "flex",
@@ -295,7 +170,7 @@ const useIconContainerClasses = makeStyles((theme) => ({
         gap: "1rem",
         alignItems: "center",
         flexWrap: "wrap",
-        width: "min(980px, 85vw)",
+        width: "min(1280px, 85vw)",
         height: "100%",
         padding: "1rem",
 
@@ -338,7 +213,7 @@ const useIconContainerClasses = makeStyles((theme) => ({
         minHeight: "fit-content",
         backgroundColor: theme.palette.primary.main,
         opacity: 1,
-        transition: theme.transitions.create(['background-color', 'opacity'], {
+        transition: theme.transitions.create(['background-color', 'opacity', 'box-shadow'], {
             duration: 350,
         }),
     },
@@ -437,19 +312,25 @@ const useKeyIconStyles = makeStyles((theme) => ({
 
 
 
-const IconContainer = ({
-    controlPressed,
-    setControlPressed,
-    metaPressed,
-    setMetaPressed,
-    altPressed,
-    setAltPressed,
-    shiftPressed,
-    SpecialKeys,
-    specialKeys,
-    setShiftPressed, }) => {
+const _IconContainer = ({
+    props: {
+        SpecialKeys,
+        specialKeys,
+    },
+    UI: {
+        settingsModal: {
+            isOpen: settingsModalIsOpen,
+            settingKeysBackdrop: editBackdropIsOpen,
+        },
+    },
+    user: {
+        userSettings: {
+            currentActiveKeys
+        }
+    }
+}) => {
     const classes = useIconContainerClasses();
-    const [showAlternativeKeyIcon, setShowAlternativeKeyIcon] = useState(false)
+    const [showAlternativeKeyIcon, setShowAlternativeKeyIcon] = useState(editBackdropIsOpen)
 
     useEffect(() => {
         if (showAlternativeKeyIcon) {
@@ -461,15 +342,15 @@ const IconContainer = ({
     }, [showAlternativeKeyIcon])
     useEffect(() => {
         let _f = specialKeys?.length > 0 ? specialKeys?.filter((sk) => !sk?.isSpecialKey)?.[0] : false
-        console.count("Called useEffect with specialKeys")
         // let _f = false
+        console.log('_f: ', currentActiveKeys);
         if (_f) {
             setShowAlternativeKeyIcon(_f)
         }
         if (!_f) {
             setShowAlternativeKeyIcon(null)
         }
-    }, [specialKeys])
+    }, [currentActiveKeys])
 
     if (showAlternativeKeyIcon) {
         return (
@@ -479,14 +360,6 @@ const IconContainer = ({
                 specialKeys={_specialKeys}
                 shouldShow={Boolean(showAlternativeKeyIcon)}
                 SpecialKeys={SpecialKeys}
-                controlPressed={controlPressed}
-                metaPressed={metaPressed}
-                altPressed={altPressed}
-                shiftPressed={shiftPressed}
-                setControlPressed={setControlPressed}
-                setMetaPressed={setMetaPressed}
-                setAltPressed={setAltPressed}
-                setShiftPressed={setShiftPressed}
                 _id={"keyboardShortcutSelectedNotSpecialKey"}
             />
         )
@@ -496,24 +369,25 @@ const IconContainer = ({
     }
 }
 
-const IndividualIcons = ({
-    index,
-    classes,
-    specialKeys,
-    specialKey,
-    SpecialKeys,
-    controlPressed,
-    metaPressed,
-    altPressed,
-    shiftPressed,
+
+const IconContainer = connect(mapStateToProps)(_IconContainer)
+
+
+const _IndividualIcons = ({
+    props: { index,
+        classes,
+        specialKeys,
+        specialKey,
+        SpecialKeys,
+    },
+    user: {
+        userSettings: {
+            skListeners
+        }
+    }
 }) => {
     const [isActive, setIsActive] = useState(false)
-    useEffect(() => {
-        setIsActive(SpecialKeys[specialKey.key].pressed)
-    }, [specialKeys, specialKey, controlPressed,
-        metaPressed,
-        altPressed,
-        shiftPressed,])
+
 
     let ThisIcon = _specialKeys[specialKey.key].icon
     if (ThisIcon) {
@@ -532,6 +406,9 @@ const IndividualIcons = ({
     }
 }
 
+const IndividualIcons = connect(mapStateToProps)(_IndividualIcons)
+
+
 
 const useLowerIconClasses = makeStyles((theme) => ({
     iconContainer: {
@@ -544,7 +421,8 @@ const useLowerIconClasses = makeStyles((theme) => ({
         width: "min(980px, 85vw)",
         height: "100%",
         padding: "1rem",
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        borderRadius: "15px",
+        // backgroundColor: 'rgba(0, 0, 0, 0.7)',
 
     },
     iconContainerActive: {
@@ -557,7 +435,7 @@ const useLowerIconClasses = makeStyles((theme) => ({
         width: "min(980px, 85vw)",
         height: "100%",
         padding: "1rem",
-
+        borderRadius: "15px",
     },
     iconRoot: {
         color: theme.palette.primary.main,
@@ -579,6 +457,10 @@ const useLowerIconClasses = makeStyles((theme) => ({
     singleIconContainer: {
         fontSize: "4rem"
     },
+    singleIconContainerActive: {
+        fontSize: "4rem",
+        color: "#fff"
+    },
     childIconContainer: {
         // fontSize: "4rem"
         padding: "0.75rem",
@@ -588,43 +470,57 @@ const useLowerIconClasses = makeStyles((theme) => ({
         minHeight: "100px",
         justifyContent: "center",
         alignItems: "center",
-        display: "flex"
-        // opacity: 0
-    },
-    singleIconContainerActive: {
-        fontSize: "4rem",
-        color: "#fff"
+        display: "flex",
+        borderRadius: "15px",
+        boxShadow: "12px 12px 18px #2b2b2b, -12px -12px 18px #474747",
+        // backgroundColor: "#393939",
+        background: "linear-gradient(145deg, #3d3d3d, #333333)",
+        border: `1px solid ${theme.palette.grey[800]}`
     },
     childIconContainerActive: {
         // fontSize: "4rem"
         padding: "0.75rem",
         minWidth: "100px",
         minHeight: "100px",
-        backgroundColor: theme.palette.primary.main,
+        background: theme.palette.primary.main,
+        boxShadow: "4px 4px 8px #2b2b2b, -4px -4px 8px #474747",
         // opacity: 1,
-        transition: theme.transitions.create(['background-color', 'opacity'], {
+        transition: theme.transitions.create(['background', 'opacity', 'box-shadow'], {
             duration: 350,
         }),
     },
 }))
 
 
-const LowerIconContainer = ({ SpecialKeys, controlPressed,
-    metaPressed,
-    altPressed,
-    shiftPressed, }) => {
+const _LowerIconContainer = ({
+    user: {
+        userSettings: {
+            skListeners
+        }
+    }
+}) => {
+    const [listeners, setListeners] = useState({
+        shiftKey: false,
+        ctrlKey: false,
+        metaKey: false,
+        altKey: false,
+    })
+
+    useEffect(() => {
+        setListeners(skListeners)
+    }, [skListeners])
+
     const classes = useIconContainerClasses();
     return (
         <div className={classes.lowerContainer}>
             {Object.keys(_specialKeys).map((sk, index) => {
-
                 return <LowerIcon sk={sk} key={`key-${index}`} SpecialKeys={SpecialKeys}
-                    controlPressed={controlPressed}
-                    metaPressed={metaPressed}
+                    controlPressed={listeners}
+                    metaPressed={listeners.metaKey}
+                    altPressed={listeners.altKey}
+                    shiftPressed={listeners.shiftKey}
                     index={index}
-                    altPressed={altPressed}
-                    shiftPressed={shiftPressed}
-
+                    skListeners={skListeners}
                 />
             })
             }
@@ -632,36 +528,111 @@ const LowerIconContainer = ({ SpecialKeys, controlPressed,
     )
 }
 
-const _LowerIcon = ({ props: { sk, SpecialKeys, controlPressed,
+
+const useLowerIconStyles = makeStyles((theme) => ({
+    iconContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+        gap: "1rem",
+        alignItems: "center",
+        flexWrap: "wrap",
+        width: "min(980px, 85vw)",
+        height: "100%",
+        padding: "1rem",
+        // backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    },
+    iconContainerActive: {
+
+    },
+    iconText: {
+
+    },
+    iconTextActive: {
+
+    },
+    // iconContainer: {
+    //     display: "flex",
+    //     flexDirection: "row",
+    //     justifyContent: "space-around",
+    //     gap: "1rem",
+    //     alignItems: "center",
+    //     flexWrap: "wrap",
+    //     width: "min(980px, 85vw)",
+    //     height: "100%",
+    //     padding: "1rem",
+    //     backgroundColor: 'rgba(0, 0, 0, 0.7)',
+
+    // },
+    // iconContainerActive: {
+    //     display: "flex",
+    //     flexDirection: "row",
+    //     justifyContent: "space-around",
+    //     gap: "1rem",
+    //     alignItems: "center",
+    //     flexWrap: "wrap",
+    //     width: "min(980px, 85vw)",
+    //     height: "100%",
+    //     padding: "1rem",
+
+    // },
+    // iconRoot: {
+    //     color: theme.palette.primary.main,
+    //     minWidth: "3rem",
+    //     minHeight: "3rem",
+    //     transition: theme.transitions.create(['color'], {
+    //         duration: 350,
+    //     }),
+    // },
+    // iconRootActive: {
+    //     // color: theme.palette.primary.main,
+    //     color: "#fff !important",
+    //     minWidth: "3rem",
+    //     minHeight: "3rem",
+    //     transition: theme.transitions.create(['color'], {
+    //         duration: 350,
+    //     }),
+    // },
+    // singleIconContainer: {
+    //     fontSize: "4rem"
+    // },
+    // childIconContainer: {
+    //     // fontSize: "4rem"
+    //     padding: "0.75rem",
+    //     // minWidth: "fit-content",
+    //     // minHeight: "fit-content",
+    //     minWidth: "100px",
+    //     minHeight: "100px",
+    //     justifyContent: "center",
+    //     alignItems: "center",
+    //     display: "flex"
+    //     // opacity: 0
+    // },
+
+}))
+
+const LowerIcon = ({ sk, controlPressed,
     metaPressed,
     altPressed,
     index,
-    shiftPressed
-},
-    user: {
-        userSettings: {
-            skListeners
-        }
-    }
+    shiftPressed,
+    skListeners
 }) => {
     const [isActive, setIsActive] = useState(false)
     useEffect(() => {
-        // setIsActive(SpecialKeys[sk].pressed)
-        console.log('skListeners: ', skListeners);
+        setIsActive(skListeners[_specialKeys[sk].booleanCheck])
     }, [skListeners])
     const classes = useLowerIconClasses();
     let ThisIcon = _specialKeys[sk].icon
-    return (<ThisIcon _className={{ icon: clsx(classes.iconRoot, isActive && classes.iconRootActive), container: clsx(classes.childIconContainer, isActive && classes.childIconContainerActive) }} id={isActive ? "active-key-icon-container" : `key-icon-container-${index}`} />
+    return (<ThisIcon _className={{ icon: clsx(classes.iconRoot, isActive && classes.iconRootActive), container: clsx(classes.childIconContainer, isActive && classes.childIconContainerActive) }}
+        ownStyles={useLowerIconStyles}
+        id={isActive ? "active-key-icon-container" : `key-icon-container-${index}`} />
     )
 }
 
-const mapStateToLowerIcon = (state, props) => ({
-    UI: state.UI,
-    user: state.user,
-    props: props
-});
 
-const LowerIcon = connect(mapStateToLowerIcon)(_LowerIcon)
+
+const LowerIconContainer = connect(mapStateToProps)(_LowerIconContainer)
 
 
 

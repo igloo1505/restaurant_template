@@ -29,7 +29,9 @@ const initialState = {
   },
   settingsModal: {
     isOpen: false,
-    settingKeysBackdrop: false,
+    settingKeysBackdrop: true,
+    // TODO reset this 
+    // settingKeysBackdrop: false,
   },
   Grocery_navbarMenu: {
     el: null,
@@ -434,13 +436,20 @@ export default function UIReducer(state = initialState, action) {
         }
       }
     }
-    case Types.TOGGLE_SET_KEYS_BACKDROP: {
+    case Types.TOGGLE_SET_KEYS_BACKDROP:
+    case Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS: {
+      console.log("woah", {
+        ...state.settingsModal,
+        settingKeysBackdrop: !state.settingsModal.settingKeysBackdrop,
+        ...(action?.payload?.settingKeysBackdrop && { settingKeysBackdrop: action.payload.settingKeysBackdrop })
+      });
       return {
         ...state,
         settingsModal: {
           ...state.settingsModal,
           settingKeysBackdrop: !state.settingsModal.settingKeysBackdrop,
-          ...(action?.payload?.settingKeysBackdrop && { settingKeysBackdrop: action.payload.settingKeysBackdrop })
+          ...(action?.payload?.settingKeysBackdrop && { settingKeysBackdrop: action.payload.settingKeysBackdrop }),
+          ...(action?.payload === "hide" && { settingKeysBackdrop: false })
         }
       }
     }

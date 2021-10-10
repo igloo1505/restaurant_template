@@ -13,7 +13,6 @@ import RecipeReviewModal from "../components/modalsAndAlerts/RecipeReviewModal";
 import Drawer from "../components/portalAuthenticated/Drawer";
 import ReviewRecipeBeforeSubmission from '../components/modalsAndAlerts/ReviewRecipeBeforeSubmission';
 import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
-import * as KeyIcons from "../components/modalsAndAlerts/KeyIcons"
 import Head from "next/head";
 import "../styles/globals.css";
 import { Provider } from "react-redux";
@@ -29,6 +28,7 @@ import theme from "../styles/MUITheme";
 import * as userActions from "../stateManagement/userActions";
 import setAuthToken from "../stateManagement/setAuth";
 // import { sw } from "../util/serviceWorker-main";
+import { settingKeysKeyup, settingKeysKeydown, handleEventListeners } from "../util/SettingShortcutsListeners"
 import * as Types from "../stateManagement/TYPES";
 
 const cache = createCache({
@@ -39,143 +39,7 @@ cache.compat = true;
 
 
 
-const settingKeysModal = (state) => {
-  return state?.UI?.settingsModal?.settingKeysBackdrop
-}
 
-const allowKeys = (state) => {
-  return state?.user?.userSettings?.allowKeyboardShortcuts
-}
-
-
-
-const disallowKeys = [
-  "CapsLock",
-  "Tab",
-  "Enter",
-]
-
-const _specialKeys = {
-  "Shift": {
-    booleanCheck: "shiftKey",
-    icon: KeyIcons.ShiftIcon,
-    isSpecialKey: true,
-    isActive: false
-  },
-  "Alt": {
-    booleanCheck: "altKey",
-    icon: KeyIcons.AltIcon,
-    isActive: false,
-    isSpecialKey: true,
-  },
-  "Meta": {
-    booleanCheck: "metaKey",
-    icon: KeyIcons.CommandIcon,
-    isActive: false,
-    isSpecialKey: true,
-  },
-  "Control": {
-    booleanCheck: "ctrlKey",
-    icon: KeyIcons.ControlIcon,
-    isActive: false,
-    isSpecialKey: true,
-  },
-}
-
-
-
-const SpecialKeys = (_localState) => {
-  let state = store.getState();
-  let currentKeys = state?.user?.userSettings?.currentActiveKeys
-  let _currentKeys = _localState?.user?.userSettings?.currentActiveKeys
-  // console.log('state.user.userSettings.currentActiveKeys: ', state.user.userSettings.currentActiveKeys);
-  console.log('currentKeys: ', currentKeys);
-  console.log('localState currentKeys: ', _currentKeys);
-  const setSpecialKeys = (newKeys) => {
-    store.dispatch({
-      type: Types.SET_CURRENT_ACTIVE_KEYS,
-      payload: newKeys,
-    })
-  }
-
-  return {
-    "Shift": {
-      pressed: state?.user?.userSettings?.skListeners?.shiftPressed,
-      setPressed: (newValue, event) => {
-        // RESUME Pick this back up here and move icons into a switch component and just pass a string to redux ["cmd", "shft", "ctrl", "alt", "standard"]
-        store.dispatch({
-          type: Types.SET_LISTENER_KEY,
-          payload: { shiftKey: newValue, _e: event }
-        })
-
-        let newKeys = state?.userSettings?.currentActiveKeys.filter((sk) => !sk?.isSpecialKey)
-        if (newKeys?.length >= 2) {
-          newKeys = newKeys?.splice(-2)
-        }
-        setSpecialKeys([
-          _specialKeys.Shift
-        ]
-        )
-      }
-    },
-    "Alt": {
-      pressed: state?.user?.userSettings?.skListeners?.altPressed,
-      setPressed: (newValue, event) => {
-        store.dispatch({
-          type: Types.SET_LISTENER_KEY,
-          payload: { altKey: newValue, _e: event }
-        })
-
-        let newKeys = state?.userSettings?.currentActiveKeys.filter((sk) => !sk?.isSpecialKey)?.slice(newKeys?.length - 2, newKeys?.length)
-        if (newKeys?.length >= 2) {
-          newKeys = newKeys?.splice(-2)
-        }
-        console.log('newKeys: ', newKeys);
-        setSpecialKeys([
-          _specialKeys.Alt
-        ]
-        )
-      }
-    },
-    "Meta": {
-      pressed: state?.user?.userSettings?.skListeners?.metaPressed,
-      setPressed: (newValue, event) => {
-        store.dispatch({
-          type: Types.SET_LISTENER_KEY,
-          payload: { metaKey: newValue, _e: event }
-        })
-        let newKeys = state?.userSettings?.currentActiveKeys.filter((sk) => !sk?.isSpecialKey)?.slice(newKeys?.length - 2, newKeys?.length)
-        if (newKeys?.length >= 2) {
-          newKeys = newKeys?.splice(-2)
-        }
-        setSpecialKeys([
-          _specialKeys.Meta
-        ]
-        )
-      }
-    },
-    "Control": {
-      pressed: state?.user?.userSettings?.skListeners?.controlPressed,
-      setPressed: (newValue, event) => {
-        store.dispatch({
-          type: Types.SET_LISTENER_KEY,
-          payload: { ctrlKey: newValue, _e: event }
-        })
-        let newKeys = state?.userSettings?.currentActiveKeys.filter((sk) => !sk?.isSpecialKey)?.slice(newKeys?.length - 2, newKeys?.length)
-        if (newKeys?.length >= 2) {
-          newKeys = newKeys?.splice(-2)
-        }
-        setSpecialKeys([
-          _specialKeys.Control
-        ]
-        )
-      }
-    },
-    setSpecialKeys: (newKeys) => {
-      setSpecialKeys(newKeys)
-    }
-  }
-}
 
 
 
@@ -183,14 +47,15 @@ function MyApp({ Component, pageProps, ...rest }) {
   // if (localStorage.token) {
   //   setAuthToken(localStorage.token);
   // }
-  const [localState, set_appState] = useState({})
+  const [localState, setAppState] = useState({})
 
-  const setLocalState = () => {
+  const setLocalState = (par) => {
+    console.log('par: ', par);
     let state = store.getState();
-    set_appState(state)
-    console.log('sks', state?.user?.userSettings.skListeners);
+    console.log("setting setLocalState p-b", localState);
+    console.log('state before setting p-b: ', state);
+    setAppState({ ...state })
   }
-
   useEffect(() => {
     const unSubscribe = store.subscribe(setLocalState)
     return () => {
@@ -216,76 +81,12 @@ function MyApp({ Component, pageProps, ...rest }) {
   let state = store.getState();
   const router = useRouter();
 
-  const settingKeyDownListener = (e) => {
-    const bypassKeys = ["Escape", "Tab", "Enter"]
-    if (!bypassKeys.includes(e.key)) {
-      e.preventDefault()
-    }
-    if (e.repeat) {
-      return
-    };
-    if (SpecialKeys(localState)[e.key]) {
-      SpecialKeys(localState)[e.key].setPressed(true)
-    }
 
-    if (!SpecialKeys(localState)[e.key]) {
-      if (disallowKeys.includes(e.key) || e.key === "" || e.key.length > 1) {
-        return;
-      }
-      let newSpecialKeys = localState?.user?.userSettings?.currentActiveKeys?.filter((sk) => sk.isSpecialKey)
-      console.log('newSpecialKeys: ', newSpecialKeys);
-      console.log('newSpecialKeys factors: ', localState?.user?.userSettings?.currentActiveKeys);
-      console.log('localState', localState);
-      console.log('sks', localState?.user?.userSettings.skListeners, e.repeat);
-      let forSomeReasonINeedThis = localState?.user?.userSettings?.currentActiveKeys?.filter((sk) => sk.keyCode === e.keyCode)
-      console.log('forSomeReasonINeedThis: ', forSomeReasonINeedThis);
-      if (forSomeReasonINeedThis?.length > 0 || newSpecialKeys?.length >= 2) {
-        return
-      }
-      console.log('Types.SET_CURRENT_ACTIVE_KEYS: 245', Types.SET_CURRENT_ACTIVE_KEYS);
-      store.dispatch({
-        type: Types.SET_CURRENT_ACTIVE_KEYS,
-        payload: [
-          // ...newSpecialKeys,
-          {
-            keyCode: e.keyCode,
-            key: e.key,
-            code: e.code,
-            isActive: true,
-            isSpecialKey: false,
-          }
-        ]
-      })
-    }
-  }
-  const settingKeyUpListener = (e) => {
-    e.preventDefault()
-    if (e.repeat) {
-      return
-    };
-
-    if (SpecialKeys()[e.key]) {
-      
-      SpecialKeys()[e.key].setPressed(false, e)
-    }
-    if (!SpecialKeys()[e.key]) {
-      let newKeys = localState?.user?.userSettings?.currentActiveKeys.filter((sk) => sk.key !== e.key)
-      console.log('newKeys: ', newKeys, e.key, localState);
-      SpecialKeys(localState).setSpecialKeys(newKeys)
-    }
-  }
 
   useEffect(() => {
     console.log('state?.UI?.settingsModal?.settingKeysBackdrop: ', state?.UI?.settingsModal?.settingKeysBackdrop);
     if (typeof window !== "undefined") {
-      if (state?.user?.userSettings?.allowKeyboardShortcuts || state?.UI?.settingsModal?.settingKeysBackdrop) {
-        document.addEventListener("keydown", settingKeyDownListener);
-        document.addEventListener("keyup", settingKeyUpListener);
-      }
-      if (!state?.user?.userSettings?.allowKeyboardShortcuts || !state?.UI?.settingsModal?.settingKeysBackdrop) {
-        document.removeEventListener("keydown", settingKeyDownListener);
-        document.removeEventListener("keyup", settingKeyUpListener);
-      }
+      handleEventListeners()
     }
   }, [state?.UI?.settingsModal?.settingKeysBackdrop, state?.user?.userSettings?.allowKeyboardShortcuts]);
 
