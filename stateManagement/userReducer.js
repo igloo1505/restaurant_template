@@ -3,6 +3,36 @@ import { getAllRecipesFromUser } from "./recipeActions";
 import { getNewCurrentKeys } from "../util/SettingShortcutsListeners"
 import store from "./store";
 
+const temporaryUserShortcuts = [
+  {
+    key: "Shift",
+    keyCode: 16,
+    isActive: true,
+    code: "ShiftLeft",
+    booleanCheck: "shiftKey",
+    isSpecialKey: true,
+  },
+  {
+    key: "Meta",
+    keyCode: 91,
+    isActive: true,
+    code: "MetaLeft",
+    booleanCheck: "metaKey",
+    isSpecialKey: true,
+  },
+  {
+    key: "k",
+    keyCode: 75,
+    isActive: true,
+    code: "KeyK",
+    booleanCheck: false,
+    isSpecialKey: false,
+  },
+]
+
+
+
+
 const initialState = {
   loggedIn: false,
   triedAutoLogin: false,
@@ -21,30 +51,10 @@ const initialState = {
     allowRecipeReviews: true,
     skString: "setting",
     // RESUME link this to handleEventListener in settingShortcutsListeners after getting currentActiveKeys working properly
-    keyboardShortcuts: [
-      {
-        key: "Shift",
-        code: "ShiftLeft",
-        keyCode: 16,
-        isSpecialKey: true,
-        isActive: false
-      },
-      {
-        key: "Meta",
-        code: "MetaLeft",
-        keyCode: 91,
-        isSpecialKey: true,
-        isActive: false
-      },
-      {
-        key: "i",
-        code: "KeyI",
-        keyCode: 73,
-        isSpecialKey: false,
-        isActive: false
-      },
-    ],
-    currentActiveKeys: [],
+    keyboardShortcuts: temporaryUserShortcuts,
+    // currentActiveKeys: [],
+    // BUG remove this after working on UI
+    currentActiveKeys: temporaryUserShortcuts,
     skListeners: {
       shiftKey: false,
       ctrlKey: false,

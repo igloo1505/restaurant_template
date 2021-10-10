@@ -287,10 +287,13 @@ export const getNewCurrentKeys = ({ event, reset, state, metaKeys, ...rest }) =>
                 console.log('osk: gnk ', rKeys);
             }
         }
-        console.log('rKeys: gnk ', rKeys);
         return rKeys
     }
     if (event.type === "keyup") {
+        console.log("handling key up gnk", currentKeys.filter((sk) => sk?.keyCode !== event.keyCode))
+        console.log("key up gnk", event.keyCode);
+        currentKeys.map((sk) => console.log("key up sk gnk", sk.keyCode))
+        console.log("key up gnk", event.keyCode);
         return currentKeys.filter((sk) => sk?.keyCode !== event.keyCode)
     }
     return currentKeys

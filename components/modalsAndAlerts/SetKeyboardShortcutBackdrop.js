@@ -21,10 +21,28 @@ const useClasses = makeStyles((theme) => ({
         zIndex: theme.zIndex.modal + 1,
         // backgroundColor: "rgba(0, 0, 0, 0.5)",
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        // display: "flex",
+        display: "grid",
+        gridTemplateRows: "1fr 1fr",
+        gridTemplateColumns: "1fr",
+        // flexDirection: "column",
+        // justifyContent: "center"
+    },
+    topRow: {
         display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        height: "100%",
+    },
+    bottomRow: {
+        display: "flex",
+        justifyContent: "flex-start",
         flexDirection: "column",
-        justifyContent: "center"
-    }
+        alignItems: "center",
+        width: "100%",
+        height: "100%",
+    },
 }))
 
 
@@ -85,13 +103,17 @@ const SetKeyboardShortcutBackdrop = ({
     return (
         <ClientOnlyPortal selector="#topLevelPortalContainer">
             <Backdrop classes={{ root: classes.backdropRoot }} open={isOpen} onClick={handleBackdropClick} id="set-shortcuts-backdrop"  >
-                <IconContainer
-                    specialKeys={specialKeys}
-                    SpecialKeys={SpecialKeys}
-                />
-                <LowerIconContainer
-                    SpecialKeys={SpecialKeys}
-                />
+                <div className={classes.topRow}>
+                    <IconContainer
+                        specialKeys={specialKeys}
+                        SpecialKeys={SpecialKeys}
+                    />
+                </div>
+                <div className={classes.bottomRow}>
+                    <LowerIconContainer
+                        SpecialKeys={SpecialKeys}
+                    />
+                </div>
             </Backdrop>
         </ClientOnlyPortal>
     )
@@ -268,8 +290,8 @@ const useKeyIconStyles = makeStyles((theme) => ({
         minWidth: "100px",
         minHeight: "100px",
         border: `1px solid ${theme.palette.primary.main}`,
-        position: "absolute",
-        top: "calc(50vh - 2.5rem)",
+        // position: "absolute",
+        // top: "calc(50vh - 2.5rem)",
         borderRadius: "5px",
         "&:hover": {
             cursor: "pointer"
