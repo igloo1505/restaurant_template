@@ -21,53 +21,53 @@ import {
 
 const keyIconContainerId = "keyboardShortcutSelectedNotSpecialKey"
 
-gsap.registerEffect({
-    name: "pulse",
-    effect: ({ elapsedTime, percentage }) => {
-        let tl = gsap.timeline({
-            defaults: {
-                ease: "power1.inOut",
-                duration: 0.5,
-            }
-        })
-        tl.to(`#${keyIconContainerId}`, {
-            scale: 1.6,
-            repeat: 1,
-            yoyo: true,
-            stagger: 0.1,
-        })
-        return tl
-    }
-}
-)
+// gsap.registerEffect({
+//     name: "pulse",
+//     effect: ({ elapsedTime, percentage }) => {
+//         let tl = gsap.timeline({
+//             defaults: {
+//                 ease: "power1.inOut",
+//                 duration: 0.5,
+//             }
+//         })
+//         tl.to(`#${keyIconContainerId}`, {
+//             scale: 1.6,
+//             repeat: 1,
+//             yoyo: true,
+//             stagger: 0.1,
+//         })
+//         return tl
+//     }
+// }
+// )
 
-gsap.registerEffect({
-    name: "secondaryShift",
-    effect: ({ theme }) => {
-        gsap.to(`#${keyIconContainerId}`, {
-            scale: 1.6,
-            duration: 2,
-            background: "#EB6010 !important",
-            border: "1px solid #EB6010",
-            color: "#fff",
-            ease: "back.out(1.3)",
-        })
-    }
-})
-gsap.registerEffect({
-    name: "shiftBackwards",
-    effect: ({ theme }) => {
-        console.log("running shiftBackwards");
-        gsap.to(`#${keyIconContainerId}`, {
-            scale: 1.0,
-            duration: 2,
-            background: "#268AFF !important",
-            border: "1px solid #268AFF",
-            color: "#fff",
-            ease: "back.out(1.3)",
-        })
-    }
-})
+// gsap.registerEffect({
+//     name: "secondaryShift",
+//     effect: ({ theme }) => {
+//         gsap.to(`#${keyIconContainerId}`, {
+//             scale: 1.6,
+//             duration: 2,
+//             background: "#EB6010 !important",
+//             border: "1px solid #EB6010",
+//             color: "#fff",
+//             ease: "back.out(1.3)",
+//         })
+//     }
+// })
+// gsap.registerEffect({
+//     name: "shiftBackwards",
+//     effect: ({ theme }) => {
+//         console.log("running shiftBackwards");
+//         gsap.to(`#${keyIconContainerId}`, {
+//             scale: 1.0,
+//             duration: 2,
+//             background: "#268AFF !important",
+//             border: "1px solid #268AFF",
+//             color: "#fff",
+//             ease: "back.out(1.3)",
+//         })
+//     }
+// })
 
 
 
@@ -143,26 +143,30 @@ const SetKeyboardShortcutBackdrop = ({
 
     const handleTimer = ({ otv, specialKeys, ctv, original, currentToggle, clear }) => {
         let timerLimit = 3000
-        let timer = new Timer({ otv, specialKeys, ctv, original, currentToggle, clear, timerLimit })
         console.log('originalTimerValue: timer', currentTimerValue);
         console.log('timer class: timer', timer);
         console.log('specialKeys: timer', specialKeys);
+        let timer;
         if (original) {
-            return dispatch({
-                type: Types.UPDATE_SHORTCUT_TIMER,
-                payload: {
-                    elapsedTime: timer.elapsedTime,
-                    percentage: timer.percentage,
-                    toggle: timer.currentToggle,
-                }
-            })
+            timer = new Timer({ otv, specialKeys, ctv, original, currentToggle, clear, timerLimit })
+            timer.init(dispatch)
+            // return dispatch({
+            //     type: Types.UPDATE_SHORTCUT_TIMER,
+            //     payload: {
+            //         elapsedTime: timer.elapsedTime,
+            //         percentage: timer.percentage,
+            //         toggle: timer.currentToggle,
+            //     }
+            // })
         }
         console.log('timer class down here: ', timer);
         let elapsedTime = Date.now() - otv
-        console.log('elapsedTime: timer class', `${timer.percentage}%`);
+        console.log('elapsedTime: timer class', `${timer?.percentage}%`);
+        console.log("Timer: ntk ", timer)
+        console.log("currentToggle: ntk ", currentToggle)
         let startingTimer;
-        if (timer.percentage < 100 && specialKeys?.length === 3) {
-            timer.updateValue(dispatch)
+        if (timer.currentToggle < 3 && specialKeys?.length === 3) {
+            // timer?.updateValue(dispatch)
             // dispatch({
             //     type: Types.UPDATE_SHORTCUT_TIMER,
             //     payload: {
@@ -190,11 +194,11 @@ const SetKeyboardShortcutBackdrop = ({
             console.log("clearing timer");
             clearTimer()
         }
-        if (specialKeys?.length === 3) {
-            setTimeout(() => {
-                handleTimer({ otv: originalTimerValue, original: false, specialKeys, currentToggle })
-            }, 1000);
-        }
+        // if (specialKeys?.length === 3 && !currentTimerValue) {
+        //     // setTimeout(() => {
+        //     handleTimer({ otv: originalTimerValue, original: false, specialKeys, currentToggle })
+        //     // }, 1000);
+        // }
     }, [originalTimerValue, currentTimerValue, specialKeys])
 
 
@@ -435,9 +439,9 @@ const useKeyIconStyles = makeStyles((theme) => ({
         // position: "absolute",
         // top: "calc(50vh - 2.5rem)",
         borderRadius: "5px",
-        "&:hover": {
-            cursor: "pointer"
-        }
+        // "&:hover": {
+        //     cursor: "pointer"
+        // }
     },
     iconText: {
         color: theme.palette.primary.main,
@@ -802,6 +806,7 @@ const LowerIconContainer = connect(mapStateToProps)(_LowerIconContainer)
 
 
 const animateKeyIconEntrance = () => {
+    console.count("ANIMATING KEY ICON ENTRANCEE")
     const duration = Math.random() * 5 + 0.5
     // let tl = gsap.timeline({})
     // let rs = Math.floor(Math.random() * 360)
@@ -813,28 +818,37 @@ const animateKeyIconEntrance = () => {
 
     let _x = _radius * Math.sin(Math.PI * 2 * _a / 360)
     let _y = _radius * Math.cos(Math.PI * 2 * _a / 360)
-
-
-
     console.log('_rotateY: ', _rotateY);
     console.log('_rotateX: ', _rotateX);
-
     const fromArray = [{
         y: _y,
         x: _x,
         opacity: 0,
         scale: 0.3,
         // rotation: Math.random() > 0.5 ? -360 : 360,
-        rotateY: Math.random() > 0.5 ? `${_rotateY}deg` : ` - ${_rotateY}deg`,
-        rotateX: Math.random() > 0.5 ? `${_rotateX}deg` : ` - ${_rotateX}deg`,
-        rotateZ: Math.random() > 0.5 ? `${_rotateZ}deg` : ` - ${_rotateZ}deg`,
+        rotateY: Math.random() > 0.5 ? `${_rotateY}deg` : ` -${_rotateY}deg`,
+        rotateX: Math.random() > 0.5 ? `${_rotateX}deg` : ` -${_rotateX}deg`,
+        rotateZ: Math.random() > 0.5 ? `${_rotateZ}deg` : ` -${_rotateZ}deg`,
         duration: 0.5,
         // ease: "bounce.out"
         ease: "back.out(1.7)"
         // ease: "rough({ template: none.out, strength: 1, points: 20, taper: 'none', randomize: true, clamp: false})"
     }]
 
-    gsap.fromTo(`#${keyIconContainerId}`, fromArray[Math.floor(Math.random() * fromArray.length)], {
+    gsap.fromTo("#keyboardShortcutSelectedNotSpecialKey", {
+        y: _y,
+        x: _x,
+        opacity: 0,
+        scale: 0.3,
+        // rotation: Math.random() > 0.5 ? -60 : 360,
+        rotateY: Math.random() > 0.5 ? `${_rotateY}deg` : ` -${_rotateY}deg`,
+        rotateX: Math.random() > 0.5 ? `${_rotateX}deg` : ` -${_rotateX}deg`,
+        rotateZ: Math.random() > 0.5 ? `${_rotateZ}deg` : ` -${_rotateZ}deg`,
+        duration: 0.5,
+        // ease: "bounce.out"
+        ease: "back.out(1.7)"
+        // ease: "rough({ template: none.out, strength: 1, points: 20, taper: 'none', randomize: true, clamp: false})"
+    }, {
         y: 0,
         x: 0,
         opacity: 1,
@@ -844,9 +858,7 @@ const animateKeyIconEntrance = () => {
         rotateY: 0,
         rotateZ: 0,
         duration: 0.5,
-        // ease: "elastic",
         ease: "back.out(1.7)",
-        // ease: "rough({ template: none.out, strength: 1, points: 20, taper: 'none', randomize: true, clamp: false})"
     })
     // gsap.from(`#${keyIconContainerId}`, {
     //     y: -100,
@@ -871,37 +883,60 @@ class Timer {
         // if (ctv) {
         //     this.currentValue = ctv
         // }
-        this.currentToggle = 0
+        this.currentToggle = -1
         this.percentage = 0
         this.elapsedTime = 0
         this.specialKeys = specialKeys
         this.timerLimit = timerLimit
-        if (original) {
-            this.currentToggle = currentToggle || 2
-        }
         this.updateValue = function (dispatch) {
             console.log("updating timer class: ", this.originalValue)
             console.log("updating timer class: date.now", Date.now())
             console.log("updating timer class: difference", Date.now() - this.originalValue)
             let elapsedTime = Date.now() - this.originalValue
-            this.elapsed = elapsedTime
+            this.elapsedTime = elapsedTime
             this.currentToggle = this.currentToggle + 1
             this.percentage = elapsedTime / this.timerLimit * 100
-            console.log('percentage: timer class', elapsedTime / this.timerLimit * 100);
+            console.log("This dot currentToggle", this.currentToggle)
             dispatch({
                 type: Types.UPDATE_SHORTCUT_TIMER,
                 payload: {
-                    // elapsedTime: elapsedTime,
-                    elapsedTime: 0,
+                    elapsedTime: elapsedTime,
+                    // elapsedTime: 0,
                     currentToggle: this.currentToggle + 1,
                     percentage: elapsedTime / this.timerLimit * 100
                 }
             })
         }
+        this.init = function (dispatch) {
+            const updateAndDispatch = () => {
+                let elapsedTime = Date.now() - this.originalValue
+                this.elapsedTime = Date.now() - this.originalValue
+                this.currentToggle = this.currentToggle + 1
+                this.percentage = this.elapsedTime / this.timerLimit * 100
+                // debugger
+                console.log("dis dot currentToggle", this)
+                if (this.currentToggle > 3) {
+                    clearInterval(thisInterval)
+                    console.log("handle submitting keys here")
+                    return
+                }
+                dispatch({
+                    type: Types.UPDATE_SHORTCUT_TIMER,
+                    payload: {
+                        elapsedTime: elapsedTime,
+                        currentToggle: this.currentToggle,
+                        percentage: this.percentage
+                    }
+                })
+            }
+            updateAndDispatch()
+            let thisInterval = setInterval(updateAndDispatch, 1000);
+        }
     }
 }
 
 const animateKeySetting = ({ }) => {
+
     gsap.to(`#${keyIconContainerId}-childIcon`, {
         // y: -100,
         // background: "#eb6010",

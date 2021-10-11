@@ -402,7 +402,7 @@ export const handleEventListeners = () => {
         if (state?.user?.userSettings?.allowKeyboardShortcuts) {
             document.addEventListener("keydown", (e) => {
                 console.log("Logging this: ", e)
-                // if(e)
+
             })
         }
 

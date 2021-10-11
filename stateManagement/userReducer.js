@@ -204,7 +204,7 @@ export default function userReducer(state = initialState, action) {
             ...state.userSettings.settingProgress,
             elapsedTime: action.payload.elapsedTime,
             percentage: action.payload?.percentage,
-            toggle: action.payload?.toggle,
+            toggle: action.payload?.currentToggle,
           }
         },
       };
