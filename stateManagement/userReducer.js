@@ -50,11 +50,17 @@ const initialState = {
     allowNotifications: true,
     allowRecipeReviews: true,
     skString: "setting",
+    settingProgress: {
+      elapsedTime: null,
+      originalValue: null,
+      percentage: null,
+      toggle: null
+    },
     // RESUME link this to handleEventListener in settingShortcutsListeners after getting currentActiveKeys working properly
     keyboardShortcuts: temporaryUserShortcuts,
-    // currentActiveKeys: [],
+    currentActiveKeys: [],
     // BUG remove this after working on UI
-    currentActiveKeys: temporaryUserShortcuts,
+    // currentActiveKeys: temporaryUserShortcuts,
     skListeners: {
       shiftKey: false,
       ctrlKey: false,
@@ -64,6 +70,7 @@ const initialState = {
   },
   error: null,
 };
+
 
 
 
@@ -140,7 +147,6 @@ export default function userReducer(state = initialState, action) {
       };
     case Types.REGISTER_NEW_USER:
       // array of 10 users
-
       return {
         ...state,
         loggedIn: true,
@@ -159,12 +165,48 @@ export default function userReducer(state = initialState, action) {
       };
     case Types.SET_CURRENT_ACTIVE_KEYS:
       console.log("Setting current active keys with: ", action.payload);
+      console.log("!state.userSettings.settingProgress.originalValue timer: ", !state.userSettings.settingProgress.originalValue);
+      let timerData;
+      if (action.payload?.currentActiveKeys.length === 3) {
+        timerData = {
+          // elapsedTime: state.userSettings.settingProgress.originalValue - Date.now(),
+          ...(!state.userSettings.settingProgress.originalValue && { originalValue: Date.now() })
+        }
+        console.log("timerData: ", timerData);
+      }
       return {
         ...state,
         userSettings: {
           ...state.userSettings,
-          currentActiveKeys: action.payload?.currentActiveKeys
-        }
+          currentActiveKeys: action.payload?.currentActiveKeys,
+          ...(timerData && { settingProgress: { ...timerData } })
+        },
+      };
+    case Types.CLEAR_SET_SHORTCUTS_TIMER: {
+      return {
+        ...state,
+        userSettings: {
+          ...state.userSettings,
+          settingProgress: {
+            ...initialState.userSettings.settingProgress,
+          },
+        },
+      };
+    }
+    case Types.UPDATE_SHORTCUT_TIMER:
+      console.log('action.payload: timer ', action.payload);
+      return {
+        ...state,
+        userSettings: {
+          ...state.userSettings,
+          // currentActiveKeys: action.payload?.currentActiveKeys,
+          settingProgress: {
+            ...state.userSettings.settingProgress,
+            elapsedTime: action.payload.elapsedTime,
+            percentage: action.payload?.percentage,
+            toggle: action.payload?.toggle,
+          }
+        },
       };
     case Types.SET_LISTENER_KEY:
       // TODO filter currentActiveKeys here based on metaKey changes
@@ -176,6 +218,19 @@ export default function userReducer(state = initialState, action) {
           skListeners: {
             ...state.userSettings.skListeners,
             ...action.payload
+          }
+        }
+      };
+    case Types.CLEAR_CURRENT_ACTIVE_KEYS:
+      return {
+        ...state,
+        userSettings: {
+          ...state.userSettings,
+          currentActiveKeys: [
+            ...initialState.userSettings.currentActiveKeys,
+          ],
+          skListeners: {
+            ...initialState.userSettings.skListeners,
           }
         }
       };

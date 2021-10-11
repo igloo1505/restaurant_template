@@ -438,11 +438,6 @@ export default function UIReducer(state = initialState, action) {
     }
     case Types.TOGGLE_SET_KEYS_BACKDROP:
     case Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS: {
-      console.log("woah", {
-        ...state.settingsModal,
-        settingKeysBackdrop: !state.settingsModal.settingKeysBackdrop,
-        ...(action?.payload?.settingKeysBackdrop && { settingKeysBackdrop: action.payload.settingKeysBackdrop })
-      });
       return {
         ...state,
         settingsModal: {

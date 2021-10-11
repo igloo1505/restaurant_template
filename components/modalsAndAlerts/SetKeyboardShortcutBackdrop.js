@@ -2,8 +2,10 @@
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import { connect, useDispatch } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+
 import * as Types from "../../stateManagement/TYPES"
+import store from "../../stateManagement/store"
 import ClientOnlyPortal from "../portalAuthenticated/ClientSidePortal";
 import { gsap } from 'gsap'
 import Backdrop from "@material-ui/core/Backdrop";
@@ -16,6 +18,59 @@ import {
     settingKeysKeyup,
 } from "../../util/SettingShortcutsListeners"
 
+
+const keyIconContainerId = "keyboardShortcutSelectedNotSpecialKey"
+
+gsap.registerEffect({
+    name: "pulse",
+    effect: ({ elapsedTime, percentage }) => {
+        let tl = gsap.timeline({
+            defaults: {
+                ease: "power1.inOut",
+                duration: 0.5,
+            }
+        })
+        tl.to(`#${keyIconContainerId}`, {
+            scale: 1.6,
+            repeat: 1,
+            yoyo: true,
+            stagger: 0.1,
+        })
+        return tl
+    }
+}
+)
+
+gsap.registerEffect({
+    name: "secondaryShift",
+    effect: ({ theme }) => {
+        gsap.to(`#${keyIconContainerId}`, {
+            scale: 1.6,
+            duration: 2,
+            background: "#EB6010 !important",
+            border: "1px solid #EB6010",
+            color: "#fff",
+            ease: "back.out(1.3)",
+        })
+    }
+})
+gsap.registerEffect({
+    name: "shiftBackwards",
+    effect: ({ theme }) => {
+        console.log("running shiftBackwards");
+        gsap.to(`#${keyIconContainerId}`, {
+            scale: 1.0,
+            duration: 2,
+            background: "#268AFF !important",
+            border: "1px solid #268AFF",
+            color: "#fff",
+            ease: "back.out(1.3)",
+        })
+    }
+})
+
+
+
 const useClasses = makeStyles((theme) => ({
     backdropRoot: {
         zIndex: theme.zIndex.modal + 1,
@@ -23,13 +78,15 @@ const useClasses = makeStyles((theme) => ({
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         // display: "flex",
         display: "grid",
-        gridTemplateRows: "1fr 1fr",
+        gridTemplateRows: "50% 50%",
         gridTemplateColumns: "1fr",
         // flexDirection: "column",
         // justifyContent: "center"
     },
     topRow: {
         display: "flex",
+        position: "relative",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         width: "100%",
@@ -37,6 +94,7 @@ const useClasses = makeStyles((theme) => ({
     },
     bottomRow: {
         display: "flex",
+        position: "relative",
         justifyContent: "flex-start",
         flexDirection: "column",
         alignItems: "center",
@@ -58,7 +116,12 @@ const SetKeyboardShortcutBackdrop = ({
         userSettings: {
             keyboardShortcuts: currentShortcuts,
             allowKeyboardShortcuts,
-            currentActiveKeys: specialKeys
+            currentActiveKeys: specialKeys,
+            settingProgress: {
+                elapsedTime: currentTimerValue,
+                originalValue: originalTimerValue,
+                toggle: currentToggle
+            },
         }
     },
     props
@@ -71,9 +134,74 @@ const SetKeyboardShortcutBackdrop = ({
     const [altPressed, setAltPressed] = useState(false)
 
 
+    const clearTimer = () => {
+        // console.trace("Called clearTimer")
+        dispatch({
+            type: Types.CLEAR_SET_SHORTCUTS_TIMER,
+        })
+    }
+
+    const handleTimer = ({ otv, specialKeys, ctv, original, currentToggle, clear }) => {
+        let timerLimit = 3000
+        let timer = new Timer({ otv, specialKeys, ctv, original, currentToggle, clear, timerLimit })
+        console.log('originalTimerValue: timer', currentTimerValue);
+        console.log('timer class: timer', timer);
+        console.log('specialKeys: timer', specialKeys);
+        if (original) {
+            return dispatch({
+                type: Types.UPDATE_SHORTCUT_TIMER,
+                payload: {
+                    elapsedTime: timer.elapsedTime,
+                    percentage: timer.percentage,
+                    toggle: timer.currentToggle,
+                }
+            })
+        }
+        console.log('timer class down here: ', timer);
+        let elapsedTime = Date.now() - otv
+        console.log('elapsedTime: timer class', `${timer.percentage}%`);
+        let startingTimer;
+        if (timer.percentage < 100 && specialKeys?.length === 3) {
+            timer.updateValue(dispatch)
+            // dispatch({
+            //     type: Types.UPDATE_SHORTCUT_TIMER,
+            //     payload: {
+            //         elapsedTime: elapsedTime,
+            //         percentage: elapsedTime / 50,
+            //     }
+            // })
+        }
+        if (elapsedTime > timerLimit || specialKeys?.length < 3) {
+            console.countReset("updateTimer")
+            if (startingTimer) {
+                clearInterval(startingTimer)
+            }
+            clearTimer()
+        }
+    }
 
 
 
+    useEffect(() => {
+        if (originalTimerValue && specialKeys?.length === 3 && !currentTimerValue) {
+            handleTimer({ otv: originalTimerValue, original: true, specialKeys, currentToggle })
+        }
+        if (originalTimerValue && specialKeys?.length < 3) {
+            console.log("clearing timer");
+            clearTimer()
+        }
+        if (specialKeys?.length === 3) {
+            setTimeout(() => {
+                handleTimer({ otv: originalTimerValue, original: false, specialKeys, currentToggle })
+            }, 1000);
+        }
+    }, [originalTimerValue, currentTimerValue, specialKeys])
+
+
+    // useEffect(() => {
+    //     console.log("Running handleTimer");
+    //     handleTimer({ ctv: currentTimerValue })
+    // }, [currentTimerValue])
 
 
 
@@ -100,9 +228,18 @@ const SetKeyboardShortcutBackdrop = ({
         }
     }
 
+    const handleBlur = (e) => {
+        console.log("dispatch reset activeKeys here", e)
+        dispatch({
+            type: Types.CLEAR_CURRENT_ACTIVE_KEYS,
+        })
+    }
+
     return (
         <ClientOnlyPortal selector="#topLevelPortalContainer">
-            <Backdrop classes={{ root: classes.backdropRoot }} open={isOpen} onClick={handleBackdropClick} id="set-shortcuts-backdrop"  >
+            <Backdrop classes={{ root: classes.backdropRoot }} open={isOpen} onClick={handleBackdropClick} id="set-shortcuts-backdrop" onBlur={handleBlur} onBeforeInput={(e) => e.preventDefault()}
+                onInput={(e) => e.preventDefault()}
+            >
                 <div className={classes.topRow}>
                     <IconContainer
                         specialKeys={specialKeys}
@@ -149,7 +286,7 @@ const useIconContainerClasses = makeStyles((theme) => ({
         width: "min(1280px, 85vw)",
         justifyContent: "space-between",
         gap: "1rem",
-        position: "absolute",
+        // position: "absolute",
         top: "calc(50vh + 2.5rem)",
         border: `1px solid ${theme.palette.grey[800]}`,
         borderRadius: "10px",
@@ -280,16 +417,21 @@ const useIconContainerClasses = makeStyles((theme) => ({
 
 
 const useKeyIconStyles = makeStyles((theme) => ({
+    // SpecialKey Icon here
     iconContainer: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        // padding: "0.75rem",
-        width: "100px",
-        height: "100px",
+        padding: "0.75rem",
+        marginTop: "15%",
+        // transform: "translateY(-50%)",
+        // width: "100px",
+        // height: "100px",
         minWidth: "100px",
         minHeight: "100px",
-        border: `1px solid ${theme.palette.primary.main}`,
+        border: `2px solid ${theme.palette.primary.main}`,
+        boxShadow: `8px 8px 12px rgba(0, 0, 0, 0.7), -8px - 8px 12px rgba(255, 255, 255, 0.17)`,
+        background: "linear-gradient(145deg, #3d3d3d, #333333)",
         // position: "absolute",
         // top: "calc(50vh - 2.5rem)",
         borderRadius: "5px",
@@ -298,7 +440,9 @@ const useKeyIconStyles = makeStyles((theme) => ({
         }
     },
     iconText: {
-        color: theme.palette.primary.main
+        color: theme.palette.primary.main,
+        fontWeight: 600,
+        fontSize: "3.25rem",
     }
 }))
 
@@ -318,13 +462,18 @@ const _IconContainer = ({
     },
     user: {
         userSettings: {
-            currentActiveKeys
+            currentActiveKeys,
+            settingProgress: {
+                elapsedTime,
+                originalValue: originalTimerValue,
+                percentage
+            },
         }
     }
 }) => {
     const classes = useIconContainerClasses();
     const [showAlternativeKeyIcon, setShowAlternativeKeyIcon] = useState(editBackdropIsOpen)
-
+    const theme = useTheme()
     useEffect(() => {
         if (showAlternativeKeyIcon) {
             console.count("Called useEffect with showAlternativeKeyIcon")
@@ -333,11 +482,34 @@ const _IconContainer = ({
             // animateKeySetting()
         }
     }, [showAlternativeKeyIcon])
+
+    useEffect(() => {
+        // if (!elapsedTime) {
+        //     gsap.effects.shiftBackwards()
+        // }
+        // if (theme) {
+        //     gsap.effects.secondaryShift({ theme })
+        // }
+        if (currentActiveKeys.length < 3) {
+            return resetKeySetting()
+        }
+        animateKeySetting({ elapsedTime, percentage })
+    }, [elapsedTime, percentage])
+
+
+    // useEffect(() => {
+    //     if (elapsedTime > 0) {
+    //         animateKeySetting(elapsedTime)
+    //     }
+    // }, [originalTimerValue])
+
+
     useEffect(() => {
         let _f = specialKeys?.length > 0 ? specialKeys?.filter((sk) => !sk?.isSpecialKey)?.[0] : false
         // let _f = false
         console.log('_f: ', currentActiveKeys);
         if (_f) {
+            console.log("Setting showAlternativeIcon");
             setShowAlternativeKeyIcon(_f)
         }
         if (!_f) {
@@ -353,7 +525,7 @@ const _IconContainer = ({
                 specialKeys={_specialKeys}
                 shouldShow={Boolean(showAlternativeKeyIcon)}
                 SpecialKeys={SpecialKeys}
-                _id={"keyboardShortcutSelectedNotSpecialKey"}
+                _id={keyIconContainerId}
             />
         )
     }
@@ -507,7 +679,7 @@ const _LowerIconContainer = ({
     return (
         <div className={classes.lowerContainer}>
             {Object.keys(_specialKeys).map((sk, index) => {
-                return <LowerIcon sk={sk} key={`key-${index}`} SpecialKeys={SpecialKeys}
+                return <LowerIcon sk={sk} key={`key - ${index}`} SpecialKeys={SpecialKeys}
                     controlPressed={listeners}
                     metaPressed={listeners.metaKey}
                     altPressed={listeners.altKey}
@@ -619,7 +791,7 @@ const LowerIcon = ({ sk, controlPressed,
     let ThisIcon = _specialKeys[sk].icon
     return (<ThisIcon _className={{ icon: clsx(classes.iconRoot, isActive && classes.iconRootActive), container: clsx(classes.childIconContainer, isActive && classes.childIconContainerActive) }}
         ownStyles={useLowerIconStyles}
-        id={isActive ? "active-key-icon-container" : `key-icon-container-${index}`} />
+        id={isActive ? "active-key-icon-container" : `key - icon - container - ${index}`} />
     )
 }
 
@@ -631,37 +803,38 @@ const LowerIconContainer = connect(mapStateToProps)(_LowerIconContainer)
 
 const animateKeyIconEntrance = () => {
     const duration = Math.random() * 5 + 0.5
-    let rs = Math.floor(Math.random() * 90)
-    const _rotateX = rs
-    const _rotateY = 90 - rs;
+    // let tl = gsap.timeline({})
+    // let rs = Math.floor(Math.random() * 360)
+    const _rotateX = Math.random() * 360
+    const _rotateY = Math.random() * 360
+    const _rotateZ = Math.random() * 360;
     let _radius = 100
-    // let _a = Math.random() * 90 / 2 * Math.PI / 180
-    // let _a = Math.random() * Math.PI / 2
-    // let _a = 90
     let _a = Math.random() * 180 + 90
-    // let _x = -Math.abs(Math.random() * _radius)
-    // let _y = Math.sqrt(_radius * _radius - _x * _x)
-    // let _y = 90
 
     let _x = _radius * Math.sin(Math.PI * 2 * _a / 360)
     let _y = _radius * Math.cos(Math.PI * 2 * _a / 360)
 
 
 
+    console.log('_rotateY: ', _rotateY);
+    console.log('_rotateX: ', _rotateX);
 
     const fromArray = [{
         y: _y,
         x: _x,
         opacity: 0,
         scale: 0.3,
-        rotation: Math.random() > 0.5 ? -360 : 360,
-        // rotateY: _rotateY,
+        // rotation: Math.random() > 0.5 ? -360 : 360,
+        rotateY: Math.random() > 0.5 ? `${_rotateY}deg` : ` - ${_rotateY}deg`,
+        rotateX: Math.random() > 0.5 ? `${_rotateX}deg` : ` - ${_rotateX}deg`,
+        rotateZ: Math.random() > 0.5 ? `${_rotateZ}deg` : ` - ${_rotateZ}deg`,
         duration: 0.5,
         // ease: "bounce.out"
-        ease: "rough({ template: none.out, strength: 1, points: 20, taper: 'none', randomize: true, clamp: false})"
+        ease: "back.out(1.7)"
+        // ease: "rough({ template: none.out, strength: 1, points: 20, taper: 'none', randomize: true, clamp: false})"
     }]
 
-    gsap.fromTo("#keyboardShortcutSelectedNotSpecialKey", fromArray[Math.floor(Math.random() * fromArray.length)], {
+    gsap.fromTo(`#${keyIconContainerId}`, fromArray[Math.floor(Math.random() * fromArray.length)], {
         y: 0,
         x: 0,
         opacity: 1,
@@ -669,12 +842,13 @@ const animateKeyIconEntrance = () => {
         rotateX: 0,
         rotation: 0,
         rotateY: 0,
+        rotateZ: 0,
         duration: 0.5,
         // ease: "elastic",
-        ease: "bounce.out",
+        ease: "back.out(1.7)",
         // ease: "rough({ template: none.out, strength: 1, points: 20, taper: 'none', randomize: true, clamp: false})"
     })
-    // gsap.from("#keyboardShortcutSelectedNotSpecialKey", {
+    // gsap.from(`#${keyIconContainerId}`, {
     //     y: -100,
     //     opacity: 0.5,
     //     scale: 0.5,
@@ -684,6 +858,82 @@ const animateKeyIconEntrance = () => {
     // })
 }
 
-const animateKeySetting = () => {
 
+
+
+
+
+
+
+class Timer {
+    constructor({ otv, specialKeys, ctv, timerLimit, original, currentToggle, clear }) {
+        this.originalValue = otv
+        // if (ctv) {
+        //     this.currentValue = ctv
+        // }
+        this.currentToggle = 0
+        this.percentage = 0
+        this.elapsedTime = 0
+        this.specialKeys = specialKeys
+        this.timerLimit = timerLimit
+        if (original) {
+            this.currentToggle = currentToggle || 2
+        }
+        this.updateValue = function (dispatch) {
+            console.log("updating timer class: ", this.originalValue)
+            console.log("updating timer class: date.now", Date.now())
+            console.log("updating timer class: difference", Date.now() - this.originalValue)
+            let elapsedTime = Date.now() - this.originalValue
+            this.elapsed = elapsedTime
+            this.currentToggle = this.currentToggle + 1
+            this.percentage = elapsedTime / this.timerLimit * 100
+            console.log('percentage: timer class', elapsedTime / this.timerLimit * 100);
+            dispatch({
+                type: Types.UPDATE_SHORTCUT_TIMER,
+                payload: {
+                    // elapsedTime: elapsedTime,
+                    elapsedTime: 0,
+                    currentToggle: this.currentToggle + 1,
+                    percentage: elapsedTime / this.timerLimit * 100
+                }
+            })
+        }
+    }
+}
+
+const animateKeySetting = ({ }) => {
+    gsap.to(`#${keyIconContainerId}-childIcon`, {
+        // y: -100,
+        // background: "#eb6010",
+        color: "#fff",
+        scale: 1.4,
+        duration: 0.5,
+        ease: "back.out(1.4)"
+    })
+    gsap.to(`#${keyIconContainerId}`, {
+        y: -100,
+        background: "#eb6010",
+        color: "#fff",
+        border: "2px solid #fff",
+        scale: 1.4,
+        duration: 0.5,
+        ease: "back.out(1.4)"
+    })
+}
+
+const resetKeySetting = () => {
+    gsap.to(`#${keyIconContainerId}`, {
+        y: 0,
+        background: "linear-gradient(145deg, #3d3d3d, #333333)",
+        border: "1px solid #424242",
+        scale: 1.0,
+        duration: 0.5,
+        ease: "back.out(1.4)"
+    })
+    gsap.to(`#${keyIconContainerId}-childIcon`, {
+        color: "#268AFF",
+        scale: 1.0,
+        duration: 0.5,
+        ease: "back.out(1.4)"
+    })
 }

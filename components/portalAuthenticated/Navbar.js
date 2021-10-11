@@ -16,6 +16,7 @@ import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import NavbarSearchInput from "./NavbarSearchInput";
 
+
 const useStylesAppbar = makeStyles((theme) => ({
   appBar: {
     [theme.breakpoints.up("xl")]: {
@@ -141,6 +142,13 @@ const useStylesAppbar = makeStyles((theme) => ({
     right: "2rem",
     cursor: "pointer",
   },
+  percentageText: {
+    color: "#fff",
+    fontSize: "1rem",
+    position: "absolute",
+    left: "50%",
+  },
+  // }
 }));
 const drawerWidth = 240;
 
@@ -150,8 +158,33 @@ const Navbar = ({
   isSignUp,
   user: { _id },
   viewport: { width: deviceWidth, height: deviceHeight },
+  userSettings: {
+    settingProgress: {
+      elapsedTime,
+      percentage: _percentage,
+      toggle: currentToggleValue,
+      originalValue: originalTimerValue
+    }
+  }
 }) => {
   const dispatch = useDispatch();
+  const [percentage, setPercentage] = useState(null)
+  useEffect(() => {
+    // setTimeout(() => {
+    if (parseInt(_percentage) > 0) {
+      setPercentage(_percentage)
+    }
+    // }, 100)
+  }, [_percentage])
+
+  const [toggleValue, setToggleValue] = useState(null)
+  useEffect(() => {
+    if (parseInt(currentToggleValue) > 0) {
+      setToggleValue(currentToggleValue)
+    }
+  }, [currentToggleValue])
+
+
   let router = useRouter();
   const handleSignInClick = () => {
     if (router.pathname === "/portal" && isSignUp) {
@@ -264,6 +297,14 @@ const Navbar = ({
           >
             Rad<span className="navbar_italic">-ish</span>
           </Typography>
+          {percentage && <Typography
+            variant="h6"
+            noWrap
+            classes={{ root: appbarClasses.percentageText }}
+          >
+            {parseInt(percentage)}%
+          </Typography>
+          }
           {loggedIn && (
             <IconButton
               color="secondary"
@@ -357,6 +398,7 @@ const mapStateToProps = (state, props) => ({
   loggedIn: state.user.loggedIn,
   viewport: state.UI.viewport,
   isSignUp: state.UI.login.isSignUp,
+  userSettings: state.user.userSettings
 });
 
 export default connect(mapStateToProps)(Navbar);

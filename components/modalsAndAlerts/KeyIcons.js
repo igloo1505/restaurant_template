@@ -145,8 +145,8 @@ export const KeyIcon = ({ settingKeysBackdrop, keyData, showSetKeysBackdrop, sty
             style={styles}
             id={_id}
         >
-            <Typography variant="h4" className={clsx(classes.iconText, isActive && classes.iconTextActive, _className?.text && _className.text)}>
-                {keyData.key}
+            <Typography variant="h4" className={clsx(classes.iconText, isActive && classes.iconTextActive, _className?.text && _className.text)} id={`${_id}-childIcon`}>
+                {keyData.key.toLowerCase()}
             </Typography>
         </div>
     )

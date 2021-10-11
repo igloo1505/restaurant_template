@@ -212,11 +212,17 @@ export const SpecialKeys = (_localState) => {
 export const settingKeysKeydown = (e) => {
     let state = store.getState();
     console.log('state: p-b', state);
-    const bypassKeys = ["Escape", "Tab", "Enter"]
-    console.log('bypassKeys.includes(e.key): ', bypassKeys.includes(e.key));
+    const bypassKeys = ["Escape", "Tab", "Enter", "Control", "Alt"]
+    console.log('bypassKeys.includes(e.key): event in keydown ', bypassKeys.includes(e.key));
     if (!bypassKeys.includes(e.key)) {
         e.preventDefault()
+        e.stopPropagation()
     }
+    // if (e.altKey) {
+    //     console.log("event in keydown should cancel")
+    //     e.preventDefault()
+    //     e.stopPropagation()
+    // }
     if (e.repeat) {
         return
     };
@@ -275,14 +281,14 @@ export const getNewCurrentKeys = ({ event, reset, state, metaKeys, ...rest }) =>
     if (event.type === "keydown") {
         let rKeys = [newKey]
         if (!newKey.isSpecialKey) {
-            rKeys = [...currentKeys.filter((ck) => ck.isSpecialKey), newKey]
+            rKeys = [...currentKeys?.filter((ck) => ck.isSpecialKey), newKey]
         }
         if (newKey.isSpecialKey) {
             console.log('currentKeys: gnk', currentKeys);
-            let nsk = currentKeys.filter((ck) => !ck?.isSpecialKey)?.[0]
+            let nsk = currentKeys?.filter((ck) => !ck?.isSpecialKey)?.[0]
             nsk && rKeys.push(nsk)
-            if (currentKeys.filter(ck => ck?.isSpecialKey).length <= 1) {
-                let osk = currentKeys.find(ck => ck?.isSpecialKey)
+            if (currentKeys?.filter(ck => ck?.isSpecialKey).length <= 1) {
+                let osk = currentKeys?.find(ck => ck?.isSpecialKey)
                 osk && rKeys.push(osk)
                 console.log('osk: gnk ', rKeys);
             }
@@ -290,11 +296,13 @@ export const getNewCurrentKeys = ({ event, reset, state, metaKeys, ...rest }) =>
         return rKeys
     }
     if (event.type === "keyup") {
-        console.log("handling key up gnk", currentKeys.filter((sk) => sk?.keyCode !== event.keyCode))
+        // TODO ADD CHECK HERE TO CLEAR CURRENT KEY IF LAST KEY LIFTED IS A METAKEY
+        // BUG ADD CHECK HERE TO CLEAR CURRENT KEY IF LAST KEY LIFTED IS A METAKEY
+        console.log("handling key up gnk", currentKeys?.filter((sk) => sk?.keyCode !== event.keyCode))
         console.log("key up gnk", event.keyCode);
-        currentKeys.map((sk) => console.log("key up sk gnk", sk.keyCode))
+        currentKeys?.map((sk) => console.log("key up sk gnk", sk.keyCode))
         console.log("key up gnk", event.keyCode);
-        return currentKeys.filter((sk) => sk?.keyCode !== event.keyCode)
+        return currentKeys?.filter((sk) => sk?.keyCode !== event.keyCode)
     }
     return currentKeys
 }
@@ -320,43 +328,68 @@ export const clearListeners = () => {
 // const handleKeyUp = (e) => {
 //     console.log('handleKeyUp: ', handleKeyUp);
 // }
+
+// TODO add filter to remove cntrl key press but still push to state to avoid weird characters like ∂ 
 const Listeners = {
     settingKeyDownListener: (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        console.log('event in keydown listener: ', e);
+        if (SpecialKeys(localState)?.[e.key]) {
+            SpecialKeys(localState)?.[e.key]?.setPressed(true, e)
+        }
         let localState = store.getState();
         console.log('localState: p-b', localState);
         const bypassKeys = ["Escape", "Tab", "Enter"]
+
         if (!bypassKeys.includes(e.key)) {
+            console.log("Souuld be canceling special keys in event in keydown")
             e.preventDefault()
+            e.stopPropagation()
         }
         if (e.repeat) {
             return
         };
-        if (SpecialKeys(localState)[e.key]) {
-            SpecialKeys(localState)[e.key].setPressed(true, e)
+        if (e.altKey) {
+            console.log("altKey event in keydown should cancel")
+            e.preventDefault()
+            e.stopPropagation()
         }
-
-        if (!SpecialKeys(localState)[e.key]) {
-            if (disallowKeys.includes(e.key) || e.key === "" || e.key.length > 1) {
-                return;
-            }
-            let newSpecialKeys = getNewCurrentKeys({ event: e, state: localState })
-            store.dispatch({
-                type: Types.SET_CURRENT_ACTIVE_KEYS,
-                payload: {
-                    currentActiveKeys: newSpecialKeys
+        // if (e.metaKey) {
+        //     console.log("metaKey event in keydown should cancel")
+        //     e.preventDefault()
+        //     e.stopPropagation()
+        // }
+        // if (!e.altKey && !e.metaKey) {
+        if (!e.altKey) {
+            if (!SpecialKeys(localState)[e.key]) {
+                if (disallowKeys.includes(e.key) || e.key === "" || e.key.length > 1) {
+                    return;
                 }
-            })
+                let newSpecialKeys = getNewCurrentKeys({ event: e, state: localState })
+                store.dispatch({
+                    type: Types.SET_CURRENT_ACTIVE_KEYS,
+                    payload: {
+                        currentActiveKeys: newSpecialKeys
+                    }
+                })
+            }
         }
     },
     settingKeyUpListener: (e) => {
+        console.log('event in keyup listener: ', e);
         let localState = store.getState();
-        e.preventDefault()
+        // e.preventDefault()
         if (e.repeat) {
             return
         };
-
         if (SpecialKeys()[e.key]) {
             SpecialKeys()[e.key].setPressed(false, e)
+        }
+        if (e.key === "Meta") {
+            store.dispatch({
+                type: Types.CLEAR_CURRENT_ACTIVE_KEYS
+            })
         }
         SpecialKeys(localState).setSpecialKeys(e)
     }
@@ -372,16 +405,17 @@ export const handleEventListeners = () => {
                 // if(e)
             })
         }
+
         if (state?.UI?.settingsModal?.settingKeysBackdrop) {
             console.log('window: ', window.location);
-            document.addEventListener("keydown", Listeners[`${state?.user?.userSettings?.skString}KeyDownListener`]);
-            document.addEventListener("keyup", Listeners[`${state?.user?.userSettings?.skString}KeyUpListener`]);
+            window.addEventListener("keydown", Listeners[`${state?.user?.userSettings?.skString}KeyDownListener`]);
+            window.addEventListener("keyup", Listeners[`${state?.user?.userSettings?.skString}KeyUpListener`]);
         }
     }
 
-
-    //   if (!state?.user?.userSettings?.allowKeyboardShortcuts || !state?.UI?.settingsModal?.settingKeysBackdrop) {
-    //     document.removeEventListener("keydown", handleEventListeners("keyDown"));
-    //     document.removeEventListener("keyup", handleEventListeners("keyUp"));
-    //   }
+    if (!state?.user?.userSettings?.allowKeyboardShortcuts || !state?.UI?.settingsModal?.settingKeysBackdrop) {
+        let x = window.removeEventListener("keydown", Listeners[`${state?.user?.userSettings?.skString}KeyDownListener`]);
+        console.log("Removing listeners, gnk", x)
+        window.removeEventListener("keyup", Listeners[`${state?.user?.userSettings?.skString}KeyUpListener`]);
+    }
 }
