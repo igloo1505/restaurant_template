@@ -31,6 +31,10 @@ const temporaryUserShortcuts = [
 ]
 
 
+export const skEnum = [
+  "setting",
+  "hasOwn"
+]
 
 
 const initialState = {
@@ -49,18 +53,16 @@ const initialState = {
     allowKeyboardShortcuts: true,
     allowNotifications: true,
     allowRecipeReviews: true,
-    skString: "setting",
+    // skString: "setting",
+    skString: "",
     settingProgress: {
       elapsedTime: null,
       originalValue: null,
       percentage: null,
       toggle: null
     },
-    // RESUME link this to handleEventListener in settingShortcutsListeners after getting currentActiveKeys working properly
     keyboardShortcuts: temporaryUserShortcuts,
     currentActiveKeys: [],
-    // BUG remove this after working on UI
-    // currentActiveKeys: temporaryUserShortcuts,
     skListeners: {
       shiftKey: false,
       ctrlKey: false,
@@ -174,12 +176,14 @@ export default function userReducer(state = initialState, action) {
         }
         console.log("timerData: ", timerData);
       }
+      console.log('...initialState.userSettings.settingProgress: ', { ...initialState.userSettings.settingProgress });
       return {
         ...state,
         userSettings: {
           ...state.userSettings,
           currentActiveKeys: action.payload?.currentActiveKeys,
-          ...(timerData && { settingProgress: { ...timerData } })
+          ...(timerData && { settingProgress: { ...timerData } }),
+          // ...(action.payload?.currentActiveKeys.length < 3 && { settingProgress: { ...initialState.userSettings.settingProgress } })
         },
       };
     case Types.CLEAR_SET_SHORTCUTS_TIMER: {
@@ -232,6 +236,17 @@ export default function userReducer(state = initialState, action) {
           skListeners: {
             ...initialState.userSettings.skListeners,
           }
+        }
+      };
+    case Types.SET_NEW_CURRENT_SHORTCUTS:
+      return {
+        ...state,
+        userSettings: {
+          ...state.userSettings,
+          skString: skEnum[1],
+          keyboardShortcuts: [
+            ...state.userSettings.currentActiveKeys
+          ]
         }
       };
     default:

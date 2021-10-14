@@ -1,5 +1,15 @@
 import * as Types from './TYPES';
 import store from './store';
+// import { withRouter } from "next/router"
+
+
+const handleRedirect = (data, ...rest) => {
+    console.log("data in with router", data, rest)
+
+}
+
+
+
 
 export const defaultShortcutArray = [
     {
@@ -134,6 +144,34 @@ export const defaultShortcutArray = [
             })
         }
     },
+    {
+        key: '11',
+        scs: ["ADD NEW RECIPE", "ANR", "ADDRECIPE", "ADDNEWRECIPE"],
+        displayText: "Add New Recipe",
+        locations: ["*"],
+        // test: (prevState) => {
+        //     console.log('prevState: ', prevState);
+        //     return true
+        // },
+        action: () => {
+            // if (typeof window !== 'undefined') {
+            //     window.location.pathname = "/addRecipe"
+            // }
+        }
+    },
+    {
+        key: '12',
+        scs: ["SET SHORTCUT KEYS", "NEWSHORTCUT ", "CHANGE SHORTCUT", "SETSHORTCUT", "NEWSHORTCUTS ", "SHORTCUTS", "CHANGESHORTCUTS", "CSK", "NSK", "KEYS"],
+        displayText: "Adjust Shortcut Keys",
+        locations: ["*"],
+        // test: (prevState) => {
+        //     console.log('prevState: ', prevState);
+        //     return true
+        // },
+        action: (payload) => {
+            // handleRedirect(payload)
+        }
+    },
 ]
 
 
@@ -147,14 +185,17 @@ export const returnShortcutArray = (location) => {
 }
 
 
+
 export const returnFilteredShortcutArray = ({
     searchString,
     currentState,
     currentPath,
 }) => {
     let filteredByLocation = returnShortcutArray(currentPath)
+    console.log('filteredByLocation: fsk', filteredByLocation);
     let _regex = new RegExp(searchString, "gi")
     let _r = {}
+
     let allScs = (() => {
         let _allScs = [];
         filteredByLocation.forEach(sc => {
@@ -171,7 +212,10 @@ export const returnFilteredShortcutArray = ({
     })
         .map((sc) => filteredByLocation.filter(dsc => dsc.key === sc.key)[0])
 
-    if (_newFilteredArray.length === filteredByLocation.length) {
+    // if (_newFilteredArray.length === filteredByLocation.length) {
+    //     _newFilteredArray.length = 0
+    // }
+    if (searchString === "") {
         _newFilteredArray.length = 0
     }
     if (_newFilteredArray.length !== 0) {

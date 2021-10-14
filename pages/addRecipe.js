@@ -17,6 +17,12 @@ import Loader from "../components/Loader";
 import * as Types from '../stateManagement/TYPES';
 import { setKeyboardListener } from '../stateManagement/userActions';
 import AddRecipeFormContainer from "../components/addRecipeFormContainer";
+// import { connectDB } from "../util/connectDB";
+// import { wrapper } from "../stateManagement/store";
+// import Cookies from "cookies";
+// import mongoose from "mongoose";
+// import User from "../models/User";
+// import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
 import {
   UnderNavbar,
   AdjustForDrawerContainer,
@@ -102,8 +108,9 @@ const AddRecipe = ({
 }) => {
   const [toggleFormWidth, setToggleFormWidth] = useState({ width: "auto" });
   const dispatch = useDispatch();
-  // const [slideIn, setSlideIn] = useState(false);
+
   const router = useRouter();
+  // const [slideIn, setSlideIn] = useState(false);
   //!!! The only reason half of this form state isn't in Redux is because I installed Apple's beta OS on my macbook and now Chrome just about starts it on fire... and Safari doesn't have **** for devtools.
   // TODO Add character limit to title!!
   const [formData, setFormData] = useState(initialFormData);
@@ -195,7 +202,6 @@ const AddRecipe = ({
               <AddRecipeFormContainer
                 activeStep={activeStep}
                 steps={steps}
-
                 setActiveStep={setActiveStep}
                 formData={formData}
                 setFormData={setFormData}
@@ -222,7 +228,6 @@ const mapStateToProps = (state, props) => ({
   recipe: state.recipes,
 });
 
-export default connect(mapStateToProps)(AddRecipe);
 
 // eslint-disable-next-line react/display-name
 const SlideComponent = forwardRef(
@@ -243,19 +248,54 @@ const SlideComponent = forwardRef(
   // )
 );
 
-// const _SlideComponent = ({ ...props }) => {
-//   //
-//
-//   return (
-//     <Slide
-//       direction="right"
-//       in={true}
-//       ref={props.ref}
-//       timeout={{ appear: 300, enter: 500, exit: 500 }}
-//       mountOnEnter
-//       unmountOnExit
-//     >
-//       {props.children}
-//     </Slide>
-//   );
-// }
+// export const getServerSideProps = wrapper.getServerSideProps(
+//   (store) =>
+//     async ({ req, res }) => {
+//       debugger
+//       let state = store.getState();
+//       let cookies = new Cookies(req, res);
+//       let hasUser = false;
+//       let token = cookies.get("token") || state?.user?.self?.token;
+//       let userId = cookies.get("userId") || state?.user?.self?._id;
+//       let rememberMe = cookies.get("rememberMe");
+//       console.log("rememberMe avoiding redirect: ", rememberMe);
+//       console.log("userId avoiding redirect: ", userId);
+
+//       let isInState = Boolean(
+//         state?.user?.self?._id && state?.user?.self?.token
+//       );
+//       console.log('isInState: avoiding redirect', isInState);
+//       if (Boolean(!userId || !token) && !isInState) {
+//         return {
+//           redirect: {
+//             destination: "/",
+//             permanent: false,
+//           },
+//         };
+//       }
+//       if (Boolean(userId && token) && !isInState) {
+//         console.log("userId && token: ", userId, token, rememberMe);
+//         if (rememberMe) {
+//           hasUser = await autoLoginOnFirstRequest(req, res);
+//           console.log('hasUser: avoiding redirect', hasUser);
+//           if (!hasUser) {
+//             return {
+//               redirect: {
+//                 destination: "/",
+//                 permanent: false,
+//               },
+//             };
+//           }
+//           console.log("hasUser: ", hasUser);
+//         }
+//         return {
+//           props: {
+//             hasUser: hasUser,
+//           },
+//         };
+//       }
+//     }
+// );
+
+
+export default connect(mapStateToProps)(AddRecipe);

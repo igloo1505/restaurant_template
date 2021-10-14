@@ -16,7 +16,7 @@ import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
 import Head from "next/head";
 import "../styles/globals.css";
 import { Provider } from "react-redux";
-import { useRouter } from "next/router"
+// import { useRouter } from "next/router"
 import store, { wrapper } from "../stateManagement/store";
 import { removeBoxShadow } from "../stateManagement/uiActions";
 import { ThemeProvider } from "@material-ui/core/styles";
@@ -40,28 +40,12 @@ cache.compat = true;
 
 
 
-
-
-
 function MyApp({ Component, pageProps, ...rest }) {
   // if (localStorage.token) {
   //   setAuthToken(localStorage.token);
   // }
-  const [localState, setAppState] = useState({})
 
-  const setLocalState = (par) => {
-    console.log('par: ', par);
-    let state = store.getState();
-    console.log("setting setLocalState p-b", localState);
-    console.log('state before setting p-b: ', state);
-    setAppState({ ...state })
-  }
-  useEffect(() => {
-    const unSubscribe = store.subscribe(setLocalState)
-    return () => {
-      unSubscribe()
-    }
-  }, [])
+
 
   useEffect(() => {
     const jssStyles = document.querySelector("#jss-server-side");
@@ -70,25 +54,24 @@ function MyApp({ Component, pageProps, ...rest }) {
     }
   }, []);
 
-  // useEffect(() => {
-  //   // store.
-  //   store.subscribe(setLocalState)
+  const [state, setState] = useState({})
 
-  //   return {
-  //   }
-  // }, [])
+  useEffect(() => {
+    let _state = store.getState();
+    let unSub = store.subscribe(() => setState(_state));
+    return () => {
+      unSub();
+    }
+  }, []);
 
-  let state = store.getState();
-  const router = useRouter();
 
 
 
   useEffect(() => {
-    console.log('state?.UI?.settingsModal?.settingKeysBackdrop: ', state?.UI?.settingsModal?.settingKeysBackdrop);
     if (typeof window !== "undefined") {
       handleEventListeners()
     }
-  }, [state?.UI?.settingsModal?.settingKeysBackdrop, state?.user?.userSettings?.allowKeyboardShortcuts]);
+  }, [state?.UI?.settingsModal?.settingKeysBackdrop, state?.user?.userSettings?.allowKeyboardShortcuts, state.user?.userSettings?.keyboardShortcuts]);
 
   const setViewPortDimensions = () => {
     if (typeof window !== "undefined") {
@@ -177,6 +160,3 @@ function MyApp({ Component, pageProps, ...rest }) {
 }
 
 export default wrapper.withRedux(MyApp);
-
-// <Navbar />
-// <CacheProvider value={cache}>

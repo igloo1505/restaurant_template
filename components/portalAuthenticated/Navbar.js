@@ -1,11 +1,13 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect, Fragment } from "react";
 import NextLink from "next/link";
 import { connect, useDispatch } from "react-redux";
-import { useRouter } from "next/router";
+import { useRouter } from "next/router"
 import * as Types from "../../stateManagement/TYPES";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
+import { gsap } from 'gsap'
 import IconButton from "@material-ui/core/IconButton";
 import MyAccountIcon from "./AccountIcon";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -29,7 +31,7 @@ const useStylesAppbar = makeStyles((theme) => ({
       // width: "100vw",
       backgroundColor: theme.palette.primary.main,
       zIndex: 1303,
-      transition: "margin-left 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+      // transition: "margin-left 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
       transition: "width 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     },
   },
@@ -142,12 +144,7 @@ const useStylesAppbar = makeStyles((theme) => ({
     right: "2rem",
     cursor: "pointer",
   },
-  percentageText: {
-    color: "#fff",
-    fontSize: "1rem",
-    position: "absolute",
-    left: "50%",
-  },
+
   // }
 }));
 const drawerWidth = 240;
@@ -161,37 +158,28 @@ const Navbar = ({
   userSettings: {
     settingProgress: {
       elapsedTime,
-      percentage: _percentage,
-      toggle: currentToggleValue,
+      toggle: _currentToggleValue,
       originalValue: originalTimerValue
     }
   }
 }) => {
+  // debugger
   const dispatch = useDispatch();
-  const [percentage, setPercentage] = useState(null)
-  useEffect(() => {
-    // setTimeout(() => {
-    if (parseInt(_percentage) > 0) {
-      setPercentage(_percentage)
-    }
-    // }, 100)
-  }, [_percentage])
-
-  const [toggleValue, setToggleValue] = useState(null)
-  useEffect(() => {
-    if (parseInt(currentToggleValue) > 0) {
-      setToggleValue(currentToggleValue)
-    }
-  }, [currentToggleValue])
-
-
+  console.log("userRouter avoiding redirect", useRouter)
   let router = useRouter();
+
+
   const handleSignInClick = () => {
+    console.log("Router avoiding redirect", router)
     if (router.pathname === "/portal" && isSignUp) {
       dispatch({ type: Types.TOGGLE_SIGNUP_FORM });
     }
   };
   const [shiftAppbar, setShiftAppbar] = useState(false);
+
+
+
+
   useEffect(() => {
     // debugger;
     if (deviceWidth === 0) {
@@ -252,13 +240,15 @@ const Navbar = ({
   const appbarClasses = useStylesAppbar();
   return (
     <Fragment>
+      <NotificationBanner />
       <AppBar
         position="fixed"
         color="primary"
         classes={{
           root: clsx(
             appbarClasses.appBar,
-            isOpen && appbarClasses.appbarShifted
+            isOpen && appbarClasses.appbarShifted,
+            "navbar-background-shift"
           ),
         }}
       >
@@ -266,7 +256,8 @@ const Navbar = ({
           classes={{
             root: clsx(
               appbarClasses.toolbarRoot,
-              shiftAppbar && appbarClasses.toolbarRootOpen
+              shiftAppbar && appbarClasses.toolbarRootOpen,
+              "navbar-background-shift"
             ),
           }}
         >
@@ -278,33 +269,27 @@ const Navbar = ({
             classes={{
               root: clsx(
                 appbarClasses.menuButtonRoot,
-                shiftAppbar && appbarClasses.hideMenuButton
+                shiftAppbar && appbarClasses.hideMenuButton,
+                "navbar-background-shift"
               ),
-              label: appbarClasses.menuButtonLabel,
+              label: clsx(appbarClasses.menuButtonLabel, "navbar-foreground-shift"),
             }}
           >
             <MenuIcon
               className={clsx(
                 appbarClasses.menuIconRoot,
-                shouldHideMenuButton && appbarClasses.hideMenuButton
+                shouldHideMenuButton && appbarClasses.hideMenuButton,
+                "navbar-foreground-shift"
               )}
             />
           </IconButton>
           <Typography
             variant="h6"
             noWrap
-            classes={{ root: appbarClasses.appbarLabelText }}
+            classes={{ root: clsx(appbarClasses.appbarLabelText, "navbar-foreground-shift") }}
           >
             Rad<span className="navbar_italic">-ish</span>
           </Typography>
-          {percentage && <Typography
-            variant="h6"
-            noWrap
-            classes={{ root: appbarClasses.percentageText }}
-          >
-            {parseInt(percentage)}%
-          </Typography>
-          }
           {loggedIn && (
             <IconButton
               color="secondary"
@@ -364,7 +349,7 @@ const Navbar = ({
                     ? appbarClasses.accountIconButton
                     : appbarClasses.accountIconButtonPermanent
                 ),
-                label: appbarClasses.accountIconButtonLabel,
+                label: clsx(appbarClasses.accountIconButtonLabel, "navbar-foreground-shift"),
               }}
             >
               <MyAccountIcon
@@ -400,5 +385,193 @@ const mapStateToProps = (state, props) => ({
   isSignUp: state.UI.login.isSignUp,
   userSettings: state.user.userSettings
 });
+
+const useStylesNotificationBanner = makeStyles((theme) => ({
+  notificationBannerOuter: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100vw",
+    // zIndex: theme.zIndex.drawer + 1,
+    zIndex: 99999999999999,
+    height: "0px",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "#fff",
+    "&.success": {
+      backgroundColor: "#00E676",
+    },
+    "&.error": {
+      backgroundColor: "#FF1744",
+    },
+    "&.social": {
+      backgroundColor: "#D500F9",
+    },
+  },
+  bannerCharacter: {
+    fontSize: "2rem",
+    marginRight: "0.5rem",
+    display: "inline-block",
+    color: "#fff"
+  }
+}))
+
+const _mapStateToProps = (state, props) => ({
+  props: props,
+  bannerStuff: state.UI.notificationBanner,
+  user: state.user,
+});
+
+const NotificationBanner = connect(_mapStateToProps)(({
+  bannerStuff: {
+    isOpen,
+    variant,
+    message,
+    delay
+  },
+  user: {
+    userSettings: {
+      currentActiveKeys
+    }
+  }
+}) => {
+  const classes = useStylesNotificationBanner();
+  const dispatch = useDispatch();
+
+  const [animationInProgress, setAnimationInProgress] = useState([])
+  useEffect(() => {
+    if (isOpen) {
+      let tl = animateBannerEntrance();
+      setAnimationInProgress([tl]);
+      setAnimationInProgress([...animationInProgress, tl]);
+    }
+  }, [isOpen])
+  useEffect(() => {
+    if (isOpen && currentActiveKeys.length < 3) {
+      dispatch({
+        type: Types.CLEAR_SET_SHORTCUTS_TIMER,
+      })
+    }
+  }, [currentActiveKeys])
+  useEffect(() => {
+    if (isOpen) {
+      const handleDismissal = () => {
+        setTimeout(() => {
+          dispatch({
+            type: Types.HIDE_TOP_NOTIFICATION_BAR
+          })
+        }, delay)
+      }
+      setTimeout(() => {
+        hideBanner({ handleDismissal })
+      }, delay - 1500)
+    }
+  }, [isOpen, variant, message, delay])
+
+
+  return (
+    <div className={clsx(classes.notificationBannerOuter, "notification-banner-outer-container", variant && `${variant}`)}>
+      <div className={classes.bannerTextContainer}>
+        {message && [...message].map((ch, index) => {
+          return (<Typography variant="h6" className={clsx(classes.bannerCharacter, "notification-banner-text")} key={`notification-banner-${index}`}>
+            {ch}
+          </Typography>)
+        })}
+      </div>
+    </div>
+  )
+}
+)
+
+
+const animateBannerEntrance = () => {
+  let tl = gsap.timeline()
+  tl.fromTo(".notification-banner-outer-container", {
+    height: "0px",
+    // opacity: 0.,
+    duration: 0.5,
+    ease: "back.out(1.2, 0.2)"
+  }, {
+    height: "64px",
+    opacity: 1,
+    duration: 0.5,
+    ease: "back.out(1.2, 0.2)"
+  })
+  tl.fromTo(".notification-banner-text", {
+    x: 200,
+    stagger: 0.1,
+    opacity: 0,
+    duration: 0.5,
+    ease: "back.out(1.2, 0.2)"
+  }, {
+    x: 0,
+    stagger: 0.1,
+    opacity: 1,
+    duration: 0.5,
+    ease: "back.out(1.2, 0.2)"
+  })
+  return tl
+}
+
+
+
+const hideBanner = ({ handleDismissal, immediate }) => {
+  if (immediate) {
+    let tl = gsap.timeline()
+    tl.to(".notification-banner-outer-container", {
+      height: "0px",
+      opacity: 0,
+      duration: 0.5,
+      ease: "back.out(1.2, 0.2)"
+    })
+    tl.to(".notification-banner-text", {
+      stagger: 0.1,
+      opacity: 0,
+      duration: 0.5,
+      ease: "back.out(1.2, 0.2)"
+    })
+    return tl
+  }
+  let tl = gsap.timeline()
+  tl.fromTo(".notification-banner-text",
+    {
+      x: 0,
+      stagger: 0.1,
+      opacity: 1,
+      duration: 0.5,
+      ease: "back.out(1.2, 0.2)",
+      // onComplete: handleDismissal,
+    },
+    {
+      x: -200,
+      stagger: 0.1,
+      opacity: 0,
+      duration: 0.5,
+      ease: "back.out(1.2, 0.2)",
+      // onComplete: handleDismissal,
+    }
+  )
+  // }
+  tl.fromTo(".notification-banner-outer-container",
+    {
+      height: "64px",
+      opacity: 1,
+      duration: 0.5,
+      onComplete: handleDismissal,
+      ease: "back.out(1.2, 0.2)"
+    },
+    {
+      height: "0px",
+      // opacity: 0.,
+      onComplete: handleDismissal,
+      duration: 0.5,
+      ease: "back.out(1.2, 0.2)"
+    }, "+=0.2"
+  )
+  return tl
+}
+
 
 export default connect(mapStateToProps)(Navbar);

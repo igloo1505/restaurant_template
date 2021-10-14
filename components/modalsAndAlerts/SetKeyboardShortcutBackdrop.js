@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-
+import * as muiColor from "@material-ui/core/colors"
 import * as Types from "../../stateManagement/TYPES"
 import store from "../../stateManagement/store"
 import ClientOnlyPortal from "../portalAuthenticated/ClientSidePortal";
@@ -20,55 +20,6 @@ import {
 
 
 const keyIconContainerId = "keyboardShortcutSelectedNotSpecialKey"
-
-// gsap.registerEffect({
-//     name: "pulse",
-//     effect: ({ elapsedTime, percentage }) => {
-//         let tl = gsap.timeline({
-//             defaults: {
-//                 ease: "power1.inOut",
-//                 duration: 0.5,
-//             }
-//         })
-//         tl.to(`#${keyIconContainerId}`, {
-//             scale: 1.6,
-//             repeat: 1,
-//             yoyo: true,
-//             stagger: 0.1,
-//         })
-//         return tl
-//     }
-// }
-// )
-
-// gsap.registerEffect({
-//     name: "secondaryShift",
-//     effect: ({ theme }) => {
-//         gsap.to(`#${keyIconContainerId}`, {
-//             scale: 1.6,
-//             duration: 2,
-//             background: "#EB6010 !important",
-//             border: "1px solid #EB6010",
-//             color: "#fff",
-//             ease: "back.out(1.3)",
-//         })
-//     }
-// })
-// gsap.registerEffect({
-//     name: "shiftBackwards",
-//     effect: ({ theme }) => {
-//         console.log("running shiftBackwards");
-//         gsap.to(`#${keyIconContainerId}`, {
-//             scale: 1.0,
-//             duration: 2,
-//             background: "#268AFF !important",
-//             border: "1px solid #268AFF",
-//             color: "#fff",
-//             ease: "back.out(1.3)",
-//         })
-//     }
-// })
-
 
 
 const useClasses = makeStyles((theme) => ({
@@ -126,6 +77,7 @@ const SetKeyboardShortcutBackdrop = ({
     },
     props
 }) => {
+
     const classes = useClasses();
     const dispatch = useDispatch()
     const [isOpen, setIsOpen] = useState(settingKeysBackdrop);
@@ -134,47 +86,48 @@ const SetKeyboardShortcutBackdrop = ({
     const [altPressed, setAltPressed] = useState(false)
 
 
+    useEffect(() => {
+        if (currentToggle === 3 && specialKeys.length === 3) {
+            let _d = 5000
+            dispatch({
+                type: Types.SET_NEW_CURRENT_SHORTCUTS,
+                payload: {
+                    banner: {
+                        isOpen: true,
+                        delay: _d,
+                        variant: "success",
+                        message: "New Keys Set!"
+                    }
+                }
+            })
+            setTimeout(() => {
+                dispatch({
+                    type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
+                    payload: {
+                        settingKeysBackdrop: false
+                    }
+                })
+            }, _d + 1000);
+        }
+    }, [currentToggle])
+
     const clearTimer = () => {
-        // console.trace("Called clearTimer")
         dispatch({
             type: Types.CLEAR_SET_SHORTCUTS_TIMER,
         })
     }
 
+
     const handleTimer = ({ otv, specialKeys, ctv, original, currentToggle, clear }) => {
         let timerLimit = 3000
-        console.log('originalTimerValue: timer', currentTimerValue);
-        console.log('timer class: timer', timer);
-        console.log('specialKeys: timer', specialKeys);
         let timer;
         if (original) {
             timer = new Timer({ otv, specialKeys, ctv, original, currentToggle, clear, timerLimit })
             timer.init(dispatch)
-            // return dispatch({
-            //     type: Types.UPDATE_SHORTCUT_TIMER,
-            //     payload: {
-            //         elapsedTime: timer.elapsedTime,
-            //         percentage: timer.percentage,
-            //         toggle: timer.currentToggle,
-            //     }
-            // })
         }
-        console.log('timer class down here: ', timer);
         let elapsedTime = Date.now() - otv
-        console.log('elapsedTime: timer class', `${timer?.percentage}%`);
-        console.log("Timer: ntk ", timer)
-        console.log("currentToggle: ntk ", currentToggle)
         let startingTimer;
-        if (timer.currentToggle < 3 && specialKeys?.length === 3) {
-            // timer?.updateValue(dispatch)
-            // dispatch({
-            //     type: Types.UPDATE_SHORTCUT_TIMER,
-            //     payload: {
-            //         elapsedTime: elapsedTime,
-            //         percentage: elapsedTime / 50,
-            //     }
-            // })
-        }
+
         if (elapsedTime > timerLimit || specialKeys?.length < 3) {
             console.countReset("updateTimer")
             if (startingTimer) {
@@ -191,45 +144,22 @@ const SetKeyboardShortcutBackdrop = ({
             handleTimer({ otv: originalTimerValue, original: true, specialKeys, currentToggle })
         }
         if (originalTimerValue && specialKeys?.length < 3) {
-            console.log("clearing timer");
             clearTimer()
         }
-        // if (specialKeys?.length === 3 && !currentTimerValue) {
-        //     // setTimeout(() => {
-        //     handleTimer({ otv: originalTimerValue, original: false, specialKeys, currentToggle })
-        //     // }, 1000);
-        // }
     }, [originalTimerValue, currentTimerValue, specialKeys])
 
-
-    // useEffect(() => {
-    //     console.log("Running handleTimer");
-    //     handleTimer({ ctv: currentTimerValue })
-    // }, [currentTimerValue])
-
-
-
-
     useEffect(() => {
-        // BUG remove this... just reintroduced this to mess with the UI for now.
-        console.log('SpecialKeys: ', SpecialKeys);
-        // SpecialKeys().setSpecialKeys("reset")
-    }, [])
-
-
-    useEffect(() => {
-        console.log('settingKeysBackdrop: ', settingKeysBackdrop);
         setIsOpen(settingKeysBackdrop);
     }, [settingKeysBackdrop])
     const handleBackdropClick = (e) => {
-        if (e.target.id === "set-shortcuts-backdrop") {
-            dispatch({
-                type: Types.TOGGLE_SET_KEYS_BACKDROP,
-                payload: {
-                    settingKeysBackdrop: false
-                }
-            })
-        }
+        console.log("did click backdrop", e)
+        // if (e.target.id === "set-shortcuts-backdrop") {
+        dispatch({
+            type: Types.TOGGLE_SET_KEYS_BACKDROP,
+            payload: {
+                settingKeysBackdrop: false
+            }
+        })
     }
 
     const handleBlur = (e) => {
@@ -470,13 +400,15 @@ const _IconContainer = ({
             settingProgress: {
                 elapsedTime,
                 originalValue: originalTimerValue,
-                percentage
+                percentage,
+                toggle: currentToggle
             },
         }
     }
 }) => {
     const classes = useIconContainerClasses();
     const [showAlternativeKeyIcon, setShowAlternativeKeyIcon] = useState(editBackdropIsOpen)
+    const [_currentActiveKeys, set_currentActiveKeys] = useState(currentActiveKeys)
     const theme = useTheme()
     useEffect(() => {
         if (showAlternativeKeyIcon) {
@@ -488,17 +420,17 @@ const _IconContainer = ({
     }, [showAlternativeKeyIcon])
 
     useEffect(() => {
-        // if (!elapsedTime) {
-        //     gsap.effects.shiftBackwards()
-        // }
-        // if (theme) {
-        //     gsap.effects.secondaryShift({ theme })
-        // }
+        let _tl = animateKeySetting({ currentToggle })
         if (currentActiveKeys.length < 3) {
+            _tl.pause()
             return resetKeySetting()
         }
-        animateKeySetting({ elapsedTime, percentage })
-    }, [elapsedTime, percentage])
+        if (_currentActiveKeys.length === 3 && currentActiveKeys.length === 2) {
+            resetKeyOrientation()
+            resetKeySetting()
+        }
+        set_currentActiveKeys(currentActiveKeys)
+    }, [currentToggle])
 
 
     // useEffect(() => {
@@ -780,7 +712,9 @@ const useLowerIconStyles = makeStyles((theme) => ({
 
 }))
 
-const LowerIcon = ({ sk, controlPressed,
+const LowerIcon = ({
+    sk,
+    controlPressed,
     metaPressed,
     altPressed,
     index,
@@ -935,40 +869,99 @@ class Timer {
     }
 }
 
-const animateKeySetting = ({ }) => {
-
-    gsap.to(`#${keyIconContainerId}-childIcon`, {
-        // y: -100,
-        // background: "#eb6010",
+const animateKeySetting = ({ currentToggle }) => {
+    let _r = Math.floor(currentToggle / 3 * 360)
+    let _colors = [
+        "#227ce6",
+        "#D500F9",
+        "#eb6010",
+        "#76FF03"
+    ]
+    let tl = gsap.timeline()
+    console.log('new timeline scale parseFloat(`1.${currentToggle * 2}`): ', parseFloat(`1.${currentToggle * 2}`), currentToggle);
+    console.log('currentToggle: ', currentToggle);
+    tl.to(`#${keyIconContainerId}-childIcon`, {
+        rotateZ: "360deg",
         color: "#fff",
-        scale: 1.4,
+        scale: parseFloat(`1.${currentToggle * 2}`),
         duration: 0.5,
-        ease: "back.out(1.4)"
+        ease: "back.out(1.9)"
     })
-    gsap.to(`#${keyIconContainerId}`, {
+    tl.to(`#${keyIconContainerId}`, {
         y: -100,
-        background: "#eb6010",
+        background: _colors[currentToggle],
+        rotateZ: `-${_r}deg`,
         color: "#fff",
         border: "2px solid #fff",
-        scale: 1.4,
+        scale: parseFloat(`1.${currentToggle * 2}`),
         duration: 0.5,
-        ease: "back.out(1.4)"
+        ease: "back.out(1.9)"
     })
+    if (currentToggle === 3) {
+        let nS = parseFloat(`1.${currentToggle * 2}`)
+        tl.to(`#${keyIconContainerId}`, {
+            y: -50,
+            x: -50,
+            background: _colors[currentToggle],
+            rotateZ: `-${_r - 15}deg`,
+            color: "#fff",
+            // border: "4px solid #51a1ff",
+            scale: nS * 1.05,
+            duration: 0.35,
+        }, "+=0.2")
+        tl.to(`#${keyIconContainerId}`, {
+            y: 0,
+            x: -100,
+            background: _colors[currentToggle],
+            rotateZ: `-${_r - 30}deg`,
+            color: "#fff",
+            // border: "4px solid #51a1ff",
+            scale: nS * 1.1,
+            duration: 0.35,
+        }, "+=0.2")
+        let ab = document.getElementById("accountIconButton")
+        let ki = document.getElementById(keyIconContainerId)
+        if (ab && ki) {
+            let abL = {
+                x: ki.offsetTop - ab.offsetTop
+            }
+            let cw = window.innerWidth
+            tl.to(`#${keyIconContainerId}`, {
+                background: _colors[currentToggle],
+                rotateZ: "-1080deg",
+                color: "#fff",
+                y: ab.offsetTop - ki.offsetTop,
+                x: ab.offsetLeft - ki.offsetLeft,
+                zIndex: 999999,
+                // border: "4px solid #51a1ff",
+                opacity: 0,
+                scale: 0,
+                duration: 0.75,
+            }, "+=0.2")
+        }
+    }
+    return tl
 }
 
+
 const resetKeySetting = () => {
-    gsap.to(`#${keyIconContainerId}`, {
+    let tl = gsap.timeline()
+    tl.to(`#${keyIconContainerId}`, {
         y: 0,
+        x: 0,
         background: "linear-gradient(145deg, #3d3d3d, #333333)",
         border: "1px solid #424242",
         scale: 1.0,
+        rotateZ: "360deg",
         duration: 0.5,
         ease: "back.out(1.4)"
-    })
-    gsap.to(`#${keyIconContainerId}-childIcon`, {
+    }, 0)
+    tl.to(`#${keyIconContainerId}-childIcon`, {
         color: "#268AFF",
         scale: 1.0,
         duration: 0.5,
+        rotateZ: "360deg",
         ease: "back.out(1.4)"
-    })
+    }, 0)
+    return tl
 }

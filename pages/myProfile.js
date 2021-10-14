@@ -1,19 +1,19 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, forwardRef } from "react";
 import { connect, useDispatch } from "react-redux";
+import { AdjustForDrawerContainer } from "../components/UIComponents";
+import { makeStyles } from "@material-ui/core/styles";
+import clsx from "clsx";
+import ProfileImage from "../components/myProfile/profileImage";
+import MyProfile_primaryInfo from "../components/myProfile/myProfile_primaryInfo";
+import MyProfile_aboutMe from "../components/myProfile/myProfile_aboutMe";
+import { connectDB } from "../util/connectDB";
 import { wrapper } from "../stateManagement/store";
 import Cookies from "cookies";
 import mongoose from "mongoose";
 import User from "../models/User";
-import { AdjustForDrawerContainer } from "../components/UIComponents";
-import { makeStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
-import { connectDB } from "../util/connectDB";
 import * as Types from "../stateManagement/TYPES";
 import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
-import ProfileImage from "../components/myProfile/profileImage";
-import MyProfile_primaryInfo from "../components/myProfile/myProfile_primaryInfo";
-import MyProfile_aboutMe from "../components/myProfile/myProfile_aboutMe";
 
 const useProfileStyles = makeStyles((theme) => ({
   myProfileContainer: {

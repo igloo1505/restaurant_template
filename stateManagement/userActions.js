@@ -375,3 +375,28 @@ export const setKeyboardListener = () => {
   )
   // }
 }
+
+
+export const setNewKeyboardShortcuts = (shortcuts) => async (dispatch) => {
+  // RESUME resume here after listeners are handled appropriately  
+  // console.log(data);
+  // let res = await useAxios({
+  //   method: "post",
+  //   url: "/api/userInteractions/removeRecipeReview",
+  //   data: data,
+  // });
+  // console.log("response", res);
+  // if (res.status === 200) {
+  //   dispatch({
+  //     type: Types.REMOVE_RECIPE_REVIEW_SUCCESS,
+  //     payload: res.data,
+  //   });
+  // }
+  // if (res.status !== 200) {
+  //   console.log("Res.data", res.data);
+  //   dispatch({
+  //     type: Types.REMOVE_RECIPE_REVIEW_FAIL,
+  //     payload: "Error adding profile data",
+  //   });
+  // }
+}

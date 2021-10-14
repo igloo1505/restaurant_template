@@ -54,7 +54,6 @@ const KeyboardShortcutModalDropdown = ({ alert: { keyboardShortcuts: { filteredS
     const classes = useClasses()
     const [dropdownIsOpen, setDropdownIsOpen] = useState(false)
     const [currentHighlightedIndex, setCurrentHighlightedIndex] = useState(selectedItemIndex)
-
     useEffect(() => {
         console.log('router: ', router);
         setCurrentHighlightedIndex(selectedItemIndex)

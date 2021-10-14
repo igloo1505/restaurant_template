@@ -29,8 +29,6 @@ const initialState = {
   },
   settingsModal: {
     isOpen: false,
-    // TODO reset this 
-    // settingKeysBackdrop: true,
     settingKeysBackdrop: false,
   },
   Grocery_navbarMenu: {
@@ -55,6 +53,12 @@ const initialState = {
     isXL: false,
     width: 0,
     height: 0,
+  },
+  notificationBanner: {
+    isOpen: false,
+    delay: 3000,
+    variant: "secondary",
+    message: "",
   },
   leftTab: {
     isOpen: true,
@@ -136,88 +140,6 @@ export default function UIReducer(state = initialState, action) {
         },
       };
 
-    // case Types.TRIGGER_ALERT:
-    //   return {
-    //     ...state,
-    //     leftTab: { ...state.leftTab },
-    //     alert: action.payload,
-    //     accountMenu: { ...state.accountMenu },
-    //   };
-    // case Types.DISPOSE_ALERT:
-    //   return {
-    //     ...state,
-    //     modal: { ...state.modal },
-    //     leftTab: { ...state.leftTab },
-    //     alert: initialState.alert,
-    //     accountMenu: { ...state.accountMenu },
-    //   };
-    // case Types.SET_MODAL_INSTANCE:
-    //   return {
-    //     ...state,
-    //     modal: {
-    //       ...state.modal,
-    //       instance: action.payload,
-    //       wasDismissed: false,
-    //       wasAccepted: false,
-    //     },
-    //     alert: { ...state.alert },
-    //     leftTab: { ...state.leftTab },
-    //     accountMenu: { ...state.accountMenu },
-    //   };
-    // case Types.MODAL_DISMISSED:
-    //   return {
-    //     ...state,
-    //     modal: {
-    //       ...state.modal,
-    //       isOpen: false,
-    //       wasDismissed: true,
-    //       wasAccepted: false,
-    //     },
-    //     alert: { ...state.alert },
-    //     leftTab: { ...state.leftTab },
-    //     accountMenu: { ...state.accountMenu },
-    //   };
-    // case Types.MODAL_CONFIRMED:
-    //   return {
-    //     ...state,
-    //     modal: {
-    //       ...state.modal,
-    //       isOpen: false,
-    //       wasDismissed: false,
-    //       wasAccepted: true,
-    //     },
-    //     alert: { ...state.alert },
-    //     leftTab: { ...state.leftTab },
-    //     accountMenu: { ...state.accountMenu },
-    //   };
-
-    // case Types.UPDATE_USER_INFO:
-    //   return {
-    //     ...state,
-    //     modal: { ...state.modal },
-    //     letTab: { ...state.leftTab },
-    //     alert: {
-    //       alertText: "User was updated successfully",
-    //       alertType: "success",
-    //       isOpen: true,
-    //     },
-    //     isEditing: !state.isEditing,
-    //     accountMenu: { ...state.accountMenu },
-    //   };
-    // case Types.EDIT_MENU_ITEM:
-    //   return {
-    //     ...state,
-    //     modal: { ...state.modal },
-    //     letTab: { ...state.leftTab },
-    //     alert: {
-    //       alertText: "Recipe was updated successfully",
-    //       alertType: "success",
-    //       isOpen: true,
-    //     },
-    //     isEditing: !state.isEditing,
-    //     accountMenu: { ...state.accountMenu },
-    //   };
-    // !! DO NOT DELETE BELOW.
     case Types.AUTHENTICATION_ERROR:
       return {
         ...state,
@@ -436,8 +358,16 @@ export default function UIReducer(state = initialState, action) {
         }
       }
     }
-    case Types.TOGGLE_SET_KEYS_BACKDROP:
-    case Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS: {
+    // case Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS: {
+    //   return {
+    //     ...state,
+    //     settingsModal: {
+    //       ...state.settingsModal,
+    //       settingKeysBackdrop: false,
+    //     }
+    //   }
+    // }
+    case Types.TOGGLE_SET_KEYS_BACKDROP: {
       return {
         ...state,
         settingsModal: {
@@ -445,6 +375,23 @@ export default function UIReducer(state = initialState, action) {
           settingKeysBackdrop: !state.settingsModal.settingKeysBackdrop,
           ...(action?.payload?.settingKeysBackdrop && { settingKeysBackdrop: action.payload.settingKeysBackdrop }),
           ...(action?.payload === "hide" && { settingKeysBackdrop: false })
+        }
+      }
+    }
+    case Types.SET_NEW_CURRENT_SHORTCUTS: {
+      return {
+        ...state,
+        notificationBanner: {
+          ...state.notificationBanner,
+          ...action?.payload?.banner
+        },
+      }
+    }
+    case Types.HIDE_TOP_NOTIFICATION_BAR: {
+      return {
+        ...state,
+        notificationBanner: {
+          ...initialState.notificationBanner,
         }
       }
     }

@@ -1,6 +1,10 @@
+
 import * as KeyIcons from "../components/modalsAndAlerts/KeyIcons"
 import store from "../stateManagement/store"
 import * as Types from "../stateManagement/TYPES"
+import { skEnum } from "../stateManagement/userReducer"
+
+
 
 import { List } from '@material-ui/core';
 
@@ -131,10 +135,7 @@ class SpecialKeysClass {
             //     setSpecialKeys(newKey)
             // }
             this.setSpecialKeys = function (event) {
-                console.log('event sending to getNewCurrentKeys: ', event);
-                if (!event) {
-                    console.trace("this.setSpecialKeys: ")
-                }
+                
                 let newActiveKeys = getNewCurrentKeys({ event, state: this?.state })
                 store.dispatch({
                     type: Types.SET_CURRENT_ACTIVE_KEYS,
@@ -149,80 +150,15 @@ export const SpecialKeys = (_localState) => {
     return new SpecialKeysClass(_localState)
 }
 
-
-// export const SpecialKeys = (_localState) => {
-//     let state = store.getState();
-
-//     return {
-//         "Shift": {
-//             pressed: state?.user?.userSettings?.skListeners?.shiftPressed,
-//             setPressed: (newValue, event) => {
-//                 store.dispatch({
-//                     type: Types.SET_LISTENER_KEY,
-//                     payload: { shiftKey: newValue }
-//                 })
-//                 this.setSpecialKeys(event)
-//             }
-//         },
-//         "Alt": {
-//             pressed: state?.user?.userSettings?.skListeners?.altPressed,
-//             setPressed: (newValue, event) => {
-//                 store.dispatch({
-//                     type: Types.SET_LISTENER_KEY,
-//                     payload: { altKey: newValue }
-//                 })
-//                 this.setSpecialKeys(event)
-//             }
-//         },
-//         "Meta": {
-//             pressed: state?.user?.userSettings?.skListeners?.metaPressed,
-//             setPressed: (newValue, event) => {
-//                 store.dispatch({
-//                     type: Types.SET_LISTENER_KEY,
-//                     payload: { metaKey: newValue }
-//                 })
-//                 this.setSpecialKeys(event)
-//             }
-//         },
-//         "Control": {
-//             pressed: state?.user?.userSettings?.skListeners?.controlPressed,
-//             setPressed: (newValue, event) => {
-//                 store.dispatch({
-//                     type: Types.SET_LISTENER_KEY,
-//                     payload: { ctrlKey: newValue }
-//                 })
-//                 this.setSpecialKeys(event)
-//             }
-//         },
-//         // setSpecialKeys: (newKey) => {
-//         //     setSpecialKeys(newKey)
-//         // }
-//         setSpecialKeys: (event) => {
-//             let newActiveKeys = getNewCurrentKeys({ event, state })
-//             console.log('newActiveKeys up here: ', newActiveKeys);
-//             store.dispatch({
-//                 type: Types.SET_CURRENT_ACTIVE_KEYS,
-//                 payload: newActiveKeys,
-//             })
-//         }
-//     }
-// }
-
-
 export const settingKeysKeydown = (e) => {
     let state = store.getState();
-    console.log('state: p-b', state);
+
     const bypassKeys = ["Escape", "Tab", "Enter", "Control", "Alt"]
-    console.log('bypassKeys.includes(e.key): event in keydown ', bypassKeys.includes(e.key));
+    
     if (!bypassKeys.includes(e.key)) {
         e.preventDefault()
         e.stopPropagation()
     }
-    // if (e.altKey) {
-    //     console.log("event in keydown should cancel")
-    //     e.preventDefault()
-    //     e.stopPropagation()
-    // }
     if (e.repeat) {
         return
     };
@@ -261,6 +197,31 @@ export const settingKeysKeyup = (e) => {
 
 
 
+const mainShortcutModalListener = (e) => {
+    let state = store.getState();
+    if(e.repeat){
+        return
+    }
+    let csk = state?.user?.userSettings?.keyboardShortcuts
+    if(csk){
+
+        let fs = csk.filter((sk) => Boolean(sk.booleanCheck)).every((sk) => Boolean(e[sk.booleanCheck]))
+        let nfs = csk.filter((sk) => !sk.booleanCheck)[0]
+        if (fs && e.key === nfs.key) {
+            console.log('e: cnt', e);
+            store.dispatch({
+                type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
+                payload: { 
+                    nfs, 
+                    fromHere: true, 
+                    event: {...e}   
+                }
+            })
+        }
+    }
+    
+}
+
 
 
 
@@ -269,7 +230,7 @@ export const getNewCurrentKeys = ({ event, reset, state, metaKeys, ...rest }) =>
     if (reset) {
         return []
     }
-    console.log('getNewCurrentKeys state, metaKeys, ...rest: gnk', state, metaKeys, rest);
+    
     let isSpecialKey = Object.keys(_specialKeys).includes(event?.key)
     let currentKeys = state?.user?.userSettings?.currentActiveKeys || []
     const newKey = new ShortcutKey({
@@ -284,24 +245,18 @@ export const getNewCurrentKeys = ({ event, reset, state, metaKeys, ...rest }) =>
             rKeys = [...currentKeys?.filter((ck) => ck.isSpecialKey), newKey]
         }
         if (newKey.isSpecialKey) {
-            console.log('currentKeys: gnk', currentKeys);
+            
             let nsk = currentKeys?.filter((ck) => !ck?.isSpecialKey)?.[0]
             nsk && rKeys.push(nsk)
             if (currentKeys?.filter(ck => ck?.isSpecialKey).length <= 1) {
                 let osk = currentKeys?.find(ck => ck?.isSpecialKey)
                 osk && rKeys.push(osk)
-                console.log('osk: gnk ', rKeys);
+                
             }
         }
         return rKeys
     }
-    if (event.type === "keyup") {
-        // TODO ADD CHECK HERE TO CLEAR CURRENT KEY IF LAST KEY LIFTED IS A METAKEY
-        // BUG ADD CHECK HERE TO CLEAR CURRENT KEY IF LAST KEY LIFTED IS A METAKEY
-        console.log("handling key up gnk", currentKeys?.filter((sk) => sk?.keyCode !== event.keyCode))
-        console.log("key up gnk", event.keyCode);
-        currentKeys?.map((sk) => console.log("key up sk gnk", sk.keyCode))
-        console.log("key up gnk", event.keyCode);
+    if (event.type === "keyup") {        
         return currentKeys?.filter((sk) => sk?.keyCode !== event.keyCode)
     }
     return currentKeys
@@ -322,11 +277,11 @@ export const clearListeners = () => {
 
 
 // const handleKeyDown = (e) => {
-//     console.log('handleKeyDown: ', handleKeyDown);
+//     
 // }
 
 // const handleKeyUp = (e) => {
-//     console.log('handleKeyUp: ', handleKeyUp);
+//     
 // }
 
 // TODO add filter to remove cntrl key press but still push to state to avoid weird characters like ∂ 
@@ -334,16 +289,14 @@ const Listeners = {
     settingKeyDownListener: (e) => {
         e.preventDefault()
         e.stopPropagation()
-        console.log('event in keydown listener: ', e);
+        
         if (SpecialKeys(localState)?.[e.key]) {
             SpecialKeys(localState)?.[e.key]?.setPressed(true, e)
         }
         let localState = store.getState();
-        console.log('localState: p-b', localState);
+        
         const bypassKeys = ["Escape", "Tab", "Enter"]
-
         if (!bypassKeys.includes(e.key)) {
-            console.log("Souuld be canceling special keys in event in keydown")
             e.preventDefault()
             e.stopPropagation()
         }
@@ -351,16 +304,9 @@ const Listeners = {
             return
         };
         if (e.altKey) {
-            console.log("altKey event in keydown should cancel")
             e.preventDefault()
             e.stopPropagation()
         }
-        // if (e.metaKey) {
-        //     console.log("metaKey event in keydown should cancel")
-        //     e.preventDefault()
-        //     e.stopPropagation()
-        // }
-        // if (!e.altKey && !e.metaKey) {
         if (!e.altKey) {
             if (!SpecialKeys(localState)[e.key]) {
                 if (disallowKeys.includes(e.key) || e.key === "" || e.key.length > 1) {
@@ -377,7 +323,7 @@ const Listeners = {
         }
     },
     settingKeyUpListener: (e) => {
-        console.log('event in keyup listener: ', e);
+        
         let localState = store.getState();
         // e.preventDefault()
         if (e.repeat) {
@@ -392,30 +338,114 @@ const Listeners = {
             })
         }
         SpecialKeys(localState).setSpecialKeys(e)
+    },
+    hasOwnKeyUpListener: (e) => {
+        
+    },
+    hasOwnKeyDownListener: (e) => {
+        
     }
 }
 
+
+const clearKeyListeners = (state) => {
+    let newSkString = state?.user?.userSettings?.skString
+    if (newSkString && typeof window !== "undefined") {
+        console.log('window.CURRENT_LISTENERS: up here', window.CURRENT_LISTENERS);
+        Object.keys(Listeners).map((l) => {
+            let r = new RegExp("keydown", "gi")
+            let type = r.test(l) ? "keydown" : "keyup"
+            let controllers = window.CURRENT_LISTENERS
+            console.log("CURRENT_LISTENERS controllers cnt", controllers, typeof controllers)
+            if(controllers){
+                // Object.keys(controllers).map((c) => controllers[c].abort())
+    
+                Object.keys(controllers).forEach((c) => {
+                    let cnt = controllers[c]
+                    cnt?.controller?.abort()
+                    window.removeEventListener(cnt.type, cnt.listener)                    
+                    delete window.CURRENT_LISTENERS[cnt]
+                    console.log('cnt: ', cnt);
+                    console.log('cnt: ', cnt);
+                    console.log('cnt: ', JSON.stringify(cnt));
+                    // cnt?.controller?.abort()
+                })
+            }
+            console.log("CURRENT_LISTENERS controllers DOWN HERE", window.CURRENT_LISTENERS)
+            window.removeEventListener(type, Listeners[l])
+        })
+        window.CURRENT_LISTENERS = {}
+        console.log('window.CURRENT_LISTENERS: ', window.CURRENT_LISTENERS);
+
+    }
+}
+
+
 export const handleEventListeners = () => {
     let state = store.getState();
-    console.log('state: ', state);
-    if (typeof window !== undefined) {
-        if (state?.user?.userSettings?.allowKeyboardShortcuts) {
-            document.addEventListener("keydown", (e) => {
-                console.log("Logging this: ", e)
-
+    const handleStoreUpdate = () => {
+        let localState = store.getState();
+        let newSkString = localState?.user?.userSettings?.skString
+        let oldSkString = state?.user?.userSettings?.skString
+        state.user.userSettings.skString = newSkString
+        if (newSkString && (newSkString !== oldSkString || newSkString === "setting")) {
+            clearKeyListeners(state)
+            Object.keys(Listeners).map((l) => {
+                let r = new RegExp("keydown", "gi")
+                let type = r.test(l) ? "keydown" : "keyup"
+                let controller = new AbortController()
+                console.log('newSkString: window.current_listeners', newSkString);
+                let _listener = Listeners[`${newSkString}KeyDownListener`]
+                
+                console.log('Window.c newSkString: ', newSkString);
+                debugger
+                if(_listener){
+                    window.addEventListener(type, _listener, {
+                        signal: controller.signal
+                    })
+                    window.CURRENT_LISTENERS = {
+                        ...window?.CURRENT_LISTENERS,
+                        [l]: {
+                            type,
+                            controller,
+                            listener: _listener
+                        }
+                    }
+                }
+                
             })
         }
-
+    }
+    let unSubscribe = store.subscribe(handleStoreUpdate)
+    
+    if (typeof window !== undefined) {
+        let csk = state?.user?.userSettings?.keyboardShortcuts
+        if (state?.user?.userSettings?.allowKeyboardShortcuts && csk && csk?.filter((sk) => Boolean(sk?.booleanCheck)).length >= 2) {
+            clearKeyListeners(state)
+            let controller = new AbortController()
+            window.CURRENT_LISTENERS = {
+                ...window?.CURRENT_LISTENERS,
+                [mainShortcutModalListener]: {
+                    type: "keydown",
+                    controller: controller.signal,
+                    listener: mainShortcutModalListener
+                }
+            }
+            window.addEventListener("keydown", mainShortcutModalListener, )           
+        }
         if (state?.UI?.settingsModal?.settingKeysBackdrop) {
-            console.log('window: ', window.location);
-            window.addEventListener("keydown", Listeners[`${state?.user?.userSettings?.skString}KeyDownListener`]);
-            window.addEventListener("keyup", Listeners[`${state?.user?.userSettings?.skString}KeyUpListener`]);
+            // window.addEventListener("keydown", Listeners[`${state?.user?.userSettings?.skString}KeyDownListener`]);
+            // window.addEventListener("keyup", Listeners[`${state?.user?.userSettings?.skString}KeyUpListener`]);
         }
     }
 
-    if (!state?.user?.userSettings?.allowKeyboardShortcuts || !state?.UI?.settingsModal?.settingKeysBackdrop) {
+    if (!state?.user?.userSettings?.allowKeyboardShortcuts || !state?.UI?.settingsModal?.settingKeysBackdrop && state?.user?.userSettings?.skString === "setting") {
         let x = window.removeEventListener("keydown", Listeners[`${state?.user?.userSettings?.skString}KeyDownListener`]);
-        console.log("Removing listeners, gnk", x)
-        window.removeEventListener("keyup", Listeners[`${state?.user?.userSettings?.skString}KeyUpListener`]);
+        let controller = window.localStorage.getItem(`${state?.user?.userSettings?.skString}KeyDownListener`)
+        if(controller) {
+            // Remove this or change the way this is handled once you figure out where the listerner is being set
+            clearKeyListeners(state)
+        }
+        // window.removeEventListener("keyup", Listeners[`${state?.user?.userSettings?.skString}KeyUpListener`]);
     }
 }

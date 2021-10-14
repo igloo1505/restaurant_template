@@ -508,6 +508,7 @@ const modalReducer = createReducer(initialState, (builder) => {
       }
     }
   });
+
   builder.addCase(Types.SET_SHORTCUT_MODAL_SEARCH_VALUE, (state, action) => {
     return {
       ...state,

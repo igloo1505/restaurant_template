@@ -208,7 +208,6 @@ const ShortcutIcons = ({ userSettings, classes, settingKeysBackdrop, allowShortc
 
 
     const showSetKeysBackdrop = (e) => {
-
         dispatch({
             type: Types.TOGGLE_SET_KEYS_BACKDROP,
             payload: {

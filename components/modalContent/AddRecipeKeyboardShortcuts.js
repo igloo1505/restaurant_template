@@ -495,6 +495,7 @@ const ModalSearchField = ({ selectedItemIndex, filteredShortcutArray, setSelecte
             currentState: _state,
             currentPath: router.pathname
         })
+        console.log("newShortcutArray", newShortcutArray);
         dispatch({
             type: Types.FILTER_KEYBOARD_SHORTCUTS,
             payload: newShortcutArray
