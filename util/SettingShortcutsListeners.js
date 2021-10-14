@@ -137,6 +137,7 @@ class SpecialKeysClass {
             this.setSpecialKeys = function (event) {
                 
                 let newActiveKeys = getNewCurrentKeys({ event, state: this?.state })
+                console.log('newActiveKeys: coming from setSpecialKeys', newActiveKeys);
                 store.dispatch({
                     type: Types.SET_CURRENT_ACTIVE_KEYS,
                     payload: {
@@ -171,6 +172,7 @@ export const settingKeysKeydown = (e) => {
             return;
         }
         let newSpecialKeys = getNewCurrentKeys({ event: e, state })
+        console.log('newActiveKeys: coming from 175', newSpecialKeys);
         store.dispatch({
             type: Types.SET_CURRENT_ACTIVE_KEYS,
             payload: {
@@ -198,7 +200,7 @@ export const settingKeysKeyup = (e) => {
 
 
 const mainShortcutModalListener = (e) => {
-    
+    console.log("Coming from listener mainShortcutModalListener")
     let state = store.getState();
     if(e.repeat){
         return
@@ -285,6 +287,8 @@ export const clearListeners = () => {
 // TODO add filter to remove cntrl key press but still push to state to avoid weird characters like ∂ 
 const Listeners = {
     settingKeyDownListener: (e) => {
+        console.log('Coming from listener settingKeyDownListener: settingKeyDownListener');
+        
         e.preventDefault()
         e.stopPropagation()
         
@@ -311,22 +315,29 @@ const Listeners = {
                     return;
                 }
                 let newSpecialKeys = getNewCurrentKeys({ event: e, state: localState })
+                console.log('newActiveKeys: coming from setSpecialKeys', newSpecialKeys);
                 store.dispatch({
                     type: Types.SET_CURRENT_ACTIVE_KEYS,
                     payload: {
                         currentActiveKeys: newSpecialKeys
                     }
                 })
+                
+                let skKey = localState?.user?.userSettings?.skString
+                if(skKey){
+                    updateEventListeners(skKey)       
+                }
             }
         }
     },
     settingKeyUpListener: (e) => {
+        console.log('Coming from listener settingKeyUpListener');
         
         let localState = store.getState();
         // e.preventDefault()
         if (e.repeat) {
             return
-        };
+        }
         if (SpecialKeys()[e.key]) {
             SpecialKeys()[e.key].setPressed(false, e)
         }
@@ -338,9 +349,13 @@ const Listeners = {
         SpecialKeys(localState).setSpecialKeys(e)
     },
     hasOwnKeyUpListener: (e) => {
+        mainShortcutModalListener(e)
+        console.log('Coming from listener hasOwnKeyUpListener');
         
     },
     hasOwnKeyDownListener: (e) => {
+        mainShortcutModalListener(e)
+        console.log('Coming from listener hasOwnKeyDownListener');
         
     }
 }

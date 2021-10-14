@@ -183,6 +183,7 @@ export default function userReducer(state = initialState, action) {
           ...state.userSettings,
           currentActiveKeys: action.payload?.currentActiveKeys,
           ...(timerData && { settingProgress: { ...timerData } }),
+          ...(action.payload.currentActiveKeys.length < 3 && {timerData: { ...initialState.userSettings.settingProgress }})
           // ...(action.payload?.currentActiveKeys.length < 3 && { settingProgress: { ...initialState.userSettings.settingProgress } })
         },
       };
@@ -255,8 +256,16 @@ export default function userReducer(state = initialState, action) {
           skString: skEnum[1],
           keyboardShortcuts: [
             ...state.userSettings.currentActiveKeys
-          ]
-        }
+          ],
+          allowKeyboardShortcuts: true,
+          settingProgress: {
+            ...initialState.userSettings.settingProgress,
+          },
+          currentActiveKeys: [...initialState.userSettings.currentActiveKeys],
+          skListeners: {
+            ...initialState.userSettings.skListeners
+          }        
+        },
       };
     default:
       return state;

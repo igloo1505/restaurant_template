@@ -30,6 +30,7 @@ const initialState = {
   settingsModal: {
     isOpen: false,
     settingKeysBackdrop: false,
+    _startBackdropHide: 0
   },
   Grocery_navbarMenu: {
     el: null,
@@ -387,8 +388,9 @@ export default function UIReducer(state = initialState, action) {
         },
         settingsModal: {
           ...state.settingsModal,
-          _startBackdropHide: true,
-        }
+          _startBackdropHide: state.settingsModal._startBackdropHide + 1,
+        },
+
       }
     }
     case Types.HIDE_TOP_NOTIFICATION_BAR: {

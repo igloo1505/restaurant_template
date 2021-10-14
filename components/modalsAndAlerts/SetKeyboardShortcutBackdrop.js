@@ -73,6 +73,7 @@ const SetKeyboardShortcutBackdrop = ({
                 originalValue: originalTimerValue,
                 toggle: currentToggle
             },
+            skString
         }
     },
     props
@@ -84,9 +85,10 @@ const SetKeyboardShortcutBackdrop = ({
     
 
     useEffect(() => {
-        if(_startBackdropHide){
+        if(_startBackdropHide > 0){
             setIsOpen(false)
             setTimeout(() => {
+                debugger
                 dispatch({
                     type: Types.TOGGLE_SET_KEYS_BACKDROP,
                     payload: {
@@ -163,6 +165,9 @@ const SetKeyboardShortcutBackdrop = ({
         setIsOpen(settingKeysBackdrop);
         if (settingKeysBackdrop) {
             updateEventListeners("setting")
+        }
+        else {
+            updateEventListeners(skString)
         }
         
     }, [settingKeysBackdrop])

@@ -207,6 +207,7 @@ const UserNoImage = ({ userId }) => {
 // }
 
 const animateCircularImageHover = (e, theme) => {
+  let rotateRate = 0.022
   let rec = document.getElementById(imageContainerId).getBoundingClientRect()
   let em = {
     x: rec.left,
@@ -235,8 +236,15 @@ const animateCircularImageHover = (e, theme) => {
     bos: 14
   }
 
+  
+
   gsap.to(`#${imageContainerId}`, {
     boxShadow: `${_nbs.fx}px ${_nbs.fy}px ${_nbs.fos}px ${theme.palette.grey[500]}, ${_nbs.bx}px ${_nbs.by}px ${_nbs.bos}px ${theme.palette.grey[400]}`,
+    x: `${pX * rotateRate}%`,
+    y: `${pY * rotateRate}%`,
+    rotateX: `${Math.floor(pX * rotateRate * 360)}deg`,
+    rotateY: `${Math.floor(pY * rotateRate * 360)}deg`,
+    perspective: `${_r * 2}px`,
     duration: 0.35,
     ease: "back.out(2.0)"
   })
@@ -245,6 +253,8 @@ const animateCircularImageHover = (e, theme) => {
 const animateMouseLeave = (theme) => {
   gsap.to(`#${imageContainerId}`, {
     boxShadow: `${bShadow.fx}px ${bShadow.fy}px ${bShadow.fos}px ${theme.palette.grey[500]}, ${bShadow.bx}px ${bShadow.by}px ${bShadow.bos}px ${theme.palette.grey[400]}`,
+    rotateX: 0,
+    rotateY: 0,
     duration: 2.5,
     ease: "elastic.out(1.2, 0.2)"
   })
