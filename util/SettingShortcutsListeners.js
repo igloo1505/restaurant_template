@@ -202,6 +202,9 @@ export const settingKeysKeyup = (e) => {
 const mainShortcutModalListener = (e) => {
     console.log("Coming from listener mainShortcutModalListener")
     let state = store.getState();
+    if(!state?.user?.userSettings?.allowKeyboardShortcuts){
+        return
+    }
     if(e.repeat){
         return
     }
@@ -296,6 +299,9 @@ const Listeners = {
             SpecialKeys(localState)?.[e.key]?.setPressed(true, e)
         }
         let localState = store.getState();
+        if(!localState?.user?.userSettings?.allowKeyboardShortcuts){
+            return
+        }
         
         const bypassKeys = ["Escape", "Tab", "Enter"]
         if (!bypassKeys.includes(e.key)) {
@@ -334,6 +340,10 @@ const Listeners = {
         console.log('Coming from listener settingKeyUpListener');
         
         let localState = store.getState();
+        
+        if(!localState?.user?.userSettings?.allowKeyboardShortcuts){
+            return
+        }
         // e.preventDefault()
         if (e.repeat) {
             return
@@ -349,11 +359,19 @@ const Listeners = {
         SpecialKeys(localState).setSpecialKeys(e)
     },
     hasOwnKeyUpListener: (e) => {
+        let localState = store.getState()
+        if(!localState?.user?.userSettings?.allowKeyboardShortcuts){
+            return
+        }
         mainShortcutModalListener(e)
         console.log('Coming from listener hasOwnKeyUpListener');
         
     },
     hasOwnKeyDownListener: (e) => {
+        let localState = store.getState()
+        if(!localState?.user?.userSettings?.allowKeyboardShortcuts){
+            return
+        }
         mainShortcutModalListener(e)
         console.log('Coming from listener hasOwnKeyDownListener');
         

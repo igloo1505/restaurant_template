@@ -267,6 +267,18 @@ export default function userReducer(state = initialState, action) {
           }        
         },
       };
+
+
+
+    case Types.TOGGLE_ALLOW_SHORTCUTS:
+      return {
+        ...state,
+        userSettings: {
+          ...state.userSettings,
+          allowKeyboardShortcuts: !state.userSettings.allowKeyboardShortcuts,
+          
+        },
+      };
     default:
       return state;
   }

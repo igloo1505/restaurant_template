@@ -88,7 +88,6 @@ const SetKeyboardShortcutBackdrop = ({
         if(_startBackdropHide > 0){
             setIsOpen(false)
             setTimeout(() => {
-                debugger
                 dispatch({
                     type: Types.TOGGLE_SET_KEYS_BACKDROP,
                     payload: {

@@ -84,42 +84,24 @@ const useClasses = makeStyles((theme) => ({
 
 const SettingsModal = ({
     settingsModal: { isOpen, settingKeysBackdrop },
+    user: {
+            userSettings: {
+                allowKeyboardShortcuts,
+                allowNotifications,
+                allowRecipeReviews,
+                skString,
+                settingProgress,
+                keyboardShortcuts,
+                currentActiveKeys,
+                skListeners,        
+        },
+        },
     props
 }) => {
     const router = useRouter()
     const classes = useClasses()
     const dispatch = useDispatch()
-    const [userSettings, setUserSettings] = useState({
-        isDarkMode: false,
-        allowKeyboardShortcuts: false,
-        currentShortcuts: [
-            {
-                key: "Shift",
-                code: "ShiftLeft",
-                keyCode: 16,
-            },
-            {
-                key: "Meta",
-                code: "MetaLeft",
-                keyCode: 91,
-            },
-            {
-                key: "i",
-                code: "KeyI",
-                keyCode: 73,
-            },
-            // {
-            //     key: "Control",
-            //     code: "ControlLeft",
-            //     keyCode: 17,
-            // },
-            // {
-            //     key: "Alt",
-            //     code: "AltLeft",
-            //     keyCode: 18,
-            // },
-        ]
-    })
+    
     const handleClose = () => {
         dispatch({
             type: Types.TOGGLE_SETTINGS_MODAL,
@@ -129,10 +111,9 @@ const SettingsModal = ({
         })
     }
 
-    const handleToggle = (_field) => {
-        setUserSettings({
-            ...userSettings,
-            [_field]: !userSettings[_field]
+    const handleToggle = () => {
+        dispatch({
+            type: Types.TOGGLE_ALLOW_SHORTCUTS
         })
     }
 
@@ -160,17 +141,18 @@ const SettingsModal = ({
                     <FormControlLabel
                         control={
                             <Switch
-                                checked={userSettings.allowKeyboardShortcuts}
-                                onChange={() => handleToggle("allowKeyboardShortcuts")}
+                                checked={allowKeyboardShortcuts}
+                                onChange={handleToggle}
                                 name="allowKeyboardShortcuts"
                             />
                         }
                         label="Keyboard Shortcuts"
                     />
                     {
-                        userSettings.allowKeyboardShortcuts && <ShortcutIcons
-                            userSettings={userSettings}
-                            allowShortcuts={userSettings.allowKeyboardShortcuts}
+                        allowKeyboardShortcuts && <ShortcutIcons
+                            currentActiveKeys={currentActiveKeys}
+                            keyboardShortcuts={keyboardShortcuts}
+                            allowShortcuts={allowKeyboardShortcuts}
                             classes={classes}
                             settingKeysBackdrop={settingKeysBackdrop}
                         />
@@ -185,13 +167,14 @@ const SettingsModal = ({
 const mapStateToProps = (state, props) => ({
     alert: state.alert,
     settingsModal: state.UI.settingsModal,
+    user: state.user,
     props: props
 });
 
 export default connect(mapStateToProps)(SettingsModal)
 
 
-const ShortcutIcons = ({ userSettings, classes, settingKeysBackdrop, allowShortcuts }) => {
+const ShortcutIcons = ({ currentActiveKeys, keyboardShortcuts, classes, settingKeysBackdrop, allowShortcuts }) => {
     const [allow, setAllow] = useState(allowShortcuts)
     const dispatch = useDispatch()
     useEffect(() => {
@@ -222,7 +205,7 @@ const ShortcutIcons = ({ userSettings, classes, settingKeysBackdrop, allowShortc
     return (
         <div className={classes.shortcutsContainer}>
             <Divider />
-            {userSettings.currentShortcuts.map((shortcut, index) => {
+            {keyboardShortcuts && keyboardShortcuts.map((shortcut, index) => {
                 let ThisIcon = iconMap[shortcut.key]
                 return ThisIcon ? <ThisIcon keyData={shortcut} showSetKeysBackdrop={showSetKeysBackdrop} /> : <KeyIcons.KeyIcon keyData={shortcut} showSetKeysBackdrop={showSetKeysBackdrop} />
             })}
