@@ -238,6 +238,15 @@ export default function userReducer(state = initialState, action) {
           }
         }
       };
+    case Types.SET_SK_STRING: 
+      return {
+        ...state,
+        userSettings: {
+          ...state.userSettings,
+          skString: action.payload
+        }
+      };
+    
     case Types.SET_NEW_CURRENT_SHORTCUTS:
       return {
         ...state,

@@ -198,6 +198,7 @@ export const settingKeysKeyup = (e) => {
 
 
 const mainShortcutModalListener = (e) => {
+    
     let state = store.getState();
     if(e.repeat){
         return
@@ -212,14 +213,11 @@ const mainShortcutModalListener = (e) => {
             store.dispatch({
                 type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
                 payload: { 
-                    nfs, 
-                    fromHere: true, 
-                    event: {...e}   
+                    nfs
                 }
             })
         }
     }
-    
 }
 
 
@@ -362,6 +360,8 @@ const clearKeyListeners = (state) => {
     
                 Object.keys(controllers).forEach((c) => {
                     let cnt = controllers[c]
+                    // debugger
+                    console.log('cnt: ', cnt);
                     cnt?.controller?.abort()
                     window.removeEventListener(cnt.type, cnt.listener)                    
                     delete window.CURRENT_LISTENERS[cnt]
@@ -381,6 +381,56 @@ const clearKeyListeners = (state) => {
 }
 
 
+
+export const updateEventListeners = (key, _type) => {
+    let state = store.getState()
+    // if(key){
+    //     store.dispatch({
+    //         type: Types.SET_SK_STRING,
+    //         payload: key
+    //     })
+    // }
+    // let skString = state?.user?.userSettings?.skString
+    clearKeyListeners(state)
+    if(typeof window !== "undefined"){
+        let _l = Listeners[`${key}KeyDownListener`]
+        let _lu = Listeners[`${key}KeyUpListener`]
+        if (_l) {
+            let controller = new AbortController()
+    
+            window.addEventListener("keydown", _l, {
+                signal: controller.signal
+            })
+            window.CURRENT_LISTENERS  = {
+                ...window.CURRENT_LISTENERS,
+                settingKeyDownListener: {
+                    type: "keydown",
+                    listener: _l,
+                    controller: controller,
+                },
+                }
+            }
+        if (_lu) {
+            let controller = new AbortController()
+            let type = "keyup"
+            window.addEventListener(type, _lu, {
+                signal: controller.signal
+            })
+            window.CURRENT_LuISTENERS  = {
+                ...window.CURRENT_LISTENERS,
+                settingKeyDownListeneru: {
+                    type: "keyup",
+                    listener: _lu,
+                    controller: controller,
+                },
+                }
+            }
+            
+        }
+}
+
+
+
 export const handleEventListeners = () => {
     let state = store.getState();
     const handleStoreUpdate = () => {
@@ -396,9 +446,8 @@ export const handleEventListeners = () => {
                 let controller = new AbortController()
                 console.log('newSkString: window.current_listeners', newSkString);
                 let _listener = Listeners[`${newSkString}KeyDownListener`]
-                
                 console.log('Window.c newSkString: ', newSkString);
-                debugger
+                // debugger
                 if(_listener){
                     window.addEventListener(type, _listener, {
                         signal: controller.signal
@@ -425,13 +474,15 @@ export const handleEventListeners = () => {
             let controller = new AbortController()
             window.CURRENT_LISTENERS = {
                 ...window?.CURRENT_LISTENERS,
-                [mainShortcutModalListener]: {
+                mainShortcutModalListener: {
                     type: "keydown",
-                    controller: controller.signal,
+                    controller: controller,
                     listener: mainShortcutModalListener
                 }
             }
-            window.addEventListener("keydown", mainShortcutModalListener, )           
+            window.addEventListener("keydown", mainShortcutModalListener, {
+                signal: controller.signal
+            })           
         }
         if (state?.UI?.settingsModal?.settingKeysBackdrop) {
             // window.addEventListener("keydown", Listeners[`${state?.user?.userSettings?.skString}KeyDownListener`]);
@@ -440,12 +491,12 @@ export const handleEventListeners = () => {
     }
 
     if (!state?.user?.userSettings?.allowKeyboardShortcuts || !state?.UI?.settingsModal?.settingKeysBackdrop && state?.user?.userSettings?.skString === "setting") {
-        let x = window.removeEventListener("keydown", Listeners[`${state?.user?.userSettings?.skString}KeyDownListener`]);
-        let controller = window.localStorage.getItem(`${state?.user?.userSettings?.skString}KeyDownListener`)
-        if(controller) {
-            // Remove this or change the way this is handled once you figure out where the listerner is being set
-            clearKeyListeners(state)
-        }
+        // let x = window.removeEventListener("keydown", Listeners[`${state?.user?.userSettings?.skString}KeyDownListener`]);
+        // let controller = window.localStorage.getItem(`${state?.user?.userSettings?.skString}KeyDownListener`)
+        // if(controller) {
+        //     // Remove this or change the way this is handled once you figure out where the listerner is being set
+        //     clearKeyListeners(state)
+        // }
         // window.removeEventListener("keyup", Listeners[`${state?.user?.userSettings?.skString}KeyUpListener`]);
     }
 }

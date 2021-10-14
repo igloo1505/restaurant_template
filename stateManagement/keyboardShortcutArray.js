@@ -1,6 +1,6 @@
 import * as Types from './TYPES';
 import store from './store';
-// import { withRouter } from "next/router"
+import Router from "next/router"
 
 
 const handleRedirect = (data, ...rest) => {
@@ -154,9 +154,7 @@ export const defaultShortcutArray = [
         //     return true
         // },
         action: () => {
-            // if (typeof window !== 'undefined') {
-            //     window.location.pathname = "/addRecipe"
-            // }
+            Router.router.push("/addRecipe")
         }
     },
     {
@@ -168,8 +166,18 @@ export const defaultShortcutArray = [
         //     console.log('prevState: ', prevState);
         //     return true
         // },
-        action: (payload) => {
+        action: () => {
             // handleRedirect(payload)
+            store.dispatch({
+                type: Types.TOGGLE_SET_KEYS_BACKDROP,
+                payload: {
+                    // settingKeysBackdrop: true
+                }
+            })
+            // store.dispatch({
+            //     type: Types.SET_SK_STRING,
+            //     // payload: "setting"
+            // })
         }
     },
 ]

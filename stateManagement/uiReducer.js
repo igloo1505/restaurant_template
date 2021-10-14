@@ -385,6 +385,10 @@ export default function UIReducer(state = initialState, action) {
           ...state.notificationBanner,
           ...action?.payload?.banner
         },
+        settingsModal: {
+          ...state.settingsModal,
+          _startBackdropHide: true,
+        }
       }
     }
     case Types.HIDE_TOP_NOTIFICATION_BAR: {

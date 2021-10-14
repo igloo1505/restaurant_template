@@ -10,7 +10,7 @@ import ClientOnlyPortal from "../portalAuthenticated/ClientSidePortal";
 import { gsap } from 'gsap'
 import Backdrop from "@material-ui/core/Backdrop";
 import * as KeyIcons from "./KeyIcons"
-import { ClassNames } from "@emotion/react";
+import {updateEventListeners} from '../../util/SettingShortcutsListeners';
 import {
     _specialKeys,
     SpecialKeys,
@@ -61,7 +61,7 @@ const SetKeyboardShortcutBackdrop = ({
     UI: {
         settingsModal: {
             settingKeysBackdrop,
-        }
+            _startBackdropHide        }
     },
     user: {
         userSettings: {
@@ -81,10 +81,21 @@ const SetKeyboardShortcutBackdrop = ({
     const classes = useClasses();
     const dispatch = useDispatch()
     const [isOpen, setIsOpen] = useState(settingKeysBackdrop);
-    const [controlPressed, setControlPressed] = useState(false)
-    const [metaPressed, setMetaPressed] = useState(false)
-    const [altPressed, setAltPressed] = useState(false)
+    
 
+    useEffect(() => {
+        if(_startBackdropHide){
+            setIsOpen(false)
+            setTimeout(() => {
+                dispatch({
+                    type: Types.TOGGLE_SET_KEYS_BACKDROP,
+                    payload: {
+                        settingKeysBackdrop: false,
+                    }
+                })
+            }, 750)
+        }
+    }, [_startBackdropHide])
 
     useEffect(() => {
         if (currentToggle === 3 && specialKeys.length === 3) {
@@ -150,6 +161,10 @@ const SetKeyboardShortcutBackdrop = ({
 
     useEffect(() => {
         setIsOpen(settingKeysBackdrop);
+        if (settingKeysBackdrop) {
+            updateEventListeners("setting")
+        }
+        
     }, [settingKeysBackdrop])
     const handleBackdropClick = (e) => {
         console.log("did click backdrop", e)

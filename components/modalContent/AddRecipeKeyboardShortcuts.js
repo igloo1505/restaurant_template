@@ -524,6 +524,9 @@ const ModalSearchField = ({ selectedItemIndex, filteredShortcutArray, setSelecte
             }}
                 onChange={handleChange}
                 onKeyDown={highjackArrowKeys}
+                inputProps={{
+                    autoComplete: "off"
+                }}
             />
             <FormHelperText id="keyboard-shortcut-helper-text" classes={{ root: clsx(classes.formHelperText, !showHelperText && classes.hide) }}>{helperText}</FormHelperText>
         </FormControl>
