@@ -170,6 +170,12 @@ const SetKeyboardShortcutBackdrop = ({
         }
     }
 
+    const [localTimerComparison, setLocalTimerComparison] = useState(0)
+    
+    useEffect(() => {
+        setLocalTimerComparison(currentTimerValue)
+        
+    }, [currentTimerValue])
 
     useEffect(() => {
         if (originalTimerValue && specialKeys?.length === 3 && !currentTimerValue) {

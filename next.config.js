@@ -1,6 +1,28 @@
+const withPlugins = require('next-compose-plugins');
 const withPWA = require("next-pwa");
+const withTM = require("next-transpile-modules")([
+  "three",
+  "react-three-fiber",
+  "drei"
+])
+// const withTM = require("next-transpile-modules")([
+  
+// ])
+
 const path = require("path");
-module.exports = withPWA({
+// module.exports = withPlugins([ withTM, withPWA], 
+module.exports = withPWA(withTM(
+  {
+  webpack(config, options) {
+      config.module.rules.push({
+        test: /\.(glb|gltf|obj)$/,
+        use: {
+          loader: "file-loader",
+        },
+      })
+      return config;
+    },
+  webpack5: false,
   poweredByHeader: false,
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
@@ -17,6 +39,7 @@ module.exports = withPWA({
     AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
     EDAMAM_RECIPE_APP_ID: process.env.EDAMAM_RECIPE_APP_ID,
+   
     EDAMAM_RECIPE_ACCESS_KEY: process.env.EDAMAM_RECIPE_ACCESS_KEY,
     EDAMAM_FOOD_APP_ID: process.env.EDAMAM_FOOD_APP_ID,
     EDAMAM_FOOD_ACCESS_KEY: process.env.EDAMAM_FOOD_ACCESS_KEY,
@@ -29,4 +52,7 @@ module.exports = withPWA({
     dest: "public",
     disable: process.env.NODE_ENV === "development",
   },
-});
+}))
+
+
+

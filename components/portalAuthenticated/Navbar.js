@@ -175,6 +175,7 @@ const Navbar = ({
       dispatch({ type: Types.TOGGLE_SIGNUP_FORM });
     }
   };
+
   const [shiftAppbar, setShiftAppbar] = useState(false);
 
 
@@ -439,8 +440,8 @@ const NotificationBanner = connect(_mapStateToProps)(({
 }) => {
   const classes = useStylesNotificationBanner();
   const dispatch = useDispatch();
-
   const [animationInProgress, setAnimationInProgress] = useState([])
+
   useEffect(() => {
     if (isOpen) {
       let tl = animateBannerEntrance();

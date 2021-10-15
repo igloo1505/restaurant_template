@@ -108,4 +108,15 @@
 			"}))"
 		]
 	},
+	"_currentMapStateToProps": {
+		"prefix": [
+			"ifWindow"
+		],
+		"description": "check if window",
+		"body": [
+			"if(typeof window !== 'undefined') {",
+			"$1",
+			"}"
+		]
+	},
 }
