@@ -69,30 +69,30 @@ const useIconClasses = makeStyles((theme) => ({
 
 
 
-export const ShiftIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles }) => {
+export const ShiftIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles, ownOnClick }) => {
     const classes = ownStyles ? ownStyles() : useIconClasses()
     return (
-        <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={showSetKeysBackdrop}
+        <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={ownOnClick ? ownOnClick : showSetKeysBackdrop}
             style={styles}
         >
             <BsShift className={clsx(classes.icon, _className?.icon)} />
         </div>
     )
 }
-export const AltIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles }) => {
+export const AltIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles, ownOnClick }) => {
     const classes = ownStyles ? ownStyles() : useIconClasses()
     return (
-        <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={showSetKeysBackdrop}
+        <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={ownOnClick ? ownOnClick : showSetKeysBackdrop}
             style={styles}
         >
             <BsAlt className={clsx(classes.icon, _className?.icon)} />
         </div>
     )
 }
-export const ControlIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles }) => {
+export const ControlIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles, ownOnClick }) => {
     const classes = ownStyles ? ownStyles() : useIconClasses()
     return (
-        <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={showSetKeysBackdrop}
+        <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={ownOnClick ? ownOnClick : showSetKeysBackdrop}
             style={styles}
         >
             <MdKeyboardArrowUp className={clsx(classes.icon, _className?.icon)} />
@@ -101,10 +101,10 @@ export const ControlIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, 
 }
 
 
-export const CommandIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles }) => {
+export const CommandIcon = ({ settingKeysBackdrop, showSetKeysBackdrop, styles, _className, ownStyles, ownOnClick }) => {
     const classes = ownStyles ? ownStyles() : useIconClasses()
     return (
-        <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={showSetKeysBackdrop}
+        <div className={clsx(classes.iconContainer, "shortcut-icon-animated", _className?.container)} onClick={ownOnClick ? ownOnClick : showSetKeysBackdrop}
             style={styles}
         >
             <BsCommand className={clsx(classes.icon, _className?.icon)} />

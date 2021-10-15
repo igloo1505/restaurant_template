@@ -102,6 +102,9 @@ const DrawerContent = ({
     router.push("/myRecipes");
     closeDrawer();
   };
+  // const shortcutAction = () => {
+
+  // }
   let array = [
     {
       text: "Add Recipe",
@@ -110,6 +113,11 @@ const DrawerContent = ({
     },
     {
       text: "My Recipes",
+      action: myRecipeAction,
+      icon: <TwoToneBookIcon color="secondary" fontSize="large" />,
+    },
+    {
+      text: "My Shortcuts",
       action: myRecipeAction,
       icon: <TwoToneBookIcon color="secondary" fontSize="large" />,
     },

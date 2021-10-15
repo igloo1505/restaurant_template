@@ -261,13 +261,12 @@ export default function userReducer(state = initialState, action) {
           settingProgress: {
             ...initialState.userSettings.settingProgress,
           },
-          currentActiveKeys: [...initialState.userSettings.currentActiveKeys],
+          // currentActiveKeys: [...initialState.userSettings.currentActiveKeys],
           skListeners: {
             ...initialState.userSettings.skListeners
           }        
         },
       };
-
 
 
     case Types.TOGGLE_ALLOW_SHORTCUTS:

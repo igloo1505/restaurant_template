@@ -86,8 +86,8 @@ const useMenuItemClasses = makeStyles((theme) => ({
     menuItemRoot: {
         display: "flex",
         flexDirection: "row",
-        justifyContent: "flex-end",
         alignItems: "center",
+        justifyContent: "center",
     },
     typography: {
         transition: theme.transitions.create(['color'], {
@@ -95,9 +95,10 @@ const useMenuItemClasses = makeStyles((theme) => ({
         }),
     },
     typographyHighlighted: {
-        color: theme.palette.primary.main,
+        // color: theme.palette.primary.main,
+        color: "#fff",
         transition: theme.transitions.create(['color'], {
-            duration: 250,
+            duration: 500,
         }),
     },
     listItemIconRoot: {
@@ -108,9 +109,19 @@ const useMenuItemClasses = makeStyles((theme) => ({
         width: "auto",
         height: "2.1rem",
     },
-    iconHighlighted: {},
+    iconHighlighted: {
+        color: '#fff'
+    },
     minWidth: "unset",
-    menuItemHighlighted: {}
+    menuItemHighlighted: {
+        backgroundColor: theme.palette.primary.dark,
+        transition: theme.transitions.create(['background-color'], {
+        duration: 500,
+        }),
+    },
+    itemIconContainer: {
+        width: "80px"
+    }
 }
 ))
 
@@ -129,9 +140,11 @@ const ShortCutDropdownItem = ({ shortcut, index, array, isHighlighted: _isHighli
                 <Typography variant="h4" color="text.secondary" classes={{ root: clsx(classes.typography, isHighlighted && classes.typographyHighlighted, `shortcutTypographyFocused-${index}`) }}>
                     {shortcut.displayText}
                 </Typography>
+                <div className={classes.itemIconContainer}>
                 {
                     selectedItemIndex === index && <AnimatedReturnIcon classes={classes} index={index} selectedItemIndex={selectedItemIndex} />
                 }
+                </div>
             </MenuItem>
             {index !== array.length - 1 && <Divider />}
         </Fragment>
@@ -158,7 +171,8 @@ const AnimatedReturnIcon = ({ classes, index, selectedItemIndex }) => {
 
 const animateReturnIcon = (index, selectedItemIndex) => {
     gsap.fromTo(`.shortcutListItemFocused-${index}`, {
-        scaleX: 0.0001,
+        // scaleX: 0.0001,
+        opacity: 0,
         x: 50,
         duration: 0.75,
         // ease: "elastic.out(1, 0.3)",
@@ -167,18 +181,19 @@ const animateReturnIcon = (index, selectedItemIndex) => {
         {
             scaleX: 1,
             x: 0,
+            opacity: 1,
             duration: 0.75,
             // ease: "elastic.out(1, 0.3)",
             ease: "bounce.out",
         }
     );
     gsap.fromTo(`.shortcutTypographyFocused-${index}`, {
-        x: 50,
+        // y: -5,
         duration: 0.7,
         ease: "elastic.out(1.7, 0.3)",
     },
         {
-            x: 0,
+            y: 0,
             duration: 0.7,
             ease: "elastic.out(1.7, 0.3)",
         }

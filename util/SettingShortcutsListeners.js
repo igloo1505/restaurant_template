@@ -213,7 +213,7 @@ const mainShortcutModalListener = (e) => {
 
         let fs = csk.filter((sk) => Boolean(sk.booleanCheck)).every((sk) => Boolean(e[sk.booleanCheck]))
         let nfs = csk.filter((sk) => !sk.booleanCheck)[0]
-        if (fs && e.key === nfs.key) {
+        if (fs && e.key === nfs?.key) {
             console.log('e: cnt', e);
             store.dispatch({
                 type: Types.TOGGLE_ADD_RECIPE_KEYBOARD_SHORTCUTS,
@@ -350,6 +350,14 @@ const Listeners = {
         }
         if (SpecialKeys()[e.key]) {
             SpecialKeys()[e.key].setPressed(false, e)
+        }
+        if(localState?.user?.userSettings?.currentActiveKeys.filter(sk => sk?.key === e.key) && localState?.user?.userSettings?.currentActiveKeys?.length === 3){
+            store.dispatch({
+                type: Types.CLEAR_SET_SHORTCUTS_TIMER,
+                // payload: {
+                //     currentActiveKeys: []
+                // }
+            })
         }
         if (e.key === "Meta") {
             store.dispatch({

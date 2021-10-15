@@ -100,7 +100,8 @@ const useClasses = makeStyles((theme) => ({
         },
     },
     dialogPaper: {
-        maxWidth: "unset"
+        maxWidth: "unset",
+        overflowY: "visible",
     },
 }))
 

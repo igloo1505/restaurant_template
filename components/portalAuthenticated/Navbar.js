@@ -455,6 +455,7 @@ const NotificationBanner = connect(_mapStateToProps)(({
       })
     }
   }, [currentActiveKeys])
+
   useEffect(() => {
     if (isOpen) {
       const handleDismissal = () => {
@@ -514,7 +515,6 @@ const animateBannerEntrance = () => {
   })
   return tl
 }
-
 
 
 const hideBanner = ({ handleDismissal, immediate }) => {
