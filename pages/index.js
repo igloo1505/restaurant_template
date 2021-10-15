@@ -7,6 +7,7 @@ import {
   UnderNavbar,
   AdjustForDrawerContainer,
 } from "../components/UIComponents";
+import MainCanvas from '../components/landingPage/MainCanvas';
 
 const Home = ({
   viewport: { width: deviceWidth, height: deviceHeight, navHeight },
@@ -34,6 +35,7 @@ const Home = ({
     <Fragment>
       <UnderNavbar />
       <AdjustForDrawerContainer centerAll={true}>
+      <MainCanvas />
         <div>Welp...</div>
       </AdjustForDrawerContainer>
       <style jsx>{``}</style>
