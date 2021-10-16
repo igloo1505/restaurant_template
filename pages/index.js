@@ -7,11 +7,23 @@ import {
   UnderNavbar,
   AdjustForDrawerContainer,
 } from "../components/UIComponents";
+import { makeStyles } from "@material-ui/core/styles";
+import clsx from "clsx";
 
 import dynamic from "next/dynamic"
 const MainCanvas = dynamic(() =>  import('../components/landingPage/MainCanvas'), {
   ssr: false,
 });
+
+
+
+const useClasses = makeStyles((theme) => ({
+  mainCanvasContainer: {
+    
+  }
+}))
+
+
 
 const Home = ({
   viewport: { width: deviceWidth, height: deviceHeight, navHeight },
@@ -25,6 +37,7 @@ const Home = ({
   hasUser,
 }) => {
   const dispatch = useDispatch();
+  const classes = useClasses()
   useEffect(() => {
     console.log("hasUser: ", hasUser);
     if (hasUser) {
@@ -39,7 +52,9 @@ const Home = ({
     <Fragment>
       <UnderNavbar />
       <AdjustForDrawerContainer centerAll={true}>
+      <div className={classes.mainCanvasContainer} id="main-canvas-container">
       <MainCanvas />
+      </div>
       </AdjustForDrawerContainer>
       <style jsx>{``}</style>
     </Fragment>
