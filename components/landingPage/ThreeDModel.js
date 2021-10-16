@@ -9,33 +9,7 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { useSpring } from "@react-spring/core";
 import { Controls, useControl } from "react-three-gui";
 
-function Extra() {
-	const rotateX = useControl("Rotate X", {
-		type: "number",
-		group: GROUP,
-		distance: 10,
-		scrub: true,
-		min: -Infinity,
-		max: Infinity,
-		spring: true,
-	});
-	const rotateY = useControl("Rotate Y", {
-		type: "number",
-		group: GROUP,
-		distance: 10,
-		scrub: true,
-		min: -Infinity,
-		max: Infinity,
-		spring: true,
-	});
 
-	return (
-		<a.mesh position={[1.5, 0, 0.5]} rotation-x={rotateX} rotation-y={rotateY}>
-			<boxGeometry attach="geometry" args={[0.7, 0.7, 0.7]} />
-			<a.meshStandardMaterial attach="material" color={0xffff00} />
-		</a.mesh>
-	);
-}
 
 const GROUP = "mainLandingModel";
 
@@ -65,31 +39,39 @@ const Model = ({ ...modelProps }) => {
 
     const [active, setActive] = useState(false)
 	const [hovered, setHovered] = useState(false)
-	// const [styles, api] = useSpring(() => ({
-	// 	from: { x: -50, opacity: 1 },
-	//   }))
-	
-	//   useEffect(() => {
-	// 	api({
-	// 	  x: 50,
-	// 	  opacity: 1,
-	// 	  loop: { reverse: true },
-	// 	})
-	//   }, [])
-	const styles= {}
-	// const { spring } = useSpring({
-	// 	spring: active,
-	// 	// config: { mass: 1, tension: 400, friction: 250, precision: 0.0001 },
-	// 	config: config.molasses
-	// });
+	const [shouldShift, setShouldShift] = useState(false)
 
-	const newSpring = useSpring()
+
 	// interpolate values from commong spring
 	// const scale = spring.to([0.5, 0.5], [1.0, 1.0]);
 	// const scale = spring.to([0.8, 1.0], [1.0, 1.2])
 	// const rotation = spring.to([0, 1], [0, Math.PI * 2]);
 	// const color = spring.to([0, 1], ["#6246ea", "#e45858"]);
-
+	
+	const animStart = {
+		['scale-z']: 0.7,
+		['scale-x']: 0.7,
+		['scale-y']: 0.7,
+		rotation: [0, Math.PI * 1.23, 0],
+		position: [-3, 1, 0]
+	}
+	const animFinish = {
+		['scale-z']: 1,
+		['scale-x']: 1,
+		['scale-y']: 1,
+		rotation: [0, Math.PI * 1.95, 0],
+		position: [0, 0, 0]
+	}
+	
+	const newSpring = useSpring({
+		['scale-z']: shouldShift ? 0.7 :  1,
+		['scale-x']: shouldShift ? 0.7 :  1,
+		['scale-y']: shouldShift ? 0.7 :  1,
+		rotation: shouldShift ? [0, Math.PI * 1.23, 0] :  [0, Math.PI * 1.95, 0],
+		position: shouldShift ? [-3, 1, 0] :  [0, 0, 0]
+	})
+	
+	console.log('newSpring: lp ', newSpring);
 
 	return (
 		<>
@@ -109,20 +91,23 @@ const Model = ({ ...modelProps }) => {
 				>
 					<three.mesh
 						ref={mesh}
+						{...newSpring}
 						// {...modelProps}
-						// rotation-y={rotation}
-						// scale-z={scale}
-						// scale-x={scale}
-						// scale-y={scale}
+						// rotation-y={[10, 0, 0]}
+						// rotation={[0, Math.PI * 1.23, 0]}
+						// // rotation={[0, Math.PI * 1.95, 0]}
+						// position={[-3, 1, 0]}
+						// scale-z={0.7}
+						// scale-x={0.7}
+						// scale-y={0.7}
 						// style={styles}
 					>
 						<primitive ref={group} name="Object_0" object={model} 
-						onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
-						onPointerOut={(e) => setHovered(false)}
+						onPointerOver={(e) => (e.stopPropagation(), setHovered(true), setShouldShift(true))}
+						onPointerOut={(e) => (setHovered(false), setShouldShift(false))}
 						/>
 						<three.meshStandardMaterial map={texture} />
 					</three.mesh>
-					{show && <Extra />}
 				</group>
 				</three.group>
 			) : (
