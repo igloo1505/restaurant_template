@@ -75,6 +75,9 @@ const useStylesAppbar = makeStyles((theme) => ({
   },
   appbarLabelText: {
     color: "#fff",
+    "&:hover": {
+      cursor: "pointer"
+    }
   },
   toolbarRoot: {
     backgroundColor: theme.palette.primary.main,
@@ -288,6 +291,9 @@ const Navbar = ({
             variant="h6"
             noWrap
             classes={{ root: clsx(appbarClasses.appbarLabelText, "navbar-foreground-shift") }}
+            onClick={() => {
+              router.push("/")
+            }}
           >
             Rad<span className="navbar_italic">-ish</span>
           </Typography>

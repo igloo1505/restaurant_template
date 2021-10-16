@@ -37,6 +37,21 @@ const Model = ({ ...modelProps }) => {
 		});
 	}, []);
 
+
+	// useEffect(() => {
+	// 	var mtlLoader = new MTLLoader();
+	// 	mtlLoader.load("/assets/cookingGlove.mtl", function (materials) {
+	// 		console.log("materials: lp", materials);
+	// 		materials.preload();
+	// 		var objLoader = new OBJLoader();
+	// 		objLoader.setMaterials(materials);
+	// 		objLoader.load("/assets/cookingGlove.obj", function (object) {
+	// 			console.log('object: lp', object);
+	// 			setModel(object);
+	// 		});
+	// 	});
+	// }, []);
+
     const [active, setActive] = useState(false)
 	const [hovered, setHovered] = useState(false)
 	const [shouldShift, setShouldShift] = useState(false)
@@ -68,10 +83,16 @@ const Model = ({ ...modelProps }) => {
 		['scale-x']: shouldShift ? 0.7 :  1,
 		['scale-y']: shouldShift ? 0.7 :  1,
 		rotation: shouldShift ? [0, Math.PI * 1.23, 0] :  [0, Math.PI * 1.95, 0],
-		position: shouldShift ? [-3, 1, 0] :  [0, 0, 0]
+		position: shouldShift ? [-3, 1, 0] :  [0, 0, 0],
+		config: config.stiff
 	})
 	
 	console.log('newSpring: lp ', newSpring);
+
+	const handleModelClick = (e) => {
+		setShouldShift(!shouldShift)
+	}
+
 
 	return (
 		<>
@@ -92,21 +113,20 @@ const Model = ({ ...modelProps }) => {
 					<three.mesh
 						ref={mesh}
 						{...newSpring}
-						// {...modelProps}
 						// rotation-y={[10, 0, 0]}
 						// rotation={[0, Math.PI * 1.23, 0]}
 						// // rotation={[0, Math.PI * 1.95, 0]}
-						// position={[-3, 1, 0]}
+						// position={[0, 0, -2]}
 						// scale-z={0.7}
 						// scale-x={0.7}
 						// scale-y={0.7}
 						// style={styles}
 					>
 						<primitive ref={group} name="Object_0" object={model} 
-						onPointerOver={(e) => (e.stopPropagation(), setHovered(true), setShouldShift(true))}
-						onPointerOut={(e) => (setHovered(false), setShouldShift(false))}
+						onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
+						onPointerOut={(e) => (setHovered(false))}
+						onClick={handleModelClick}
 						/>
-						<three.meshStandardMaterial map={texture} />
 					</three.mesh>
 				</group>
 				</three.group>

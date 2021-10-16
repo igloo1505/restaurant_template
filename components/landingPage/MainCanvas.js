@@ -137,39 +137,28 @@ const Scene = withControls(() => {
 				//    camera={{ position: [-10, 10, 10], fov: 35 }}
 			>
 				<Suspense fallback={null}>
-				<TransformControls onChange={logTransformChange} />		
 				<PerspectiveCamera
 				makeDefault 
-				fov={100} 
 				aspect={_aspectRatio} 
+				fov={100} 
 				near={1.1} 
 				far={500} 
 				ref={cameraRef}
 				onWheel={handleScrollWheel}
 				// rotateX={30}
-				rotation={[Math.PI / 2, 0, 0]}
+				rotation={[-Math.abs(Math.PI * 0.2), Math.abs(Math.PI * 0.2), Math.abs(Math.PI * 0.2)]}
 				position={[2, 2, 4]}
-				
-				// position={{
-					// 	x: 0,
-					// 	y: 1, 
-					// 	z: 0
-					// }}
+				// position={[4, 4, 4]}
+				// position={[0, 0, 5]}
 					// translateX={(e) => {
 						// 	console.log('e: translateX??? lp', e);
 						// 	return 1
 						// }}
 						/>
-						<ambientLight intensity={0.1} />
-						<pointLight position={[20, 20, 20]} castShadow />
-						<ThreeDModel
-						rotation-x={rotateXY.x}
-						rotation-y={rotateXY.y}
-						position-x={positionX}
-						position-y={positionY}
+						
+						<pointLight position={[50, 50, 50]} castShadow color={"#fff"}
 						/>
-						<OrbitControls onChange={logOrbitChange} 
-						camera={cameraRef.current}
+						<ThreeDModel
 						/>
 				</Suspense>
 			</Canvas>
