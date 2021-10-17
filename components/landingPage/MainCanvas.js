@@ -17,13 +17,17 @@ import {
 } from "@react-three/drei";
 import ThreeDModel from "./ThreeDModel";
 import DatGui from "./DatGui";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Controls, useControl, withControls } from "react-three-gui";
 console.log("useLoader: lp", useLoader);
 // import ObjLoader from './ObjLoader';
 // import GUI_editor from './GUI_editor';
 // import GREEN_APPLES from '../../public/assets/greenApples.OBJ';
 import OBJLoader from "./ObjLoader";
-
+import Radish from './Radish';
+import CuttingBoard from './CuttingBoard';
+import Mitts from './Mitts';
 
 // const OBJLoader = dynamic(() => import('three/examples/jsm/loaders/OBJLoader').then((mod) => mod.OBJLoader), {
 //     ssr: false,
@@ -73,7 +77,6 @@ const MainCanvas = ({
 	return (
 		<Controls.Provider>
 			<Scene />
-			<Controls style={controlStyles} onUpdate={handleUpdate} />
 		</Controls.Provider>
 	);
 };
@@ -127,10 +130,10 @@ const Scene = withControls(() => {
 				colorManagement
 				id={canvasId}
 				style={{
-					width: "60%",
+					width: "100%",
 					height: "calc(60vh - 64px)",
 					position: "absolute",
-					top: "64px",
+					top: 0,
 					left: 0,
 					border: "1px solid red",
 				}}
@@ -150,19 +153,73 @@ const Scene = withControls(() => {
 				position={[2, 2, 4]}
 				// position={[4, 4, 4]}
 				// position={[0, 0, 5]}
-					// translateX={(e) => {
-						// 	console.log('e: translateX??? lp', e);
-						// 	return 1
-						// }}
 						/>
 						
 						<pointLight position={[50, 50, 50]} castShadow color={"#fff"}
 						/>
-						<ThreeDModel
-						/>
+						<TestModel />
+						<OrbitControls/>
+						<TransformControls/>
 				</Suspense>
 			</Canvas>
 		</div>
 	);
 });
 
+
+
+const TestModel = () => {
+
+	const [scene, setScene] = useState(null)
+	useEffect(() => {
+		const loader = new GLTFLoader();
+
+// Optional: Provide a DRACOLoader instance to decode compressed mesh data
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath( '/examples/js/libs/draco/' );
+loader.setDRACOLoader( dracoLoader );
+
+// Load a glTF resource
+loader.load(
+	// resource URL
+	'/scene.gltf',
+	// called when the resource is loaded
+	function ( gltf ) {
+		console.log('gltf: ', gltf);
+
+		// scene.add( gltf.scene );
+		setScene(gltf.scene)
+
+		// gltf.animations; // Array<THREE.AnimationClip>
+		// gltf.scene; // THREE.Group
+		// gltf.scenes; // Array<THREE.Group>
+		// gltf.cameras; // Array<THREE.Camera>
+		// gltf.asset; // Object
+	},
+	// called while loading is progressing
+	function ( xhr ) {
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened', error );
+
+	}
+);
+	}, [])
+	const group = useRef()
+
+	return (
+		<>
+		{scene && <primitive
+			ref={group}
+			name="Object_0"
+			object={scene}
+			// onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
+			// onPointerOut={(e) => setHovered(false)}
+			onClick={() => console.log("Clicked")}
+		/>}
+		</>
+	)
+}
