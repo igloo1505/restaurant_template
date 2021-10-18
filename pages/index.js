@@ -19,13 +19,15 @@ const MainCanvas = dynamic(() =>  import('../components/landingPage/MainCanvas')
 
 const useClasses = makeStyles((theme) => ({
   mainCanvasContainer: {
-    width: "60%",
-    height: "calc(60vh - 64px)",
+    width: "100%",
+    height: "calc(100vh - 64px)",
+    minHeight: "calc(100vh - 64px)",
+    maxHeight: "fit-content",
     position: "absolute",
     top: "64px",
     left: 0,
-    border: "1px solid blue",
-    backgroundColor: "#51a1ff"
+    // border: "5px solid blue",
+    // backgroundColor: "#51a1ff"
   }
 }))
 
