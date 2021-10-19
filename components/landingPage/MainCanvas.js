@@ -29,6 +29,7 @@ import CuttingBoard from './CuttingBoard';
 import Mitts from './Mitts';
 import { DirectionalLightHelper } from "three/src/helpers/DirectionalLightHelper";
 import {PlaneHelper} from "three/src/helpers/PlaneHelper"
+import {CameraHelper} from "three/src/helpers/CameraHelper"
 
 
 
@@ -59,7 +60,7 @@ const mapStateToProps = (state, props) => ({
 	props: props,
 });
 
-export default connect(mapStateToProps)(MainCanvas);
+
 
 
 
@@ -84,8 +85,9 @@ const Scene = withControls(() => {
 	const rayCaster = useRef()
 	const canvasRef = useRef()
 	const rendererRef = useRef()
+	
 	const [animationPhase, setAnimationPhase] = useState(animationPhases[0])
-
+	const [newBoardPosition, setNewBoardPosition] = useState(null)
 	const [_aspectRatio, setAspectRatio] = useState(1)
 	useEffect(() => {
 			let _canvas = document.getElementById("main-canvas-container");
@@ -96,39 +98,56 @@ const Scene = withControls(() => {
 		// TODO call this on resize
 	}, [])
 
-	
-
-	const handleScrollWheel = (e) => {
-		console.log('e: scroll wheel here lp', e);
+	const getVisibleBox = (z) => {
+		console.log('cameraRef.current.fov: visbox', cameraRef.current.fov, cameraRef.current.aspect, z, cameraRef.current.position.z)
+		let _z = Math.abs(z - cameraRef.current.position.z) || z
+		console.log('_z: visbox', _z);
+		var t = Math.tan( THREE.Math.degToRad( cameraRef.current.fov )) 
+		var h = t * (_z / 2)
+		console.log('h: visBox', h);
+		var w = h * cameraRef.current.aspect;
+		return new THREE.Box2(new THREE.Vector2(-w, h), new THREE.Vector2(w, -h));
 	}
+	
 
 	const handleCanvasClick = (e) => {
 		console.log("Event from canvas click", e);
 		e.preventDefault()
-		// let mp = new THREE.Vector2()
-		// let _canvas = rendererRef.current
-		// let canvasWrapper = document.getElementById(canvasId).getBoundingClientRect()
-		// console.log('canvasWrapper: canvasClick', canvasWrapper);
-		// console.log('rendererRef.current: canvasClick', rendererRef.current);
-		// console.log('_canvas: canvasClick', ((e.clientX - canvasWrapper.left) / canvasWrapper.width));
-		// console.log('((e.clientX - canvasWrapper.left) / canvasWrapper.width) * 2 - 1: canvas click', ((e.clientX - canvasWrapper.left) / canvasWrapper.width) * 2 - 1);
-		// 	mp.x = ((e.clientX - canvasWrapper.left) / canvasWrapper.width) * 2 - 1;
-		// 	mp.y = -((e.clientY - canvasWrapper.top) / canvasWrapper.height) * 2 + 1;
-		// console.log("MP canvas click mousepoint ", mp);
+		
 		var vec = new THREE.Vector3(); 
 		var pos = new THREE.Vector3(); 
 		
 		vec.set(
 			( e.clientX / window.innerWidth ) * 2 - 1,
 			- ( e.clientY / window.innerHeight ) * 2 + 1,
-			-0.5 );	
+			0 );	
 		vec.unproject( cameraRef.current );
 		vec.sub( cameraRef.current.position ).normalize();
 		var distance = - cameraRef.current.position.z / vec.z;
 		pos.copy( cameraRef.current.position ).add( vec.multiplyScalar( distance ) );
-			// debugger
+		// debugger
+		
+		let visBox = getVisibleBox(0.5)
+		console.log('visBox: ', visBox);
+		// circle.position.z = _.random(-cameraRef.current.near, -cameraRef.current.far);
+		// let np = {}
+		// np.z = 0
+		// np.x = _.random(visBox.min.x, visBox.max.x);
+		// np.y = visBox.min.y;
+
+		let pValues = {
+			topLeft: [visBox.min.x, visBox.min.y, 0],
+			topRight: [visBox.max.x, visBox.min.y, 0],
+			bottomLeft: [visBox.min.x, visBox.max.y, 0],
+			bottomRight: [visBox.max.x, visBox.max.y, 0]
+		}
+		console.log("Object values", Math.floor(Math.random() * 4));
+			setNewBoardPosition({
+				position: pValues.topLeft
+			})
 		console.log('pos: pos in canvas click ????', pos);
 	}
+	
 
 	return (
 		<div className="mainCanvasContainer" onClick={handleCanvasClick}>
@@ -158,20 +177,7 @@ const Scene = withControls(() => {
 				//    camera={{ position: [-10, 10, 10], fov: 35 }}
 			>
 				<Suspense fallback={null}>
-				<PerspectiveCamera
-				makeDefault 
-				aspect={_aspectRatio} 
-				fov={80} 
-				near={0.01} 
-				far={50} 
-				ref={cameraRef}
-				raycaster={{
-					ref: rayCaster
-				}}
-				onWheel={handleScrollWheel}
-				// rotation={[-Math.abs(Math.PI * 0.2), Math.abs(Math.PI * 0.2), Math.abs(Math.PI * 0.2)]}
-				position={[0, 1, 3]}
-						/>
+				<Camera cameraRef={cameraRef} _aspectRatio={_aspectRatio} rayCaster={rayCaster}/>
 						<axesHelper args={[5]} />
 						<Lights
 						cameraRef={cameraRef}
@@ -179,6 +185,8 @@ const Scene = withControls(() => {
 						<CuttingBoard
 						cameraRef={cameraRef}
 						canvasRef={canvasRef}
+						newBoardPosition={newBoardPosition}
+						setNewBoardPosition={setNewBoardPosition}
 						/>
           				<ContactShadows rotation-x={Math.PI / 2} position={[0, -0.4, 0]} opacity={0.65} width={10} height={10} blur={1.5} far={0.8} />
 				</Suspense>
@@ -222,9 +230,6 @@ loader.load(
 			ref={group}
 			name="Object_0"
 			object={scene}
-			// onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
-			// onPointerOut={(e) => setHovered(false)}
-			onClick={() => console.log("Clicked")}
 		/>}
 		</>
 	)
@@ -269,3 +274,27 @@ const MainPlane = forwardRef((props, ref) => {
 		</>
 	)
 })
+
+
+
+const Camera = ({cameraRef, rayCaster, _aspectRatio}) => {
+	useHelper(cameraRef, CameraHelper, 1, 'hotpink')
+	return (
+		<PerspectiveCamera
+		makeDefault 
+		aspect={_aspectRatio} 
+		fov={10}
+		near={0.01} 
+		far={50} 
+		ref={cameraRef}
+		raycaster={{
+			ref: rayCaster
+		}}
+		// rotation={[-Math.abs(Math.PI * 0.2), Math.abs(Math.PI * 0.2), Math.abs(Math.PI * 0.2)]}
+		position={[0, 0, 10]}
+		/>
+	)
+}
+
+
+export default connect(mapStateToProps)(MainCanvas);

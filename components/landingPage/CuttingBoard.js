@@ -10,7 +10,8 @@ import { a as web } from "@react-spring/web";
 
 const Model = ({ 
   cameraRef,
-  canvasRef
+  canvasRef,
+  newBoardPosition
  }) =>  {
   const group = useRef()
   const [boardIsExtended, setBoardIsExtended] = useState(false)
@@ -28,42 +29,36 @@ const Model = ({
     });
   }, [])
 
-
-
-  const handleItemClick = (e) => {
-    setBoardIsExtended(!boardIsExtended)
-    // var vec = new THREE.Vector3(); // create once and reuse
-    // var pos = new THREE.Vector3(); // create once and reuse
-
-    // vec.set(
-    //     ( e.clientX / window.innerWidth ) * 2 - 1,
-    //     - ( e.clientY / window.innerHeight ) * 2 + 1,
-    //     0.5 );
-    
-    // vec.unproject( cameraRef.current );
-    
-    // vec.sub( cameraRef.current.position ).normalize();
-    
-    // var distance = - cameraRef.current.position.z / vec.z;
-    
-    // pos.copy( cameraRef.current.position ).add( vec.multiplyScalar( distance ) );
-    // console.log('pos: canvasWrapper', pos);
-    // // requestAnimationFrame(animateBoard)
-    // animateOnClick(pos)
-  } 
-
-  const styles = useSpring({
+  const [styles, api] = useSpring(() => ({
     // ["scale-z"]: boardIsExtended ? 1 : 0.7,
     // ["scale-x"]: boardIsExtended ? 1 : 0.7,
     // ["scale-y"]: boardIsExtended ? 1 : 0.7,
     rotation: boardIsExtended ? [-Math.PI * 17 / 36, Math.PI * 73 / 36, -Math.PI * 8 / 36] : [0, 0, 0],
-    position: boardIsExtended ? [0, 0, 0] : [0, 0, -0.5],
+    position: boardIsExtended ? [0, 0, 0.5] : [0, 0, 0],
     config: config.stiff,
-  })
-  // const animateOnClick = (vec) => {
-  //   // styles.position
-  //   api.start({position: vec})
-  // }
+  }))
+
+  useEffect(() => {
+    if(newBoardPosition){
+      if(newBoardPosition.position === "center"){
+        console.log("Setting center");
+        return api.start({
+          position: boardIsExtended ? [0, 0, 0.5] : [0, 0, 0]
+        })
+      }
+
+      api.start({...newBoardPosition})
+      console.log('newBoardPosition: ', newBoardPosition);
+    }
+  }, [newBoardPosition])
+
+  const handleItemClick = (e) => {
+    e.stopPropagation()
+    setBoardIsExtended(!boardIsExtended)
+    
+  } 
+
+  
 
   return (
     <three.group
@@ -72,7 +67,7 @@ const Model = ({
      position={[0,0,0]}
      onClick={handleItemClick}
      name="cuttingBoard"
-     scale={[10, 10, 10]}
+     scale={[1, 1, 1]}
      castShadow
      >
       <three.group rotation={[-Math.PI / 2, 0, 0]} {...styles}>
