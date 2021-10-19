@@ -63,10 +63,29 @@ export default connect(mapStateToProps)(MainCanvas);
 
 
 
+const animationPhases = [
+	{
+		title: "initial",
+		index: 0
+	},
+	{
+		title: "firstScroll",
+		index: 1
+	},
+	{
+		title: "scrollToSecondSection",
+		index: 2
+	},
+]
+
 
 const Scene = withControls(() => {
 	const cameraRef = useRef()
-	
+	const rayCaster = useRef()
+	const canvasRef = useRef()
+	const rendererRef = useRef()
+	const [animationPhase, setAnimationPhase] = useState(animationPhases[0])
+
 	const [_aspectRatio, setAspectRatio] = useState(1)
 	useEffect(() => {
 			let _canvas = document.getElementById("main-canvas-container");
@@ -77,36 +96,51 @@ const Scene = withControls(() => {
 		// TODO call this on resize
 	}, [])
 
-	const rotateXY = useControl("Rotation", { type: "xypad", distance: Math.PI });
-
-
-	const positionX = useControl("Pos X", { type: "number", value: 0 });
-	const positionY = useControl("Pos Y", {
-		type: "number",
-		value: 0,
-	});
-
-	const logOrbitChange = (e) => {
-		console.log("e: logOrbitChange lp", e);
-	};
-	const logTransformChange = (e) => {
-		console.log("e: logTransformChange lp ", e);
-	};
+	
 
 	const handleScrollWheel = (e) => {
 		console.log('e: scroll wheel here lp', e);
+	}
 
+	const handleCanvasClick = (e) => {
+		console.log("Event from canvas click", e);
+		e.preventDefault()
+		// let mp = new THREE.Vector2()
+		// let _canvas = rendererRef.current
+		// let canvasWrapper = document.getElementById(canvasId).getBoundingClientRect()
+		// console.log('canvasWrapper: canvasClick', canvasWrapper);
+		// console.log('rendererRef.current: canvasClick', rendererRef.current);
+		// console.log('_canvas: canvasClick', ((e.clientX - canvasWrapper.left) / canvasWrapper.width));
+		// console.log('((e.clientX - canvasWrapper.left) / canvasWrapper.width) * 2 - 1: canvas click', ((e.clientX - canvasWrapper.left) / canvasWrapper.width) * 2 - 1);
+		// 	mp.x = ((e.clientX - canvasWrapper.left) / canvasWrapper.width) * 2 - 1;
+		// 	mp.y = -((e.clientY - canvasWrapper.top) / canvasWrapper.height) * 2 + 1;
+		// console.log("MP canvas click mousepoint ", mp);
+		var vec = new THREE.Vector3(); 
+		var pos = new THREE.Vector3(); 
+		
+		vec.set(
+			( e.clientX / window.innerWidth ) * 2 - 1,
+			- ( e.clientY / window.innerHeight ) * 2 + 1,
+			-0.5 );	
+		vec.unproject( cameraRef.current );
+		vec.sub( cameraRef.current.position ).normalize();
+		var distance = - cameraRef.current.position.z / vec.z;
+		pos.copy( cameraRef.current.position ).add( vec.multiplyScalar( distance ) );
+			// debugger
+		console.log('pos: pos in canvas click ????', pos);
 	}
 
 	return (
-		<div className="mainCanvasContainer" id={canvasId}>
+		<div className="mainCanvasContainer" onClick={handleCanvasClick}>
 			<Canvas
 				colorManagement
 				dpr={[1, 2]}
+				ref={canvasRef}
 				gl={{
 				shadowMapEnabled: true,
 				outputEncoding: THREE.sRGBEncoding,
-				pixelRatio: window.devicePixelRatio
+				pixelRatio: window.devicePixelRatio,
+				ref: rendererRef
 				}}
 				// shadows={true}
 				id={canvasId}
@@ -118,7 +152,8 @@ const Scene = withControls(() => {
 					position: "absolute",
 					top: 0,
 					left: 0,
-				
+					// backgroundColor: "#268AFF"
+					backgroundColor: "#fff"
 				}}
 				//    camera={{ position: [-10, 10, 10], fov: 35 }}
 			>
@@ -128,41 +163,26 @@ const Scene = withControls(() => {
 				aspect={_aspectRatio} 
 				fov={80} 
 				near={0.01} 
-				far={500} 
+				far={50} 
 				ref={cameraRef}
+				raycaster={{
+					ref: rayCaster
+				}}
 				onWheel={handleScrollWheel}
-				// rotateX={30}
-				rotation={[-Math.abs(Math.PI * 0.2), Math.abs(Math.PI * 0.2), Math.abs(Math.PI * 0.2)]}
-				position={[0, 0, 3]}
-				// position={[4, 4, 4]}
-				// position={[0, 0, 5]}
+				// rotation={[-Math.abs(Math.PI * 0.2), Math.abs(Math.PI * 0.2), Math.abs(Math.PI * 0.2)]}
+				position={[0, 1, 3]}
 						/>
 						<axesHelper args={[5]} />
 						<Lights
 						cameraRef={cameraRef}
 						/>
-						<CuttingBoard 
-						scale={[10, 10, 10]}
-						castShadow
-						position={[0, 0, 0]}
+						<CuttingBoard
+						cameraRef={cameraRef}
+						canvasRef={canvasRef}
 						/>
-						<MainPlane
-						// rotation={[-Math.PI / 2, 0, 0]}
-						/>
-						<Environment preset="city" />
-						<OrbitControls 
-						/>
-						<TransformControls/>
+          				<ContactShadows rotation-x={Math.PI / 2} position={[0, -0.4, 0]} opacity={0.65} width={10} height={10} blur={1.5} far={0.8} />
 				</Suspense>
 				
-				<ContactShadows
-					opacity={1}
-					width={1}
-					height={1}
-					blur={1}
-					far={10}
-					resolution={256}
-				  />
 			</Canvas>
 		</div>
 	);
@@ -171,16 +191,13 @@ const Scene = withControls(() => {
 
 
 const Radish = () => {
-
 	const [scene, setScene] = useState(null)
 	useEffect(() => {
-		const loader = new GLTFLoader();
-
+	const loader = new GLTFLoader();
 // Optional: Provide a DRACOLoader instance to decode compressed mesh data
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath( '/examples/js/libs/draco/' );
 loader.setDRACOLoader( dracoLoader );
-
 // Load a glTF resource
 loader.load(
 	'/scene.gltf',
@@ -237,15 +254,15 @@ const MainPlane = forwardRef((props, ref) => {
 		position={[0 , -0.25, 0]} 
 		>
 		<planeGeometry 
-		args={[100, 100]}
+		args={[100000, 100000]}
 		// rotation={[-Math.PI, Math.PI / 2, 0]}
 		// color="0xffffff"
 		// // args={[1, 1, 2]}
 		// {...props}
 		/>
 		<meshPhongMaterial 
-		// color="#268AFF"
-		color="#fff"
+		color="#268AFF"
+		// color="#fff"
 		depthWrite={false}
 		/>
 		</mesh>
