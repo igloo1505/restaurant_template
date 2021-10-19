@@ -87,7 +87,7 @@ const Scene = withControls(() => {
 	const rendererRef = useRef()
 	
 	const [animationPhase, setAnimationPhase] = useState(animationPhases[0])
-	const [newBoardPosition, setNewBoardPosition] = useState(null)
+	
 	const [_aspectRatio, setAspectRatio] = useState(1)
 	useEffect(() => {
 			let _canvas = document.getElementById("main-canvas-container");
@@ -98,59 +98,12 @@ const Scene = withControls(() => {
 		// TODO call this on resize
 	}, [])
 
-	const getVisibleBox = (z) => {
-		console.log('cameraRef.current.fov: visbox', cameraRef.current.fov, cameraRef.current.aspect, z, cameraRef.current.position.z)
-		let _z = Math.abs(z - cameraRef.current.position.z) || z
-		console.log('_z: visbox', _z);
-		var t = Math.tan( THREE.Math.degToRad( cameraRef.current.fov )) 
-		var h = t * (_z / 2)
-		console.log('h: visBox', h);
-		var w = h * cameraRef.current.aspect;
-		return new THREE.Box2(new THREE.Vector2(-w, h), new THREE.Vector2(w, -h));
-	}
 	
-
-	const handleCanvasClick = (e) => {
-		console.log("Event from canvas click", e);
-		e.preventDefault()
-		
-		var vec = new THREE.Vector3(); 
-		var pos = new THREE.Vector3(); 
-		
-		vec.set(
-			( e.clientX / window.innerWidth ) * 2 - 1,
-			- ( e.clientY / window.innerHeight ) * 2 + 1,
-			0 );	
-		vec.unproject( cameraRef.current );
-		vec.sub( cameraRef.current.position ).normalize();
-		var distance = - cameraRef.current.position.z / vec.z;
-		pos.copy( cameraRef.current.position ).add( vec.multiplyScalar( distance ) );
-		// debugger
-		
-		let visBox = getVisibleBox(0.5)
-		console.log('visBox: ', visBox);
-		// circle.position.z = _.random(-cameraRef.current.near, -cameraRef.current.far);
-		// let np = {}
-		// np.z = 0
-		// np.x = _.random(visBox.min.x, visBox.max.x);
-		// np.y = visBox.min.y;
-
-		let pValues = {
-			topLeft: [visBox.min.x, visBox.min.y, 0],
-			topRight: [visBox.max.x, visBox.min.y, 0],
-			bottomLeft: [visBox.min.x, visBox.max.y, 0],
-			bottomRight: [visBox.max.x, visBox.max.y, 0]
-		}
-		console.log("Object values", Math.floor(Math.random() * 4));
-			setNewBoardPosition({
-				position: pValues.topLeft
-			})
-		console.log('pos: pos in canvas click ????', pos);
-	}
+	
 	
 
 	return (
-		<div className="mainCanvasContainer" onClick={handleCanvasClick}>
+		<div className="mainCanvasContainer">
 			<Canvas
 				colorManagement
 				dpr={[1, 2]}
@@ -185,8 +138,6 @@ const Scene = withControls(() => {
 						<CuttingBoard
 						cameraRef={cameraRef}
 						canvasRef={canvasRef}
-						newBoardPosition={newBoardPosition}
-						setNewBoardPosition={setNewBoardPosition}
 						/>
           				<ContactShadows rotation-x={Math.PI / 2} position={[0, -0.4, 0]} opacity={0.65} width={10} height={10} blur={1.5} far={0.8} />
 				</Suspense>

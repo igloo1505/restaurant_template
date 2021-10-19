@@ -11,11 +11,11 @@ import { a as web } from "@react-spring/web";
 const Model = ({ 
   cameraRef,
   canvasRef,
-  newBoardPosition
  }) =>  {
   const group = useRef()
   const [boardIsExtended, setBoardIsExtended] = useState(false)
   const { nodes, materials } = useGLTF('/cuttingBoard.glb')
+  const [newBoardPosition, setNewBoardPosition] = useState("topLeft")
   useEffect(() => {
     let canvasWrapper = document.getElementById("mainCanvas").getBoundingClientRect()
     console.log('canvasWrapper: ', canvasWrapper);
@@ -40,22 +40,91 @@ const Model = ({
 
   useEffect(() => {
     if(newBoardPosition){
-      if(newBoardPosition.position === "center"){
-        console.log("Setting center");
-        return api.start({
-          position: boardIsExtended ? [0, 0, 0.5] : [0, 0, 0]
-        })
-      }
-
-      api.start({...newBoardPosition})
-      console.log('newBoardPosition: ', newBoardPosition);
+      toggleItemPosition(newBoardPosition)
+      // if(newBoardPosition.position === "center"){
+      //   console.log("Setting center");
+      //   return api.start({
+      //     position: boardIsExtended ? [0, 0, 0.5] : [0, 0, 0]
+      //   })
+      // }   
+      // console.log('newBoardPosition: ', newBoardPosition);
     }
-  }, [newBoardPosition])
+    
+  }, [newBoardPosition, boardIsExtended])
+
+  const getVisibleBox = (z) => {
+		console.log('cameraRef.current.fov: visbox', cameraRef.current.fov, cameraRef.current.aspect, z, cameraRef.current.position.z)
+		let _z = Math.abs(z - cameraRef.current.position.z) || z
+		console.log('_z: visbox', _z);
+		var t = Math.tan( THREE.Math.degToRad( cameraRef.current.fov )) 
+		var h = t * (_z / 2)
+		console.log('h: visBox', h);
+		var w = h * cameraRef.current.aspect;
+		return new THREE.Box2(new THREE.Vector2(-w, h), new THREE.Vector2(w, -h));
+	}
+
+
+
+const toggleItemPosition = (transformation) => {
+
+  let visBox = getVisibleBox(0.5)
+  console.log('visBox: ', visBox);
+  
+  let pValues = {
+    topLeft: [visBox.min.x, visBox.min.y, 0],
+    topRight: [visBox.max.x, visBox.min.y, 0],
+    bottomLeft: [visBox.min.x, visBox.max.y, 0],
+    bottomRight: [visBox.max.x, visBox.max.y, 0]
+  }
+  // let x = rendererRef.current.getObjectByName("cuttingBoard")
+  let _bBox = new THREE.Box3().setFromObject(group.current);
+    let obSize = _bBox.getSize(new THREE.Vector3());
+    let newPosition = pValues[transformation]
+
+
+    if(transformation === "topLeft"){
+      newPosition[0] = newPosition[0] + (obSize.x / 2)
+      newPosition[1] = newPosition[1] - (obSize.y / 1.5 )
+  
+    }
+    if(transformation === "topRight"){
+      newPosition[0] = newPosition[0] - (obSize.x / 2)
+      newPosition[1] = newPosition[1] - (obSize.y / 1.5)
+    }
+    if(transformation === "bottomLeft"){
+      newPosition[0] = newPosition[0] + (obSize.x / 2)
+      newPosition[1] = newPosition[1] + (obSize.y / 1.5 )
+  
+    }
+    if(transformation === "bottomRight"){
+      newPosition[0] = newPosition[0] - (obSize.x / 2)
+      newPosition[1] = newPosition[1] + (obSize.y / 1.5)
+    } 
+    if(transformation === "center"){
+      newPosition = [0, 0, 0]
+    }
+      api.start({
+        position: newPosition
+      })
+  console.log('newPosition down here visibile transform', newPosition);
+    // setNewBoardPosition({
+    //   position: newPosition,
+    // })
+}
+
+
 
   const handleItemClick = (e) => {
     e.stopPropagation()
     setBoardIsExtended(!boardIsExtended)
-    
+    const arr = [
+      "topLeft",
+      "topRight",
+      "bottomRight",
+      'bottomLeft',
+      'center'
+    ]
+    setNewBoardPosition(arr[arr.indexOf(newBoardPosition) + 1])
   } 
 
   
