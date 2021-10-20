@@ -112,6 +112,7 @@ const Scene = withControls(() => {
 				shadowMapEnabled: true,
 				outputEncoding: THREE.sRGBEncoding,
 				pixelRatio: window.devicePixelRatio,
+				alpha: true,
 				ref: rendererRef
 				}}
 				// shadows={true}
@@ -125,7 +126,7 @@ const Scene = withControls(() => {
 					top: 0,
 					left: 0,
 					// backgroundColor: "#268AFF"
-					backgroundColor: "#fff"
+					backgroundColor: "transparent"
 				}}
 				//    camera={{ position: [-10, 10, 10], fov: 35 }}
 			>

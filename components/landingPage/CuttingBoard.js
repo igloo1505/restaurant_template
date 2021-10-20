@@ -8,11 +8,13 @@ import { a as web } from "@react-spring/web";
 
 
 
+
 const Model = ({ 
   cameraRef,
   canvasRef,
  }) =>  {
   const group = useRef()
+  const modelRef = useRef()
   const [boardIsExtended, setBoardIsExtended] = useState(false)
   const { nodes, materials } = useGLTF('/cuttingBoard.glb')
   const [newBoardPosition, setNewBoardPosition] = useState("topLeft")
@@ -64,6 +66,40 @@ const Model = ({
 	}
 
 
+const getAlignTitlePosition = () => {
+  const scalePercentage = 20
+  let camera = cameraRef.current
+  let target = document.getElementById("dot-io-target").getBoundingClientRect()
+  let clone = modelRef.current.clone()
+  modelRef.current.geometry.computeBoundingBox(); 
+  let bBox = clone.geometry.boundingBox;
+  let obSize = bBox.getSize(new THREE.Vector3());
+  console.log('obSize: ', obSize);
+
+  var vec = new THREE.Vector3(); 
+  var pos = new THREE.Vector3(); 
+  vec.set(
+    ( target.x / window.innerWidth ) * 2 - 1,
+    - ( target.y / window.innerHeight ) * 2 + 1,
+    clone.position.z );
+
+  vec.unproject( camera );
+
+  vec.sub( camera.position ).normalize();
+
+  var distance = - camera.position.z / vec.z;
+
+  pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
+// end
+
+
+  return {
+    x: pos.x,
+    y: pos.y - (obSize.y * scalePercentage / 100),
+    z: pos.z
+  }
+}
+
 
 const toggleItemPosition = (transformation) => {
 
@@ -103,6 +139,11 @@ const toggleItemPosition = (transformation) => {
     if(transformation === "center"){
       newPosition = [0, 0, 0]
     }
+    if(transformation === "alignTitle"){
+      let np = getAlignTitlePosition()
+      newPosition = [np.x, np.y, np.z]
+      console.log('newPosition: ', newPosition);
+    }
       api.start({
         position: newPosition
       })
@@ -121,6 +162,7 @@ const toggleItemPosition = (transformation) => {
       "topLeft",
       "topRight",
       "bottomRight",
+      "alignTitle",
       'bottomLeft',
       'center'
     ]
@@ -138,9 +180,15 @@ const toggleItemPosition = (transformation) => {
      name="cuttingBoard"
      scale={[1, 1, 1]}
      castShadow
+     {...styles}
      >
-      <three.group rotation={[-Math.PI / 2, 0, 0]} {...styles}>
-        <mesh receiveShadow castShadow geometry={nodes.mesh_0.geometry} material={materials.Cutting_Board} />
+      <three.group rotation={[0, 0, 0]}>
+        <mesh receiveShadow castShadow geometry={nodes.mesh_0.geometry} material={materials.Cutting_Board} ref={modelRef}/>
+      </three.group>
+      <three.group rotation={[0, 0, 0]} position={[0, 0, -0.19]}>
+        <mesh scale={0.01} />
+        <meshBasicMaterial attach="material" color={"#268AFF"} />
+        <sphereGeometry attach="geometry" args={[0.01, 0.01, 0.01]} />
       </three.group>
     </three.group>
   )

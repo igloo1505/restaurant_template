@@ -8,6 +8,7 @@ import {
   AdjustForDrawerContainer,
 } from "../components/UIComponents";
 import { makeStyles } from "@material-ui/core/styles";
+import LandingPageBanner from '../components/landingPage/landingPageBanner';
 import clsx from "clsx";
 
 import dynamic from "next/dynamic"
@@ -28,6 +29,7 @@ const useClasses = makeStyles((theme) => ({
     left: 0,
     // border: "5px solid blue",
     // backgroundColor: "#51a1ff"
+    backgroundColor: "transparent"
   }
 }))
 
@@ -59,10 +61,11 @@ const Home = ({
   return (
     <Fragment>
       <UnderNavbar />
-      <AdjustForDrawerContainer centerAll={true}>
+      <AdjustForDrawerContainer>
       <div className={classes.mainCanvasContainer} id="main-canvas-container">
       <MainCanvas />
       </div>
+      <LandingPageBanner/>
       </AdjustForDrawerContainer>
       <style jsx>{``}</style>
     </Fragment>
