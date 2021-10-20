@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useRef, useEffect, useState } from 'react'
-import { useGLTF } from '@react-three/drei'
+import { Sphere, useGLTF } from '@react-three/drei'
 import * as THREE from "three";
 import { useSpring } from '@react-spring/core';
 import { a as three, config } from "@react-spring/three";
@@ -185,10 +185,10 @@ const toggleItemPosition = (transformation) => {
       <three.group rotation={[0, 0, 0]}>
         <mesh receiveShadow castShadow geometry={nodes.mesh_0.geometry} material={materials.Cutting_Board} ref={modelRef}/>
       </three.group>
-      <three.group rotation={[0, 0, 0]} position={[0, 0, -0.19]}>
-        <mesh scale={0.01} />
-        <meshBasicMaterial attach="material" color={"#268AFF"} />
-        <sphereGeometry attach="geometry" args={[0.01, 0.01, 0.01]} />
+      <three.group >  
+        <Sphere scale={[0.01, 0.01, 0.01]} position={[0, 0.19, 0]}>
+        <meshPhongMaterial attach="material" color="#268AFF" />
+        </Sphere>
       </three.group>
     </three.group>
   )
