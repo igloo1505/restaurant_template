@@ -30,6 +30,12 @@ const useClasses = makeStyles((theme) => ({
     // border: "5px solid blue",
     // backgroundColor: "#51a1ff"
     backgroundColor: "transparent"
+  },
+  container: {
+    maxWidth: "1280px",
+    // marginLeft: "50%",
+
+    // transform: "translateX(-50%)"
   }
 }))
 
@@ -61,11 +67,13 @@ const Home = ({
   return (
     <Fragment>
       <UnderNavbar />
-      <AdjustForDrawerContainer>
+      <AdjustForDrawerContainer customStyles={{justifyContent: "center", alignItems: "flex-start", display: "flex"}} >
+      <div className={classes.container}>
       <div className={classes.mainCanvasContainer} id="main-canvas-container">
       <MainCanvas />
       </div>
       <LandingPageBanner/>
+      </div>
       </AdjustForDrawerContainer>
       <style jsx>{``}</style>
     </Fragment>

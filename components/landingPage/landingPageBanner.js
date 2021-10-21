@@ -44,8 +44,8 @@ const useClasses = makeStyles((theme) => ({
     },
     titleTextMain: {
         color: "#fff",
-        fontSize: "7rem",
-        lineHeight: "7rem",
+        fontSize: "6rem",
+        lineHeight: "6rem",
         fontWeight: 400,
         position: "relative",
     },
@@ -77,11 +77,20 @@ const useClasses = makeStyles((theme) => ({
         flexDirection: "column",
         alignItems: "flex-start",
         gap: "0",
-        lineHeight: 1
+        lineHeight: 1,
+        marginBottom: "1rem"
     },
     rightDefinitionTitle: {
-        color: "#fff",
         fontWeight: 500,
+        // backgroundColor: "#FFFDD0",
+        backgroundColor: "#FFF",
+        width: "100%",
+        padding: "0.25rem",
+        textAlign: "center",
+        // color: "#273c75",
+        color: theme.palette.primary.dark,
+        borderRadius: "4px",
+        marginBottom: "1rem"
     },
     rightDefinitionNoun: {
         color: "#fff",
@@ -199,7 +208,7 @@ console.log("Did click signup button target")
         <div className={classes.bannerRightContainer}>
         <div className={classes.rightDefinitionTitleContainer}>
         <Typography variant="h1" className={classes.rightDefinitionTitle}>
-        Radish:
+        Radish
         </Typography>
         <div style={{display: "flex", flexDirection: "row", justifyContent: "flex-start", width: "100%", gap: "0.75rem"}}>
         <Typography variant="h1" className={classes.rightDefinitionNoun}>

@@ -114,65 +114,55 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		let sphereTl = gsap.timeline({
 			yoyo: true,
 			repeat: -1,
+			repeatDelay: 0.5
 		});
-		let sphereMaterial = sphereRef.current.material.color
-		sphereTl.fromTo(sphereMaterial, {
-			r: 1,
-			g: 1,
-			b: 1,
-			duration: 0.35,
-			onUpdateParams: [sphereMaterial.newColor]
-		}, {
-			r: 0.92156863,
-			g: 0.37647059,
-			b: 0.0627451,
-			duration: 0.35,
-			onUpdateParams: [sphereMaterial.newColor]
-		},
-		)
+		let sphereMaterial = sphereRef.current.material.color;
+		sphereTl.fromTo(
+			sphereMaterial,
+			{
+				r: 1,
+				g: 1,
+				b: 1,
+				duration: 0.35,
+				onUpdateParams: [sphereMaterial.newColor],
+			},
+			{
+				r: 0.92156863,
+				g: 0.37647059,
+				b: 0.0627451,
+				duration: 0.35,
+				onUpdateParams: [sphereMaterial.newColor],
+			}
+		);
 		let sphereScaleTl = gsap.timeline({
 			yoyo: true,
 			repeat: -1,
+			repeatDelay: 0.5
 		});
-		let sphereScale = sphereRef.current.scale
-		console.log('sphereScale: ', sphereScale);
-		sphereScaleTl.fromTo(sphereScale, {
-			x: 1,
-			y: 1,
-			z: 1,
-			duration: 1,
-			onUpdate: (...self) => {
-				console.log("this self", self)
+		let sphereScale = sphereRef.current.scale;
+		console.log("sphereScale: ", sphereScale);
+		sphereScaleTl.fromTo(
+			sphereScale,
+			{
+				x: 1,
+				y: 1,
+				z: 1,
+				duration: 0.35,
+				onUpdate: (...self) => {
+					console.log("this self", self);
+				},
+				onUpdateParams: [sphereMaterial.newColor],
 			},
-			onUpdateParams: [sphereMaterial.newColor]
-		}, {
-			x: 0.6,
-			y: 0.6,
-			z: 0.6,
-			duration: 1,
-			// onUpdate: (self) => {
-			// 	if(self){
-			// 		console.log("that self", self)
-			// 		let sa = [...`${self}`]
-			// 		let ia = [];
-			// 		sa.forEach((ch, i) => {
-			// 			if(parseInt(ch)){
-			// 				ia.push(i)
-			// 			}
-			// 		})
-			// 			let _self = self.slice(sa.indexOf("("), sa.indexOf(")"))
-			// 			let nc = new THREE.Color(_self)
-			// 			console.log('nc: self', nc);
-			// 			// debugger
-			// 		if(nc.r){
-			// 			sphereMaterial.color.set(nc)
-			// 		}
-			// 	}
-			// },
-			onUpdateParams: [sphereMaterial.newColor]
-		},
-		)
+			{
+				x: 0.6,
+				y: 0.6,
+				z: 0.6,
+				duration: 0.35,
+				onUpdateParams: [sphereMaterial.newColor],
+			}
+		);
 
+		
 	};
 
 	const [UIstate, setUIstate] = useState(null);
