@@ -132,14 +132,14 @@ const Scene = withControls(() => {
 					top: 0,
 					left: 0,
 					// backgroundColor: "#268AFF"
-					backgroundColor: "transparent"
+					backgroundColor: "transparent",
 				}}
 				//    camera={{ position: [-10, 10, 10], fov: 35 }}
 			>
 				<Suspense fallback={null}>
 				<Camera cameraRef={cameraRef} _aspectRatio={_aspectRatio} rayCaster={rayCaster}/>
 						<axesHelper args={[5]} />
-						<Billboard position={[0, 0, -0.5]} receiveShadow/>
+						<Billboard ponsition={[0, 0, -0.5]} receiveShadow/>
 						<Lights
 						cameraRef={cameraRef}
 						/>

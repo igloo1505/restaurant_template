@@ -18,7 +18,8 @@ const useClasses = makeStyles((theme) => ({
         height: "40vh",
         backgroundColor: theme.palette.primary.main,
         padding: "1.5rem",
-        borderRadius: "0.6rem"
+        borderRadius: "0.6rem",
+        boxShadow: `8px 8px 12px ${theme.palette.grey[400]}, -8px 8px 12px ${theme.palette.grey[300]}`,
     },
     titleTextWrapper: {
         display: "flex",
