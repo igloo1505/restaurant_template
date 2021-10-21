@@ -17,14 +17,14 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
         [0, 0, 0],
         [0, 0, 0],
     ])
-	// console.log('targets: ', targets);
+    let refArray = []
+
     const setTargets = () => {
         let targets = document.getElementsByClassName("i-hover-target")
         let newTargets = []
         for(var i = 0; i < targets.length; i ++){
             let _t = targets[i]
             let target = _t.getBoundingClientRect()
-            
             // start
 		let camera = cameraRef.current;
 		var vec = new THREE.Vector3();
@@ -41,9 +41,7 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
 
 		var distance = -camera.position.z / vec.z;
 
-
 		pos.copy(camera.position).add(vec.multiplyScalar(distance));
-
 		let targetPosition = [ pos.x, pos.y, pos.z]
         newTargets.push(targetPosition)
 
@@ -62,13 +60,15 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
 		<>
         {targetPosition.map((t, i) => {
             console.log("Target!!!! hoverSpheres", t)
+            const ref = useRef()
+            refArray.push(ref)
             return (
                 <>
                 <three.mesh
-                // ref={sphereRef}
+                ref={ref}
                 receiveShadow
                 castShadow
-                scale={[1, 1, 1]}
+                scale={[5, 5, 5]}
                 position={t}
                 key={`titleHoverSphere-${i}`}
                 // position={[0, 0.19, 0]}
