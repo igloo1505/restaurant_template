@@ -13,13 +13,11 @@ import { gsap } from "gsap";
 
 const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
 	// let hoverSpheres = [];
-    const [targetPosition, setTargetPosition] = useState([
-        [0, 0, 0],
-        [0, 0, 0],
-    ])
-    let refArray = []
+    const [hasFoundTargets, setHasFoundTargets] = useState(false)
+    const [targetPosition, setTargetPosition] = useState([])
+    
 
-    const setTargets = () => {
+    const setTargets = (cancel) => {
         let targets = document.getElementsByClassName("i-hover-target")
         let newTargets = []
         for(var i = 0; i < targets.length; i ++){
@@ -32,7 +30,7 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
 		vec.set(
 			(target.x / window.innerWidth) * 2 - 1,
 			-(target.y / window.innerHeight) * 2 + 1,
-			0
+			-1
 		);
 
 		vec.unproject(camera);
@@ -42,30 +40,40 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
 		var distance = -camera.position.z / vec.z;
 
 		pos.copy(camera.position).add(vec.multiplyScalar(distance));
-		let targetPosition = [ pos.x, pos.y, pos.z]
+		let targetPosition = [ pos.x, pos.y + 0.095, pos.z]
+        console.log('targetPosition: target positions', targetPosition);
+        // debugger
         newTargets.push(targetPosition)
-
+        // setHasFoundTargets(true)
         // end
     }
     setTargetPosition(newTargets)
+    if(newTargets.length !== 0){
+        cancel()
+    }
     }
     useEffect(() => {
-        setTargets()
-        document.addEventListener("resize", () => {
-            setTargets()
-        })
+            let _interval = setInterval(() => {
+                setTargets(clearInt)
+            })
+            const clearInt = () => {
+                clearInterval(_interval)
+            }        
+        // document.addEventListener("resize", () => {
+        //     setTargets()
+        // })
     }, []) 
 
 	return (
 		<>
         {targetPosition.map((t, i) => {
             console.log("Target!!!! hoverSpheres", t)
-            const ref = useRef()
-            refArray.push(ref)
+            // const ref = useRef()
+            // refArray.push(ref)
             return (
                 <>
                 <three.mesh
-                ref={ref}
+                // ref={ref}
                 receiveShadow
                 castShadow
                 scale={[5, 5, 5]}

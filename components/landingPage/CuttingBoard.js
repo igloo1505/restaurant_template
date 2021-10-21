@@ -44,9 +44,13 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	}));
 
 	useEffect(() => {
-		if (newBoardPosition) {
-			toggleItemPosition(newBoardPosition);
-		}
+			let lookForTarget = setInterval(() => {
+				toggleItemPosition(newBoardPosition, cancelInterval)
+			})
+			const cancelInterval = () => {
+				clearInterval(lookForTarget)	
+			}
+		// }
 	}, [newBoardPosition, boardIsExtended]);
 
 	const getVisibleBox = (z) => {
@@ -67,6 +71,7 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	};
 
 	const getAlignTitlePosition = () => {
+		console.log("Running get title position target");
 		const scalePercentage = 40;
 		let camera = cameraRef.current;
 		let target = document
@@ -100,7 +105,9 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		};
 	};
 
-	const toggleItemPosition = (transformation) => {
+	const toggleItemPosition = (transformation, cancel) => {
+		if(!transformation) transformation = "alignTitle"
+		
 		let visBox = getVisibleBox(0.5);
 		let pValues = {
 			topLeft: [visBox.min.x, visBox.min.y, 0],
@@ -134,12 +141,14 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		}
 		if (transformation === "alignTitle") {
 			let np = getAlignTitlePosition();
+			if(np){
+				cancel()
+			}
 			newPosition = [np.x, np.y, np.z];
 		}
 		api.start({
 			position: newPosition,
 		});
-
 
 	};
 
