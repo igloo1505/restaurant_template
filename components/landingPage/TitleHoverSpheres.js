@@ -6,6 +6,7 @@ import {connect} from "react-redux"
 import { useSpring } from "@react-spring/core";
 import { a as three, config } from "@react-spring/three";
 import { ContactShadows } from "@react-three/drei";
+import store from '../../stateManagement/store';
 import { useFrame } from "react-three-fiber";
 import { a as web } from "@react-spring/web";
 import { useTheme } from "@material-ui/styles";
@@ -15,9 +16,7 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
 	// let hoverSpheres = [];
     const [hasFoundTargets, setHasFoundTargets] = useState(false)
     const [targetPosition, setTargetPosition] = useState([])
-    
-
-    const setTargets = (cancel) => {
+    const setTargets = (cancel, method) => {
         let targets = document.getElementsByClassName("i-hover-target")
         let newTargets = []
         for(var i = 0; i < targets.length; i ++){
@@ -49,50 +48,63 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
     }
     setTargetPosition(newTargets)
     if(newTargets.length !== 0){
-        cancel()
+        if(method !== "resize"){
+            cancel()
+        }
+        if(method === "resize"){
+            debugger
+            console.log("Resize here target");
+            setTimeout(() => {
+                cancel()
+            }, 1000)
+        }
     }
     }
+
+    const [UIstate, setUIstate] = useState(null)
+
+    const handleUIState = () => {
+        let state = store.getState()
+        if(UIstate?.UI?.viewport?.width !== state?.UI?.viewport?.width){
+            console.log("handling ui state target");
+            let int = setInterval(() => {
+                // setTargetPosition([])
+                setTargets(cancelInt)
+            }, 200)
+            const cancelInt = () => {}
+            setTimeout(() => {
+                clearInterval(int)
+            }, 1500);
+        }
+        setUIstate(state.UI)
+    }
+
+
     useEffect(() => {
+        let unsubscribe = store.subscribe(handleUIState)
+        return () => {
+            unsubscribe()
+        }
+    }, [])
+
+
+
+    useEffect(() => {
+        if(targetPosition.length === 0){
             let _interval = setInterval(() => {
                 setTargets(clearInt)
             })
             const clearInt = () => {
                 clearInterval(_interval)
             }        
-        // document.addEventListener("resize", () => {
-        //     setTargets()
-        // })
-    }, []) 
+        }
+    }, [targetPosition]) 
 
 	return (
 		<>
         {targetPosition.map((t, i) => {
             console.log("Target!!!! hoverSpheres", t)
-            // const ref = useRef()
-            // refArray.push(ref)
-            return (
-                <>
-                <three.mesh
-                // ref={ref}
-                receiveShadow
-                castShadow
-                scale={[5, 5, 5]}
-                position={t}
-                key={`titleHoverSphere-${i}`}
-                // position={[0, 0.19, 0]}
-                // {...sphereStyles}
-                >
-                <three.sphereGeometry attach="geometry" args={[0.005]} />
-                <three.meshStandardMaterial
-                attach="material"
-                roughness={0.1}
-                metalness={0}
-                color={"#eb6010"}
-                />
-                </three.mesh>
-                <ContactShadows rotation={[-Math.PI / 2, 0, 0]} opacity={0.95} width={1} height={1} blur={1} far={10} />
-                </>
-                )
+            return <HoverOrb t={t} i={i} key={`hover-orb-${i}`} UIState={UIstate} /> 
         })}
 		</>
 	);
@@ -101,3 +113,49 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
 
 
 export default TitleHoverSpheres;
+
+
+
+const HoverOrb = ({t: targetPosition, i, UIState: UI}) => {
+    const ref = useRef()
+    
+    useFrame((state) => {
+        const t = state.clock.getElapsedTime()
+        // state.camera.position.lerp(vec.set(0, 0, open ? -24 : -32), 0.1)
+        // state.camera.lookAt(0, 0, 0)
+        // let cp = d
+        let np = {}
+        np.y = THREE.MathUtils.lerp(targetPosition[1], ref.current.position.y + (Math.sin(t)) / 3, 0.02)
+        np.z = THREE.MathUtils.lerp(targetPosition[2], ref.current.position.z + (Math.sin(t)) / 3, 0.05)
+        // np.x
+        ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, open ? Math.cos(t / 2) / 8 + 0.25 : 0, 0.1)
+        ref.current.rotation.y = THREE.MathUtils.lerp(ref.current.rotation.y, open ? Math.sin(t / 4) / 4 : 0, 0.1)
+        ref.current.rotation.z = THREE.MathUtils.lerp(ref.current.rotation.z, open ? Math.sin(t / 4) / 4 : 0, 0.1)
+        ref.current.position.y = np.y
+        ref.current.position.z = np.z
+      })
+
+
+    return (
+        <>
+        <three.mesh
+        ref={ref}
+        receiveShadow
+        castShadow
+        scale={[5, 5, 5]}
+        position={targetPosition}
+        // position={[0, 0.19, 0]}
+        // {...sphereStyles}
+        >
+        <three.sphereGeometry attach="geometry" args={[0.005]} />
+        <three.meshStandardMaterial
+        attach="material"
+        roughness={0.1}
+        metalness={0}
+        color={"#eb6010"}
+        />
+        </three.mesh>
+        <ContactShadows rotation={[-Math.PI / 2, 0, 0]} opacity={0.95} width={1} height={1} blur={1} far={10} />
+        </>
+        )
+}

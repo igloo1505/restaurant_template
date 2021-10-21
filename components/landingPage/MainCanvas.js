@@ -1,5 +1,7 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
+const ADD_CONTROLS = false;
+
 import React, {
 	useEffect,
 	createContext,
@@ -43,7 +45,7 @@ import { PointLightHelper } from "three/src/helpers/PointLightHelper";
 import { CameraHelper } from "three/src/helpers/CameraHelper";
 import TitleHoverSpheres from "./TitleHoverSpheres";
 
-const ADD_CONTROLS = true;
+
 
 let objs = [
 	"../../public/assets/greenApples.OBJ",
@@ -138,25 +140,25 @@ const Scene = withControls(() => {
 						_aspectRatio={_aspectRatio}
 						rayCaster={rayCaster}
 					/>
-					<axesHelper args={[5]} />
 					<Billboard ponsition={[0, 0, -0.5]} receiveShadow />
 					<Lights cameraRef={cameraRef} />
 					<MainPlane cameraRef={cameraRef} />
 					<CuttingBoard
-						cameraRef={cameraRef}
-						canvasRef={canvasRef}
-						newShadowProps={newShadowProps}
-						setNewShadowProps={setNewShadowProps}
+					cameraRef={cameraRef}
+					canvasRef={canvasRef}
+					newShadowProps={newShadowProps}
+					setNewShadowProps={setNewShadowProps}
 					/>
 					<TitleHoverSpheres
-						cameraRef={cameraRef}
-						canvasRef={canvasRef}
-						rayCasterRef={rayCaster}
+					cameraRef={cameraRef}
+					canvasRef={canvasRef}
+					rayCasterRef={rayCaster}
 					/>
 					{ADD_CONTROLS && (
 						<>
-							<OrbitControls />
-							<TransformControls />
+						<OrbitControls />
+						<TransformControls />
+						<axesHelper args={[5]} />
 						</>
 					)}
 				</Suspense>
@@ -199,7 +201,7 @@ const Radish = () => {
 const Lights = ({ cameraRef }) => {
 	
 	const lightRef = useRef();
-	useHelper(lightRef, SpotLightHelper);
+	// useHelper(lightRef, SpotLightHelper);
 	return (
 		<>
 			<spotLight
@@ -247,7 +249,7 @@ const MainPlane = forwardRef((props, ref) => {
 });
 
 const Camera = ({ cameraRef, rayCaster, _aspectRatio }) => {
-	useHelper(cameraRef, CameraHelper, 1, "hotpink");
+	// useHelper(cameraRef, CameraHelper, 1, "hotpink");
 	return (
 		<PerspectiveCamera
 			makeDefault
