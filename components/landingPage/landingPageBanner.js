@@ -34,6 +34,7 @@ const useClasses = makeStyles((theme) => ({
         fontSize: "7rem",
         lineHeight: "7rem",
         fontWeight: 400,
+        position: "relative"
     },
     dotIoTarget: {
         width: "2px",
@@ -43,17 +44,56 @@ const useClasses = makeStyles((theme) => ({
     },
 }))
 
+
+const coverBackground = {
+        position: "absolute",
+        display: "flex",
+        height: "40%",
+        width: "100%",
+        backgroundColor: "#268AFF",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        top: 0
+}
+
 const landingPageBanner = () => {
     const classes = useClasses();
+    
+    useEffect(() => {
+        let targets = document.getElementsByClassName("i-hover-target")
+        console.log('targets: iTargets', targets);
+        for(var i = 0; i < targets.length; i ++){
+            console.log("Target i iTargets", targets[i])
+        }
+    }, [])
+
+
+
     return (
         <div className={classes.landingpageBannerContainer}>
         <div className={classes.titleTextWrapper}>
-        <Typography variant="h1" className={classes.titleTextMain}>
-        Radish
-        </Typography>
+        {[..."Radish"].map((ch, i) => {
+            return (
+                <Typography variant="h1" className={clsx(classes.titleTextMain, `title-character-${ch}`)} key={`title-${ch}-${i}`}>
+                {ch === "i" && 
+                <div style={coverBackground}  >
+                <div className="i-hover-target" style={{backgroundColor: "#fff", width: "2px", height: "2px"}}></div>
+                </div>
+                    }
+                {ch}
+                </Typography>
+            )
+        })}
         <div className={classes.dotIoTarget} id="dot-io-target"></div>
         <Typography variant="h1" className={classes.titleTextMain}>
-        io
+            <div style={coverBackground}  >
+                <div className="i-hover-target" style={{backgroundColor: "#fff", width: "2px", height: "2px"}}></div>
+            </div>
+        i
+        </Typography>
+        <Typography variant="h1" className={classes.titleTextMain}>
+        o
         </Typography>
         </div>
         </div>

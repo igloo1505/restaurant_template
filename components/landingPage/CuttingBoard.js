@@ -16,7 +16,7 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	const sphereRef = useRef();
 	const [boardIsExtended, setBoardIsExtended] = useState(false);
 	const { nodes, materials } = useGLTF("/cuttingBoard.glb");
-	const [newBoardPosition, setNewBoardPosition] = useState("topLeft");
+	const [newBoardPosition, setNewBoardPosition] = useState("alignTitle");
 	useEffect(() => {
 		let canvasWrapper = document
 			.getElementById("mainCanvas")
@@ -46,13 +46,6 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	useEffect(() => {
 		if (newBoardPosition) {
 			toggleItemPosition(newBoardPosition);
-			// if(newBoardPosition.position === "center"){
-			//   console.log("Setting center");
-			//   return api.start({
-			//     position: boardIsExtended ? [0, 0, 0.5] : [0, 0, 0]
-			//   })
-			// }
-			// console.log('newBoardPosition: ', newBoardPosition);
 		}
 	}, [newBoardPosition, boardIsExtended]);
 
@@ -100,8 +93,6 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		var distance = -camera.position.z / vec.z;
 
 		pos.copy(camera.position).add(vec.multiplyScalar(distance));
-		// end
-
 		return {
 			x: pos.x,
 			y: pos.y - (obSize.y * scalePercentage) / 100,
@@ -111,8 +102,6 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 
 	const toggleItemPosition = (transformation) => {
 		let visBox = getVisibleBox(0.5);
-		console.log("visBox: ", visBox);
-		let shadowProps = {};
 		let pValues = {
 			topLeft: [visBox.min.x, visBox.min.y, 0],
 			topRight: [visBox.max.x, visBox.min.y, 0],
@@ -146,18 +135,12 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		if (transformation === "alignTitle") {
 			let np = getAlignTitlePosition();
 			newPosition = [np.x, np.y, np.z];
-
-			console.log("newPosition: ", newPosition);
 		}
 		api.start({
 			position: newPosition,
 		});
 
-		// setNewShadowProps(shadowProps)
-		console.log("newPosition down here visibile transform", newPosition);
-		// setNewBoardPosition({
-		//   position: newPosition,
-		// })
+
 	};
 
 	const sphereStyles = useSpring({
@@ -174,10 +157,6 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		},
 		config: config.gentle,
 	});
-
-
-
-
 
 
 
