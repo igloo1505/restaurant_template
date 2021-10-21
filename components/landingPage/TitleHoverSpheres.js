@@ -21,6 +21,7 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
         let newTargets = []
         for(var i = 0; i < targets.length; i ++){
             let _t = targets[i]
+            _t.setAttribute("hasThreeHoveredEm", true)
             let target = _t.getBoundingClientRect()
             // start
 		let camera = cameraRef.current;
@@ -33,11 +34,8 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
 		);
 
 		vec.unproject(camera);
-
 		vec.sub(camera.position).normalize();
-
 		var distance = -camera.position.z / vec.z;
-
 		pos.copy(camera.position).add(vec.multiplyScalar(distance));
 		let targetPosition = [ pos.x, pos.y + 0.095, pos.z]
         console.log('targetPosition: target positions', targetPosition);

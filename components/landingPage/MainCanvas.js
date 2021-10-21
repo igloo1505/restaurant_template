@@ -44,6 +44,7 @@ import { SpotLightHelper } from "three/src/helpers/SpotLightHelper";
 import { PointLightHelper } from "three/src/helpers/PointLightHelper";
 import { CameraHelper } from "three/src/helpers/CameraHelper";
 import TitleHoverSpheres from "./TitleHoverSpheres";
+import {useRouter} from "next/router";
 
 
 
@@ -90,7 +91,7 @@ const Scene = withControls(() => {
 	const rayCaster = useRef();
 	const canvasRef = useRef();
 	const rendererRef = useRef();
-
+	const router = useRouter()
 	const [newShadowProps, setNewShadowProps] = useState({});
 
 	const [animationPhase, setAnimationPhase] = useState(animationPhases[0]);
@@ -99,6 +100,30 @@ const Scene = withControls(() => {
 	useEffect(() => {
 		let _canvas = document.getElementById("main-canvas-container");
 		let ar = _canvas?.clientWidth / _canvas?.clientHeight;
+
+		let hoverListener = document.addEventListener("mousemove", (e) => {
+			let dim = document.getElementById("landingPage-banner-signupButton")?.getBoundingClientRect()
+			console.log("Mouse movement", e.x, dim.left)
+			if(e.x > dim.left && e.x < dim.right){
+				if(e.y > dim.top && e.y < dim.bottom){
+					console.log("handle mouse movement now!!")
+					return document.body.style.cursor = "pointer"
+				}
+			}
+			return document.body.style.cursor = "default"
+		})
+		let clickListener = document.addEventListener("click", (e) => {
+			let dim = document.getElementById("landingPage-banner-signupButton")?.getBoundingClientRect()
+			console.log("Mouse movement", e.x, dim.left)
+			if(e.x > dim.left && e.x < dim.right){
+				if(e.y > dim.top && e.y < dim.bottom){
+					console.log("handle mouse movement now!!")
+					return router.push("/portal")
+				}
+			}
+			return document.body.style.cursor = "default"
+		})
+
 		if (ar) {
 			setAspectRatio(ar);
 		}

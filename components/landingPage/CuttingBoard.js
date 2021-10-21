@@ -18,7 +18,7 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	const [boardIsExtended, setBoardIsExtended] = useState(false);
 	const { nodes, materials } = useGLTF("/cuttingBoard.glb");
 	const [newBoardPosition, setNewBoardPosition] = useState("alignTitle");
-	const [latestAlignedPosition, setLatestAlignedPosition] = useState(null)
+	const [latestAlignedPosition, setLatestAlignedPosition] = useState(null);
 
 	useEffect(() => {
 		let canvasWrapper = document
@@ -38,25 +38,25 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	const wobbleBoard = () => {
 		let tl = gsap.timeline({
 			yoyo: true,
-			repeat: -1
+			repeat: -1,
 		});
-		let _target = group?.current?.rotation
+		let _target = group?.current?.rotation;
 		let clone = modelRef.current.clone();
 		modelRef.current.geometry.computeBoundingBox();
 		let bBox = clone.geometry.boundingBox;
 		let obSize = bBox.getSize(new THREE.Vector3());
-		let _offset = Math.tan(THREE.MathUtils.degToRad(6)) * obSize.y / 2
-		console.log('d: angle offset target', _offset);
+		let _offset = (Math.tan(THREE.MathUtils.degToRad(6)) * obSize.y) / 2;
+		console.log("d: angle offset target", _offset);
 		// let wobbleOffset = {
-		// 	p:  
+		// 	p:
 		// 	n:
 		// }
-		let _positionTarget = group?.current?.position
+		let _positionTarget = group?.current?.position;
 		let otherTl = gsap.timeline({
 			yoyo: true,
-			repeat: -1
-		})
-		if(_target){
+			repeat: -1,
+		});
+		if (_target) {
 			tl.fromTo(
 				_target,
 				{
@@ -68,60 +68,111 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 					x: THREE.MathUtils.degToRad(6),
 					// position: [group.current.position.x, group.current.position.y, group.current.position.z - _offset]
 				}
-				)
-				tl.to(_target, 
-					{
-						duration: 1,
-						x: THREE.MathUtils.degToRad(0),
-					}	
-				)
-				tl.to(_target, 
-					{
-						duration: 1,
-						x: THREE.MathUtils.degToRad(-6),
-						// position: [group.current.position.x, group.current.position.y, group.current.position.z + _offset]
-					}	
-				)
-				tl.to(_target, 
-					{
-						duration: 1,
-						x: THREE.MathUtils.degToRad(0),
-					}	
-				)
-			}
-			if(_positionTarget && latestAlignedPosition){
-				console.log('latestAlignedPosition: ', latestAlignedPosition, _offset);
-				otherTl.fromTo(
-					_positionTarget,
-					{
-						duration: 1,
-						z: latestAlignedPosition.z
-					},
-					{
-						duration: 1,
-						// position: [group.current.position.x, group.current.position.y, group.current.position.z - _offset]
-						z: latestAlignedPosition.z - _offset
-					}
-					)
-					otherTl.to(_positionTarget, 
-						{
-							duration: 1,
-							z: latestAlignedPosition.z
-						}	
-					)
-					otherTl.to(_positionTarget, 
-						{
-							duration: 1,
-							z: latestAlignedPosition.z + _offset
-						}	
-					)
-					otherTl.to(_positionTarget, 
-						{
-							duration: 1,
-							z: latestAlignedPosition.z
-						}	
-					)
+			);
+			tl.to(_target, {
+				duration: 1,
+				x: THREE.MathUtils.degToRad(0),
+			});
+			tl.to(_target, {
+				duration: 1,
+				x: THREE.MathUtils.degToRad(-6),
+				// position: [group.current.position.x, group.current.position.y, group.current.position.z + _offset]
+			});
+			tl.to(_target, {
+				duration: 1,
+				x: THREE.MathUtils.degToRad(0),
+			});
+		}
+		if (_positionTarget && latestAlignedPosition) {
+			console.log("latestAlignedPosition: ", latestAlignedPosition, _offset);
+			otherTl.fromTo(
+				_positionTarget,
+				{
+					duration: 1,
+					z: latestAlignedPosition.z,
+				},
+				{
+					duration: 1,
+					// position: [group.current.position.x, group.current.position.y, group.current.position.z - _offset]
+					z: latestAlignedPosition.z - _offset,
 				}
+			);
+			otherTl.to(_positionTarget, {
+				duration: 1,
+				z: latestAlignedPosition.z,
+			});
+			otherTl.to(_positionTarget, {
+				duration: 1,
+				z: latestAlignedPosition.z + _offset,
+			});
+			otherTl.to(_positionTarget, {
+				duration: 1,
+				z: latestAlignedPosition.z,
+			});
+		}
+
+		let sphereTl = gsap.timeline({
+			yoyo: true,
+			repeat: -1,
+		});
+		let sphereMaterial = sphereRef.current.material.color
+		sphereTl.fromTo(sphereMaterial, {
+			r: 1,
+			g: 1,
+			b: 1,
+			duration: 0.35,
+			onUpdateParams: [sphereMaterial.newColor]
+		}, {
+			r: 0.92156863,
+			g: 0.37647059,
+			b: 0.0627451,
+			duration: 0.35,
+			onUpdateParams: [sphereMaterial.newColor]
+		},
+		)
+		let sphereScaleTl = gsap.timeline({
+			yoyo: true,
+			repeat: -1,
+		});
+		let sphereScale = sphereRef.current.scale
+		console.log('sphereScale: ', sphereScale);
+		sphereScaleTl.fromTo(sphereScale, {
+			x: 1,
+			y: 1,
+			z: 1,
+			duration: 1,
+			onUpdate: (...self) => {
+				console.log("this self", self)
+			},
+			onUpdateParams: [sphereMaterial.newColor]
+		}, {
+			x: 0.6,
+			y: 0.6,
+			z: 0.6,
+			duration: 1,
+			// onUpdate: (self) => {
+			// 	if(self){
+			// 		console.log("that self", self)
+			// 		let sa = [...`${self}`]
+			// 		let ia = [];
+			// 		sa.forEach((ch, i) => {
+			// 			if(parseInt(ch)){
+			// 				ia.push(i)
+			// 			}
+			// 		})
+			// 			let _self = self.slice(sa.indexOf("("), sa.indexOf(")"))
+			// 			let nc = new THREE.Color(_self)
+			// 			console.log('nc: self', nc);
+			// 			// debugger
+			// 		if(nc.r){
+			// 			sphereMaterial.color.set(nc)
+			// 		}
+			// 	}
+			// },
+			onUpdateParams: [sphereMaterial.newColor]
+		},
+		)
+
 	};
 
 	const [UIstate, setUIstate] = useState(null);
@@ -175,10 +226,10 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	const getVisibleBox = (z) => {
 		console.log(
 			"cameraRef.current.fov: visbox",
-			cameraRef.current.fov,
-			cameraRef.current.aspect,
+			cameraRef?.current?.fov,
+			cameraRef?.current?.aspect,
 			z,
-			cameraRef.current.position.z
+			cameraRef?.current?.position.z
 		);
 		let _z = Math.abs(z - cameraRef.current.position.z) || z;
 		console.log("_z: visbox", _z);
@@ -221,7 +272,7 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 			x: pos.x,
 			y: pos.y - (obSize.y * scalePercentage) / 100,
 			z: pos.z,
-		})
+		});
 		return {
 			x: pos.x,
 			y: pos.y - (obSize.y * scalePercentage) / 100,
@@ -275,21 +326,6 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		});
 	};
 
-	const sphereStyles = useSpring({
-		loop: true,
-		to: [
-			{ scale: [0.5, 0.5, 0.5], opacity: 0.7, color: "#fff" },
-			{ scale: [1, 1, 1], opacity: 1, color: "#ed7028" },
-			{ scale: [0.5, 0.5, 0.5], opacity: 0.7, color: "#fff" },
-		],
-		from: {
-			scale: [0.5, 0.5, 0.5],
-			opacity: 0.7,
-			color: "#fff",
-		},
-		config: config.gentle,
-	});
-
 	// const wobbleStyles = useSpring({
 	// 	loop: true,
 	// 	to: [{
@@ -311,8 +347,7 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	// })
 
 	const handleItemClick = (e) => {
-		e.stopPropagation();
-
+		// e.stopPropagation();
 		setBoardIsExtended(!boardIsExtended);
 		const arr = [
 			"topLeft",
@@ -353,14 +388,12 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 					castShadow
 					scale={[1, 1, 1]}
 					position={[0, 0.19, 0]}
-					{...sphereStyles}
 				>
 					<three.sphereGeometry attach="geometry" args={[0.005]} />
 					<three.meshStandardMaterial
 						attach="material"
 						roughness={0.1}
 						metalness={0}
-						color={sphereStyles.color}
 					/>
 				</three.mesh>
 			)}
