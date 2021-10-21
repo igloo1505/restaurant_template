@@ -18,7 +18,8 @@ import {
 	PerspectiveCamera,
 	useHelper,
 	ContactShadows,
-	Environment
+	Environment,
+	Billboard
 } from "@react-three/drei";
 import ThreeDModel from "./ThreeDModel";
 import DatGui from "./DatGui";
@@ -29,6 +30,8 @@ import CuttingBoard from './CuttingBoard';
 import Mitts from './Mitts';
 import { DirectionalLightHelper } from "three/src/helpers/DirectionalLightHelper";
 import {PlaneHelper} from "three/src/helpers/PlaneHelper"
+import {SpotLightHelper} from "three/src/helpers/SpotLightHelper"
+import {PointLightHelper} from "three/src/helpers/PointLightHelper"
 import {CameraHelper} from "three/src/helpers/CameraHelper"
 
 
@@ -85,6 +88,9 @@ const Scene = withControls(() => {
 	const rayCaster = useRef()
 	const canvasRef = useRef()
 	const rendererRef = useRef()
+
+
+	const [newShadowProps, setNewShadowProps] = useState({})
 	
 	const [animationPhase, setAnimationPhase] = useState(animationPhases[0])
 	
@@ -133,18 +139,18 @@ const Scene = withControls(() => {
 				<Suspense fallback={null}>
 				<Camera cameraRef={cameraRef} _aspectRatio={_aspectRatio} rayCaster={rayCaster}/>
 						<axesHelper args={[5]} />
+						<Billboard position={[0, 0, -0.5]} receiveShadow/>
 						<Lights
 						cameraRef={cameraRef}
 						/>
 						<CuttingBoard
 						cameraRef={cameraRef}
 						canvasRef={canvasRef}
+						newShadowProps={newShadowProps}
+						setNewShadowProps={setNewShadowProps}
 						/>
-          				<ContactShadows rotation-x={Math.PI / 2} position={[0, -0.4, 0]} opacity={0.65} width={10} height={10} blur={1.5} far={0.8} />
-
 						<OrbitControls />
 						<TransformControls />
-
 				</Suspense>
 			</Canvas>
 		</div>
@@ -196,10 +202,12 @@ loader.load(
 
 
 const Lights = ({cameraRef}) => {
+	const lightRef = useRef()
+	useHelper(lightRef, SpotLightHelper)
 	return (
 		<>
-		<spotLight intensity={0.5} angle={0.1} penumbra={1} position={[10, 15, 10]} castShadow />
-		<ambientLight intensity={0.7} />
+		<spotLight intensity={0.7} angle={0.1} penumbra={1} position={[2, 3, 5]} castShadow ref={lightRef} shadowDarkness={0.8}/>
+		<ambientLight intensity={0.5} />
 		</>
 		)
 }

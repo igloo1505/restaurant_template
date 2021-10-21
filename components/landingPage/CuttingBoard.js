@@ -4,7 +4,13 @@ import { Sphere, useGLTF } from '@react-three/drei'
 import * as THREE from "three";
 import { useSpring } from '@react-spring/core';
 import { a as three, config } from "@react-spring/three";
+import {
+	ContactShadows,
+} from "@react-three/drei";
+import { useFrame } from 'react-three-fiber';
 import { a as web } from "@react-spring/web";
+import { useTheme } from '@material-ui/styles';
+
 
 
 
@@ -12,9 +18,12 @@ import { a as web } from "@react-spring/web";
 const Model = ({ 
   cameraRef,
   canvasRef,
+  newShadowProps, 
+  setNewShadowProps
  }) =>  {
   const group = useRef()
   const modelRef = useRef()
+  const sphereRef = useRef()
   const [boardIsExtended, setBoardIsExtended] = useState(false)
   const { nodes, materials } = useGLTF('/cuttingBoard.glb')
   const [newBoardPosition, setNewBoardPosition] = useState("topLeft")
@@ -67,7 +76,7 @@ const Model = ({
 
 
 const getAlignTitlePosition = () => {
-  const scalePercentage = 20
+  const scalePercentage = 40
   let camera = cameraRef.current
   let target = document.getElementById("dot-io-target").getBoundingClientRect()
   let clone = modelRef.current.clone()
@@ -105,7 +114,7 @@ const toggleItemPosition = (transformation) => {
 
   let visBox = getVisibleBox(0.5)
   console.log('visBox: ', visBox);
-  
+  let shadowProps = {}
   let pValues = {
     topLeft: [visBox.min.x, visBox.min.y, 0],
     topRight: [visBox.max.x, visBox.min.y, 0],
@@ -142,17 +151,68 @@ const toggleItemPosition = (transformation) => {
     if(transformation === "alignTitle"){
       let np = getAlignTitlePosition()
       newPosition = [np.x, np.y, np.z]
+      
       console.log('newPosition: ', newPosition);
     }
       api.start({
         position: newPosition
       })
+
+      // setNewShadowProps(shadowProps)
   console.log('newPosition down here visibile transform', newPosition);
     // setNewBoardPosition({
     //   position: newPosition,
     // })
 }
 
+
+const sphereStyles = useSpring({
+  loop: true,
+  to: [
+    {scale: [0.5, 0.5, 0.5], opacity: 0.7, color: "#fff"},
+    {scale: [1, 1, 1], opacity: 1, color: "#ed7028"},
+    {scale: [0.5, 0.5, 0.5], opacity: 0.7, color: "#fff"},
+  ],
+  from: {
+    scale: [0.5, 0.5, 0.5],
+    opacity: 0.7,
+    color: "#fff"
+  },
+  config: config.gentle,
+})
+
+
+useFrame((state) => {
+  console.log('state: ', state);
+    const t = state.clock.getElapsedTime()
+    if(newBoardPosition !== "alignTitle"){
+      // sphereRef.current.opacity = 0
+      return
+    }
+    // state.camera.position.lerp(vec.set(0, 0, open ? -24 : -32), 0.1)
+    // state.camera.lookAt(0, 0, 0)
+    // sphereRef.current.rotation.x = THREE.MathUtils.lerp(sphereRef.current.rotation.x, Math.cos(t / 2) / 8 + 0.25)
+    // sphereRef.current.rotation.y = THREE.MathUtils.lerp(sphereRef.current.rotation.y, Math.sin(t / 4) / 4)
+    // sphereRef.current.rotation.z = THREE.MathUtils.lerp(sphereRef.current.rotation.z, Math.sin(t / 4) / 4)
+    // sphereRef.current.position.y = THREE.MathUtils.lerp(sphereRef.current.position.y, open ? (-2 + Math.sin(t)) / 3 : -4.3, 0.1)
+  
+  return {
+
+  }
+
+})
+
+
+// const sphereColors = useSpring({
+//   loop: true,
+//   to: {
+//     color: "#fff",
+//   },
+//   from: {
+//     color: "#ed7028",
+//   },
+//   config: config.stiff
+// })
 
 
   const handleItemClick = (e) => {
@@ -178,19 +238,31 @@ const toggleItemPosition = (transformation) => {
      position={[0,0,0]}
      onClick={handleItemClick}
      name="cuttingBoard"
-     scale={[1, 1, 1]}
+     scale={[1.3, 1.3, 1.3]}
      castShadow
      {...styles}
      >
       <three.group rotation={[0, 0, 0]}>
         <mesh receiveShadow castShadow geometry={nodes.mesh_0.geometry} material={materials.Cutting_Board} ref={modelRef}/>
       </three.group>
-      <three.group >  
-        <Sphere scale={[0.01, 0.01, 0.01]} position={[0, 0.19, 0]}>
-        <meshPhongMaterial attach="material" color="#268AFF" />
-        </Sphere>
-      </three.group>
+      {
+          newBoardPosition && newBoardPosition === "alignTitle" && (
+        <three.mesh receiveShadow castShadow scale={[1, 1, 1]} position={[0, 0.19, 0]} {...sphereStyles} ref={sphereRef}>
+        <three.sphereGeometry attach="geometry" args={[0.005]} />
+        
+        <three.meshStandardMaterial
+        attach="material"
+        
+        roughness={0.1}
+        metalness={0.1}
+        color={sphereStyles.color}
+        // {...sphereColors}
+      />
+        </three.mesh>
+        )
+      }
     </three.group>
+      
   )
 }
 
