@@ -11,12 +11,14 @@ import Typography from "@material-ui/core/Typography";
 import BookmarkedIcon from "@material-ui/icons/Bookmark";
 import NotBookmarkedIcon from "@material-ui/icons/BookmarkBorderOutlined";
 import Button from "@material-ui/core/Button"
+import ClientSidePortal from "../portalAuthenticated/ClientSidePortal";
 
 
 const useClasses = makeStyles((theme) => ({
     landingpageBannerContainer: {
         width: "100%",
-        height: "40vh",
+        height: "fit-content",
+        minHeight: "40vh",
         backgroundColor: theme.palette.primary.main,
         padding: "1.5rem",
         borderRadius: "0.6rem",
@@ -24,14 +26,26 @@ const useClasses = makeStyles((theme) => ({
         display: "flex",
         flexDirection: "row",
         gap: "1.5rem",
+        [theme.breakpoints.down(1200)]: {
+            flexDirection: "column",
+            width: "85vw",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "fit-content",
+            // width: "fit-content",
+            padding: "2rem"
+          },
     },
     titleTextWrapper: {
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-end",
         alignItems: "flex-start",
-        width: "min(50%, 800px)",
+        // width: "min(50%, 800px)",
         gap: "1rem",
+        // [theme.breakpoints.up()]: {
+        
+        //   },
     },
     entireTextContainer: {
         display: "flex",
@@ -72,6 +86,28 @@ const useClasses = makeStyles((theme) => ({
     bannerRightContainer: {
         padding: "0.75rem"
     },
+    bannerRightNarrow: {
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        marginLeft: "6rem"
+        // border: "2px solid red"
+    },
+    rightDefinitionTitleNarrow: {
+        // rotate: "90deg",
+        // transform: "rotate(270deg)",
+        msTransform: "rotateZ(-90deg)",
+        webkitTransform: "rotateZ(-90deg)",
+        mozTransform: "rotateZ(-90deg)",
+        oTransform: "rotateZ(-90deg)",
+        transform: "rotateZ(-90deg) translate(-50%, 50%, 0%)",
+        height: "fit-content",
+        width: "100%",
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        padding: "0.75rem 0.75rem"
+    },
     rightDefinitionTitleContainer: {
         display: "flex",
         flexDirection: "column",
@@ -82,7 +118,19 @@ const useClasses = makeStyles((theme) => ({
     },
     rightDefinitionTitle: {
         fontWeight: 500,
-        // backgroundColor: "#FFFDD0",
+        backgroundColor: "#fff",
+        width: "100%",
+        padding: "0.25rem",
+        textAlign: "center",
+        
+        color: theme.palette.primary.dark,
+        overflow: "visible",
+        borderRadius: "4px",
+        marginBottom: "1rem",
+        
+    },
+    rotatedDefinitionTitle: {
+        fontWeight: 500,
         backgroundColor: "#FFF",
         width: "100%",
         padding: "0.25rem",
@@ -90,7 +138,7 @@ const useClasses = makeStyles((theme) => ({
         // color: "#273c75",
         color: theme.palette.primary.dark,
         borderRadius: "4px",
-        marginBottom: "1rem"
+        marginBottom: "1rem",
     },
     rightDefinitionNoun: {
         color: "#fff",
@@ -117,25 +165,63 @@ const useClasses = makeStyles((theme) => ({
         fontSize: "1.2rem",
         fontWeight: 200,
         color: "#fff",
-        margin: "0.75rem",
-        fontStyle: "italic"
+        margin: "0.75rem 0rem",
+        fontStyle: "italic",
+        // margin: "0px"
     },
     buttonText: {
         color: "#fff",
         fontWeight: 600,
         letterSpacing: "0.2rem",
         fontSize: "2rem",
-        padding: "0.75rem",
-        textTransform: "none"
-    }
+        padding: "0.5rem",
+        textTransform: "none",
+        borderRadius: "8px",
+        [theme.breakpoints.down(1200)]: {
+            padding: "0.5rem"
+          },
+    },
+    buttonTextLogin: {
+        color: "#eb6010",
+        fontWeight: 600,
+        letterSpacing: "0.2rem",
+        fontSize: "2rem",
+        padding: "0.5rem",
+        textTransform: "none",
+        borderRadius: "8px",
+        [theme.breakpoints.down(1200)]: {
+            padding: "0.5rem"
+          },
+    },
 }))
+
+
 
 
 const useButtonClasses = makeStyles((theme) => ({
     root: {
-        width: "100%",
-        marginTop: "2rem"
-    }
+        width: "calc(50% - 1rem)",
+        margin: "0.5rem",
+        height: "100%",
+        marginTop: "2rem",
+        border: "2px solid #eb6010",
+        boxSizing: "border-box",
+    },
+    loginRoot: {
+        width: "calc(50% - 1rem)",
+        margin: "0.5rem",
+        backgroundColor: "#fff",
+        height: "100%",
+        marginTop: "2rem",
+        border: "2px solid #eb6010",
+        boxSizing: "border-box",
+    },
+    // text: {
+        
+    // },
+    // loginText: {
+        
+    // }
 }))
 
 const coverBackground = {
@@ -150,10 +236,14 @@ const coverBackground = {
         top: 0
 }
 
-const landingPageBanner = () => {
+const landingPageBanner = ({UI: {
+    viewport: {width: deviceWidth, height: deviceHeight}
+}}) => {
     const classes = useClasses();
-    
+    const [anchorToCorner, setAnchorToCorner] = useState(null)
+
     useEffect(() => {
+        
         let targets = document.getElementsByClassName("i-hover-target")
         console.log('targets: iTargets', targets);
         for(var i = 0; i < targets.length; i ++){
@@ -161,9 +251,57 @@ const landingPageBanner = () => {
         }
     }, [])
 
+const handleAnchorPoint = (cancel) => {
+    
+    let dim = document.getElementById("banner-title-narrow")?.getBoundingClientRect()
+        // let textDim = document.getElementById("banner-title-narrow-title-text")?.getBoundingClientRect()
+        // console.log('dim: here ', dim, textDim);
+        if(!dim){
+            return
+        }
+        let leftOffset = deviceWidth > 900 ? 16 : 24
+        setAnchorToCorner({
+            // rotateZ: "270deg"
+            // transfo
+            msTransform: "rotateZ(-90deg)",
+            webkitTransform: "rotateZ(-90deg)",
+            mozTransform: "rotateZ(-90deg)",
+            oTransform: "rotateZ(-90deg)",
+            transform: "rotateZ(-90deg)",
+            transformOrigin: "bottom left",
+            // rotate: "270deg",
+            top: `${dim.bottom - 56}px`,
+            left: dim.left - 16,
+            overflow: "hidden",
+            width: dim.height,
+            height: "3.5rem",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "2px solid #227ce6",
+            fontSize: "1.8rem"
+        })
+        if(cancel) {        
+            setTimeout(() => {
+                cancel()
+            }, 1000);
+        }
+        // console.log("dim cancel", cancel)
+}
+
+    useEffect(() => {
+        let _int = setInterval(() => handleAnchorPoint(cancelInterval))
+        const cancelInterval = () => {
+        clearInterval(_int)
+        }
+
+    }, [deviceWidth, deviceHeight])
+
 const handleSignupClick = (e) => {
 console.log("Did click signup button target")
 }
+const buttonClasses = useButtonClasses()
 
     return (
         <div className={classes.landingpageBannerContainer}>
@@ -183,15 +321,16 @@ console.log("Did click signup button target")
             )
         })}
         </div>
-        <div style={{height: "100%", display: "flex", flexDirecton: "column", justifyContent: "center", alignItems: "flex-end"}}>
-        <div className={classes.dotIoTarget} id="dot-io-target">
-        {(() => document.getElementById("dot-io-target").hasAttribute("hasThreeHoveredEm")) && 
-        (<Typography>
-        .
-        </Typography>)
-    }
-        </div>
-        </div>
+        {
+            deviceWidth > 1200 ? (
+                <div style={{height: "100%", display: "flex", flexDirecton: "column", justifyContent: "center", alignItems: "flex-end"}}>
+                <div className={classes.dotIoTarget} id="dot-io-target">
+                </div>
+                </div>
+                ) : (
+                <div className="i-hover-target white" style={{width: "2px", height: "2px", backgroundColor: "green"}}></div>
+            )
+        }
         <div className={classes.textUnderline}>
         <Typography variant="h1" className={classes.titleTextMain}>
         <div style={coverBackground}  >
@@ -205,11 +344,23 @@ console.log("Did click signup button target")
         </div>
         </div>
         </div>
-        <div className={classes.bannerRightContainer}>
+        <div className={clsx(classes.bannerRightContainer, deviceWidth < 1200 && classes.bannerRightNarrow)}>
+        {
+            deviceWidth <= 1200 && deviceWidth >= 750 && (
+                <ClientSidePortal selector="#topLevelPortalContainer">
+                <Typography variant="h1" className={clsx(classes.rightDefinitionTitle, deviceWidth < 1200 && classes.rightDefinitionTitleNarrow)} style={{...anchorToCorner}} id="banner-title-narrow-title-text">
+                    Radish
+                </Typography>
+                </ClientSidePortal>
+                )
+        }
+        <div className={classes.dictionaryContent} id="banner-title-narrow">
         <div className={classes.rightDefinitionTitleContainer}>
+        {deviceWidth > 1200 && 
         <Typography variant="h1" className={classes.rightDefinitionTitle}>
         Radish
         </Typography>
+        }
         <div style={{display: "flex", flexDirection: "row", justifyContent: "flex-start", width: "100%", gap: "0.75rem"}}>
         <Typography variant="h1" className={classes.rightDefinitionNoun}>
         noun, adjective
@@ -230,26 +381,41 @@ console.log("Did click signup button target")
         <Typography variant="h1" className={classes.informal}>
             informal
         </Typography>
-        : to be pretty awesome. Usually in the presence of friends. 
+        The state of being kind of awesome. Usually in the presence of friends. 
         </Typography>
         <div style={{display: "flex", flexDirection: "column", height: "fit-content"}}>
         <Typography variant="h1" className={classes.definitionMain} style={{flexDirection: "row", alignItems: "center", margin: "0px"}}>
-        <Typography variant="h1" className={classes.informal}>
+        <Typography variant="h1" className={classes.informal} style={{margin: "0.75rem"}}>
         also:
         </Typography>
         a plant that produces radishes.
         </Typography>
         </div>
         </div>
-        <Button variant="contained" color="secondary" classes={useButtonClasses()} onClick={handleSignupClick} id="landingPage-banner-signupButton">
+        </div>
+        <div>
+        <Button variant="contained" color="secondary" classes={{root: buttonClasses.root}} onClick={handleSignupClick} id="landingPage-banner-signupButton">
         <Typography variant="h1" className={classes.buttonText}>
         Sign up
         </Typography>
         </Button>
+        <Button variant="contained" color="secondary" classes={{root: buttonClasses.loginRoot}} onClick={handleSignupClick} id="landingPage-banner-loginButton">
+        <Typography variant="h1" className={classes.buttonTextLogin} i>
+        Login
+        </Typography>
+        </Button>
         </div>
+        </div> 
         
         </div>
     )
 }
 
-export default landingPageBanner
+
+const mapStateToProps = (state, props) => ({
+        user: state.user,
+        UI: state.UI,
+        props: props
+});
+
+export default connect(mapStateToProps)(landingPageBanner)

@@ -17,10 +17,30 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
     const [hasFoundTargets, setHasFoundTargets] = useState(false)
     const [targetPosition, setTargetPosition] = useState([])
     const setTargets = (cancel, method) => {
+        // let _width = window.innerWidth
+        let _height = window.innerHeight
+
+        let _scaleUp = 0.095
+        
+        if(_height < 1100){
+                console.log('_height: ', _height);
+                _scaleUp = 0.115
+        }
+        if(_height < 900){
+                console.log('_height: ', _height);
+                _scaleUp = 0.125
+        }
+        if(_height < 750){
+                console.log('_height: ', _height);
+                _scaleUp = 0.145
+        }
+        
+        // if(_height < 1200)
         let targets = document.getElementsByClassName("i-hover-target")
         let newTargets = []
         for(var i = 0; i < targets.length; i ++){
             let _t = targets[i]
+            let _hasColor = false
             _t.setAttribute("hasThreeHoveredEm", true)
             let target = _t.getBoundingClientRect()
             // start
@@ -37,10 +57,13 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
 		vec.sub(camera.position).normalize();
 		var distance = -camera.position.z / vec.z;
 		pos.copy(camera.position).add(vec.multiplyScalar(distance));
-		let targetPosition = [ pos.x, pos.y + 0.095, pos.z]
+		let targetPosition = [ pos.x, pos.y + _scaleUp, pos.z]
         console.log('targetPosition: target positions', targetPosition);
-        // debugger
-        newTargets.push(targetPosition)
+        // debugger 
+        if(_t.classList.contains("white")){
+            _hasColor = "white"
+        }
+        newTargets.push({position: targetPosition, hasColor: _hasColor})
         // setHasFoundTargets(true)
         // end
     }
@@ -102,7 +125,7 @@ const TitleHoverSpheres = ({cameraRef, canvasRef}) => {
 		<>
         {targetPosition.map((t, i) => {
             console.log("Target!!!! hoverSpheres", t)
-            return <HoverOrb t={t} i={i} key={`hover-orb-${i}`} UIState={UIstate} /> 
+            return <HoverOrb t={t.position} hasColor={t.hasColor} i={i} key={`hover-orb-${i}`} UIState={UIstate} /> 
         })}
 		</>
 	);
@@ -114,7 +137,7 @@ export default TitleHoverSpheres;
 
 
 
-const HoverOrb = ({t: targetPosition, i, UIState: UI}) => {
+const HoverOrb = ({t: targetPosition, i, UIState: UI, hasColor}) => {
     const ref = useRef()
     
     useFrame((state) => {
@@ -140,7 +163,7 @@ const HoverOrb = ({t: targetPosition, i, UIState: UI}) => {
         ref={ref}
         receiveShadow
         castShadow
-        scale={[5, 5, 5]}
+        scale={hasColor === "white" ? [3, 3, 3] : [5, 5, 5]}
         position={targetPosition}
         // position={[0, 0.19, 0]}
         // {...sphereStyles}
@@ -150,7 +173,7 @@ const HoverOrb = ({t: targetPosition, i, UIState: UI}) => {
         attach="material"
         roughness={0.1}
         metalness={0}
-        color={"#eb6010"}
+        color={hasColor === "white" ? "#fff"  : "#eb6010"}
         />
         </three.mesh>
         <ContactShadows rotation={[-Math.PI / 2, 0, 0]} opacity={0.95} width={1} height={1} blur={1} far={10} />

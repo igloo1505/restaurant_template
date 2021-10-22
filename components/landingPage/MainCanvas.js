@@ -44,9 +44,7 @@ import { SpotLightHelper } from "three/src/helpers/SpotLightHelper";
 import { PointLightHelper } from "three/src/helpers/PointLightHelper";
 import { CameraHelper } from "three/src/helpers/CameraHelper";
 import TitleHoverSpheres from "./TitleHoverSpheres";
-import {useRouter} from "next/router";
-
-
+import { useRouter } from "next/router";
 
 let objs = [
 	"../../public/assets/greenApples.OBJ",
@@ -61,7 +59,7 @@ const MainCanvas = ({
 }) => {
 	return (
 		<Controls.Provider>
-			<Scene />
+			<Scene deviceWidth={deviceWidth} />
 		</Controls.Provider>
 	);
 };
@@ -86,43 +84,81 @@ const animationPhases = [
 	},
 ];
 
-const Scene = withControls(() => {
+const Scene = withControls(({ deviceWidth }) => {
 	const cameraRef = useRef();
 	const rayCaster = useRef();
 	const canvasRef = useRef();
 	const rendererRef = useRef();
-	const router = useRouter()
+	const router = useRouter();
 	const [newShadowProps, setNewShadowProps] = useState({});
 
 	const [animationPhase, setAnimationPhase] = useState(animationPhases[0]);
 
 	const [_aspectRatio, setAspectRatio] = useState(1);
 	useEffect(() => {
+		router.prefetch("/portal")
 		let _canvas = document.getElementById("main-canvas-container");
 		let ar = _canvas?.clientWidth / _canvas?.clientHeight;
 
 		let hoverListener = document.addEventListener("mousemove", (e) => {
-			let dim = document.getElementById("landingPage-banner-signupButton")?.getBoundingClientRect()
-			console.log("Mouse movement", e.x, dim.left)
-			if(e.x > dim.left && e.x < dim.right){
-				if(e.y > dim.top && e.y < dim.bottom){
-					console.log("handle mouse movement now!!")
-					return document.body.style.cursor = "pointer"
+			let dim = document
+				.getElementById("landingPage-banner-signupButton")
+				?.getBoundingClientRect();
+				if(!dim){
+					return
+				}
+			if (e.x > dim.left && e.x < dim.right) {
+				if (e.y > dim.top && e.y < dim.bottom) {
+					console.log("handle mouse movement now!!");
+					return (document.body.style.cursor = "pointer");
 				}
 			}
-			return document.body.style.cursor = "default"
-		})
+
+
+			let loginDim = document
+				.getElementById("landingPage-banner-loginButton")
+				?.getBoundingClientRect();
+				
+				if(!loginDim){
+					return
+				}
+
+			if (e.x > loginDim.left && e.x < loginDim.right) {
+				if (e.y > loginDim.top && e.y < loginDim.bottom) {
+					console.log("handle mouse movement now!!");
+					return (document.body.style.cursor = "pointer");
+				}
+			}
+			return (document.body.style.cursor = "default");
+		});
 		let clickListener = document.addEventListener("click", (e) => {
-			let dim = document.getElementById("landingPage-banner-signupButton")?.getBoundingClientRect()
-			console.log("Mouse movement", e.x, dim.left)
-			if(e.x > dim.left && e.x < dim.right){
-				if(e.y > dim.top && e.y < dim.bottom){
-					console.log("handle mouse movement now!!")
-					return router.push("/portal")
+			let dim = document
+				.getElementById("landingPage-banner-signupButton")
+				?.getBoundingClientRect();
+				let loginDim = document
+				.getElementById("landingPage-banner-loginButton")
+				?.getBoundingClientRect();
+				if(!dim || !loginDim){
+					return
+				}
+			console.log("Mouse movement", e.x, dim.left);
+			if (e.x > dim.left && e.x < dim.right) {
+				if (e.y > dim.top && e.y < dim.bottom) {
+					console.log("handle mouse movement now!!");
+					return router.push("/portal");
 				}
 			}
-			return document.body.style.cursor = "default"
-		})
+			if (e.x > loginDim.left && e.x < loginDim.right) {
+				if (e.y > loginDim.top && e.y < loginDim.bottom) {
+					console.log("handle mouse movement now!!");
+					return router.push({
+						pathname: "/portal",
+						query: {login: true}
+					});
+				}
+			}
+			return (document.body.style.cursor = "default");
+		});
 
 		if (ar) {
 			setAspectRatio(ar);
@@ -168,22 +204,24 @@ const Scene = withControls(() => {
 					<Billboard ponsition={[0, 0, -0.5]} receiveShadow />
 					<Lights cameraRef={cameraRef} />
 					<MainPlane cameraRef={cameraRef} />
-					<CuttingBoard
-					cameraRef={cameraRef}
-					canvasRef={canvasRef}
-					newShadowProps={newShadowProps}
-					setNewShadowProps={setNewShadowProps}
-					/>
+					{deviceWidth > 1200 && (
+						<CuttingBoard
+							cameraRef={cameraRef}
+							canvasRef={canvasRef}
+							newShadowProps={newShadowProps}
+							setNewShadowProps={setNewShadowProps}
+						/>
+					)}
 					<TitleHoverSpheres
-					cameraRef={cameraRef}
-					canvasRef={canvasRef}
-					rayCasterRef={rayCaster}
+						cameraRef={cameraRef}
+						canvasRef={canvasRef}
+						rayCasterRef={rayCaster}
 					/>
 					{ADD_CONTROLS && (
 						<>
-						<OrbitControls />
-						<TransformControls />
-						<axesHelper args={[5]} />
+							<OrbitControls />
+							<TransformControls />
+							<axesHelper args={[5]} />
 						</>
 					)}
 				</Suspense>
@@ -224,7 +262,6 @@ const Radish = () => {
 };
 
 const Lights = ({ cameraRef }) => {
-	
 	const lightRef = useRef();
 	// useHelper(lightRef, SpotLightHelper);
 	return (
@@ -258,16 +295,15 @@ const MainPlane = forwardRef((props, ref) => {
 				color="transparent"
 				ref={planeRef}
 			>
-			<mesh
-			receiveShadow
-			position={[0, -0.01, 0]}
-			rotation={[0, 0, 0]}
-			visible
-			// material={new THREE.MeshBasicMaterial( { color: "green", transparent: true, opacity: 1} )}
-			material={new THREE.ShadowMaterial({opacity: 0.25})}
-			geometry={new THREE.PlaneGeometry(10, 10)}
-			>
-			</mesh>
+				<mesh
+					receiveShadow
+					position={[0, -0.01, 0]}
+					rotation={[0, 0, 0]}
+					visible
+					// material={new THREE.MeshBasicMaterial( { color: "green", transparent: true, opacity: 1} )}
+					material={new THREE.ShadowMaterial({ opacity: 0.25 })}
+					geometry={new THREE.PlaneGeometry(10, 10)}
+				></mesh>
 			</Billboard>
 		</>
 	);
