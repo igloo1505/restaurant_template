@@ -3,13 +3,19 @@
 const ADD_CONTROLS = false;
 
 import {
-	Billboard, OrbitControls, PerspectiveCamera, TransformControls
+	Billboard,
+	OrbitControls,
+	PerspectiveCamera,
+	TransformControls,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useRouter } from "next/router";
 import React, {
-	forwardRef, Suspense, useEffect, useRef,
-	useState
+	forwardRef,
+	Suspense,
+	useEffect,
+	useRef,
+	useState,
 } from "react";
 import { connect } from "react-redux";
 import { Controls, withControls } from "react-three-gui";
@@ -18,7 +24,8 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import CuttingBoard from "./CuttingBoard";
 import TitleHoverSpheres from "./TitleHoverSpheres";
-import OvenMitts from './Mitts';
+import ClientSidePortal from "../portalAuthenticated/ClientSidePortal";
+import OvenMitts from "./Mitts";
 
 let objs = [
 	"../../public/assets/greenApples.OBJ",
@@ -70,7 +77,7 @@ const Scene = withControls(({ deviceWidth }) => {
 
 	const [_aspectRatio, setAspectRatio] = useState(1);
 	useEffect(() => {
-		router.prefetch("/portal")
+		router.prefetch("/portal");
 		let _canvas = document.getElementById("main-canvas-container");
 		let ar = _canvas?.clientWidth / _canvas?.clientHeight;
 
@@ -78,9 +85,9 @@ const Scene = withControls(({ deviceWidth }) => {
 			let dim = document
 				.getElementById("landingPage-banner-signupButton")
 				?.getBoundingClientRect();
-				if(!dim){
-					return
-				}
+			if (!dim) {
+				return;
+			}
 			if (e.x > dim.left && e.x < dim.right) {
 				if (e.y > dim.top && e.y < dim.bottom) {
 					console.log("handle mouse movement now!!");
@@ -88,14 +95,13 @@ const Scene = withControls(({ deviceWidth }) => {
 				}
 			}
 
-
 			let loginDim = document
 				.getElementById("landingPage-banner-loginButton")
 				?.getBoundingClientRect();
 
-				if(!loginDim){
-					return
-				}
+			if (!loginDim) {
+				return;
+			}
 
 			if (e.x > loginDim.left && e.x < loginDim.right) {
 				if (e.y > loginDim.top && e.y < loginDim.bottom) {
@@ -109,12 +115,12 @@ const Scene = withControls(({ deviceWidth }) => {
 			let dim = document
 				.getElementById("landingPage-banner-signupButton")
 				?.getBoundingClientRect();
-				let loginDim = document
+			let loginDim = document
 				.getElementById("landingPage-banner-loginButton")
 				?.getBoundingClientRect();
-				if(!dim || !loginDim){
-					return
-				}
+			if (!dim || !loginDim) {
+				return;
+			}
 			console.log("Mouse movement", e.x, dim.left);
 			if (e.x > dim.left && e.x < dim.right) {
 				if (e.y > dim.top && e.y < dim.bottom) {
@@ -127,7 +133,7 @@ const Scene = withControls(({ deviceWidth }) => {
 					console.log("handle mouse movement now!!");
 					return router.push({
 						pathname: "/portal",
-						query: {login: true}
+						query: { login: true },
 					});
 				}
 			}
@@ -142,64 +148,66 @@ const Scene = withControls(({ deviceWidth }) => {
 
 	return (
 		<div className="mainCanvasContainer">
-			<Canvas
-				colorManagement
-				dpr={[1, 2]}
-				ref={canvasRef}
-				gl={{
-					shadowMapEnabled: true,
-					outputEncoding: THREE.sRGBEncoding,
-					pixelRatio: window.devicePixelRatio,
-					alpha: true,
-					ref: rendererRef,
-				}}
-				// shadows={true}
-				id={canvasId}
-				style={{
-					width: "100%",
-					height: "calc(100vh - 64px)",
-					minHeight: "calc(100vh - 64px)",
-					maxHeight: "fit-content",
-					position: "absolute",
-					zIndex: 99999999,
-					top: 0,
-					left: 0,
-					// backgroundColor: "#268AFF"
-					backgroundColor: "transparent",
-				}}
-				//    camera={{ position: [-10, 10, 10], fov: 35 }}
-			>
-				<Suspense fallback={null}>
-					<Camera
-						cameraRef={cameraRef}
-						_aspectRatio={_aspectRatio}
-						rayCaster={rayCaster}
-					/>
-					<Billboard ponsition={[0, 0, -0.5]} receiveShadow />
-					<Lights cameraRef={cameraRef} />
-					<MainPlane cameraRef={cameraRef} />
-					{deviceWidth > 1200 &&
-						<CuttingBoard
-						cameraRef={cameraRef}
-						canvasRef={canvasRef}
-						newShadowProps={newShadowProps}
-						setNewShadowProps={setNewShadowProps}
+			<ClientSidePortal selector="#topLevelPortalContainer">
+				<Canvas
+					colorManagement
+					dpr={[1, 2]}
+					ref={canvasRef}
+					gl={{
+						shadowMapEnabled: true,
+						outputEncoding: THREE.sRGBEncoding,
+						pixelRatio: window.devicePixelRatio,
+						alpha: true,
+						ref: rendererRef,
+					}}
+					// shadows={true}
+					id={canvasId}
+					style={{
+						width: "100vw",
+						height: "calc(100vh)",
+						minHeight: "calc(100vh)",
+						maxHeight: "fit-content",
+						position: "absolute",
+						zIndex: 99999999,
+						top: 0,
+						left: 0,
+						// backgroundColor: "#268AFF"
+						backgroundColor: "transparent",
+					}}
+					//    camera={{ position: [-10, 10, 10], fov: 35 }}
+				>
+					<Suspense fallback={null}>
+						<Camera
+							cameraRef={cameraRef}
+							_aspectRatio={_aspectRatio}
+							rayCaster={rayCaster}
 						/>
-					}					
-					<TitleHoverSpheres
-						cameraRef={cameraRef}
-						canvasRef={canvasRef}
-						rayCasterRef={rayCaster}
-					/>
-					{ADD_CONTROLS && (
-						<>
-							<OrbitControls />
-							<TransformControls />
-							<axesHelper args={[5]} />
-						</>
-					)}
-				</Suspense>
-			</Canvas>
+						<Billboard ponsition={[0, 0, -0.5]} receiveShadow />
+						<Lights cameraRef={cameraRef} />
+						<MainPlane cameraRef={cameraRef} />
+						{deviceWidth > 1200 && (
+							<CuttingBoard
+								cameraRef={cameraRef}
+								canvasRef={canvasRef}
+								newShadowProps={newShadowProps}
+								setNewShadowProps={setNewShadowProps}
+							/>
+						)}
+						<TitleHoverSpheres
+							cameraRef={cameraRef}
+							canvasRef={canvasRef}
+							rayCasterRef={rayCaster}
+						/>
+						{ADD_CONTROLS && (
+							<>
+								<OrbitControls />
+								<TransformControls />
+								<axesHelper args={[5]} />
+							</>
+						)}
+					</Suspense>
+				</Canvas>
+			</ClientSidePortal>
 		</div>
 	);
 });

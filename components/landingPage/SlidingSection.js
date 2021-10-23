@@ -15,6 +15,8 @@ const useClasses = makeStyles((theme) => ({
 		// paddingLeft: marginHorizontal,
 		// paddingTop: marginVertical,
 		border: "2px solid red",
+		position: "absolute",
+
 		transition: theme.transitions.create(["margin-left", "width"], {
 			duration: 500,
 		}),
@@ -37,7 +39,7 @@ const useClasses = makeStyles((theme) => ({
 }));
 
 const SlidingSection = ({
-	props: { thisIndex, currentIndex },
+	props: { thisIndex, currentIndex, ownStyles },
 	UI: {
 		mainDrawer: { open: drawerIsOpen },
 		viewport: { navHeight, width: deviceWidth },
@@ -56,14 +58,21 @@ const SlidingSection = ({
 		if (_navHeight === 0) {
 			_styles.marginTop = "64px";
 		}
+		if (typeof window !== "undefined") {
+			let _w = window.innerWidth;
+			_styles.transform = `translateX(${_w * (thisIndex - 1)}px)`;
+			_styles.overflow = "hidden";
+		}
 		setStyles({
 			..._styles,
 		});
 	};
+
 	const [shifted, setShifted] = useState(deviceWidth > 1920);
 	const [styles, setStyles] = useState({
 		marginTop: "64px",
 	});
+
 	useEffect(() => {
 		let shouldShift = drawerIsOpen
 			? drawerIsOpen
@@ -72,11 +81,12 @@ const SlidingSection = ({
 			: false;
 		setShifted(shouldShift);
 		getStyles();
-	}, [drawerIsOpen, navHeight, deviceWidth]);
+	}, [drawerIsOpen, navHeight, deviceWidth, currentIndex, thisIndex]);
 	return (
 		<div
 			className={clsx(classes.root, shifted && classes.shifted)}
-			style={styles}
+			style={{ ...styles, ...ownStyles }}
+			id={`sliding-container-${thisIndex}`}
 		>
 			{children}
 		</div>

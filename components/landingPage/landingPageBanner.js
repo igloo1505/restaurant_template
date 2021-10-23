@@ -92,9 +92,9 @@ const useClasses = makeStyles((theme) => ({
 		position: "relative",
 		marginLeft: "6rem",
 		// border: "2px solid red"
-        [theme.breakpoints.down(750)]: {
-            margin: "0rem"
-          },
+		[theme.breakpoints.down(750)]: {
+			margin: "0rem",
+		},
 	},
 	rightDefinitionTitleNarrow: {
 		// rotate: "90deg",
@@ -110,6 +110,7 @@ const useClasses = makeStyles((theme) => ({
 		bottom: 0,
 		left: 0,
 		padding: "0.75rem 0.75rem",
+		zIndex: 9999,
 	},
 	rightDefinitionTitleContainer: {
 		display: "flex",
@@ -181,6 +182,7 @@ const useClasses = makeStyles((theme) => ({
 		borderRadius: "8px",
 		[theme.breakpoints.down(1200)]: {
 			padding: "0.5rem",
+			fontSize: "1.5rem",
 		},
 	},
 	buttonTextLogin: {
@@ -193,6 +195,7 @@ const useClasses = makeStyles((theme) => ({
 		borderRadius: "8px",
 		[theme.breakpoints.down(1200)]: {
 			padding: "0.5rem",
+			fontSize: "1.5rem",
 		},
 	},
 }));
@@ -488,9 +491,9 @@ const landingPageBanner = ({
 						position: "absolute",
 						bottom: "-2rem",
 						left: "-3rem",
-                        width: "2px",
-                        height: "2px",
-                        backgroundColor: "pink"
+						width: "2px",
+						height: "2px",
+						backgroundColor: "pink",
 					}}
 				></div>
 			</div>

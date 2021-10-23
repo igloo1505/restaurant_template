@@ -42,8 +42,8 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		});
 		let _target = group?.current?.rotation;
 		let clone = modelRef.current?.clone();
-		if(!_target || !clone){
-			return
+		if (!_target || !clone) {
+			return;
 		}
 		modelRef.current.geometry.computeBoundingBox();
 		let bBox = clone.geometry.boundingBox;
@@ -117,11 +117,11 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		let sphereTl = gsap.timeline({
 			yoyo: true,
 			repeat: -1,
-			repeatDelay: 0.5
+			repeatDelay: 0.5,
 		});
 		let sphereMaterial = sphereRef?.current?.material.color;
-		if(!sphereMaterial){
-			return
+		if (!sphereMaterial) {
+			return;
 		}
 		// 212, 86, 14)
 		// 0.83137255, 0.3372549, 0.05490196
@@ -148,7 +148,7 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		let sphereScaleTl = gsap.timeline({
 			yoyo: true,
 			repeat: -1,
-			repeatDelay: 0.5
+			repeatDelay: 0.5,
 		});
 		let sphereScale = sphereRef.current.scale;
 		console.log("sphereScale: ", sphereScale);
@@ -172,23 +172,21 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 				onUpdateParams: [sphereMaterial.newColor],
 			}
 		);
-
-		
 	};
 
 	const [UIstate, setUIstate] = useState(null);
 
 	useEffect(() => {
-		let dw = UIstate?.viewport?.width
-		if(dw >= 1200){
+		let dw = UIstate?.viewport?.width;
+		if (dw >= 1200) {
 			console.log("Aligning top");
-			return setNewBoardPosition("alignTitle")
+			return setNewBoardPosition("alignTitle");
 		}
-		if(dw >= 750 && dw < 1200){
+		if (dw >= 750 && dw < 1200) {
 			console.log("Aligning bottom");
-			return setNewBoardPosition("alignBottom")
+			return setNewBoardPosition("alignBottom");
 		}
-	}, [UIstate])
+	}, [UIstate]);
 
 	const handleUIState = () => {
 		let state = store.getState();
@@ -237,8 +235,8 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	}, [newBoardPosition, boardIsExtended]);
 
 	const getVisibleBox = (z) => {
-		if(!cameraRef?.current) {
-			return
+		if (!cameraRef?.current) {
+			return;
 		}
 		console.log(
 			"cameraRef.current.fov: visbox",
@@ -257,62 +255,62 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	};
 
 	const getAlignBottomPosition = () => {
-	let scalePercentage = 40
-	let camera = cameraRef.current;
-	let target = document
-		.getElementById("hover-bottom-landing-page-target")
-		?.getBoundingClientRect();
-	if(!target){
-		return
-	}
-	let clone = modelRef.current.clone();
-	modelRef.current.geometry.computeBoundingBox();
-	let bBox = clone.geometry.boundingBox;
-	let obSize = bBox.getSize(new THREE.Vector3());
-	console.log("obSize: ", obSize);
-	var vec = new THREE.Vector3();
-	var pos = new THREE.Vector3();
-	vec.set(
-		(target.x / window.innerWidth) * 2 - 1,
-		-(target.y / window.innerHeight) * 2 + 1,
-		clone.position.z
-	);
+		let scalePercentage = 40;
+		let camera = cameraRef.current;
+		let target = document
+			.getElementById("hover-bottom-landing-page-target")
+			?.getBoundingClientRect();
+		if (!target) {
+			return;
+		}
+		let clone = modelRef.current.clone();
+		modelRef.current.geometry.computeBoundingBox();
+		let bBox = clone.geometry.boundingBox;
+		let obSize = bBox.getSize(new THREE.Vector3());
+		console.log("obSize: ", obSize);
+		var vec = new THREE.Vector3();
+		var pos = new THREE.Vector3();
+		vec.set(
+			(target.x / window.innerWidth) * 2 - 1,
+			-(target.y / window.innerHeight) * 2 + 1,
+			clone.position.z
+		);
 
-	vec.unproject(camera);
+		vec.unproject(camera);
 
-	vec.sub(camera.position).normalize();
+		vec.sub(camera.position).normalize();
 
-	var distance = -camera.position.z / vec.z;
+		var distance = -camera.position.z / vec.z;
 
-	pos.copy(camera.position).add(vec.multiplyScalar(distance));
-	setLatestAlignedPosition({
-		x: pos.x,
-		y: pos.y - obSize.y,
-		z: pos.z,
-	});
-	return {
-		x: pos.x,
-		y: pos.y - (obSize.y * scalePercentage) / 100,
-		z: pos.z,
+		pos.copy(camera.position).add(vec.multiplyScalar(distance));
+		setLatestAlignedPosition({
+			x: pos.x,
+			y: pos.y - obSize.y,
+			z: pos.z,
+		});
+		return {
+			x: pos.x,
+			y: pos.y - (obSize.y * scalePercentage) / 100,
+			z: pos.z,
+		};
 	};
-	}
 
 	const getAlignTitlePosition = () => {
 		console.log("Running get title position target");
-		let scalePercentage = 40;
-		
-		if(window.innerHeight < 900){
-			scalePercentage = 30			
-		}
-		if(window.innerHeight < 700){
-			scalePercentage = 20			
-		}
+		let scalePercentage = 67;
+
+		// if (window.innerHeight < 900) {
+		// 	scalePercentage = 40;
+		// }
+		// if (window.innerHeight < 700) {
+		// 	scalePercentage = 30;
+		// }
 		let camera = cameraRef.current;
 		let target = document
 			.getElementById("dot-io-target")
 			?.getBoundingClientRect();
-		if(!target){
-			return
+		if (!target) {
+			return;
 		}
 		let clone = modelRef.current.clone();
 		modelRef.current.geometry.computeBoundingBox();
@@ -351,8 +349,8 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		if (!transformation) transformation = "alignTitle";
 
 		let visBox = getVisibleBox(0.5);
-		if(!visBox || !group?.current){
-			return
+		if (!visBox || !group?.current) {
+			return;
 		}
 		let pValues = {
 			topLeft: [visBox.min.x, visBox.min.y, 0],
@@ -360,13 +358,15 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 			bottomLeft: [visBox.min.x, visBox.max.y, 0],
 			bottomRight: [visBox.max.x, visBox.max.y, 0],
 		};
-		
+
 		// let x = rendererRef.current.getObjectByName("cuttingBoard")
 		let _bBox = new THREE.Box3()?.setFromObject(group.current);
 		let obSize = _bBox?.getSize(new THREE.Vector3());
 		let newPosition = pValues[transformation];
-		if(!obSize){return}
-		
+		if (!obSize) {
+			return;
+		}
+
 		if (transformation === "topLeft") {
 			newPosition[0] = newPosition[0] + obSize.x / 2;
 			newPosition[1] = newPosition[1] - obSize.y / 1.5;
