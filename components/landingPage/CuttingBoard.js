@@ -119,7 +119,10 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 			repeat: -1,
 			repeatDelay: 0.5
 		});
-		let sphereMaterial = sphereRef.current.material.color;
+		let sphereMaterial = sphereRef?.current?.material.color;
+		if(!sphereMaterial){
+			return
+		}
 		// 212, 86, 14)
 		// 0.83137255, 0.3372549, 0.05490196
 		sphereTl.fromTo(
@@ -174,6 +177,18 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 	};
 
 	const [UIstate, setUIstate] = useState(null);
+
+	useEffect(() => {
+		let dw = UIstate?.viewport?.width
+		if(dw >= 1200){
+			console.log("Aligning top");
+			return setNewBoardPosition("alignTitle")
+		}
+		if(dw >= 750 && dw < 1200){
+			console.log("Aligning bottom");
+			return setNewBoardPosition("alignBottom")
+		}
+	}, [UIstate])
 
 	const handleUIState = () => {
 		let state = store.getState();
@@ -241,6 +256,47 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		return new THREE.Box2(new THREE.Vector2(-w, h), new THREE.Vector2(w, -h));
 	};
 
+	const getAlignBottomPosition = () => {
+	let scalePercentage = 40
+	let camera = cameraRef.current;
+	let target = document
+		.getElementById("hover-bottom-landing-page-target")
+		?.getBoundingClientRect();
+	if(!target){
+		return
+	}
+	let clone = modelRef.current.clone();
+	modelRef.current.geometry.computeBoundingBox();
+	let bBox = clone.geometry.boundingBox;
+	let obSize = bBox.getSize(new THREE.Vector3());
+	console.log("obSize: ", obSize);
+	var vec = new THREE.Vector3();
+	var pos = new THREE.Vector3();
+	vec.set(
+		(target.x / window.innerWidth) * 2 - 1,
+		-(target.y / window.innerHeight) * 2 + 1,
+		clone.position.z
+	);
+
+	vec.unproject(camera);
+
+	vec.sub(camera.position).normalize();
+
+	var distance = -camera.position.z / vec.z;
+
+	pos.copy(camera.position).add(vec.multiplyScalar(distance));
+	setLatestAlignedPosition({
+		x: pos.x,
+		y: pos.y - obSize.y,
+		z: pos.z,
+	});
+	return {
+		x: pos.x,
+		y: pos.y - (obSize.y * scalePercentage) / 100,
+		z: pos.z,
+	};
+	}
+
 	const getAlignTitlePosition = () => {
 		console.log("Running get title position target");
 		let scalePercentage = 40;
@@ -293,7 +349,6 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 
 	const toggleItemPosition = (transformation, cancel) => {
 		if (!transformation) transformation = "alignTitle";
-		
 
 		let visBox = getVisibleBox(0.5);
 		if(!visBox || !group?.current){
@@ -333,6 +388,13 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		}
 		if (transformation === "alignTitle") {
 			let np = getAlignTitlePosition();
+			if (np) {
+				cancel();
+				newPosition = [np.x, np.y, np.z];
+			}
+		}
+		if (transformation === "alignBottom") {
+			let np = getAlignBottomPosition();
 			if (np) {
 				cancel();
 				newPosition = [np.x, np.y, np.z];

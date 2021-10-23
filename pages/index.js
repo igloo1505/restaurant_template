@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect, Fragment } from "react";
 import { connect, useDispatch } from "react-redux";
 import { tryAutoLogin } from "../stateManagement/userActions";
@@ -9,6 +10,8 @@ import {
 } from "../components/UIComponents";
 import { makeStyles } from "@material-ui/core/styles";
 import LandingPageBanner from '../components/landingPage/landingPageBanner';
+import SlidingSection from '../components/landingPage/SlidingSection';
+import SectionTwoMain from '../components/landingPage/sectionTwo/SectionTwoMain';
 import clsx from "clsx";
 
 import dynamic from "next/dynamic"
@@ -40,8 +43,15 @@ const useClasses = makeStyles((theme) => ({
 }))
 
 
+const mapStateToProps = (state, props) => ({
+  viewport: state.UI.viewport,
+  user: state.user,
+  network: state.network,
+});
 
-const Home = ({
+
+
+const Home = connect(mapStateToProps)(({
   viewport: { width: deviceWidth, height: deviceHeight, navHeight },
   user: {
     loggedIn,
@@ -78,21 +88,53 @@ const Home = ({
       <style jsx>{``}</style>
     </Fragment>
   );
-};
-
-const mapStateToProps = (state, props) => ({
-  viewport: state.UI.viewport,
-  user: state.user,
-  network: state.network,
 });
 
-export default connect(mapStateToProps, { tryAutoLogin })(Home);
 
-export const getServerSideProps = async (ctx) => {
-  let _user = await autoLoginOnFirstRequest(ctx.req, ctx.res);
-  return {
-    props: {
-      hasUser: _user,
-    },
-  };
-};
+
+
+
+
+const Switcher = () => {
+  const [visibleSection, setVisibleSection] = useState(1)
+  useEffect(() => {
+    // add scroll listener and toggle sections here
+    setVisibleSection(2)
+  }, [])
+  if(visibleSection === 1)
+  {
+    return (
+      <SlidingSection thisIndex={1} currentIndex={visibleSection}>
+      <Home/>
+      </SlidingSection>
+      )  
+    }
+  if(visibleSection === 2)
+  {
+    return (
+      <SlidingSection thisIndex={2} currentIndex={visibleSection}>
+      <SectionTwoMain />
+      </SlidingSection>
+      )  
+    }
+    else {
+      return (
+        <Home/>
+        )  
+      }
+    }
+    
+    
+    
+    
+    export const getServerSideProps = async (ctx) => {
+      let _user = await autoLoginOnFirstRequest(ctx.req, ctx.res);
+      return {
+        props: {
+          hasUser: _user,
+        },
+      };
+    };
+
+
+    export default connect(mapStateToProps, { tryAutoLogin })(Switcher);

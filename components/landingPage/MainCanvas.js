@@ -2,49 +2,23 @@
 /* eslint-disable react/prop-types */
 const ADD_CONTROLS = false;
 
+import {
+	Billboard, OrbitControls, PerspectiveCamera, TransformControls
+} from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { useRouter } from "next/router";
 import React, {
-	useEffect,
-	createContext,
-	forwardRef,
-	useRef,
-	useState,
-	Suspense,
+	forwardRef, Suspense, useEffect, useRef,
+	useState
 } from "react";
 import { connect } from "react-redux";
-import dynamic from "next/dynamic";
-import { WebGLCheck } from "./webGLCheck";
-import { useLoader } from "@react-three/fiber";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useResource } from "react-three-fiber";
+import { Controls, withControls } from "react-three-gui";
 import * as THREE from "three";
-import { a, config } from "@react-spring/three";
-import {
-	TransformControls,
-	Sky,
-	OrbitControls,
-	FlyControls,
-	MapControls,
-	PerspectiveCamera,
-	useHelper,
-	ContactShadows,
-	Environment,
-	Plane,
-	Billboard,
-} from "@react-three/drei";
-import ThreeDModel from "./ThreeDModel";
-import DatGui from "./DatGui";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { Controls, useControl, withControls } from "react-three-gui";
 import CuttingBoard from "./CuttingBoard";
-import Mitts from "./Mitts";
-import { DirectionalLightHelper } from "three/src/helpers/DirectionalLightHelper";
-import { PlaneHelper } from "three/src/helpers/PlaneHelper";
-import { SpotLightHelper } from "three/src/helpers/SpotLightHelper";
-import { PointLightHelper } from "three/src/helpers/PointLightHelper";
-import { CameraHelper } from "three/src/helpers/CameraHelper";
 import TitleHoverSpheres from "./TitleHoverSpheres";
-import { useRouter } from "next/router";
+import OvenMitts from './Mitts';
 
 let objs = [
 	"../../public/assets/greenApples.OBJ",
@@ -118,7 +92,7 @@ const Scene = withControls(({ deviceWidth }) => {
 			let loginDim = document
 				.getElementById("landingPage-banner-loginButton")
 				?.getBoundingClientRect();
-				
+
 				if(!loginDim){
 					return
 				}
@@ -204,14 +178,14 @@ const Scene = withControls(({ deviceWidth }) => {
 					<Billboard ponsition={[0, 0, -0.5]} receiveShadow />
 					<Lights cameraRef={cameraRef} />
 					<MainPlane cameraRef={cameraRef} />
-					{deviceWidth > 1200 && (
+					{deviceWidth > 1200 &&
 						<CuttingBoard
-							cameraRef={cameraRef}
-							canvasRef={canvasRef}
-							newShadowProps={newShadowProps}
-							setNewShadowProps={setNewShadowProps}
+						cameraRef={cameraRef}
+						canvasRef={canvasRef}
+						newShadowProps={newShadowProps}
+						setNewShadowProps={setNewShadowProps}
 						/>
-					)}
+					}					
 					<TitleHoverSpheres
 						cameraRef={cameraRef}
 						canvasRef={canvasRef}

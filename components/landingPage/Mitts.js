@@ -1,16 +1,20 @@
-import React, { useRef, useEffect } from 'react'
-import { useGLTF } from '@react-three/drei'
+/* eslint-disable react/prop-types */
+import React, { useRef, useEffect, useState } from "react";
+import { Sphere, useGLTF } from "@react-three/drei";
+import * as THREE from "three";
+import { to, useSpring } from "@react-spring/core";
+import { a as three, config } from "@react-spring/three";
+import store from "../../stateManagement/store";
+import { ContactShadows } from "@react-three/drei";
+import { useFrame } from "react-three-fiber";
+import { a as web } from "@react-spring/web";
+import { useTheme } from "@material-ui/styles";
+import { gsap } from "gsap";
 
 export default function Model({ ...props }) {
   const group = useRef()
   const { nodes, materials } = useGLTF('/mitts.glb')
-  useEffect(() => {
-    Object.keys(nodes).forEach((n) => {
-        if ( nodes[n].isMesh ) {
-          nodes[n].geometry.center(); // center here
-        }
-    });
-  }, [])
+  console.log('nodes: ', nodes);
   return (
     <group ref={group} {...props} dispose={null}>
       <group rotation={[-Math.PI / 2, 0, 0]}>
