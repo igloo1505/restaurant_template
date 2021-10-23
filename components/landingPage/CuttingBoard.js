@@ -11,7 +11,13 @@ import { a as web } from "@react-spring/web";
 import { useTheme } from "@material-ui/styles";
 import { gsap } from "gsap";
 
-const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
+const Model = ({
+	cameraRef,
+	canvasRef,
+	newShadowProps,
+	setNewShadowProps,
+	visibleSection,
+}) => {
 	const group = useRef();
 	const modelRef = useRef();
 	const sphereRef = useRef();
@@ -34,6 +40,30 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 			}
 		});
 	}, []);
+
+	useEffect(() => {
+		let dw = window?.innerWidth;
+		if (!dw) {
+			return;
+		}
+		if (visibleSection === 2) {
+			setNewBoardPosition("demoLeft");
+		}
+		if (visibleSection === 1) {
+			// setNewBoardPosition("alignTitle");
+			// debugger;
+			if (dw >= 1200) {
+				console.log("Aligning top");
+				setTimeout(() => setNewBoardPosition("alignTitle"), 150);
+				// return setNewBoardPosition("alignTitle");
+			}
+			if (dw >= 750 && dw < 1200) {
+				console.log("Aligning bottom");
+				// return setNewBoardPosition("alignBottom");
+				setTimeout(() => setNewBoardPosition("alignBottom"), 150);
+			}
+		}
+	}, [visibleSection]);
 
 	const wobbleBoard = () => {
 		let tl = gsap.timeline({
@@ -199,7 +229,9 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 			const cancelInt = () => {};
 			setTimeout(() => {
 				clearInterval(int);
-				wobbleBoard();
+				if (visibleSection === 1) {
+					wobbleBoard();
+				}
 			}, 1500);
 		}
 		setUIstate(state.UI);
@@ -254,6 +286,49 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 		return new THREE.Box2(new THREE.Vector2(-w, h), new THREE.Vector2(w, -h));
 	};
 
+	const getDemoLeftPosition = () => {
+		let scalePercentage = 40;
+		let camera = cameraRef.current;
+		let target = document
+			.getElementById("hover-bottom-landing-page-target")
+			?.getBoundingClientRect();
+		// will probably have to toggle 240> with drawer here
+		let _x = window.innerWidth / 4;
+		let _y = window.innerHeight / 2;
+		if (!target) {
+			return;
+		}
+		let clone = modelRef.current.clone();
+		modelRef.current.geometry.computeBoundingBox();
+		let bBox = clone.geometry.boundingBox;
+		let obSize = bBox.getSize(new THREE.Vector3());
+		console.log("obSize: ", obSize);
+		var vec = new THREE.Vector3();
+		var pos = new THREE.Vector3();
+		vec.set(
+			(_x / window.innerWidth) * 2 - 1,
+			-(_y / window.innerHeight) * 2 + 1,
+			clone.position.z
+		);
+
+		vec.unproject(camera);
+
+		vec.sub(camera.position).normalize();
+
+		var distance = -camera.position.z / vec.z;
+
+		pos.copy(camera.position).add(vec.multiplyScalar(distance));
+		setLatestAlignedPosition({
+			x: pos.x,
+			y: pos.y - obSize.y,
+			z: pos.z,
+		});
+		return {
+			x: pos.x,
+			y: pos.y - (obSize.y * scalePercentage) / 100,
+			z: pos.z,
+		};
+	};
 	const getAlignBottomPosition = () => {
 		let scalePercentage = 40;
 		let camera = cameraRef.current;
@@ -400,43 +475,16 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 				newPosition = [np.x, np.y, np.z];
 			}
 		}
+		if (transformation === "demoLeft") {
+			let np = getDemoLeftPosition();
+			if (np) {
+				cancel();
+				newPosition = [np.x, np.y, np.z];
+			}
+		}
 		api.start({
 			position: newPosition,
 		});
-	};
-
-	// const wobbleStyles = useSpring({
-	// 	loop: true,
-	// 	to: [{
-	// 		rotation: [THREE.MathUtils.degToRad(25), 0, 0]
-	// 	},
-	// 	{
-	// 		rotation: [THREE.MathUtils.degToRad(0), 0, 0]
-	// 	},
-	// 	{
-	// 		rotation: [THREE.MathUtils.degToRad(-10), 0, 0]
-	// 	},
-	// 	{
-	// 		rotation: [THREE.MathUtils.degToRad(0), 0, 0]
-	// 	},
-	// ],
-	// 	from: {
-	// 		rotation: [0, 0, 0]
-	// 	}
-	// })
-
-	const handleItemClick = (e) => {
-		// e.stopPropagation();
-		setBoardIsExtended(!boardIsExtended);
-		const arr = [
-			"topLeft",
-			"topRight",
-			"bottomRight",
-			"alignTitle",
-			"bottomLeft",
-			"center",
-		];
-		setNewBoardPosition(arr[arr.indexOf(newBoardPosition) + 1]);
 	};
 
 	return (
@@ -444,7 +492,6 @@ const Model = ({ cameraRef, canvasRef, newShadowProps, setNewShadowProps }) => {
 			ref={group}
 			dispose={null}
 			position={[0, 0, 0]}
-			onClick={handleItemClick}
 			name="cuttingBoard"
 			scale={[1.3, 1.3, 1.3]}
 			castShadow

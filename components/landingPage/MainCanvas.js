@@ -7,6 +7,7 @@ import {
 	OrbitControls,
 	PerspectiveCamera,
 	TransformControls,
+	useContextBridge,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useRouter } from "next/router";
@@ -36,11 +37,13 @@ const canvasId = "mainCanvas";
 
 const MainCanvas = ({
 	viewport: { width: deviceWidth, height: deviceHeight, navHeight },
-	props,
+	props: { visibleSection },
 }) => {
+	// console.log("visibleSection_props: ", props);
+
 	return (
 		<Controls.Provider>
-			<Scene deviceWidth={deviceWidth} />
+			<Scene deviceWidth={deviceWidth} visibleSection={visibleSection} />
 		</Controls.Provider>
 	);
 };
@@ -65,80 +68,23 @@ const animationPhases = [
 	},
 ];
 
-const Scene = withControls(({ deviceWidth }) => {
+const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	const cameraRef = useRef();
 	const rayCaster = useRef();
 	const canvasRef = useRef();
 	const rendererRef = useRef();
 	const router = useRouter();
 	const [newShadowProps, setNewShadowProps] = useState({});
+	// const ContextBridge = useContextBridge(ThemeContext, GreetingContext)
 
 	const [animationPhase, setAnimationPhase] = useState(animationPhases[0]);
 
 	const [_aspectRatio, setAspectRatio] = useState(1);
+
 	useEffect(() => {
 		router.prefetch("/portal");
 		let _canvas = document.getElementById("main-canvas-container");
 		let ar = _canvas?.clientWidth / _canvas?.clientHeight;
-
-		let hoverListener = document.addEventListener("mousemove", (e) => {
-			let dim = document
-				.getElementById("landingPage-banner-signupButton")
-				?.getBoundingClientRect();
-			if (!dim) {
-				return;
-			}
-			if (e.x > dim.left && e.x < dim.right) {
-				if (e.y > dim.top && e.y < dim.bottom) {
-					console.log("handle mouse movement now!!");
-					return (document.body.style.cursor = "pointer");
-				}
-			}
-
-			let loginDim = document
-				.getElementById("landingPage-banner-loginButton")
-				?.getBoundingClientRect();
-
-			if (!loginDim) {
-				return;
-			}
-
-			if (e.x > loginDim.left && e.x < loginDim.right) {
-				if (e.y > loginDim.top && e.y < loginDim.bottom) {
-					console.log("handle mouse movement now!!");
-					return (document.body.style.cursor = "pointer");
-				}
-			}
-			return (document.body.style.cursor = "default");
-		});
-		let clickListener = document.addEventListener("click", (e) => {
-			let dim = document
-				.getElementById("landingPage-banner-signupButton")
-				?.getBoundingClientRect();
-			let loginDim = document
-				.getElementById("landingPage-banner-loginButton")
-				?.getBoundingClientRect();
-			if (!dim || !loginDim) {
-				return;
-			}
-			console.log("Mouse movement", e.x, dim.left);
-			if (e.x > dim.left && e.x < dim.right) {
-				if (e.y > dim.top && e.y < dim.bottom) {
-					console.log("handle mouse movement now!!");
-					return router.push("/portal");
-				}
-			}
-			if (e.x > loginDim.left && e.x < loginDim.right) {
-				if (e.y > loginDim.top && e.y < loginDim.bottom) {
-					console.log("handle mouse movement now!!");
-					return router.push({
-						pathname: "/portal",
-						query: { login: true },
-					});
-				}
-			}
-			return (document.body.style.cursor = "default");
-		});
 
 		if (ar) {
 			setAspectRatio(ar);
@@ -191,6 +137,7 @@ const Scene = withControls(({ deviceWidth }) => {
 								canvasRef={canvasRef}
 								newShadowProps={newShadowProps}
 								setNewShadowProps={setNewShadowProps}
+								visibleSection={visibleSection}
 							/>
 						)}
 						<TitleHoverSpheres

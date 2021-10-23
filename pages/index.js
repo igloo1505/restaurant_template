@@ -51,6 +51,7 @@ const mapStateToProps = (state, props) => ({
 	viewport: state.UI.viewport,
 	user: state.user,
 	network: state.network,
+	props: props,
 });
 
 const Home = connect(mapStateToProps)(
@@ -64,7 +65,9 @@ const Home = connect(mapStateToProps)(
 		network: { loading: isLoading },
 		tryAutoLogin,
 		hasUser,
+		props: { visibleSection },
 	}) => {
+		// console.log("props: visibleSection", visibleSection);
 		const dispatch = useDispatch();
 		const classes = useClasses();
 		useEffect(() => {
@@ -85,7 +88,7 @@ const Home = connect(mapStateToProps)(
 						className={classes.mainCanvasContainer}
 						id="main-canvas-container"
 					>
-						<MainCanvas />
+						<MainCanvas visibleSection={visibleSection} />
 					</div>
 					<LandingPageBanner />
 				</div>
@@ -99,20 +102,14 @@ const Switcher = () => {
 	const [visibleSection, setVisibleSection] = useState(1);
 
 	const [styles, api] = useSpring(() => ({
-		// ["scale-z"]: boardIsExtended ? 1 : 0.7,
-		// ["scale-x"]: boardIsExtended ? 1 : 0.7,
-		// ["scale-y"]: boardIsExtended ? 1 : 0.7,
-		// rotation: boardIsExtended
-		// 	? [(-Math.PI * 17) / 36, (Math.PI * 73) / 36, (-Math.PI * 8) / 36]
-		// 	: [0, 0, 0],
-		// position: boardIsExtended ? [0, 0, 0.5] : [0, 0, 0],
-		// transform: `translateX(-${window.innerWidth * (visibleSection - 1)}px)`,
 		transform: "translateX(0px)",
 		config: config.stiff,
 	}));
 	useEffect(() => {
 		// add scroll listener and toggle sections here
 		// setVisibleSection(1);
+		// TODO: ADD GESTURE HANDLER TO TOGGLE SECTIONS ON TOUCH DEVICES
+		// BUG: ADD GESTURE HANDLER TO TOGGLE SECTIONS ON TOUCH DEVICES
 		document.addEventListener("scroll", (e) => {
 			e.preventDefault();
 			e.stopPropagation();
@@ -121,17 +118,10 @@ const Switcher = () => {
 			e.preventDefault();
 			e.stopPropagation();
 
-			console.log("e: scroll event", e);
-			// setVisibleSection(visibleSection === 1 ? 2 : 1)
-			console.log("switching!!!");
-
-			if (e.deltaY > 20 && visibleSection === 2) {
-				// debugger;
-				// switchSection(1, setVisibleSection, setIsTransitioning);
+			if (e.deltaY > 20) {
 				return setVisibleSection(1);
 			}
-			if (e.deltaY < -20 && visibleSection === 1) {
-				// switchSection(2, setVisibleSection, setIsTransitioning);
+			if (e.deltaY < -20) {
 				return setVisibleSection(2);
 			}
 		});
@@ -182,8 +172,13 @@ const Switcher = () => {
 						alignItems: "center",
 						padding: "2rem",
 					}}
+					// visibleSection={visibleSection}
+					// setVisibleSection={setVisibleSection}
 				>
-					<Home />
+					<Home
+						visibleSection={visibleSection}
+						setVisibleSection={setVisibleSection}
+					/>
 				</SlidingSection>
 				<SlidingSection
 					thisIndex={2}
@@ -195,6 +190,8 @@ const Switcher = () => {
 						alignItems: "center",
 						padding: "2rem",
 					}}
+					// visibleSection={visibleSection}
+					// setVisibleSection={setVisibleSection}
 				>
 					<SectionTwoMain />
 				</SlidingSection>
@@ -213,33 +210,3 @@ export const getServerSideProps = async (ctx) => {
 };
 
 export default connect(mapStateToProps, { tryAutoLogin })(Switcher);
-
-const switchSection = (newSection, setVisibleSection, setIsTransitioning) => {
-	setIsTransitioning(true);
-	const _duration = 0.5;
-	let _target = document.getElementById("main-section-scroller");
-	if (!_target) return;
-	console.log("newSection: ", newSection);
-	let _w = window.innerWidth;
-	if (!_w) {
-		return;
-	}
-	// gsap.to("#main-section-scroller", {
-	// 	transform: `unset`,
-	// 	duration: 0,
-
-	// 	// onComplete: () => {
-	// 	// },
-	// });
-
-	// gsap.to("#main-section-scroller", {
-	// 	transform: `translateX(-${_w * (newSection - 1)}px)`,
-	// 	duration: _duration,
-	// 	ease: "power3.inOut",
-	// 	onComplete: () => {
-	// 		setIsTransitioning(false);
-	// 	},
-	// });
-
-	setVisibleSection(newSection);
-};
