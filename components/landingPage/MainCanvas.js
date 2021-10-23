@@ -144,6 +144,7 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 							cameraRef={cameraRef}
 							canvasRef={canvasRef}
 							rayCasterRef={rayCaster}
+							visibleSection={visibleSection}
 						/>
 						{ADD_CONTROLS && (
 							<>

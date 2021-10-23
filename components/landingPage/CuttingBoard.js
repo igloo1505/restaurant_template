@@ -54,13 +54,13 @@ const Model = ({
 			// debugger;
 			if (dw >= 1200) {
 				console.log("Aligning top");
-				setTimeout(() => setNewBoardPosition("alignTitle"), 150);
+				setTimeout(() => setNewBoardPosition("alignTitle"), 0);
 				// return setNewBoardPosition("alignTitle");
 			}
 			if (dw >= 750 && dw < 1200) {
 				console.log("Aligning bottom");
 				// return setNewBoardPosition("alignBottom");
-				setTimeout(() => setNewBoardPosition("alignBottom"), 150);
+				setTimeout(() => setNewBoardPosition("alignBottom"), 0);
 			}
 		}
 	}, [visibleSection]);
@@ -99,7 +99,6 @@ const Model = ({
 				{
 					duration: 1,
 					x: THREE.MathUtils.degToRad(6),
-					// position: [group.current.position.x, group.current.position.y, group.current.position.z - _offset]
 				}
 			);
 			tl.to(_target, {
@@ -109,7 +108,6 @@ const Model = ({
 			tl.to(_target, {
 				duration: 1,
 				x: THREE.MathUtils.degToRad(-6),
-				// position: [group.current.position.x, group.current.position.y, group.current.position.z + _offset]
 			});
 			tl.to(_target, {
 				duration: 1,
@@ -126,7 +124,6 @@ const Model = ({
 				},
 				{
 					duration: 1,
-					// position: [group.current.position.x, group.current.position.y, group.current.position.z - _offset]
 					z: latestAlignedPosition.z - _offset,
 				}
 			);

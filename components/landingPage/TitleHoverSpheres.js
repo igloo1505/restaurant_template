@@ -12,31 +12,11 @@ import { a as web } from "@react-spring/web";
 import { useTheme } from "@material-ui/styles";
 import { gsap } from "gsap";
 
-const TitleHoverSpheres = ({ cameraRef, canvasRef }) => {
-	// let hoverSpheres = [];
+const TitleHoverSpheres = ({ cameraRef, canvasRef, visibleSection }) => {
 	const [hasFoundTargets, setHasFoundTargets] = useState(false);
 	const [targetPosition, setTargetPosition] = useState([]);
 	const setTargets = (cancel, method) => {
-		// let _width = window.innerWidth
-		let _height = window.innerHeight;
-
-		// let _scaleUp = 0.095;
 		let _scaleUp = 0.025;
-
-		// if (_height < 1100) {
-		// 	console.log("_height: ", _height);
-		// 	_scaleUp = 0.035;
-		// }
-		// if (_height < 900) {
-		// 	console.log("_height: ", _height);
-		// 	_scaleUp = 0.045;
-		// }
-		// if (_height < 750) {
-		// 	console.log("_height: ", _height);
-		// 	_scaleUp = 0.065;
-		// }
-
-		// if(_height < 1200)
 		let targets = document.getElementsByClassName("i-hover-target");
 		let newTargets = [];
 		for (var i = 0; i < targets.length; i++) {
@@ -53,7 +33,6 @@ const TitleHoverSpheres = ({ cameraRef, canvasRef }) => {
 				-(target.y / window.innerHeight) * 2 + 1,
 				-1
 			);
-
 			vec.unproject(camera);
 			vec.sub(camera.position).normalize();
 			var distance = -camera.position.z / vec.z;
@@ -74,8 +53,6 @@ const TitleHoverSpheres = ({ cameraRef, canvasRef }) => {
 				cancel();
 			}
 			if (method === "resize") {
-				debugger;
-				console.log("Resize here target");
 				setTimeout(() => {
 					cancel();
 				}, 1000);
@@ -85,9 +62,9 @@ const TitleHoverSpheres = ({ cameraRef, canvasRef }) => {
 
 	const [UIstate, setUIstate] = useState(null);
 
-	const handleUIState = () => {
+	const handleUIState = (force) => {
 		let state = store.getState();
-		if (UIstate?.UI?.viewport?.width !== state?.UI?.viewport?.width) {
+		if (UIstate?.UI?.viewport?.width !== state?.UI?.viewport?.width || force) {
 			console.log("handling ui state target");
 			let int = setInterval(() => {
 				// setTargetPosition([])
@@ -130,6 +107,8 @@ const TitleHoverSpheres = ({ cameraRef, canvasRef }) => {
 						i={i}
 						key={`hover-orb-${i}`}
 						UIState={UIstate}
+						visibleSection={visibleSection}
+						handleUIState={handleUIState}
 					/>
 				);
 			})}
@@ -139,14 +118,18 @@ const TitleHoverSpheres = ({ cameraRef, canvasRef }) => {
 
 export default TitleHoverSpheres;
 
-const HoverOrb = ({ t: targetPosition, i, UIState: UI, hasColor }) => {
+const HoverOrb = ({
+	t: targetPosition,
+	i,
+	UIState: UI,
+	hasColor,
+	visibleSection,
+	handleUIState,
+}) => {
 	const ref = useRef();
 
 	useFrame((state) => {
 		const t = state.clock.getElapsedTime();
-		// state.camera.position.lerp(vec.set(0, 0, open ? -24 : -32), 0.1)
-		// state.camera.lookAt(0, 0, 0)
-		// let cp = d
 		let np = {};
 		np.y = THREE.MathUtils.lerp(
 			targetPosition[1],
@@ -177,6 +160,29 @@ const HoverOrb = ({ t: targetPosition, i, UIState: UI, hasColor }) => {
 		ref.current.position.y = np.y;
 		ref.current.position.z = np.z;
 	});
+	const hideSphere = (ns) => {
+		const _tl = gsap.timeline({ paused: true });
+		let _target = ref.current.scale;
+		// debugger;
+		_tl.to(_target, {
+			x: ns.x,
+			y: ns.y,
+			z: ns.z,
+			duration: 0.5,
+		});
+		return _tl;
+	};
+
+	useEffect(() => {
+		if (visibleSection === 2) {
+			hideSphere({ x: 0, y: 0, z: 0 }).play();
+		}
+		if (visibleSection !== 2) {
+			handleUIState(true);
+			let s = hasColor === "white" ? 3 : 5;
+			hideSphere({ x: s, y: s, z: s }).play();
+		}
+	}, [visibleSection]);
 
 	return (
 		<>

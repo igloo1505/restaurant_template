@@ -98,8 +98,11 @@ const Home = connect(mapStateToProps)(
 	}
 );
 
-const Switcher = () => {
+const Switcher = ({
+	viewport: { width: deviceWidth, height: deviceHeight, navHeight },
+}) => {
 	const [visibleSection, setVisibleSection] = useState(1);
+	const [initialVisibleSection, setInitialVisibleSection] = useState(1);
 
 	const [styles, api] = useSpring(() => ({
 		transform: "translateX(0px)",
@@ -117,13 +120,23 @@ const Switcher = () => {
 		document.addEventListener("wheel", (e) => {
 			e.preventDefault();
 			e.stopPropagation();
-
 			if (e.deltaY > 20) {
 				return setVisibleSection(1);
 			}
 			if (e.deltaY < -20) {
-				return setVisibleSection(2);
+				return setVisibleSection(2), setInitialVisibleSection(2);
 			}
+		});
+		document.addEventListener("touchmove", (e) => {
+			console.log("e: touchmove", e);
+			e.preventDefault();
+			e.stopPropagation();
+			// if (e.deltaY > 20) {
+			// 	return setVisibleSection(1);
+			// }
+			// if (e.deltaY < -20) {
+			// 	return setVisibleSection(2), setInitialVisibleSection(2);
+			// }
 		});
 	}, []);
 
@@ -133,8 +146,11 @@ const Switcher = () => {
 		if (!_w) return;
 		api.start({
 			transform: `translateX(-${_w * (visibleSection - 1)}px)`,
+			onResolve: () => {
+				setInitialVisibleSection(visibleSection);
+			},
 		});
-	}, [visibleSection]);
+	}, [visibleSection, deviceWidth]);
 
 	return (
 		<div
@@ -176,7 +192,7 @@ const Switcher = () => {
 					// setVisibleSection={setVisibleSection}
 				>
 					<Home
-						visibleSection={visibleSection}
+						visibleSection={initialVisibleSection}
 						setVisibleSection={setVisibleSection}
 					/>
 				</SlidingSection>
