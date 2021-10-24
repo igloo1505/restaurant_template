@@ -18,6 +18,7 @@ import { a as three, config } from "@react-spring/three";
 import { a as web } from "@react-spring/web";
 import dynamic from "next/dynamic";
 import { to, useSpring } from "@react-spring/core";
+import { useDrag } from "@use-gesture/react";
 const MainCanvas = dynamic(
 	() => import("../components/landingPage/MainCanvas"),
 	{
@@ -71,7 +72,6 @@ const Home = connect(mapStateToProps)(
 		const dispatch = useDispatch();
 		const classes = useClasses();
 		useEffect(() => {
-			console.log("hasUser: ", hasUser);
 			if (hasUser) {
 				dispatch({
 					type: Types.AUTO_LOGIN_SUCCESS,
@@ -90,7 +90,7 @@ const Home = connect(mapStateToProps)(
 					>
 						<MainCanvas visibleSection={visibleSection} />
 					</div>
-					<LandingPageBanner />
+					<LandingPageBanner visibleSection={visibleSection} />
 				</div>
 				<style jsx>{``}</style>
 			</Fragment>
@@ -103,6 +103,23 @@ const Switcher = ({
 }) => {
 	const [visibleSection, setVisibleSection] = useState(1);
 	const [initialVisibleSection, setInitialVisibleSection] = useState(1);
+
+	const dragHandler = useDrag(({ delta, ...rest }) => {
+		console.log("data first", delta[0], rest, rest.args);
+		if (delta[0] < -10) {
+			if (typeof window !== "undefined" && visibleSection === 1) {
+				let em = document.getElementById("banner-title-narrow-title-text");
+				if (em) {
+					em.style.display = "none";
+				}
+			}
+			setVisibleSection(2);
+		}
+		if (delta[0] > 10) {
+			setVisibleSection(1);
+		}
+		// api.start({ x: down ? mx : 0, y: down ? my : 0, immediate: down })
+	});
 
 	const [styles, api] = useSpring(() => ({
 		transform: "translateX(0px)",
@@ -151,7 +168,11 @@ const Switcher = ({
 			},
 		});
 	}, [visibleSection, deviceWidth]);
-
+	let dHandler = dragHandler();
+	let dragHandlerWithArg = {};
+	Object.keys(dHandler).forEach((handler) => {
+		dragHandlerWithArg[handler] = (event) => dHandler[handler](event);
+	});
 	return (
 		<div
 			style={{
@@ -176,6 +197,7 @@ const Switcher = ({
 					overflow: "hidden !important",
 					...styles,
 				}}
+				{...dragHandlerWithArg}
 				id="main-section-scroller"
 			>
 				<SlidingSection

@@ -242,6 +242,7 @@ const landingPageBanner = ({
 	UI: {
 		viewport: { width: deviceWidth, height: deviceHeight },
 	},
+	props: { visibleSection },
 }) => {
 	const classes = useClasses();
 	const [anchorToCorner, setAnchorToCorner] = useState(null);
@@ -377,7 +378,7 @@ const landingPageBanner = ({
 					deviceWidth < 1200 && classes.bannerRightNarrow
 				)}
 			>
-				{deviceWidth <= 1200 && deviceWidth >= 750 && (
+				{deviceWidth <= 1200 && deviceWidth >= 750 && visibleSection === 1 && (
 					<ClientSidePortal selector="#topLevelPortalContainer">
 						<Typography
 							variant="h1"

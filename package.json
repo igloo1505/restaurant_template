@@ -23,6 +23,7 @@
     "@react-three/drei": "^7.15.1",
     "@react-three/fiber": "^7.0.16",
     "@reduxjs/toolkit": "^1.5.1",
+    "@use-gesture/react": "^10.1.1",
     "accesscontrol": "^2.2.1",
     "autosuggest-highlight": "^3.1.1",
     "aws-sdk": "^2.968.0",

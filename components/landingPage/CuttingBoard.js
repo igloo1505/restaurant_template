@@ -11,6 +11,12 @@ import { a as web } from "@react-spring/web";
 import { useTheme } from "@material-ui/styles";
 import { gsap } from "gsap";
 
+const sectionTwoRotation = [
+	(-Math.PI * 17) / 36,
+	(Math.PI * 73) / 36,
+	(-Math.PI * 8) / 36,
+];
+
 const Model = ({
 	cameraRef,
 	canvasRef,
@@ -248,7 +254,8 @@ const Model = ({
 		// rotation: boardIsExtended
 		// 	? [(-Math.PI * 17) / 36, (Math.PI * 73) / 36, (-Math.PI * 8) / 36]
 		// 	: [0, 0, 0],
-		position: boardIsExtended ? [0, 0, 0.5] : [0, 0, 0],
+		rotation: [0, 0, 0],
+		position: [0, 0, 0],
 		config: config.stiff,
 	}));
 
@@ -292,9 +299,10 @@ const Model = ({
 		// will probably have to toggle 240> with drawer here
 		let _x = window.innerWidth / 4;
 		let _y = window.innerHeight / 2;
-		if (!target) {
+		if (!target || !modelRef?.current) {
 			return;
 		}
+
 		let clone = modelRef.current.clone();
 		modelRef.current.geometry.computeBoundingBox();
 		let bBox = clone.geometry.boundingBox;
@@ -435,6 +443,9 @@ const Model = ({
 		let _bBox = new THREE.Box3()?.setFromObject(group.current);
 		let obSize = _bBox?.getSize(new THREE.Vector3());
 		let newPosition = pValues[transformation];
+		let additionalStyles = {
+			rotation: [0, 0, 0],
+		};
 		if (!obSize) {
 			return;
 		}
@@ -477,11 +488,26 @@ const Model = ({
 			if (np) {
 				cancel();
 				newPosition = [np.x, np.y, np.z];
+				additionalStyles.rotation = sectionTwoRotation;
 			}
 		}
+		let sending = {
+			position: newPosition,
+			...additionalStyles,
+		};
+		console.log("sending: ", sending);
+		// if (visibleSection === 1) {
 		api.start({
 			position: newPosition,
+			...additionalStyles,
 		});
+		// }
+		// if (visibleSection === 2) {
+		// 	api.start({
+		// 		position: newPosition,
+		// 		// ...additionalStyles,
+		// 	});
+		// }
 	};
 
 	return (
