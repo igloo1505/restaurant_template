@@ -164,7 +164,6 @@ const Radish = () => {
 	const [scene, setScene] = useState(null);
 	useEffect(() => {
 		const loader = new GLTFLoader();
-		// Optional: Provide a DRACOLoader instance to decode compressed mesh data
 		const dracoLoader = new DRACOLoader();
 		dracoLoader.setDecoderPath("/examples/js/libs/draco/");
 		loader.setDRACOLoader(dracoLoader);

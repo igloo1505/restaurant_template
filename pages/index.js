@@ -141,7 +141,7 @@ const Switcher = ({
 				return setVisibleSection(1);
 			}
 			if (e.deltaY < -20) {
-				return setVisibleSection(2), setInitialVisibleSection(2);
+				return setVisibleSection(2);
 			}
 		});
 		document.addEventListener("touchmove", (e) => {

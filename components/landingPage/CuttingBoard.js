@@ -12,8 +12,8 @@ import { useTheme } from "@material-ui/styles";
 import { gsap } from "gsap";
 
 const sectionTwoRotation = [
-	(-Math.PI * 17) / 36,
-	(Math.PI * 73) / 36,
+	(Math.PI * 18) / 36,
+	(Math.PI * 37) / 36,
 	(-Math.PI * 8) / 36,
 ];
 
@@ -28,9 +28,26 @@ const Model = ({
 	const modelRef = useRef();
 	const sphereRef = useRef();
 	const [boardIsExtended, setBoardIsExtended] = useState(false);
+	const [currentAnimations, setCurrentAnimations] = useState([]);
 	const { nodes, materials } = useGLTF("/cuttingBoard.glb");
 	const [newBoardPosition, setNewBoardPosition] = useState("alignTitle");
 	const [latestAlignedPosition, setLatestAlignedPosition] = useState(null);
+
+	const clearAnimations = () => {
+		currentAnimations.forEach((animation, index) => {
+			console.log("animation: ", animation);
+			if (typeof animation === undefined) {
+				return;
+			}
+			animation?.kill();
+			// animation.killAll();
+			animation?.pause();
+			// delete currentAnimations[Object.keys(currentAnimations)[index]];
+			// animation?.remove();
+		});
+		console.log("currentAnimations: ", currentAnimations);
+		// setCurrentAnimations({});
+	};
 
 	useEffect(() => {
 		let canvasWrapper = document
@@ -52,12 +69,12 @@ const Model = ({
 		if (!dw) {
 			return;
 		}
+		clearAnimations();
 		if (visibleSection === 2) {
 			setNewBoardPosition("demoLeft");
 		}
 		if (visibleSection === 1) {
 			// setNewBoardPosition("alignTitle");
-			// debugger;
 			if (dw >= 1200) {
 				console.log("Aligning top");
 				setTimeout(() => setNewBoardPosition("alignTitle"), 0);
@@ -72,6 +89,9 @@ const Model = ({
 	}, [visibleSection]);
 
 	const wobbleBoard = () => {
+		if (visibleSection !== 1) {
+			return clearAnimations();
+		}
 		let tl = gsap.timeline({
 			yoyo: true,
 			repeat: -1,
@@ -104,24 +124,23 @@ const Model = ({
 				},
 				{
 					duration: 1,
-					x: THREE.MathUtils.degToRad(6),
+					x: 0 + THREE.MathUtils.degToRad(6),
 				}
 			);
 			tl.to(_target, {
 				duration: 1,
-				x: THREE.MathUtils.degToRad(0),
+				x: 0 + THREE.MathUtils.degToRad(0),
 			});
 			tl.to(_target, {
 				duration: 1,
-				x: THREE.MathUtils.degToRad(-6),
+				x: 0 + THREE.MathUtils.degToRad(-6),
 			});
 			tl.to(_target, {
 				duration: 1,
-				x: THREE.MathUtils.degToRad(0),
+				x: 0 + THREE.MathUtils.degToRad(0),
 			});
 		}
 		if (_positionTarget && latestAlignedPosition) {
-			console.log("latestAlignedPosition: ", latestAlignedPosition, _offset);
 			otherTl.fromTo(
 				_positionTarget,
 				{
@@ -205,23 +224,30 @@ const Model = ({
 				onUpdateParams: [sphereMaterial.newColor],
 			}
 		);
+		return {
+			sphereScaleTl,
+			tl,
+			sphereTl,
+			otherTl,
+		};
 	};
 
 	const [UIstate, setUIstate] = useState(null);
 
 	useEffect(() => {
 		let dw = UIstate?.viewport?.width;
-		if (dw >= 1200) {
+		if (dw >= 1200 && visibleSection === 1) {
 			console.log("Aligning top");
 			return setNewBoardPosition("alignTitle");
 		}
-		if (dw >= 750 && dw < 1200) {
+		if (dw >= 750 && dw < 1200 && visibleSection === 1) {
 			console.log("Aligning bottom");
 			return setNewBoardPosition("alignBottom");
 		}
 	}, [UIstate]);
 
-	const handleUIState = () => {
+	const handleUIState = (isLoop) => {
+		clearAnimations();
 		let state = store.getState();
 		if (UIstate?.UI?.viewport?.width !== state?.UI?.viewport?.width) {
 			console.log("handling ui state target");
@@ -230,10 +256,34 @@ const Model = ({
 				toggleItemPosition(newBoardPosition, cancelInt);
 			}, 200);
 			const cancelInt = () => {};
+
 			setTimeout(() => {
 				clearInterval(int);
+				clearAnimations();
 				if (visibleSection === 1) {
-					wobbleBoard();
+					const wobbleWobble = wobbleBoard();
+					// if (
+					// 	Object.values(wobbleWobble)
+					// 		.map((w) => typeof w)
+					// 		.includes(undefined)
+					// ) {
+					// 	debugger;
+					// }
+					// if (!wobbleWobble) {
+					// 	// debugger;
+					// }
+					if (wobbleWobble) {
+						setCurrentAnimations([
+							...currentAnimations,
+							...Object.values(wobbleWobble),
+						]);
+					}
+				}
+				if (visibleSection !== 1) {
+					if (!isLoop) {
+						clearAnimations();
+						handleUIState(true);
+					}
 				}
 			}, 1500);
 		}
@@ -248,25 +298,37 @@ const Model = ({
 	}, []);
 
 	const [styles, api] = useSpring(() => ({
-		// ["scale-z"]: boardIsExtended ? 1 : 0.7,
-		// ["scale-x"]: boardIsExtended ? 1 : 0.7,
-		// ["scale-y"]: boardIsExtended ? 1 : 0.7,
-		// rotation: boardIsExtended
-		// 	? [(-Math.PI * 17) / 36, (Math.PI * 73) / 36, (-Math.PI * 8) / 36]
-		// 	: [0, 0, 0],
-		rotation: [0, 0, 0],
-		position: [0, 0, 0],
+		// position: [0, 0, 0],
 		config: config.stiff,
 	}));
 
 	useEffect(() => {
+		// if (newBoardPosition === "demoLeft") {
+		// 	return cancelInterval();
+		// }
+
+		if (visibleSection !== 1) {
+			clearAnimations();
+		}
 		let lookForTarget = setInterval(() => {
 			toggleItemPosition(newBoardPosition, cancelInterval);
 		});
-		const cancelInterval = () => {
+		function cancelInterval() {
 			clearInterval(lookForTarget);
-			wobbleBoard();
-		};
+			const wobbleWobble = wobbleBoard();
+			// if (!wobbleWobble) {
+			// 	debugger;
+			// }
+			if (wobbleWobble) {
+				setCurrentAnimations([
+					...currentAnimations,
+					...Object.values(wobbleWobble),
+				]);
+			}
+			if (visibleSection !== 1) {
+				clearAnimations();
+			}
+		}
 		// }
 	}, [newBoardPosition, boardIsExtended]);
 
@@ -302,7 +364,6 @@ const Model = ({
 		if (!target || !modelRef?.current) {
 			return;
 		}
-
 		let clone = modelRef.current.clone();
 		modelRef.current.geometry.computeBoundingBox();
 		let bBox = clone.geometry.boundingBox;
@@ -315,13 +376,9 @@ const Model = ({
 			-(_y / window.innerHeight) * 2 + 1,
 			clone.position.z
 		);
-
 		vec.unproject(camera);
-
 		vec.sub(camera.position).normalize();
-
 		var distance = -camera.position.z / vec.z;
-
 		pos.copy(camera.position).add(vec.multiplyScalar(distance));
 		setLatestAlignedPosition({
 			x: pos.x,
@@ -334,6 +391,7 @@ const Model = ({
 			z: pos.z,
 		};
 	};
+
 	const getAlignBottomPosition = () => {
 		let scalePercentage = 40;
 		let camera = cameraRef.current;
@@ -443,13 +501,14 @@ const Model = ({
 		let _bBox = new THREE.Box3()?.setFromObject(group.current);
 		let obSize = _bBox?.getSize(new THREE.Vector3());
 		let newPosition = pValues[transformation];
-		let additionalStyles = {
-			rotation: [0, 0, 0],
-		};
+		let additionalStyles = {};
+		if (visibleSection === 1) {
+			additionalStyles.rotation = [0, 0, 0];
+		}
+
 		if (!obSize) {
 			return;
 		}
-
 		if (transformation === "topLeft") {
 			newPosition[0] = newPosition[0] + obSize.x / 2;
 			newPosition[1] = newPosition[1] - obSize.y / 1.5;
@@ -471,6 +530,8 @@ const Model = ({
 		}
 		if (transformation === "alignTitle") {
 			let np = getAlignTitlePosition();
+			additionalStyles.rotation = [0, 0, 0];
+			additionalStyles.scale = [1.3, 1.3, 1.3];
 			if (np) {
 				cancel();
 				newPosition = [np.x, np.y, np.z];
@@ -478,6 +539,8 @@ const Model = ({
 		}
 		if (transformation === "alignBottom") {
 			let np = getAlignBottomPosition();
+			additionalStyles.rotation = [0, 0, 0];
+			additionalStyles.scale = [1.3, 1.3, 1.3];
 			if (np) {
 				cancel();
 				newPosition = [np.x, np.y, np.z];
@@ -487,34 +550,27 @@ const Model = ({
 			let np = getDemoLeftPosition();
 			if (np) {
 				cancel();
-				newPosition = [np.x, np.y, np.z];
+				newPosition = [np.x, np.y, 0.75];
 				additionalStyles.rotation = sectionTwoRotation;
+				additionalStyles.scale = [1.9, 1.9, 1.9];
 			}
 		}
 		let sending = {
 			position: newPosition,
 			...additionalStyles,
 		};
-		console.log("sending: ", sending);
-		// if (visibleSection === 1) {
+		console.log("sending: ", sending, additionalStyles);
 		api.start({
 			position: newPosition,
 			...additionalStyles,
 		});
-		// }
-		// if (visibleSection === 2) {
-		// 	api.start({
-		// 		position: newPosition,
-		// 		// ...additionalStyles,
-		// 	});
-		// }
 	};
 
 	return (
 		<three.group
 			ref={group}
 			dispose={null}
-			position={[0, 0, 0]}
+			// position={[0, 0, 0]}
 			name="cuttingBoard"
 			scale={[1.3, 1.3, 1.3]}
 			castShadow
