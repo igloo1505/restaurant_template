@@ -11,6 +11,7 @@ import { useFrame } from "react-three-fiber";
 import { a as web } from "@react-spring/web";
 import { useTheme } from "@material-ui/styles";
 import { gsap } from "gsap";
+// import {useDrag} from "react-use-gesture"
 
 const TitleHoverSpheres = ({ cameraRef, canvasRef, visibleSection }) => {
 	const [hasFoundTargets, setHasFoundTargets] = useState(false);

@@ -12,9 +12,9 @@ import { useTheme } from "@material-ui/styles";
 import { gsap } from "gsap";
 
 const sectionTwoRotation = [
-	(Math.PI * 18) / 36,
-	(Math.PI * 37) / 36,
-	(-Math.PI * 8) / 36,
+	(Math.PI * 20) / 36,
+	(-Math.PI * 1) / 36,
+	(Math.PI * 102) / 36,
 ];
 
 const Model = ({
@@ -22,15 +22,16 @@ const Model = ({
 	canvasRef,
 	newShadowProps,
 	setNewShadowProps,
+	cuttingBoardRef: group,
 	visibleSection,
 }) => {
-	const group = useRef();
 	const modelRef = useRef();
 	const sphereRef = useRef();
-	const [boardIsExtended, setBoardIsExtended] = useState(false);
 	const [currentAnimations, setCurrentAnimations] = useState([]);
 	const { nodes, materials } = useGLTF("/cuttingBoard.glb");
-	const [newBoardPosition, setNewBoardPosition] = useState("alignTitle");
+	const [newBoardPosition, setNewBoardPosition] = useState(
+		visibleSection === 1 ? "alignTitle" : "demoLeft"
+	);
 	const [latestAlignedPosition, setLatestAlignedPosition] = useState(null);
 
 	const clearAnimations = () => {
@@ -77,13 +78,11 @@ const Model = ({
 			// setNewBoardPosition("alignTitle");
 			if (dw >= 1200) {
 				console.log("Aligning top");
-				setTimeout(() => setNewBoardPosition("alignTitle"), 0);
-				// return setNewBoardPosition("alignTitle");
+				setNewBoardPosition("alignTitle");
 			}
 			if (dw >= 750 && dw < 1200) {
 				console.log("Aligning bottom");
-				// return setNewBoardPosition("alignBottom");
-				setTimeout(() => setNewBoardPosition("alignBottom"), 0);
+				setNewBoardPosition("alignBottom");
 			}
 		}
 	}, [visibleSection]);
@@ -330,7 +329,7 @@ const Model = ({
 			}
 		}
 		// }
-	}, [newBoardPosition, boardIsExtended]);
+	}, [newBoardPosition]);
 
 	const getVisibleBox = (z) => {
 		if (!cameraRef?.current) {
@@ -505,7 +504,6 @@ const Model = ({
 		if (visibleSection === 1) {
 			additionalStyles.rotation = [0, 0, 0];
 		}
-
 		if (!obSize) {
 			return;
 		}
@@ -552,7 +550,7 @@ const Model = ({
 				cancel();
 				newPosition = [np.x, np.y, 0.75];
 				additionalStyles.rotation = sectionTwoRotation;
-				additionalStyles.scale = [1.9, 1.9, 1.9];
+				additionalStyles.scale = [2.9, 2.9, 2.9];
 			}
 		}
 		let sending = {
@@ -574,6 +572,7 @@ const Model = ({
 			name="cuttingBoard"
 			scale={[1.3, 1.3, 1.3]}
 			castShadow
+			receiveShadow
 			// {...wobbleStyles}
 			{...styles}
 		>

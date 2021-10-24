@@ -27,6 +27,9 @@ import CuttingBoard from "./CuttingBoard";
 import TitleHoverSpheres from "./TitleHoverSpheres";
 import ClientSidePortal from "../portalAuthenticated/ClientSidePortal";
 import OvenMitts from "./Mitts";
+import Rad_ish from "./Scene";
+import { config, useSpring } from "@react-spring/core";
+import gsap from "gsap";
 
 let objs = [
 	"../../public/assets/greenApples.OBJ",
@@ -73,11 +76,10 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	const rayCaster = useRef();
 	const canvasRef = useRef();
 	const rendererRef = useRef();
+	const cuttingBoardRef = useRef();
 	const router = useRouter();
 	const [newShadowProps, setNewShadowProps] = useState({});
 	// const ContextBridge = useContextBridge(ThemeContext, GreetingContext)
-
-	const [animationPhase, setAnimationPhase] = useState(animationPhases[0]);
 
 	const [_aspectRatio, setAspectRatio] = useState(1);
 
@@ -87,9 +89,9 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 		let ar = _canvas?.clientWidth / _canvas?.clientHeight;
 
 		if (ar) {
+			// TODO call this on resize
 			setAspectRatio(ar);
 		}
-		// TODO call this on resize
 	}, []);
 
 	return (
@@ -106,7 +108,6 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 						alpha: true,
 						ref: rendererRef,
 					}}
-					// shadows={true}
 					id={canvasId}
 					style={{
 						width: "100vw",
@@ -117,10 +118,8 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 						zIndex: 99999999,
 						top: 0,
 						left: 0,
-						// backgroundColor: "#268AFF"
 						backgroundColor: "transparent",
 					}}
-					//    camera={{ position: [-10, 10, 10], fov: 35 }}
 				>
 					<Suspense fallback={null}>
 						<Camera
@@ -129,12 +128,23 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 							rayCaster={rayCaster}
 						/>
 						<Billboard ponsition={[0, 0, -0.5]} receiveShadow />
-						<Lights cameraRef={cameraRef} />
+						<Lights cameraRef={cameraRef} visibleSection={visibleSection} />
 						<MainPlane cameraRef={cameraRef} />
-						{deviceWidth > 1200 && (
+						{Boolean(deviceWidth > 1200 || visibleSection === 2) && (
 							<CuttingBoard
 								cameraRef={cameraRef}
 								canvasRef={canvasRef}
+								cuttingBoardRef={cuttingBoardRef}
+								newShadowProps={newShadowProps}
+								setNewShadowProps={setNewShadowProps}
+								visibleSection={visibleSection}
+							/>
+						)}
+						{visibleSection === 2 && (
+							<Radish
+								cameraRef={cameraRef}
+								canvasRef={canvasRef}
+								cuttingBoardRef={cuttingBoardRef}
 								newShadowProps={newShadowProps}
 								setNewShadowProps={setNewShadowProps}
 								visibleSection={visibleSection}
@@ -160,38 +170,140 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	);
 });
 
-const Radish = () => {
+const Radish = ({
+	cameraRef,
+	canvasRef,
+	cuttingBoardRef,
+	newShadowProps,
+	setNewShadowProps,
+	visibleSection,
+}) => {
 	const [scene, setScene] = useState(null);
+	const group = useRef();
+	const getRadishPosition = (scene) => {
+		let cb = cuttingBoardRef?.current;
+		if (!cb) {
+			return;
+		}
+		let cbPos = cb.position;
+		let clone = scene?.clone();
+		console.log("_clone: ", clone);
+		console.log("_clone _scene: ", scene);
+		// debugger;
+		// clone.geometry?.computeBoundingBox();
+		// let bBox = clone.geometry.boundingBox;
+		// let obSize = bBox.getSize(new THREE.Vector3());
+		// console.log("cb: ", cb, cbPos, obSize);
+
+		scene.position.set(cbPos.x - 0.12, cbPos.y - 0.005, cbPos.z + 0.015);
+		scene.castShadow = true;
+		scene.receiveShadow = true;
+		// scene.position.set(cbPos.x, cbPos.y+ obSize, cbPos.z);
+		// return {
+		// 	x: cbPos.x,
+		// 	y: cbPos.y,
+		// 	// y: cbPos.y + obSize,
+		// 	z: cbPos.z,
+		// };
+		return scene;
+	};
+
+	const updatePosition = () => {
+		let cb = cuttingBoardRef?.current;
+		let scene = group.current;
+		debugger;
+		if (!cb || !scene) {
+			return;
+		}
+		let cbPos = cb.position;
+		let clone = scene?.clone();
+		console.log("_clone: ", clone);
+		console.log("_clone _scene: ", scene);
+		// debugger;
+		// clone.geometry?.computeBoundingBox();
+		// let bBox = clone.geometry.boundingBox;
+		// let obSize = bBox.getSize(new THREE.Vector3());
+		// console.log("cb: ", cb, cbPos, obSize);
+		debugger;
+		scene.position.set(cbPos.x - 0.12, cbPos.y - 0.005, cbPos.z + 0.015);
+		scene.castShadow = true;
+		scene.receiveShadow = true;
+	};
+
 	useEffect(() => {
 		const loader = new GLTFLoader();
 		const dracoLoader = new DRACOLoader();
 		dracoLoader.setDecoderPath("/examples/js/libs/draco/");
 		loader.setDRACOLoader(dracoLoader);
-		// Load a glTF resource
 		loader.load(
 			"/scene.gltf",
-			function (gltf) {
-				setScene(gltf.scene);
+			(gltf) => {
+				let _scene = gltf.scene;
+				let Scene = getRadishPosition(gltf.scene);
+				console.log("_scene: ", _scene, Scene);
+				setScene(Scene);
 			},
-
-			function (xhr) {
+			(xhr) => {
 				console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
 			},
-			// called when loading has errors
-			function (error) {
+			(error) => {
 				console.log("An error happened", error);
 			}
 		);
+		if (typeof window !== "undefined") {
+			document.addEventListener("resize", () => {
+				debugger;
+				updatePosition();
+			});
+		}
 	}, []);
-	const group = useRef();
 
 	return (
-		<>{scene && <primitive ref={group} name="Object_0" object={scene} />}</>
+		<>
+			{scene && (
+				<primitive
+					ref={group}
+					name="Object_0"
+					object={scene}
+					scale={[0.03, 0.03, 0.03]}
+					// RESUME here... everything working ok up until here but it's 3:30am and I'm tired. Line this up after getting 3Dworld board position and set this to hover that... not the 2d equiveleant.
+					// position={[-0.7, -0.03, 5.5]}
+					castShadow
+					receiveShadow
+				/>
+			)}
+		</>
 	);
 };
 
-const Lights = ({ cameraRef }) => {
+const Lights = ({ cameraRef, visibleSection }) => {
 	const lightRef = useRef();
+	const [intensitySpring, api] = useSpring(() => ({
+		to: {
+			intensity: 0.7,
+		},
+		from: {
+			intensity: 0.0,
+		},
+		config: config.slow,
+	}));
+
+	const setIntensity = (ni) => {
+		gsap.to(lightRef.current, {
+			intensity: 1.5,
+			ease: "back.out(1.2, 0.2)",
+			duration: 1.5,
+		});
+	};
+	useEffect(() => {
+		if (visibleSection === 1) {
+			setIntensity(0.7);
+		}
+		if (visibleSection === 2) {
+			setIntensity(1.5);
+		}
+	}, [visibleSection]);
+
 	// useHelper(lightRef, SpotLightHelper);
 	return (
 		<>
