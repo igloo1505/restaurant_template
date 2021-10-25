@@ -200,6 +200,27 @@ const Radish = ({
 		return scene;
 	};
 
+	const positionAnimation = (newPosition, newScale, opt) => {
+		let model = group.current;
+		if (!model) {
+			return;
+		}
+		newPosition &&
+			gsap.to(model.position, {
+				x: newPosition.x,
+				y: newPosition.y,
+				z: newPosition.z,
+				duration: opt?.duration || 1,
+			});
+		newScale &&
+			gsap.to(model.scale, {
+				x: newScale.x,
+				y: newScale.y,
+				z: newScale.z,
+				duration: opt?.duration || 1,
+			});
+	};
+
 	const updatePosition = () => {
 		let cb = cuttingBoardRef?.current;
 		let scene = group.current;
@@ -215,7 +236,6 @@ const Radish = ({
 				let _t = targets[i];
 				let _hasColor = false;
 				let target = _t.getBoundingClientRect();
-				// start
 				let camera = cameraRef.current;
 				var vec = new THREE.Vector3();
 				var pos = new THREE.Vector3();
@@ -230,41 +250,58 @@ const Radish = ({
 				pos.copy(camera.position).add(vec.multiplyScalar(distance));
 				let targetPosition = [pos.x, pos.y + _scaleUp, pos.z];
 				console.log("targetPosition: target positions", targetPosition);
-				// debugger
 				if (_t.classList.contains("white")) {
 					_hasColor = "white";
 				}
 				newTargets.push({ position: targetPosition, hasColor: _hasColor });
-				// setHasFoundTargets(true)
-				// end
 			}
-			// setTargetPosition(newTargets);
-			// if (newTargets.length !== 0) {
-			// 	if (method !== "resize") {
-			// 		cancel();
-			// 	}
-			// 	if (method === "resize") {
-			// 		setTimeout(() => {
-			// 			cancel();
-			// 		}, 1000);
-			// 	}
-			// }
 
 			console.log("newTargets: ", newTargets);
 			if (newTargets.length === 0) {
 				return;
 			}
 			let _x = newTargets[0].position[0];
-			newTargets[1] && (_x = _x + newTargets[1].position[0] / 2);
-			// debugger;
+			// BUG: set this to zero after transition is handled obviously.
+			newTargets[1] && (_x = (_x + newTargets[1].position[0]) / 2);
 			console.log("_x: ", _x);
-			scene.position.set(_x, newTargets[1].position[1], -2);
+			positionAnimation(
+				{
+					x: _x,
+					y: newTargets[1].position[1],
+					z: newTargets[1].position[2],
+				},
+				{
+					x: 0,
+					y: 0,
+					z: 0,
+				},
+				{
+					duration: 0.2,
+				}
+			);
 			scene.castShadow = false;
 			scene.receiveShadow = false;
 		}
+
 		if (visibleSection === 2) {
 			let cbPos = cb.position;
-			scene.position.set(cbPos.x - 0.12, cbPos.y - 0.005, cbPos.z + 0.015);
+			// scene.scale.set(0.03, 0.03, 0.03);
+			// scene.position.set(cbPos.x - 0.12, cbPos.y - 0.005, cbPos.z + 0.015);
+			positionAnimation(
+				{
+					x: cbPos.x - 0.12,
+					y: cbPos.y - 0.005,
+					z: cbPos.z + 0.015,
+				},
+				{
+					x: 0.03,
+					y: 0.03,
+					z: 0.03,
+				},
+				{
+					duration: 0.2,
+				}
+			);
 			scene.castShadow = true;
 			scene.receiveShadow = true;
 		}

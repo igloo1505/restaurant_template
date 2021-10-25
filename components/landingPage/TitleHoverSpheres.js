@@ -13,7 +13,12 @@ import { useTheme } from "@material-ui/styles";
 import { gsap } from "gsap";
 // import {useDrag} from "react-use-gesture"
 
-const TitleHoverSpheres = ({ cameraRef, canvasRef, visibleSection }) => {
+const TitleHoverSpheres = ({
+	cameraRef,
+	canvasRef,
+	visibleSection,
+	shouldSetNewScale,
+}) => {
 	const [targetPosition, setTargetPosition] = useState([]);
 	const setTargets = (cancel, method) => {
 		let _scaleUp = 0.025;
@@ -109,6 +114,7 @@ const TitleHoverSpheres = ({ cameraRef, canvasRef, visibleSection }) => {
 						UIState={UIstate}
 						visibleSection={visibleSection}
 						handleUIState={handleUIState}
+						shouldSetNewScale={shouldSetNewScale}
 					/>
 				);
 			})}
@@ -125,8 +131,15 @@ const HoverOrb = ({
 	hasColor,
 	visibleSection,
 	handleUIState,
+	shouldSetNewScale: sns,
 }) => {
 	const ref = useRef();
+
+	useEffect(() => {
+		if (sns) {
+			ref.current.scale.set(sns.x, sns.y, sns.z);
+		}
+	}, [sns]);
 
 	useFrame((state) => {
 		const t = state.clock.getElapsedTime();

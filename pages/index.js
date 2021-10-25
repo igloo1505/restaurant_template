@@ -116,8 +116,6 @@ const Switcher = ({
 			setVisibleSection(2);
 		}
 		if (delta[0] > 10) {
-			console.log("rest", rest);
-
 			setVisibleSection(1);
 		}
 		// api.start({ x: down ? mx : 0, y: down ? my : 0, immediate: down })
@@ -158,6 +156,10 @@ const Switcher = ({
 		console.log("visibleSection: new section ", visibleSection);
 		let _w = window?.innerWidth;
 		if (!_w) return;
+
+		// Handle early transition here.
+		// startEarlyAnimation(visibleSection)
+
 		api.start({
 			transform: `translateX(-${_w * (visibleSection - 1)}px)`,
 			onResolve: () => {
@@ -213,6 +215,7 @@ const Switcher = ({
 					<Home
 						visibleSection={initialVisibleSection}
 						// setVisibleSection={setVisibleSection}
+						// startEarlyAnimation={startEarlyAnimation}
 					/>
 				</SlidingSection>
 				<SlidingSection
