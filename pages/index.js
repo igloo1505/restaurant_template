@@ -223,10 +223,11 @@ const Switcher = ({
 					currentIndex={visibleSection}
 					ownStyles={{
 						display: "flex",
-						flexDirection: "column",
+						flexDirection: "flex-start",
 						justifyContent: "center",
 						alignItems: "center",
 						padding: "2rem",
+						backgroundColor: "#ed7028",
 					}}
 					// visibleSection={visibleSection}
 					// setVisibleSection={setVisibleSection}

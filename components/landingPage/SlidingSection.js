@@ -14,7 +14,7 @@ const useClasses = makeStyles((theme) => ({
 		// paddingRight: marginHorizontal,
 		// paddingLeft: marginHorizontal,
 		// paddingTop: marginVertical,
-		border: "2px solid red",
+		// border: "2px solid red",
 		position: "absolute",
 
 		transition: theme.transitions.create(["margin-left", "width"], {

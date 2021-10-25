@@ -355,7 +355,7 @@ const Model = ({
 			.getElementById("hover-bottom-landing-page-target")
 			?.getBoundingClientRect();
 		// will probably have to toggle 240> with drawer here
-		let _x = window.innerWidth / 4;
+		let _x = window.innerWidth / 3;
 		let _y = window.innerHeight / 2;
 		if (!target || !modelRef?.current) {
 			return;
@@ -364,7 +364,6 @@ const Model = ({
 		modelRef.current.geometry.computeBoundingBox();
 		let bBox = clone.geometry.boundingBox;
 		let obSize = bBox.getSize(new THREE.Vector3());
-		console.log("obSize: ", obSize);
 		var vec = new THREE.Vector3();
 		var pos = new THREE.Vector3();
 		vec.set(

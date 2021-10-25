@@ -307,6 +307,7 @@ const Radish = ({
 
 	useEffect(() => {
 		if (visibleSection === 2) {
+			// Remove this timeout or adjust accordingly when sphere animation is finished.
 			return setTimeout(() => {
 				updatePosition();
 			}, 1000);
@@ -360,21 +361,21 @@ const Radish = ({
 
 const Lights = ({ cameraRef, visibleSection }) => {
 	const lightRef = useRef();
-	const [intensitySpring, api] = useSpring(() => ({
-		to: {
-			intensity: 0.7,
-		},
-		from: {
-			intensity: 0.0,
-		},
-		config: config.slow,
-	}));
+	// const [intensitySpring, api] = useSpring(() => ({
+	// 	to: {
+	// 		intensity: 0.7,
+	// 	},
+	// 	from: {
+	// 		intensity: 0.0,
+	// 	},
+	// 	config: config.slow,
+	// }));
 
-	const setIntensity = (ni) => {
+	const setIntensity = (ni, dur) => {
 		gsap.to(lightRef.current, {
 			intensity: ni,
 			ease: "back.out(1.2, 0.2)",
-			duration: 1.5,
+			duration: dur || 1.5,
 		});
 	};
 	useEffect(() => {
@@ -382,7 +383,9 @@ const Lights = ({ cameraRef, visibleSection }) => {
 			setIntensity(0.7);
 		}
 		if (visibleSection === 2) {
-			setIntensity(1.5);
+			setTimeout(() => {
+				setIntensity(3.5, 3);
+			}, 1000);
 		}
 	}, [visibleSection]);
 
