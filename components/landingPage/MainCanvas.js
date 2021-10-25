@@ -7,7 +7,6 @@ import {
 	OrbitControls,
 	PerspectiveCamera,
 	TransformControls,
-	useContextBridge,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useRouter } from "next/router";
