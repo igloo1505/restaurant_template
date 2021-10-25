@@ -1,7 +1,6 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
 const ADD_CONTROLS = false;
-
 import {
 	Billboard,
 	OrbitControls,
@@ -25,15 +24,14 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import CuttingBoard from "./CuttingBoard";
 import TitleHoverSpheres from "./TitleHoverSpheres";
 import ClientSidePortal from "../portalAuthenticated/ClientSidePortal";
-import OvenMitts from "./Mitts";
-import Rad_ish from "./Scene";
 import { config, useSpring } from "@react-spring/core";
 import gsap from "gsap";
-
-let objs = [
-	"../../public/assets/greenApples.OBJ",
-	"../../public/assets/coffeeCup.obj",
-];
+import {
+	BrowserView,
+	MobileView,
+	isBrowser,
+	isMobile,
+} from "react-device-detect";
 
 const canvasId = "mainCanvas";
 
@@ -80,6 +78,16 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	const [newShadowProps, setNewShadowProps] = useState({});
 	// const ContextBridge = useContextBridge(ThemeContext, GreetingContext)
 
+	const checkHoverPositions = (e) => {
+		let sob = document
+			.getElementById("landingPage-banner-signupButton")
+			.getBoundingClientRect();
+		let lib = document
+			.getElementById("landingPage-banner-loginButton")
+			.getBoundingClientRect();
+		console.log("e: checkHoverPositions", e);
+	};
+
 	const [_aspectRatio, setAspectRatio] = useState(1);
 
 	const setAR = () => {
@@ -94,6 +102,9 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	useEffect(() => {
 		router.prefetch("/portal");
 		setAR();
+		window.addEventListener("mousemove", (e) => {
+			checkHoverPositions(e);
+		});
 	}, []);
 
 	return (
@@ -132,8 +143,19 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 						<Billboard ponsition={[0, 0, -0.5]} receiveShadow />
 						<Lights cameraRef={cameraRef} visibleSection={visibleSection} />
 						<MainPlane cameraRef={cameraRef} />
-						{Boolean(deviceWidth > 1200 || visibleSection === 2) && (
-							<CuttingBoard
+						{Boolean(deviceWidth > 1200 || visibleSection === 2) &&
+							!isMobile && (
+								<CuttingBoard
+									cameraRef={cameraRef}
+									canvasRef={canvasRef}
+									cuttingBoardRef={cuttingBoardRef}
+									newShadowProps={newShadowProps}
+									setNewShadowProps={setNewShadowProps}
+									visibleSection={visibleSection}
+								/>
+							)}
+						{!isMobile && (
+							<Radish
 								cameraRef={cameraRef}
 								canvasRef={canvasRef}
 								cuttingBoardRef={cuttingBoardRef}
@@ -142,14 +164,6 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 								visibleSection={visibleSection}
 							/>
 						)}
-						<Radish
-							cameraRef={cameraRef}
-							canvasRef={canvasRef}
-							cuttingBoardRef={cuttingBoardRef}
-							newShadowProps={newShadowProps}
-							setNewShadowProps={setNewShadowProps}
-							visibleSection={visibleSection}
-						/>
 
 						<TitleHoverSpheres
 							cameraRef={cameraRef}
@@ -179,12 +193,15 @@ const Radish = ({
 	setNewShadowProps,
 	visibleSection,
 }) => {
-	// const positions = {
-	// 	a:
-	// }
 	const [scene, setScene] = useState(null);
 	const group = useRef();
 	const getRadishPosition = (scene) => {
+		scene.traverse((child) => {
+			console.log("child: ", child);
+			if (child instanceof THREE.Mesh) {
+				child.castShadow = true;
+			}
+		});
 		let cb = cuttingBoardRef?.current;
 		if (!cb) {
 			return;
@@ -349,7 +366,7 @@ const Radish = ({
 					ref={group}
 					name="Object_0"
 					object={scene}
-					scale={[0.03, 0.03, 0.03]}
+					scale={[0, 0, 0]}
 					// position={[-0.7, -0.03, 5.5]}
 					castShadow
 					receiveShadow
@@ -361,15 +378,6 @@ const Radish = ({
 
 const Lights = ({ cameraRef, visibleSection }) => {
 	const lightRef = useRef();
-	// const [intensitySpring, api] = useSpring(() => ({
-	// 	to: {
-	// 		intensity: 0.7,
-	// 	},
-	// 	from: {
-	// 		intensity: 0.0,
-	// 	},
-	// 	config: config.slow,
-	// }));
 
 	const setIntensity = (ni, dur) => {
 		gsap.to(lightRef.current, {
@@ -384,7 +392,7 @@ const Lights = ({ cameraRef, visibleSection }) => {
 		}
 		if (visibleSection === 2) {
 			setTimeout(() => {
-				setIntensity(3.5, 3);
+				setIntensity(1.5, 3);
 			}, 1000);
 		}
 	}, [visibleSection]);

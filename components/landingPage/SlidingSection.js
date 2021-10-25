@@ -4,6 +4,7 @@ import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { Typography } from "@material-ui/core";
+// import { useMobileOrientation } from "react-device-detect";
 
 const drawerWidth = 240;
 
@@ -82,6 +83,9 @@ const SlidingSection = ({
 		setShifted(shouldShift);
 		getStyles();
 	}, [drawerIsOpen, navHeight, deviceWidth, currentIndex, thisIndex]);
+	// let orientation = useMobileOrientation();
+	// let _orientation = useMobileOrientation;
+	// console.log("_orientation: ", _orientation);
 	return (
 		<div
 			className={clsx(classes.root, shifted && classes.shifted)}

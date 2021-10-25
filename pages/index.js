@@ -19,6 +19,7 @@ import { a as web } from "@react-spring/web";
 import dynamic from "next/dynamic";
 import { to, useSpring } from "@react-spring/core";
 import { useDrag } from "@use-gesture/react";
+import WaveBackdrop from "../components/landingPage/WaveBackdrop";
 const MainCanvas = dynamic(
 	() => import("../components/landingPage/MainCanvas"),
 	{
@@ -36,15 +37,16 @@ const useClasses = makeStyles((theme) => ({
 		top: 0,
 		left: 0,
 		backgroundColor: "transparent",
-		// top: "64px",
-		// border: "5px solid blue",
-		// backgroundColor: "#51a1ff"
 	},
 	container: {
 		maxWidth: "1280px",
-		// marginLeft: "50%",
-
-		// transform: "translateX(-50%)"
+	},
+	waveContainer: {
+		position: "absolute",
+		bottom: 0,
+		left: 0,
+		width: "100%",
+		zIndex: -1,
 	},
 }));
 
@@ -91,8 +93,15 @@ const Home = connect(mapStateToProps)(
 						<MainCanvas visibleSection={visibleSection} />
 					</div>
 					<LandingPageBanner visibleSection={visibleSection} />
+					<div className={classes.waveContainer}>
+						<WaveBackdrop
+							color="#EB6010"
+							additionalStyles={{
+								filter: "drop-shadow(-5px 0px 6px #0008)",
+							}}
+						/>
+					</div>
 				</div>
-				<style jsx>{``}</style>
 			</Fragment>
 		);
 	}
@@ -126,10 +135,6 @@ const Switcher = ({
 		config: config.stiff,
 	}));
 	useEffect(() => {
-		// add scroll listener and toggle sections here
-		// setVisibleSection(1);
-		// TODO: ADD GESTURE HANDLER TO TOGGLE SECTIONS ON TOUCH DEVICES
-		// BUG: ADD GESTURE HANDLER TO TOGGLE SECTIONS ON TOUCH DEVICES
 		document.addEventListener("scroll", (e) => {
 			e.preventDefault();
 			e.stopPropagation();
@@ -208,6 +213,7 @@ const Switcher = ({
 						justifyContent: "flex-start",
 						alignItems: "center",
 						padding: "2rem",
+						backgroundColor: "#ed7028",
 					}}
 					// visibleSection={visibleSection}
 					// setVisibleSection={setVisibleSection}
@@ -227,7 +233,8 @@ const Switcher = ({
 						justifyContent: "center",
 						alignItems: "center",
 						padding: "2rem",
-						backgroundColor: "#ed7028",
+						// backgroundColor: "#ed7028",
+						backgroundColor: "#51a1ff",
 					}}
 					// visibleSection={visibleSection}
 					// setVisibleSection={setVisibleSection}
