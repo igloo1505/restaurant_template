@@ -1,6 +1,6 @@
 const withPlugins = require("next-compose-plugins");
 const withPWA = require("next-pwa");
-const withTM = require("next-transpile-modules")(["three", "drei"]);
+const withTM = require("next-transpile-modules")(["three"]);
 // const withTM = require("next-transpile-modules")([
 
 // ])
