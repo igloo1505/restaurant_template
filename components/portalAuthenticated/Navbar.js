@@ -170,7 +170,6 @@ const Navbar = ({
 	let router = useRouter();
 
 	const handleSignInClick = () => {
-		console.log("Router avoiding redirect", router);
 		if (router.pathname === "/portal" && isSignUp) {
 			dispatch({ type: Types.TOGGLE_SIGNUP_FORM });
 		}

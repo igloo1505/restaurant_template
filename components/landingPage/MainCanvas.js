@@ -263,7 +263,6 @@ const Radish = ({
 			let _x = newTargets[0].position[0];
 			// BUG: set this to zero after transition is handled obviously.
 			newTargets[1] && (_x = (_x + newTargets[1].position[0]) / 2);
-			console.log("_x: ", _x);
 			positionAnimation(
 				{
 					x: _x,
