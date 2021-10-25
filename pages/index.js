@@ -116,6 +116,8 @@ const Switcher = ({
 			setVisibleSection(2);
 		}
 		if (delta[0] > 10) {
+			console.log("rest", rest);
+
 			setVisibleSection(1);
 		}
 		// api.start({ x: down ? mx : 0, y: down ? my : 0, immediate: down })
@@ -148,16 +150,11 @@ const Switcher = ({
 			console.log("e: touchmove", e);
 			e.preventDefault();
 			e.stopPropagation();
-			// if (e.deltaY > 20) {
-			// 	return setVisibleSection(1);
-			// }
-			// if (e.deltaY < -20) {
-			// 	return setVisibleSection(2), setInitialVisibleSection(2);
-			// }
 		});
 	}, []);
 
 	useEffect(() => {
+		// debugger;
 		console.log("visibleSection: new section ", visibleSection);
 		let _w = window?.innerWidth;
 		if (!_w) return;
@@ -215,7 +212,7 @@ const Switcher = ({
 				>
 					<Home
 						visibleSection={initialVisibleSection}
-						setVisibleSection={setVisibleSection}
+						// setVisibleSection={setVisibleSection}
 					/>
 				</SlidingSection>
 				<SlidingSection

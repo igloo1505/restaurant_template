@@ -14,7 +14,6 @@ import { gsap } from "gsap";
 // import {useDrag} from "react-use-gesture"
 
 const TitleHoverSpheres = ({ cameraRef, canvasRef, visibleSection }) => {
-	const [hasFoundTargets, setHasFoundTargets] = useState(false);
 	const [targetPosition, setTargetPosition] = useState([]);
 	const setTargets = (cancel, method) => {
 		let _scaleUp = 0.025;

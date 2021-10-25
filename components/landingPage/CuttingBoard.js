@@ -89,7 +89,14 @@ const Model = ({
 
 	const wobbleBoard = () => {
 		if (visibleSection !== 1) {
-			return clearAnimations();
+			clearAnimations();
+			let _int = setInterval(() => {
+				toggleItemPosition("demoLeft", cancelSetPosition);
+			});
+			const cancelSetPosition = () => {
+				clearInterval(_int);
+			};
+			return;
 		}
 		let tl = gsap.timeline({
 			yoyo: true,
@@ -252,7 +259,8 @@ const Model = ({
 			console.log("handling ui state target");
 			let int = setInterval(() => {
 				// setTargetPosition([])
-				toggleItemPosition(newBoardPosition, cancelInt);
+				let nb = visibleSection === 1 ? newBoardPosition : "demoLeft";
+				toggleItemPosition(nb, cancelInt);
 			}, 200);
 			const cancelInt = () => {};
 
@@ -261,16 +269,6 @@ const Model = ({
 				clearAnimations();
 				if (visibleSection === 1) {
 					const wobbleWobble = wobbleBoard();
-					// if (
-					// 	Object.values(wobbleWobble)
-					// 		.map((w) => typeof w)
-					// 		.includes(undefined)
-					// ) {
-					// 	debugger;
-					// }
-					// if (!wobbleWobble) {
-					// 	// debugger;
-					// }
 					if (wobbleWobble) {
 						setCurrentAnimations([
 							...currentAnimations,
@@ -483,8 +481,11 @@ const Model = ({
 	};
 
 	const toggleItemPosition = (transformation, cancel) => {
-		if (!transformation) transformation = "alignTitle";
-
+		if (!transformation && !newBoardPosition) {
+			return;
+		}
+		if (!transformation) transformation = newBoardPosition;
+		// debugger;
 		let visBox = getVisibleBox(0.5);
 		if (!visBox || !group?.current) {
 			return;

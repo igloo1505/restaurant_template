@@ -83,15 +83,18 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 
 	const [_aspectRatio, setAspectRatio] = useState(1);
 
-	useEffect(() => {
-		router.prefetch("/portal");
+	const setAR = () => {
 		let _canvas = document.getElementById("main-canvas-container");
 		let ar = _canvas?.clientWidth / _canvas?.clientHeight;
-
 		if (ar) {
-			// TODO call this on resize
 			setAspectRatio(ar);
 		}
+		document.addEventListener("resize", setAR);
+	};
+
+	useEffect(() => {
+		router.prefetch("/portal");
+		setAR();
 	}, []);
 
 	return (
@@ -140,16 +143,15 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 								visibleSection={visibleSection}
 							/>
 						)}
-						{visibleSection === 2 && (
-							<Radish
-								cameraRef={cameraRef}
-								canvasRef={canvasRef}
-								cuttingBoardRef={cuttingBoardRef}
-								newShadowProps={newShadowProps}
-								setNewShadowProps={setNewShadowProps}
-								visibleSection={visibleSection}
-							/>
-						)}
+						<Radish
+							cameraRef={cameraRef}
+							canvasRef={canvasRef}
+							cuttingBoardRef={cuttingBoardRef}
+							newShadowProps={newShadowProps}
+							setNewShadowProps={setNewShadowProps}
+							visibleSection={visibleSection}
+						/>
+
 						<TitleHoverSpheres
 							cameraRef={cameraRef}
 							canvasRef={canvasRef}
@@ -178,6 +180,9 @@ const Radish = ({
 	setNewShadowProps,
 	visibleSection,
 }) => {
+	// const positions = {
+	// 	a:
+	// }
 	const [scene, setScene] = useState(null);
 	const group = useRef();
 	const getRadishPosition = (scene) => {
@@ -189,46 +194,92 @@ const Radish = ({
 		let clone = scene?.clone();
 		console.log("_clone: ", clone);
 		console.log("_clone _scene: ", scene);
-		// debugger;
-		// clone.geometry?.computeBoundingBox();
-		// let bBox = clone.geometry.boundingBox;
-		// let obSize = bBox.getSize(new THREE.Vector3());
-		// console.log("cb: ", cb, cbPos, obSize);
-
 		scene.position.set(cbPos.x - 0.12, cbPos.y - 0.005, cbPos.z + 0.015);
 		scene.castShadow = true;
 		scene.receiveShadow = true;
-		// scene.position.set(cbPos.x, cbPos.y+ obSize, cbPos.z);
-		// return {
-		// 	x: cbPos.x,
-		// 	y: cbPos.y,
-		// 	// y: cbPos.y + obSize,
-		// 	z: cbPos.z,
-		// };
 		return scene;
 	};
 
 	const updatePosition = () => {
 		let cb = cuttingBoardRef?.current;
 		let scene = group.current;
-		debugger;
+		// debugger;
 		if (!cb || !scene) {
 			return;
 		}
-		let cbPos = cb.position;
-		let clone = scene?.clone();
-		console.log("_clone: ", clone);
-		console.log("_clone _scene: ", scene);
-		// debugger;
-		// clone.geometry?.computeBoundingBox();
-		// let bBox = clone.geometry.boundingBox;
-		// let obSize = bBox.getSize(new THREE.Vector3());
-		// console.log("cb: ", cb, cbPos, obSize);
-		debugger;
-		scene.position.set(cbPos.x - 0.12, cbPos.y - 0.005, cbPos.z + 0.015);
-		scene.castShadow = true;
-		scene.receiveShadow = true;
+		if (visibleSection === 1) {
+			let _scaleUp = 0.025;
+			let targets = document.getElementsByClassName("i-hover-target");
+			let newTargets = [];
+			for (var i = 0; i < targets.length; i++) {
+				let _t = targets[i];
+				let _hasColor = false;
+				let target = _t.getBoundingClientRect();
+				// start
+				let camera = cameraRef.current;
+				var vec = new THREE.Vector3();
+				var pos = new THREE.Vector3();
+				vec.set(
+					(target.x / window.innerWidth) * 2 - 1,
+					-(target.y / window.innerHeight) * 2 + 1,
+					-1
+				);
+				vec.unproject(camera);
+				vec.sub(camera.position).normalize();
+				var distance = -camera.position.z / vec.z;
+				pos.copy(camera.position).add(vec.multiplyScalar(distance));
+				let targetPosition = [pos.x, pos.y + _scaleUp, pos.z];
+				console.log("targetPosition: target positions", targetPosition);
+				// debugger
+				if (_t.classList.contains("white")) {
+					_hasColor = "white";
+				}
+				newTargets.push({ position: targetPosition, hasColor: _hasColor });
+				// setHasFoundTargets(true)
+				// end
+			}
+			// setTargetPosition(newTargets);
+			// if (newTargets.length !== 0) {
+			// 	if (method !== "resize") {
+			// 		cancel();
+			// 	}
+			// 	if (method === "resize") {
+			// 		setTimeout(() => {
+			// 			cancel();
+			// 		}, 1000);
+			// 	}
+			// }
+
+			console.log("newTargets: ", newTargets);
+			if (newTargets.length === 0) {
+				return;
+			}
+			let _x = newTargets[0].position[0];
+			newTargets[1] && (_x = _x + newTargets[1].position[0] / 2);
+			// debugger;
+			console.log("_x: ", _x);
+			scene.position.set(_x, newTargets[1].position[1], -2);
+			scene.castShadow = false;
+			scene.receiveShadow = false;
+		}
+		if (visibleSection === 2) {
+			let cbPos = cb.position;
+			scene.position.set(cbPos.x - 0.12, cbPos.y - 0.005, cbPos.z + 0.015);
+			scene.castShadow = true;
+			scene.receiveShadow = true;
+		}
 	};
+
+	useEffect(() => {
+		if (visibleSection === 2) {
+			return setTimeout(() => {
+				updatePosition();
+			}, 1000);
+		}
+		if (visibleSection !== 2) {
+			updatePosition({ p: visibleSection });
+		}
+	}, [visibleSection]);
 
 	useEffect(() => {
 		const loader = new GLTFLoader();
@@ -247,15 +298,12 @@ const Radish = ({
 				console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
 			},
 			(error) => {
-				console.log("An error happened", error);
+				console.error("An error happened", error);
 			}
 		);
-		if (typeof window !== "undefined") {
-			document.addEventListener("resize", () => {
-				debugger;
-				updatePosition();
-			});
-		}
+		window.addEventListener("resize", () => {
+			updatePosition();
+		});
 	}, []);
 
 	return (
@@ -266,7 +314,6 @@ const Radish = ({
 					name="Object_0"
 					object={scene}
 					scale={[0.03, 0.03, 0.03]}
-					// RESUME here... everything working ok up until here but it's 3:30am and I'm tired. Line this up after getting 3Dworld board position and set this to hover that... not the 2d equiveleant.
 					// position={[-0.7, -0.03, 5.5]}
 					castShadow
 					receiveShadow
@@ -290,7 +337,7 @@ const Lights = ({ cameraRef, visibleSection }) => {
 
 	const setIntensity = (ni) => {
 		gsap.to(lightRef.current, {
-			intensity: 1.5,
+			intensity: ni,
 			ease: "back.out(1.2, 0.2)",
 			duration: 1.5,
 		});
