@@ -7,7 +7,7 @@ import { useSpring } from "@react-spring/core";
 import { a as three, config } from "@react-spring/three";
 import { ContactShadows } from "@react-three/drei";
 import store from "../../stateManagement/store";
-import { useFrame } from "react-three-fiber";
+import { useFrame } from "@react-three/fiber";
 import { a as web } from "@react-spring/web";
 import { useTheme } from "@material-ui/styles";
 import { gsap } from "gsap";

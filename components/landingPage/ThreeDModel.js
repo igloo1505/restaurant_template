@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, Suspense } from "react";
-import { useFrame } from "react-three-fiber";
+
 import * as THREE from "three";
 import { Html, useProgress } from "@react-three/drei";
 import OBJLoader from "./ObjLoader";
@@ -22,7 +22,6 @@ const Model = ({ ...modelProps }) => {
 	const mesh = useRef();
 
 	const group = useRef();
-
 
 	const [active, setActive] = useState(false);
 	const [hovered, setHovered] = useState(false);
@@ -60,15 +59,12 @@ const Model = ({ ...modelProps }) => {
 
 	return (
 		<>
-				<three.group
-					ref={group}
-					dispose={null}
-					onClick={() => setActive(!active)}
-					// position={[0, -0.04, 0.41]}
-				>
-					
-				</three.group>
-		
+			<three.group
+				ref={group}
+				dispose={null}
+				onClick={() => setActive(!active)}
+				// position={[0, -0.04, 0.41]}
+			></three.group>
 		</>
 	);
 };
