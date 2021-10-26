@@ -7,6 +7,7 @@ const WaveBackdrop = ({ color, additionalStyles }) => {
 		minWidth: "100vw",
 		bottom: 0,
 		left: 0,
+		zIndex: "-1",
 	};
 	return (
 		<>

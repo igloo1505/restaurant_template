@@ -130,12 +130,16 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 		window.addEventListener("mousemove", (e) => {
 			checkHoverPositions(e);
 		});
-		window.addEventListener("click", (e) => {
+		let cListener = window.addEventListener("click", (e) => {
+			if (router.pathname !== "/") return removeClickListener();
 			let hovered = checkHoverPositions(e);
 			if (hovered.length > 0) {
 				hovered[0].action(router);
 			}
 		});
+		const removeClickListener = () => {
+			window.removeEventListener("click", cListener);
+		};
 	}, []);
 
 	return (

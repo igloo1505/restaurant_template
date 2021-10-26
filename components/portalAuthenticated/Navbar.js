@@ -211,7 +211,7 @@ const Navbar = ({
 			setShouldHideMenuButton(false);
 			setShiftAppbar(false);
 		}
-	}, [deviceWidth, deviceHeight]);
+	}, [deviceWidth, deviceHeight, loggedIn]);
 	const appbarClasses = useStylesAppbar();
 	return (
 		<Fragment>
@@ -222,7 +222,7 @@ const Navbar = ({
 				classes={{
 					root: clsx(
 						appbarClasses.appBar,
-						mobileOpen && appbarClasses.appbarShifted,
+						shiftAppbar && appbarClasses.appbarShifted,
 						"navbar-background-shift"
 					),
 				}}

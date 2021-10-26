@@ -69,20 +69,11 @@ const Home = connect(mapStateToProps)(
 		},
 		network: { loading: isLoading },
 		tryAutoLogin,
-		hasUser,
 		props: { visibleSection },
 	}) => {
 		// console.log("props: visibleSection", visibleSection);
 		const dispatch = useDispatch();
 		const classes = useClasses();
-		useEffect(() => {
-			if (hasUser) {
-				dispatch({
-					type: Types.AUTO_LOGIN_SUCCESS,
-					payload: hasUser,
-				});
-			}
-		}, [hasUser]);
 
 		return (
 			<Fragment>
@@ -105,6 +96,7 @@ const Home = connect(mapStateToProps)(
 						color="#FF6F00"
 						tintRightColor="#E91E63"
 						animId="sectionOne"
+						visibleSection={visibleSection}
 						additionalStyles={{
 							filter: "drop-shadow(-5px 0px 6px #0008)",
 						}}
@@ -117,9 +109,21 @@ const Home = connect(mapStateToProps)(
 
 const Switcher = ({
 	viewport: { width: deviceWidth, height: deviceHeight, navHeight },
+	props: { hasUser },
 }) => {
+	const dispatch = useDispatch();
 	const [visibleSection, setVisibleSection] = useState(1);
 	const [initialVisibleSection, setInitialVisibleSection] = useState(1);
+
+	useEffect(() => {
+		console.log("hasUser", hasUser);
+		if (hasUser) {
+			dispatch({
+				type: Types.AUTO_LOGIN_SUCCESS,
+				payload: hasUser,
+			});
+		}
+	}, [hasUser]);
 
 	const dragHandler = useDrag(({ delta, ...rest }) => {
 		console.log("data first", delta[0], rest, rest.args);
@@ -247,7 +251,7 @@ const Switcher = ({
 					// visibleSection={visibleSection}
 					// setVisibleSection={setVisibleSection}
 				>
-					<SectionTwoMain />
+					<SectionTwoMain visibleSection={visibleSection} />
 				</SlidingSection>
 			</web.div>
 		</div>

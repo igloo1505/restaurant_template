@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
+import gsap from "gsap";
 
 const SecondWaveBackdrop = ({
 	color,
@@ -7,6 +8,7 @@ const SecondWaveBackdrop = ({
 	tintLeftColor,
 	additionalStyles,
 	animId,
+	visibleSection,
 }) => {
 	const [currentStyles, setCurrentStyles] = useState({
 		_color: null,
@@ -14,6 +16,7 @@ const SecondWaveBackdrop = ({
 		_tintLeftColor: null,
 		_additionalStyles: null,
 	});
+	const [gradientWidth, setGradientWidth] = useState(0);
 
 	useEffect(() => {
 		setCurrentStyles({
@@ -30,8 +33,52 @@ const SecondWaveBackdrop = ({
 		width: "100vw",
 		bottom: 0,
 		left: 0,
-		zIndex: "-1",
+		zIndex: "-3",
 	};
+
+	const settingGradientWidth = (endColor) => {
+		if (
+			!currentStyles._color ||
+			!currentStyles._tintRightColor ||
+			!currentStyles._tintLeftColor
+		) {
+			return;
+		}
+		let gw = gsap.timeline({
+			yoyo: true,
+			repeat: -1,
+			repeatDelay: 0.5,
+		});
+		gw.fromTo(
+			{
+				w: 0,
+			},
+			{
+				w: 0,
+				duration: 2.5,
+				onUpdate: () => {
+					console.log("gsapstuff up hizzere", gw);
+				},
+			},
+			{
+				w: 10,
+				duration: 2.5,
+				onUpdate: () => {
+					console.log("gsapstuff up hizzere", gw);
+				},
+			}
+		);
+		gw.eventCallback("onUpdate", () => {
+			console.log("gw gsapstuff", gw);
+			setGradientWidth(gw.progress() * 100);
+		});
+		return gw;
+	};
+
+	useEffect(() => {
+		let gsapstuff = settingGradientWidth();
+		console.log("gsapstuff: downhere", gsapstuff);
+	}, [visibleSection]);
 
 	return (
 		<>
@@ -45,17 +92,19 @@ const SecondWaveBackdrop = ({
 					<linearGradient id={`${animId}-gradient`}>
 						{tintLeftColor && (
 							<stop
-								offset="10%"
+								// offset="10%"
+								offset={`${gradientWidth}%`}
 								stopColor={`${currentStyles._tintLeftColor}`}
-								stopOpacity="0.5"
+								// stopOpacity="0.5"
 							/>
 						)}
 						<stop offset="50%" stopColor={`${currentStyles._color}`} />
 						{tintRightColor && (
 							<stop
-								offset="90%"
+								// offset="90%"
+								offset={`${100 - gradientWidth}%`}
 								stopColor={`${currentStyles._tintRightColor}`}
-								stopOpacity="0.5"
+								// stopOpacity="0.5"
 							/>
 						)}
 					</linearGradient>

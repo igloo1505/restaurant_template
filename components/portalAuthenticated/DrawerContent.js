@@ -73,24 +73,24 @@ const DrawerContent = ({
 		dispatch({ type: Types.CLOSE_DRAWER });
 	};
 	// * Push down to be level with navbar
-	// const [heightOffsetStyle, setHeightOffsetStyle] = useState({
-	// 	marginTop: `${navHeight}px`,
-	// });
-	// useLayoutEffect(() => {
-	// 	let style = {
-	// 		marginTop: `${navHeight}px`,
-	// 	};
+	const [heightOffsetStyle, setHeightOffsetStyle] = useState({
+		marginTop: `${navHeight}px`,
+	});
+	useLayoutEffect(() => {
+		let style = {
+			marginTop: `${navHeight}px`,
+		};
 
-	// 	if (navHeight !== 0 && deviceWidth >= 1920) {
-	// 		setHeightOffsetStyle(style);
-	// 	}
-	// 	if (navHeight === 0 && deviceWidth >= 1920) {
-	// 		// setHeightOffsetStyle({ marginTop: "64px" });
-	// 	}
-	// 	if (deviceWidth < 1920) {
-	// 		setHeightOffsetStyle({ marginTop: "0px" });
-	// 	}
-	// }, [navHeight, deviceWidth]);
+		if (navHeight !== 0 && deviceWidth >= 1920 && loggedIn) {
+			setHeightOffsetStyle(style);
+		}
+		if (navHeight === 0 && deviceWidth >= 1920 && loggedIn) {
+			setHeightOffsetStyle({ marginTop: "64px" });
+		}
+		if (deviceWidth < 1920) {
+			setHeightOffsetStyle({ marginTop: "0px" });
+		}
+	}, [navHeight, deviceWidth]);
 	const theme = useTheme();
 	const classes = useStyles();
 	const addRecipeAction = () => {
@@ -123,7 +123,7 @@ const DrawerContent = ({
 		},
 	];
 	return (
-		<div className={classes.outerContainer}>
+		<div className={classes.outerContainer} style={heightOffsetStyle}>
 			<Divider />
 			<List className={classes.listRoot}>
 				{array.map((a) => (

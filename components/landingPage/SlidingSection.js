@@ -86,7 +86,7 @@ const SlidingSection = ({
 			: false;
 		setShifted(shouldShift);
 		getStyles();
-	}, [drawerIsOpen, navHeight, deviceWidth, currentIndex, thisIndex]);
+	}, [drawerIsOpen, navHeight, deviceWidth, currentIndex, thisIndex, loggedIn]);
 
 	return (
 		<div
