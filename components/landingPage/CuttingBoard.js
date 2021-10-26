@@ -178,10 +178,12 @@ const Model = ({
 		});
 		let sphereMaterial = sphereRef?.current?.material.color;
 		if (!sphereMaterial) {
-			return;
+			return {
+				tl,
+				otherTl,
+			};
 		}
-		// 212, 86, 14)
-		// 0.83137255, 0.3372549, 0.05490196
+
 		sphereTl.fromTo(
 			sphereMaterial,
 			{
@@ -195,9 +197,6 @@ const Model = ({
 				r: 1,
 				g: 1,
 				b: 1,
-				// r: 0.83137255,
-				// g: 0.3372549,
-				// b: 0.05490196,
 				duration: 0.35,
 				onUpdateParams: [sphereMaterial.newColor],
 			}
@@ -242,11 +241,9 @@ const Model = ({
 	useEffect(() => {
 		let dw = UIstate?.viewport?.width;
 		if (dw >= 1200 && visibleSection === 1) {
-			console.log("Aligning top");
 			return setNewBoardPosition("alignTitle");
 		}
 		if (dw >= 750 && dw < 1200 && visibleSection === 1) {
-			console.log("Aligning bottom");
 			return setNewBoardPosition("alignBottom");
 		}
 	}, [UIstate]);
@@ -255,7 +252,6 @@ const Model = ({
 		clearAnimations();
 		let state = store.getState();
 		if (UIstate?.UI?.viewport?.width !== state?.UI?.viewport?.width) {
-			console.log("handling ui state target");
 			let int = setInterval(() => {
 				// setTargetPosition([])
 				let nb = visibleSection === 1 ? newBoardPosition : "demoLeft";

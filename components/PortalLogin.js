@@ -29,6 +29,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import { config, useSpring } from "@react-spring/core";
 
 const emailMinLength = 8;
 const passwordMinLength = 8;
@@ -150,6 +151,10 @@ const SignIn = ({
 	}, [modalIsOpen, alertIsOpen]);
 	const [passwordValidated, setPasswordValidated] = useState(true);
 
+	const [spring, api] = useSpring(() => ({
+		config: config.stiff,
+	}));
+
 	// ToDO Remove all occurrences of tryAutoLogin except in _app.js
 	// useEffect(() => {
 	//   console.log("logging here");
@@ -172,6 +177,10 @@ const SignIn = ({
 	const handleSubmit = async () => {
 		if (validated && passwordValidated) {
 			let didAuthenticate = await authenticateUser(formData);
+			api.start({
+				scale: 0.2,
+			});
+			didAuthenticate && router.push("/");
 			console.log("didAuthenticate: ", didAuthenticate);
 		}
 	};
@@ -220,7 +229,7 @@ const SignIn = ({
 				shouldBeTransparent && classes.adjustForBackdropOpen
 			)}
 		>
-			<div className={clsx(classes.paper)}>
+			<div className={clsx(classes.paper)} style={{ ...spring }}>
 				<Avatar className={classes.avatar}>
 					<LockOutlinedIcon />
 				</Avatar>

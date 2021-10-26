@@ -134,7 +134,6 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 			let hovered = checkHoverPositions(e);
 			if (hovered.length > 0) {
 				hovered[0].action(router);
-				debugger;
 			}
 		});
 	}, []);
@@ -161,7 +160,7 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 						minHeight: "calc(100vh)",
 						maxHeight: "fit-content",
 						position: "absolute",
-						zIndex: 99999999,
+						zIndex: 1,
 						top: 0,
 						left: 0,
 						backgroundColor: "transparent",
@@ -357,9 +356,9 @@ const Radish = ({
 
 	useEffect(() => {
 		if (visibleSection === 2) {
-			// Remove this timeout or adjust accordingly when sphere animation is finished.
+			let int = setInterval(() => updatePosition(), 0);
 			return setTimeout(() => {
-				updatePosition();
+				clearInterval(int);
 			}, 1000);
 		}
 		if (visibleSection !== 2) {
