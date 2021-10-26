@@ -37,11 +37,7 @@ const SecondWaveBackdrop = ({
 	};
 
 	const settingGradientWidth = (endColor) => {
-		if (
-			!currentStyles._color ||
-			!currentStyles._tintRightColor ||
-			!currentStyles._tintLeftColor
-		) {
+		if (!color || !tintRightColor || !tintLeftColor) {
 			return;
 		}
 		let gw = gsap.timeline({
@@ -49,10 +45,11 @@ const SecondWaveBackdrop = ({
 			repeat: -1,
 			repeatDelay: 0.5,
 		});
+		const Gw = { w: 0 };
+		console.log("gw gsapstuff up here do", gw);
+		// debugger;
 		gw.fromTo(
-			{
-				w: 0,
-			},
+			Gw,
 			{
 				w: 0,
 				duration: 2.5,
@@ -68,9 +65,10 @@ const SecondWaveBackdrop = ({
 				},
 			}
 		);
+		console.log("Firing gsapstuff");
 		gw.eventCallback("onUpdate", () => {
 			console.log("gw gsapstuff", gw);
-			setGradientWidth(gw.progress() * 100);
+			// setGradientWidth(gw.progress() * 100);
 		});
 		return gw;
 	};

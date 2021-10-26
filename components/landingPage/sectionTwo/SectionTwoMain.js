@@ -115,6 +115,7 @@ const SectionTwoMain = ({ visibleSection }) => {
 				<SecondWaveBackdrop
 					color="#0099ff"
 					tintLeftColor="#E91E63"
+					visibleSection={visibleSection}
 					animId="sectionTwo"
 					additionalStyles={{
 						filter: "drop-shadow(-5px 0px 6px #0008)",

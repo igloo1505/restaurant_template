@@ -252,7 +252,7 @@ const Radish = ({
 		return scene;
 	};
 
-	const positionAnimation = (newPosition, newScale, opt) => {
+	const positionAnimation = (newPosition, newScale, newRotation, opt) => {
 		let model = group.current;
 		if (!model) {
 			return;
@@ -270,6 +270,13 @@ const Radish = ({
 				y: newScale.y,
 				z: newScale.z,
 				duration: opt?.duration || 1,
+			});
+		newRotation &&
+			gsap.to(model.rotation, {
+				x: newRotation.x,
+				y: newRotation.y,
+				z: newRotation.z,
+				duration: 1,
 			});
 	};
 
@@ -327,6 +334,11 @@ const Radish = ({
 					z: 0,
 				},
 				{
+					x: 0,
+					y: 0,
+					z: 0,
+				},
+				{
 					duration: 0.2,
 				}
 			);
@@ -348,6 +360,11 @@ const Radish = ({
 					x: 0.03,
 					y: 0.03,
 					z: 0.03,
+				},
+				{
+					y: -Math.PI * 2,
+					x: 0,
+					z: 0,
 				},
 				{
 					duration: 0.2,
