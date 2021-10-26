@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 	listRoot: {},
 	listItemRoot: {
 		"&:hover": {
-			backgroundColor: " rgba(251,	201,	92, 0.3)",
+			backgroundColor: "rgba(251,	201,	92, 0.3)",
 		},
 	},
 	listItemIconRoot: {
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	listItemRootDisabled: {
 		"&:hover": {
-			backgroundColor: " rgba(251,	201,	92, 0.1)",
+			backgroundColor: "rgba(251,	201,	92, 0.1)",
 			cursor: "default",
 		},
 	},

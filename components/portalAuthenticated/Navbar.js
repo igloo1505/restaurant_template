@@ -175,6 +175,7 @@ const Navbar = ({
 		dispatch({ type: Types.SHOW_ACCOUNT_MENU });
 	};
 	const handleDrawerToggle = () => {
+		// if (!loggedIn) return;
 		if (mobileOpen) {
 			dispatch({
 				type: Types.CLOSE_DRAWER,
@@ -202,8 +203,7 @@ const Navbar = ({
 	useEffect(() => {
 		if (deviceWidth >= 1920) {
 			setIsPermanent(loggedIn);
-			// BUG: set this back to !loggedIn once adjustments are made.
-			setShouldHideMenuButton(loggedIn);
+			setShouldHideMenuButton(!loggedIn);
 			setShiftAppbar(loggedIn);
 		}
 		if (deviceWidth < 1920 && !mobileOpen) {
@@ -244,7 +244,8 @@ const Navbar = ({
 						classes={{
 							root: clsx(
 								appbarClasses.menuButtonRoot,
-								shiftAppbar && appbarClasses.hideMenuButton,
+								Boolean(shiftAppbar || !loggedIn) &&
+									appbarClasses.hideMenuButton,
 								"navbar-background-shift"
 							),
 							label: clsx(

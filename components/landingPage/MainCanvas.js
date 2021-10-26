@@ -1,29 +1,5 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
-const ADD_CONTROLS = false;
-
-const hoverTargetIds = [
-	{
-		id: "landingPage-banner-loginButton",
-		isHovered: false,
-		action: (state, router) => {
-			router.push("/login");
-		},
-	},
-	{
-		id: "landingPage-banner-signupButton",
-		isHovered: false,
-		action: (state, router) => {
-			router.push({
-				pathname: "/login",
-				query: {
-					signup: true,
-				},
-			});
-		},
-	},
-];
-
 import {
 	Billboard,
 	OrbitControls,
@@ -58,6 +34,28 @@ import {
 	isMobile,
 } from "react-device-detect";
 
+const ADD_CONTROLS = false;
+
+const hoverTargetIds = [
+	{
+		id: "landingPage-banner-loginButton",
+		action: (router) => {
+			router.push("/portal");
+		},
+	},
+	{
+		id: "landingPage-banner-signupButton",
+		action: (router) => {
+			router.push({
+				pathname: "/portal",
+				query: {
+					signup: true,
+				},
+			});
+		},
+	},
+];
+
 const canvasId = "mainCanvas";
 
 const MainCanvas = ({
@@ -86,23 +84,33 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	const cuttingBoardRef = useRef();
 	const router = useRouter();
 	const [newShadowProps, setNewShadowProps] = useState({});
-	const [hoverTargets, setHoverTargets] = useState([]);
 	// const ContextBridge = useContextBridge(ThemeContext, GreetingContext)
 
-	const setHoverPositions = () => {
+	const getHoverPositions = () => {
 		let newTargets = [];
 		hoverTargetIds.forEach((hti) => {
-			let tar = document.getElementById(hti.id).getBoundingClientRect();
-			newTargets.push({ target: tar, id: hti.id, action: hti.action });
+			let tar = document.getElementById(hti.id)?.getBoundingClientRect();
+			tar && newTargets.push({ target: tar, id: hti.id, action: hti.action });
 		});
+		return newTargets;
 	};
 	// RESUME
 	const checkHoverPositions = (e) => {
-		console.log("e: checkhoverPosition", e);
-		// let lib = document
-		// 	.getElementById("landingPage-banner-loginButton")
-		// 	.getBoundingClientRect();
-		// console.log("e: checkHoverPositions", e, sob, lib);
+		let hoverTargets = getHoverPositions();
+		console.log("e: checkhoverPosition", e, hoverTargets);
+		// debugger;
+		if (!hoverTargets) return;
+		let currentHoveredTargets = hoverTargets.filter(
+			(ht) =>
+				e.clientX > ht.target.left &&
+				e.clientX < ht.target.right &&
+				e.clientY > ht.target.top &&
+				e.clientY < ht.target.bottom
+		);
+		currentHoveredTargets.length > 0
+			? (document.body.style.cursor = "pointer")
+			: (document.body.style.cursor = "default");
+		return currentHoveredTargets;
 	};
 
 	const [_aspectRatio, setAspectRatio] = useState(1);
@@ -117,15 +125,19 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	};
 
 	useEffect(() => {
-		setHoverPositions();
 		router.prefetch("/portal");
 		setAR();
 		window.addEventListener("mousemove", (e) => {
 			checkHoverPositions(e);
 		});
+		window.addEventListener("click", (e) => {
+			let hovered = checkHoverPositions(e);
+			if (hovered.length > 0) {
+				hovered[0].action(router);
+				debugger;
+			}
+		});
 	}, []);
-
-	let z = THREE.PCFSoftShadowMap;
 
 	return (
 		<div className="mainCanvasContainer">

@@ -169,9 +169,10 @@ const SignIn = ({
 		});
 	};
 	// TODO make sure initial load doesn't have label overlapping text if autofill is used
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (validated && passwordValidated) {
-			authenticateUser(formData);
+			let didAuthenticate = await authenticateUser(formData);
+			console.log("didAuthenticate: ", didAuthenticate);
 		}
 	};
 
@@ -409,11 +410,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
 				// 		useFindAndModify: false,
 				// 		useUnifiedTopology: true,
 				// 	})
-					// .then(async () => {
-					// 	// BUG An apparently pretty well known issue with mongo and getServerSideProps causing serialization errors. Come back to this and see if can figure out a hack later.
-					// 	// });
-					// 	return _recipes;
-					// });
+				// .then(async () => {
+				// 	// BUG An apparently pretty well known issue with mongo and getServerSideProps causing serialization errors. Come back to this and see if can figure out a hack later.
+				// 	// });
+				// 	return _recipes;
+				// });
 				return {
 					props: {
 						_myRecipes: JSON.parse(JSON.stringify(recipes)),
