@@ -21,6 +21,7 @@ import { to, useSpring } from "@react-spring/core";
 import { useDrag } from "@use-gesture/react";
 import { useMobileOrientation } from "react-device-detect";
 import WaveBackdrop from "../components/landingPage/WaveBackdrop";
+import SecondWaveBackdrop from "../components/landingPage/SecondWaveBackdrop";
 const MainCanvas = dynamic(
 	() => import("../components/landingPage/MainCanvas"),
 	{
@@ -94,14 +95,20 @@ const Home = connect(mapStateToProps)(
 						<MainCanvas visibleSection={visibleSection} />
 					</div>
 					<LandingPageBanner visibleSection={visibleSection} />
-					<div className={classes.waveContainer}>
-						<WaveBackdrop
-							color="#EB6010"
-							additionalStyles={{
-								filter: "drop-shadow(-5px 0px 6px #0008)",
-							}}
-						/>
-					</div>
+					<WaveBackdrop
+						color="#EB6010"
+						additionalStyles={{
+							filter: "drop-shadow(-5px 0px 6px #0008)",
+						}}
+					/>
+					<SecondWaveBackdrop
+						color="#FF6F00"
+						tintRightColor="#E91E63"
+						animId="sectionOne"
+						additionalStyles={{
+							filter: "drop-shadow(-5px 0px 6px #0008)",
+						}}
+					/>
 				</div>
 			</Fragment>
 		);

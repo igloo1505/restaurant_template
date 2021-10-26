@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { Typography } from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import WaveBackdrop from "../WaveBackdrop";
+import SecondWaveBackdrop from "../SecondWaveBackdrop";
 
 const RightColumnWidth = "40%";
 
@@ -132,6 +133,14 @@ const SectionTwoMain = () => {
 					// color=""
 					additionalStyles={{
 						filter: "drop-shadow(-5px 0px 6px #0008 )",
+					}}
+				/>
+				<SecondWaveBackdrop
+					color="#0099ff"
+					tintLeftColor="#E91E63"
+					animId="sectionTwo"
+					additionalStyles={{
+						filter: "drop-shadow(-5px 0px 6px #0008)",
 					}}
 				/>
 			</div>
