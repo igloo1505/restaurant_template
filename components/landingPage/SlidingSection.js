@@ -45,6 +45,10 @@ const SlidingSection = ({
 		mainDrawer: { open: drawerIsOpen },
 		viewport: { navHeight, width: deviceWidth },
 	},
+	user: {
+		loggedIn,
+		self: { _id, token },
+	},
 	children,
 }) => {
 	const classes = useClasses();
@@ -69,7 +73,7 @@ const SlidingSection = ({
 		});
 	};
 
-	const [shifted, setShifted] = useState(deviceWidth > 1920);
+	const [shifted, setShifted] = useState(deviceWidth > 1920 ? loggedIn : false);
 	const [styles, setStyles] = useState({
 		marginTop: "64px",
 	});
@@ -78,14 +82,12 @@ const SlidingSection = ({
 		let shouldShift = drawerIsOpen
 			? drawerIsOpen
 			: deviceWidth > 1920
-			? true
+			? loggedIn
 			: false;
 		setShifted(shouldShift);
 		getStyles();
 	}, [drawerIsOpen, navHeight, deviceWidth, currentIndex, thisIndex]);
-	// let orientation = useMobileOrientation();
-	// let _orientation = useMobileOrientation;
-	// console.log("_orientation: ", _orientation);
+
 	return (
 		<div
 			className={clsx(classes.root, shifted && classes.shifted)}
@@ -99,6 +101,7 @@ const SlidingSection = ({
 
 const mapStateToProps = (state, props) => ({
 	UI: state.UI,
+	user: state.user,
 	props: props,
 });
 

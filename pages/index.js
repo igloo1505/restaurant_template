@@ -19,6 +19,7 @@ import { a as web } from "@react-spring/web";
 import dynamic from "next/dynamic";
 import { to, useSpring } from "@react-spring/core";
 import { useDrag } from "@use-gesture/react";
+import { useMobileOrientation } from "react-device-detect";
 import WaveBackdrop from "../components/landingPage/WaveBackdrop";
 const MainCanvas = dynamic(
 	() => import("../components/landingPage/MainCanvas"),

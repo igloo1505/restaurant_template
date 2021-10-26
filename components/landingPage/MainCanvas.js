@@ -1,12 +1,37 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
 const ADD_CONTROLS = false;
+
+const hoverTargetIds = [
+	{
+		id: "landingPage-banner-loginButton",
+		isHovered: false,
+		action: (state, router) => {
+			router.push("/login");
+		},
+	},
+	{
+		id: "landingPage-banner-signupButton",
+		isHovered: false,
+		action: (state, router) => {
+			router.push({
+				pathname: "/login",
+				query: {
+					signup: true,
+				},
+			});
+		},
+	},
+];
+
 import {
 	Billboard,
 	OrbitControls,
 	PerspectiveCamera,
 	TransformControls,
+	useHelper,
 } from "@react-three/drei";
+import { SpotLightHelper } from "three/src/helpers/SpotLightHelper";
 import { Canvas } from "@react-three/fiber";
 import { useRouter } from "next/router";
 import React, {
@@ -53,21 +78,6 @@ const mapStateToProps = (state, props) => ({
 	props: props,
 });
 
-const animationPhases = [
-	{
-		title: "initial",
-		index: 0,
-	},
-	{
-		title: "firstScroll",
-		index: 1,
-	},
-	{
-		title: "scrollToSecondSection",
-		index: 2,
-	},
-];
-
 const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	const cameraRef = useRef();
 	const rayCaster = useRef();
@@ -76,16 +86,23 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	const cuttingBoardRef = useRef();
 	const router = useRouter();
 	const [newShadowProps, setNewShadowProps] = useState({});
+	const [hoverTargets, setHoverTargets] = useState([]);
 	// const ContextBridge = useContextBridge(ThemeContext, GreetingContext)
 
+	const setHoverPositions = () => {
+		let newTargets = [];
+		hoverTargetIds.forEach((hti) => {
+			let tar = document.getElementById(hti.id).getBoundingClientRect();
+			newTargets.push({ target: tar, id: hti.id, action: hti.action });
+		});
+	};
+	// RESUME
 	const checkHoverPositions = (e) => {
-		let sob = document
-			.getElementById("landingPage-banner-signupButton")
-			.getBoundingClientRect();
-		let lib = document
-			.getElementById("landingPage-banner-loginButton")
-			.getBoundingClientRect();
-		console.log("e: checkHoverPositions", e);
+		console.log("e: checkhoverPosition", e);
+		// let lib = document
+		// 	.getElementById("landingPage-banner-loginButton")
+		// 	.getBoundingClientRect();
+		// console.log("e: checkHoverPositions", e, sob, lib);
 	};
 
 	const [_aspectRatio, setAspectRatio] = useState(1);
@@ -100,12 +117,15 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	};
 
 	useEffect(() => {
+		setHoverPositions();
 		router.prefetch("/portal");
 		setAR();
 		window.addEventListener("mousemove", (e) => {
 			checkHoverPositions(e);
 		});
 	}, []);
+
+	let z = THREE.PCFSoftShadowMap;
 
 	return (
 		<div className="mainCanvasContainer">
@@ -116,6 +136,7 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 					ref={canvasRef}
 					gl={{
 						shadowMapEnabled: true,
+						"shadowMap.type": THREE.PCFSoftShadowMap,
 						outputEncoding: THREE.sRGBEncoding,
 						pixelRatio: window.devicePixelRatio,
 						alpha: true,
@@ -386,25 +407,57 @@ const Lights = ({ cameraRef, visibleSection }) => {
 			duration: dur || 1.5,
 		});
 	};
+	const setPosition = (np, dur) => {
+		gsap.to(lightRef.current.position, {
+			x: np.x,
+			y: np.y,
+			z: np.z,
+			ease: "back.out(1.2, 0.2)",
+			duration: dur || 1.5,
+		});
+	};
 	useEffect(() => {
 		if (visibleSection === 1) {
+			let dw = window?.innerWidth;
+			if (dw < 1200) {
+				setPosition({
+					x: 1,
+					y: 2,
+					z: 20,
+				});
+			}
+			if (dw > 1200) {
+				setPosition({
+					x: 0.35,
+					y: 0.5,
+					z: 10,
+				});
+			}
 			setIntensity(0.7);
 		}
 		if (visibleSection === 2) {
+			setPosition({
+				x: 1,
+				y: 1,
+				z: 10,
+			});
 			setTimeout(() => {
 				setIntensity(1.5, 3);
 			}, 1000);
 		}
 	}, [visibleSection]);
 
-	// useHelper(lightRef, SpotLightHelper);
+	// step one 1? position={[0.35, 0.5, 5]}
+
+	ADD_CONTROLS && useHelper(lightRef, SpotLightHelper);
 	return (
 		<>
 			<spotLight
 				intensity={0.7}
 				angle={0.1}
 				penumbra={1}
-				position={[2, 2, 20]}
+				position={[0.35, 0.5, 5]}
+				// position={[1, 1, 10]}
 				castShadow
 				ref={lightRef}
 				shadowDarkness={0.8}

@@ -18,21 +18,23 @@ import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import NavbarSearchInput from "./NavbarSearchInput";
 
+const mapStateToProps = (state, props) => ({
+	user: state.user.self,
+	loggedIn: state.user.loggedIn,
+	UI: state.UI,
+	isSignUp: state.UI.login.isSignUp,
+	userSettings: state.user.userSettings,
+});
+
 const useStylesAppbar = makeStyles((theme) => ({
 	appBar: {
-		[theme.breakpoints.up("xl")]: {
-			width: `calc(100% - ${drawerWidth}px)`,
-			marginLeft: drawerWidth,
-			backgroundColor: theme.palette.primary.main,
-			color: theme.palette.primary.main,
-		},
-		[theme.breakpoints.down("xl")]: {
-			// width: "100vw",
-			backgroundColor: theme.palette.primary.main,
-			zIndex: 1303,
-			// transition: "margin-left 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-			transition: "width 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-		},
+		width: `calc(100%)`,
+		marginLeft: drawerWidth,
+		backgroundColor: theme.palette.primary.main,
+		color: theme.palette.primary.main,
+		zIndex: 1303,
+		// transition: "margin-left 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+		transition: "width 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
 	},
 	accountIconButton: {},
 	accountIconButtonPermanent: {},
@@ -80,25 +82,12 @@ const useStylesAppbar = makeStyles((theme) => ({
 	},
 	toolbarRoot: {
 		backgroundColor: theme.palette.primary.main,
-		[theme.breakpoints.down("xl")]: {
-			// width: "100vw",
-			backgroundColor: theme.palette.primary.main,
-			zIndex: theme.zIndex.drawer - 1,
-			transition: theme.transitions.create(["width", "margin"], {
-				easing: theme.transitions.easing.sharp,
-				duration: 225,
-			}),
-		},
-		[theme.breakpoints.up("xl")]: {
-			width: `calc(100vw - ${drawerWidth}px)`,
-			// marginLeft: drawerWidth,
-			backgroundColor: theme.palette.primary.main,
-			zIndex: theme.zIndex.drawer - 1,
-			transition: theme.transitions.create(["width", "margin"], {
-				easing: theme.transitions.easing.sharp,
-				duration: 225,
-			}),
-		},
+		width: `calc(100%)`,
+		zIndex: theme.zIndex.drawer - 1,
+		transition: theme.transitions.create(["width", "margin"], {
+			easing: theme.transitions.easing.sharp,
+			duration: 225,
+		}),
 	},
 	toolbarRootOpen: {
 		backgroundColor: theme.palette.primary.main,
@@ -133,7 +122,6 @@ const useStylesAppbar = makeStyles((theme) => ({
 	menuIconRoot: {
 		backgroundColor: "transparent",
 	},
-	hideMenuButton: { display: "none" },
 	link: {
 		padding: "0 1rem !important",
 		position: "absolute",
@@ -152,11 +140,13 @@ const useStylesAppbar = makeStyles((theme) => ({
 const drawerWidth = 240;
 
 const Navbar = ({
-	isOpen,
 	loggedIn,
 	isSignUp,
 	user: { _id },
-	viewport: { width: deviceWidth, height: deviceHeight },
+	UI: {
+		viewport: { width: deviceWidth, height: deviceHeight },
+		mainDrawer: { open: mobileOpen },
+	},
 	userSettings: {
 		settingProgress: {
 			elapsedTime,
@@ -178,32 +168,19 @@ const Navbar = ({
 	const [shiftAppbar, setShiftAppbar] = useState(false);
 
 	useEffect(() => {
-		// debugger;
-		if (deviceWidth === 0) {
-			let shouldShift = isOpen ? true : false;
-			return setShiftAppbar(shouldShift);
-		}
-		if (deviceWidth >= 1920) {
-			setShiftAppbar(true);
-		}
-		if (isOpen) {
-			setShiftAppbar(true);
-		}
-		if (deviceWidth < 1920 || !isOpen) {
-			setShiftAppbar(false);
-		}
-	}, [deviceWidth, isOpen]);
+		setShiftAppbar(mobileOpen);
+	}, [deviceWidth, mobileOpen]);
 
 	const setMenuAnchor = (e) => {
 		dispatch({ type: Types.SHOW_ACCOUNT_MENU });
 	};
 	const handleDrawerToggle = () => {
-		if (isOpen) {
+		if (mobileOpen) {
 			dispatch({
 				type: Types.CLOSE_DRAWER,
 			});
 		}
-		if (!isOpen) {
+		if (!mobileOpen) {
 			dispatch({
 				type: Types.OPEN_DRAWER,
 			});
@@ -224,11 +201,12 @@ const Navbar = ({
 	const [shouldHideMenuButton, setShouldHideMenuButton] = useState(false);
 	useEffect(() => {
 		if (deviceWidth >= 1920) {
-			setIsPermanent(true);
-			setShouldHideMenuButton(true);
-			setShiftAppbar(true);
+			setIsPermanent(loggedIn);
+			// BUG: set this back to !loggedIn once adjustments are made.
+			setShouldHideMenuButton(loggedIn);
+			setShiftAppbar(loggedIn);
 		}
-		if (deviceWidth < 1920 && !isOpen) {
+		if (deviceWidth < 1920 && !mobileOpen) {
 			setIsPermanent(false);
 			setShouldHideMenuButton(false);
 			setShiftAppbar(false);
@@ -244,7 +222,7 @@ const Navbar = ({
 				classes={{
 					root: clsx(
 						appbarClasses.appBar,
-						isOpen && appbarClasses.appbarShifted,
+						mobileOpen && appbarClasses.appbarShifted,
 						"navbar-background-shift"
 					),
 				}}
@@ -387,15 +365,6 @@ const Navbar = ({
 		</Fragment>
 	);
 };
-
-const mapStateToProps = (state, props) => ({
-	isOpen: state.UI.mainDrawer.open,
-	user: state.user.self,
-	loggedIn: state.user.loggedIn,
-	viewport: state.UI.viewport,
-	isSignUp: state.UI.login.isSignUp,
-	userSettings: state.user.userSettings,
-});
 
 const useStylesNotificationBanner = makeStyles((theme) => ({
 	notificationBannerOuter: {
