@@ -47,6 +47,7 @@ const SecondWaveBackdrop = ({
 							<stop
 								offset="10%"
 								stopColor={`${currentStyles._tintLeftColor}`}
+								stopOpacity="0.5"
 							/>
 						)}
 						<stop offset="50%" stopColor={`${currentStyles._color}`} />
@@ -54,6 +55,7 @@ const SecondWaveBackdrop = ({
 							<stop
 								offset="90%"
 								stopColor={`${currentStyles._tintRightColor}`}
+								stopOpacity="0.5"
 							/>
 						)}
 					</linearGradient>
