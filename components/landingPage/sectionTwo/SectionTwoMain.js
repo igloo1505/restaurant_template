@@ -38,7 +38,7 @@ const useClasses = makeStyles((theme) => ({
 		color: "#fff",
 		fontWeight: 500,
 		letterSpacing: "0.1em",
-		fontSize: "5.5rem",
+		fontSize: "3.5rem",
 	},
 	subtitleText: {
 		color: "#fff",
@@ -87,10 +87,10 @@ const SectionTwoMain = ({ visibleSection }) => {
 		<div className={classes.outermostContainer}>
 			<div className={classes.titleContainer}>
 				<Typography className={classes.titleText} variant="h1">
-					Rad~ish
+					The social network to unite.
 				</Typography>
 				<Typography className={classes.subtitleText} variant="h4">
-					The social network to unite.
+					Discover recipes from around the world.
 				</Typography>
 			</div>
 			<div className={classes.bottomRow}>
@@ -100,8 +100,8 @@ const SectionTwoMain = ({ visibleSection }) => {
 						unites us all.
 					</Bulletin>
 					<Bulletin>
-						Turn your recipe book into a weekly grocery list, or create a
-						special list for recipes you love.
+						Turn your cookbook into a weekly grocery list, or create a special
+						list for recipes you love.
 					</Bulletin>
 					<Bulletin>Share recipes, ideas, inspiration and more.</Bulletin>
 				</div>
@@ -116,6 +116,7 @@ const SectionTwoMain = ({ visibleSection }) => {
 					color="#0099ff"
 					tintLeftColor="#E91E63"
 					visibleSection={visibleSection}
+					thisIndex={2}
 					animId="sectionTwo"
 					additionalStyles={{
 						filter: "drop-shadow(-5px 0px 6px #0008)",

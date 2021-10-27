@@ -94,9 +94,10 @@ const Home = connect(mapStateToProps)(
 					/>
 					<SecondWaveBackdrop
 						color="#FF6F00"
-						tintRightColor="#E91E63"
+						tintRightColor="#7C4DFF"
 						animId="sectionOne"
 						visibleSection={visibleSection}
+						thisIndex={1}
 						additionalStyles={{
 							filter: "drop-shadow(-5px 0px 6px #0008)",
 						}}
