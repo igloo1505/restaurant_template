@@ -31,7 +31,9 @@ const SecondWaveBackdrop = connect(mapStateToProps)(
 			_tintLeftColor: null,
 			_additionalStyles: null,
 		});
-		const [gradientWidth, setGradientWidth] = useState(0);
+		// const [gradientWidth, setGradientWidth] = useState(0);
+
+		const gradientWidth = 10;
 
 		useEffect(() => {
 			setCurrentStyles({
@@ -51,43 +53,44 @@ const SecondWaveBackdrop = connect(mapStateToProps)(
 			zIndex: "-3",
 		};
 
-		const settingGradientWidth = () => {
-			console.log(
-				"color, tintRightColor, tintLeftColor: gsapstuff",
-				color,
-				tintRightColor,
-				tintLeftColor
-			);
+		// const settingGradientWidth = () => {
+		// 	console.log(
+		// 		"color, tintRightColor, tintLeftColor: gsapstuff",
+		// 		color,
+		// 		tintRightColor,
+		// 		tintLeftColor
+		// 	);
 
-			// debugger;
-			let gw = gsap.timeline({
-				yoyo: true,
-				repeat: -1,
-				repeatDelay: 0.5,
-			});
-			const Gw = { w: 0 };
-			console.log("gw gsapstuff up here do", gw);
-			// debugger;
-			gw.to(Gw, {
-				w: 10,
-				duration: 2.5,
-			});
-			// debugger;
-			console.log("Firing gsapstuff");
-			gw.eventCallback("onUpdate", () => {
-				parseFloat(Gw.w) && setGradientWidth(Gw.w);
-			});
-			return gw;
-		};
+		// 	// debugger;
+		// 	let gw = gsap.timeline({
+		// 		yoyo: true,
+		// 		repeat: -1,
+		// 		repeatDelay: 0.5,
+		// 	});
+		// 	const Gw = { w: 0 };
+		// 	console.log("gw gsapstuff up here do", gw);
+		// 	// debugger;
+		// 	gw.to(Gw, {
+		// 		w: 10,
+		// 		duration: 2.5,
+		// 	});
+		// 	// debugger;
+		// 	console.log("Firing gsapstuff");
+		// 	gw.eventCallback("onUpdate", () => {
+		// 		parseFloat(Gw.w) && setGradientWidth(Gw.w);
+		// 	});
+		// 	return gw;
+		// };
 
-		useEffect(() => {
-			if (visibleSection === thisIndex) {
-				return settingGradientWidth();
-			} else {
-				return setGradientWidth(0);
-			}
-			// debugger;
-		}, [visibleSection]);
+		// Pick this back up later... leaving it here for now
+		// useEffect(() => {
+		// 	if (visibleSection === thisIndex) {
+		// 		return settingGradientWidth();
+		// 	} else {
+		// 		return setGradientWidth(0);
+		// 	}
+		// 	// debugger;
+		// }, [visibleSection]);
 
 		return (
 			<>

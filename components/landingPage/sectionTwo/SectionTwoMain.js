@@ -8,6 +8,7 @@ import Divider from "@material-ui/core/Divider";
 import WaveBackdrop from "../WaveBackdrop";
 import SecondWaveBackdrop from "../SecondWaveBackdrop";
 import gsap from "gsap";
+import FeaturedRecipeSectionTwo from "./FeaturedRecipeSectionTwo";
 
 const RightColumnWidth = "40%";
 
@@ -64,49 +65,106 @@ const useClasses = makeStyles((theme) => ({
 		float: "right",
 		gap: "1.5rem",
 	},
-	bottomRow: {
+	containerRightLarge: {
 		display: "flex",
 		flexDirection: "row",
-		justifyContent: "flex-end",
+		width: "100%",
+		height: "50%",
+		maxHeight: "50%",
+		minHeight: "50%",
+		alignItems: "flex-start",
+	},
+	containerBottomLeft: {
+		display: "flex",
+		flexGrow: 1,
+		flexDirection: "column",
+		height: "50%",
+		minHeight: "50%",
+		width: "100%",
+		justifyContent: "flex-start",
+		alignItems: "flex-end",
+		[theme.breakpoints.down(1200)]: {
+			height: "100%",
+			minHeight: "100%",
+			// justifyContent: "center",
+			// alignItems: "center",
+		},
+	},
+	mainContentContainer: {
+		display: "flex",
 		alignItems: "center",
 		width: "100%",
+		height: "100%",
+		flexDirection: "column",
+		justifyContent: "center",
+		[theme.breakpoints.down(1200)]: {
+			flexDirection: "row",
+			justifyContent: "flex-end",
+		},
 	},
 }));
 
-const SectionTwoMain = ({ visibleSection }) => {
-	const classes = useClasses();
-	useEffect(() => {
-		if (visibleSection !== 2) {
-			resetBulletins();
-		}
-		if (visibleSection === 2) {
-			animateEntrance();
-		}
-	}, [visibleSection]);
-	return (
-		<div className={classes.outermostContainer}>
-			<div className={classes.titleContainer}>
-				<Typography className={classes.titleText} variant="h1">
-					The social network to unite.
-				</Typography>
-				<Typography className={classes.subtitleText} variant="h4">
-					Discover recipes from around the world.
-				</Typography>
-			</div>
-			<div className={classes.bottomRow}>
-				<div className={classes.containerRight}>
-					<Bulletin>
-						Meet others from around the world and connect on the thing that
-						unites us all.
-					</Bulletin>
-					<Bulletin>
-						Turn your cookbook into a weekly grocery list, or create a special
-						list for recipes you love.
-					</Bulletin>
-					<Bulletin>Share recipes, ideas, inspiration and more.</Bulletin>
+const mapStateToProps = (state, props) => ({
+	UI: state.UI,
+	props: props,
+});
+
+const SectionTwoMain = connect(mapStateToProps)(
+	({
+		props: { visibleSection },
+		UI: {
+			viewport: { width: deviceWidth },
+		},
+	}) => {
+		const classes = useClasses();
+
+		useEffect(() => {
+			if (visibleSection !== 2) {
+				resetBulletins();
+			}
+			if (visibleSection === 2) {
+				animateEntrance();
+			}
+		}, [visibleSection]);
+
+		return (
+			<div className={classes.outermostContainer}>
+				<div className={classes.titleContainer}>
+					<Typography className={classes.titleText} variant="h1">
+						The social network to unite.
+					</Typography>
+					<Typography className={classes.subtitleText} variant="h4">
+						Discover recipes from around the world.
+					</Typography>
 				</div>
-			</div>
-			<div className={classes.waveContainer}>
+				<div className={classes.mainContentContainer}>
+					{deviceWidth < 1200 && (
+						<div className={classes.containerBottomLeft}>
+							<FeaturedRecipeSectionTwo />
+						</div>
+					)}
+					<div
+						className={clsx(
+							classes.containerRight,
+							deviceWidth > 1200 && classes.containerRightLarge
+						)}
+					>
+						<Bulletin>
+							Meet others from around the world and connect on the thing that
+							unites us all.
+						</Bulletin>
+						<Bulletin>
+							Turn your cookbook into a weekly grocery list, or create a special
+							list for recipes you love.
+						</Bulletin>
+						<Bulletin>Share recipes, ideas, inspiration and more.</Bulletin>
+					</div>
+					{deviceWidth >= 1200 && (
+						<div className={classes.containerBottomLeft}>
+							<FeaturedRecipeSectionTwo />
+						</div>
+					)}
+				</div>
 				<WaveBackdrop
 					additionalStyles={{
 						filter: "drop-shadow(-5px 0px 6px #0008 )",
@@ -123,15 +181,16 @@ const SectionTwoMain = ({ visibleSection }) => {
 					}}
 				/>
 			</div>
-		</div>
-	);
-};
+		);
+	}
+);
 
 export default SectionTwoMain;
 
 const useBulletinClasses = makeStyles((theme) => ({
 	subtitleRightTextContainer: {
 		flexDirection: "column",
+		display: "flex",
 		justifyContent: "center",
 		alignItems: "center",
 		textAlign: "center",
@@ -141,6 +200,12 @@ const useBulletinClasses = makeStyles((theme) => ({
 		padding: "1rem",
 		// boxShadow: "12px 12px 24px #4589d9, -12px -12px 24px #5db9ff",
 		// background: "linear-gradient(145deg, #2485f6, #1f70cf)",
+		margin: "1rem 0.7rem",
+		minHeight: "150px",
+		height: "150px",
+		[theme.breakpoints.down(1200)]: {
+			margin: "0.5rem 0.3rem",
+		},
 	},
 	subtitleRightText: {
 		color: "#fff",
@@ -148,6 +213,11 @@ const useBulletinClasses = makeStyles((theme) => ({
 		flexDirection: "column",
 		justifyContent: "center",
 		alignItems: "center",
+		textAlign: "center",
+		height: "100%",
+		[theme.breakpoints.down(1200)]: {
+			fontSize: "1.2rem",
+		},
 	},
 }));
 
@@ -157,9 +227,11 @@ const Bulletin = ({ children }) => {
 		<div
 			className={clsx(classes.subtitleRightTextContainer, "bulletin-container")}
 		>
-			<Typography className={classes.subtitleRightText} variant="h5">
-				{children}
-			</Typography>
+			<div>
+				<Typography className={classes.subtitleRightText} variant="h5">
+					{children}
+				</Typography>
+			</div>
 		</div>
 	);
 };
