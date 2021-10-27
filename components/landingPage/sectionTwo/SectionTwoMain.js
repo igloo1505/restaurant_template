@@ -251,8 +251,7 @@ const animateEntrance = () => {
 			{
 				boxShadow: "0px 0px 0px #0008",
 				background: "#1f70cf",
-				border: "none",
-				// padding: "1px",
+				border: "1px solid #1f70cf",
 				stagger: 0.1,
 				ease: "elastic.out(1.7, 0.5)",
 				duration: 1.5,

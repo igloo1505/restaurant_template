@@ -160,14 +160,15 @@ const UnitSelectCompact = ({
 		setIsSubRecipe,
 	} = props;
 	const [unitHelper, setUnitHelper] = useState("");
+	const [options, setOptions] = useState(null);
+	const [popperIsOpen, setPopperIsOpen] = useState(false);
+
 	const dispatch = useDispatch();
 	useEffect(() => {
 		if (formData.ingredient?.unit?.long) {
 			setUnitHelper(formData.ingredient.unit.long);
 		}
 	}, [formData]);
-
-	const [options, setOptions] = useState([]);
 
 	const setFormData = (newFormData) => {
 		dispatch({
@@ -187,41 +188,32 @@ const UnitSelectCompact = ({
 	};
 
 	useEffect(() => {
-		if (options.length === 1) {
-			let _unit = options[0];
-			console.log("_unit: ", _unit);
-			if (_unit && isSubRecipe < 0) {
-				setFormData({
-					...formData,
-					ingredient: { ...formData.ingredient, unit: _unit },
-				});
-			}
-			if (_unit && isSubRecipe >= 0) {
-				let newSubRecData = [...formData?.subRecipes];
-				newSubRecData[isSubRecipe] = {
-					...newSubRecData[isSubRecipe],
-					ingredient: {
-						...newSubRecData[isSubRecipe].ingredient,
-						ingredient: {
-							...newSubRecData[isSubRecipe].ingredient,
-							unit: _unit,
-						},
-					},
-				};
-				setSubRecipeFormData(newSubRecData);
+		if (options?.length === 0) {
+			return setPopperIsOpen(false);
+		}
+		if (options?.length > 0) {
+			setPopperIsOpen(true);
+		}
+		if (options?.length === 1) {
+			let _unit = options?.[0];
+			if (_unit) {
+				handleSubmission(_unit);
 			}
 		}
 	}, [options]);
 	const theme = useTheme();
 	const classes = useStyles();
-	useEffect(() => {
-		let options = getIngredientUnits("_initial_");
-		setOptions(options);
-	}, []);
+
+	// useEffect(() => {
+	// 	let options = getIngredientUnits("_initial_");
+	// 	setOptions(options);
+	// }, []);
+
 	const defaultProps = {
 		options: options,
 		getOptionLabel: (option) => option.long,
 	};
+
 	const getParts = (option) => {
 		let parts = [];
 		let flags = "gi";
@@ -271,6 +263,8 @@ const UnitSelectCompact = ({
 	const handleKeyPress = (e) => {
 		if (typeof window !== "undefined") {
 			if (e.code === "Enter") {
+				e.preventDefault();
+				e.stopPropagation();
 				let regex = new RegExp(e.target.value, "gi");
 				let daUnit = filterData(regex)[0];
 				if (
@@ -285,16 +279,24 @@ const UnitSelectCompact = ({
 		}
 	};
 
-	const handleSubmission = (_unit) => {
-		if (_unit && isSubRecipe < 0) {
-			console.log("setting formData ", _unit);
+	const handleSubmission = ({ unit, unitDotLong, noSubmit }) => {
+		if (!unit && unitDotLong) {
+			unit =
+				filterData(unitDotLong).length === 1
+					? filterData(unitDotLong)[0]
+					: null;
+		}
+		if (noSubmit) {
+			return unit;
+		}
+		if (unit && isSubRecipe < 0) {
 			setFormData({
 				...formData,
-				ingredient: { ...formData.ingredient, unit: _unit[0] },
+				ingredient: { ...formData.ingredient, unit: unit[0] },
 			});
 		}
 
-		if (_unit && isSubRecipe >= 0) {
+		if (unit && isSubRecipe >= 0) {
 			let newSubRecData = [...formData?.subRecipes];
 			newSubRecData[isSubRecipe] = {
 				...newSubRecData[isSubRecipe],
@@ -302,23 +304,28 @@ const UnitSelectCompact = ({
 					...newSubRecData[isSubRecipe].ingredient,
 					ingredient: {
 						...newSubRecData[isSubRecipe].ingredient,
-						unit: _unit[0],
+						unit: unit[0],
 					},
 				},
 			};
 			setSubRecipeFormData(newSubRecData);
 		}
-		// handleSubmission(_unit)
 	};
+
+	handleSubmission({
+		unitDotLong: "Liter",
+	});
 
 	const handleChange = (e) => {
 		console.log("e: ", e);
-		if (e.key === "Enter") {
+		if (e.key === "Enter" && e.type === "keydown") {
+			e.preventDefault();
+			e.stopPropagation();
+			// RESUME HERE: FIX THIS SHIT FOR THE FOURTH TIME SO IT DOESN'T SUBMIT ON FIRST ENTER PRESS AND RESET TO DEFAULT VALUE RIGHT AWAY. I'VE BEEN AT THIS FOR WAY TOO LONG.
+			// debugger;
 			let theseEms = document.querySelectorAll("[data-focus='true']");
 			theseEms.forEach((em) => {
-				console.log("FOUND ITTTT", em.classList);
 				if (em.classList.contains("autocomplete-unit-option")) {
-					console.log("FOUND ITTTT HERE TOO", em.classList);
 					let _unit = getIngredientUnits().filter(
 						(u) => u.long.toLowerCase() === em.textContent.trim().toLowerCase()
 					);
@@ -326,31 +333,15 @@ const UnitSelectCompact = ({
 					// handleSubmission(_unit)
 				}
 			});
+			return;
 		}
 		if (typeof e.target?.value === "string") {
-			console.log("DID FIRE EVEN AS STRING");
 			let _unit = getIngredientUnits().filter(
 				(u) => u.long.toLowerCase() === e.target.value.trim().toLowerCase()
 			);
-			if (_unit && isSubRecipe < 0) {
-				setFormData({
-					...formData,
-					ingredient: { ...formData.ingredient, unit: _unit[0] },
-				});
-			}
-			if (_unit && isSubRecipe >= 0) {
-				let newSubRecData = [...formData?.subRecipes];
-				newSubRecData[isSubRecipe] = {
-					...newSubRecData[isSubRecipe],
-					ingredient: {
-						...newSubRecData[isSubRecipe].ingredient,
-						ingredient: {
-							...newSubRecData[isSubRecipe].ingredient,
-							unit: _unit[0],
-						},
-					},
-				};
-				setSubRecipeFormData(newSubRecData);
+			setOptions(_unit);
+			if (_unit.length === 1) {
+				handleSubmission({ unit: _unit });
 			}
 			setUnitHelper(e.target.value);
 			let filtered = filterData(e.target.value);
@@ -358,44 +349,29 @@ const UnitSelectCompact = ({
 				setOptions(filtered);
 			}
 			if (e.target.value.length === 0) {
-				setOptions(getIngredientUnits("_initial_"));
+				setOptions(null);
 			}
 		}
 	};
+
 	const handleItemClick = (e, option) => {
 		if (typeof option === "object") {
 			let unit_ = getIngredientUnits().filter(
 				(u) => !u.isKey && u.long === option.long
 			);
-			if (unit_ && !isSubRecipe) {
-				setFormData({
-					...formData,
-					ingredient: { ...formData.ingredient, unit: unit_[0] },
-				});
-			}
-			if (unit_ && isSubRecipe) {
-				setSubRecipeFormData({
-					...subRecipeFormData,
-					ingredient: { ...subRecipeFormData.ingredient, unit: unit_[0] },
-				});
-			}
+			handleSubmission({ unit: unit_ });
 		} else if (e.target?.value) {
-			let index = -1;
 			let _unit = getIngredientUnits()
 				.filter((u) => !u.isKey)
-				.filter((u, i) => {
-					index = i;
-					return u.long.toLowerCase() === e.target.value.toLowerCase();
-				});
-
-			if (_unit[0]) {
-				setFormData({
-					...formData,
-					ingredient: { ...formData.ingredient, unit: _unit[0] },
-				});
+				.filter(
+					(u, i) => u.long.toLowerCase() === e.target.value.toLowerCase()
+				);
+			if (_unit.length === 1) {
+				handleSubmission({ unit: _unit });
 			}
 		}
 	};
+
 	const handleFocus = (type) => {
 		let shouldShrink =
 			unitHelper.length > 0 ||
@@ -415,6 +391,9 @@ const UnitSelectCompact = ({
 			<Autocomplete
 				{...defaultProps}
 				id="unit-select-autocomplete"
+				disableCloseOnSelect
+				defaultMuiPrevented
+				open={popperIsOpen}
 				fullWidth
 				// autoSelect
 				autoComplete
