@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import * as Types from "../stateManagement/TYPES";
+import ClientSidePortal from "./portalAuthenticated/ClientSidePortal";
 import { connect, useDispatch } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import MUIMenuItem from "@material-ui/core/MenuItem";
@@ -21,6 +22,7 @@ import {
 import { Fragment } from "react";
 
 const menuLimit = 10;
+const textFieldId = "unit-autocomplete-textfield";
 
 const useStyles = makeStyles((theme) => ({
 	margin: { width: "100%" },
@@ -45,100 +47,12 @@ const useStyles = makeStyles((theme) => ({
 			color: "#fff",
 		},
 	},
-	option: {
-		// padding: "4px 18px",
-		display: "flex",
-		width: "100%",
-		height: "100%",
-		padding: "6px 16px",
-		justifyContent: "center",
-		alignItems: "center",
-		// padding: "0px",
-		"& span": {
-			fontSize: "0.7rem",
-			// Go back to this for smaller screen sizes.
-			// whiteSpace: "nowrap",
-			whiteSpace: "break-spaces",
-			overflow: "hidden",
-			textOverflow: "ellipsis",
-		},
-		"&[data-focus='true']": {
-			backgroundColor: "rgba(81, 161, 255, 0.4)",
-			"& span": {
-				borderBottom: "1px solid #fff",
-			},
-		},
-	},
-	autoCompleteOption: {
-		opacity: "1 !important",
-		padding: "0px",
-		"&:hover": {
-			backgroundColor: "rgba(81, 161, 255, 0.4)",
-		},
-		'&[data-focus="true"]': {
-			backgroundColor: "rgba(81, 161, 255, 0.4)",
-		},
-	},
-	optionKey: {
-		"&[data-focus='true']": {
-			backgroundColor: "#fff",
-			"& span": {
-				borderBottom: "1px solid #fff",
-			},
-		},
-	},
-	optionWithValue: {
-		// padding: "4px 7px",
-		// margin: "4px 7px",
-		display: "flex",
-		justifyContent: "center",
-		alignItems: "center",
-		"& span": {
-			padding: "0px",
-			fontSize: "0.7rem",
-			// whiteSpace: "nowrap",
-			whiteSpace: "break-spaces",
-			overflow: "hidden",
-			textOverflow: "ellipsis",
-		},
-	},
+
 	togglePadding: {
 		padding: "4px 16px",
 	},
 	clearIndicator: {
 		display: "none",
-	},
-	strikethroughContainerThing: {
-		display: "flex",
-		width: "100%",
-		height: "100%",
-		flexDirection: "column",
-		justifyContent: "space-between",
-		backgroundColor: theme.palette.primary.main,
-	},
-	strikethroughUpper: {
-		height: "calc(50% - 1px)",
-		width: "100%",
-		backgroundColor: "#fff",
-	},
-	strikethroughLower: {
-		height: "calc(50% - 1px)",
-		// height: "100%",
-		width: "100%",
-		backgroundColor: "#fff",
-	},
-	textContainer: { width: "fit-content", padding: "0px 5px" },
-	keyContainer: {
-		opacity: "1 !important",
-		width: "100%",
-		display: "grid",
-		gridTemplateColumns: "1fr auto 1fr",
-		"& span": {
-			fontSize: "0.7rem",
-			whiteSpace: "nowrap",
-			overflow: "hidden",
-			textOverflow: "ellipsis",
-		},
 	},
 }));
 
@@ -161,7 +75,8 @@ const UnitSelectCompact = ({
 	} = props;
 	const [unitHelper, setUnitHelper] = useState("");
 	const [options, setOptions] = useState(null);
-	const [popperIsOpen, setPopperIsOpen] = useState(false);
+	const [currentHighlightedOption, setCurrentHighlightedOption] =
+		useState(null);
 
 	const dispatch = useDispatch();
 	useEffect(() => {
@@ -188,12 +103,6 @@ const UnitSelectCompact = ({
 	};
 
 	useEffect(() => {
-		if (options?.length === 0) {
-			return setPopperIsOpen(false);
-		}
-		if (options?.length > 0) {
-			setPopperIsOpen(true);
-		}
 		if (options?.length === 1) {
 			let _unit = options?.[0];
 			if (_unit) {
@@ -260,13 +169,69 @@ const UnitSelectCompact = ({
 		return parts;
 	};
 
+	const handleArrowKeys = (_key) => {
+		let key = _key;
+		const getValue = (curVal = 0, dir) => {
+			// if (curVal === 0) curVal = 1;
+			let iz = options?.findIndex((o) => !o.isKey);
+			if (typeof iz !== "number") {
+				return;
+			}
+			curVal === 0 && (curVal = iz);
+			let newVal = curVal;
+			if (dir === "up") {
+				if (curVal === iz) {
+					console.log("curVal", curVal);
+					newVal = options?.length - 1;
+					// newVal = setcurVal()
+				}
+				if (curVal > iz) {
+					console.log("curVal", curVal);
+					newVal = curVal - 1;
+				}
+			}
+			if (dir === "down") {
+				if (curVal === options?.length - 1) {
+					console.log("curVal", curVal);
+					newVal = iz;
+				}
+				if (curVal < options?.length - 1) {
+					console.log("curVal", curVal);
+					newVal = curVal + 1;
+				}
+			}
+			if (newVal) {
+				let ox = options[newVal];
+				// if (!ox) return getValue(0, "up");
+				if (ox.isKey) return getValue(newVal, dir);
+				return { item: ox, index: newVal };
+			}
+		};
+		let x = {
+			ArrowUp: "up",
+			ArrowDown: "down",
+		};
+		let nhl = getValue(currentHighlightedOption?.index, x[key]);
+		if (nhl) {
+			console.log("new highlighted item: ", nhl);
+			setCurrentHighlightedOption(nhl);
+		}
+	};
+
 	const handleKeyPress = (e) => {
+		if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+			handleArrowKeys(e.key);
+			if (!options) {
+				setOptions(filterData("_initial_", "servings"));
+			}
+			// debugger;
+		}
 		if (typeof window !== "undefined") {
 			if (e.code === "Enter") {
 				e.preventDefault();
 				e.stopPropagation();
 				let regex = new RegExp(e.target.value, "gi");
-				let daUnit = filterData(regex)[0];
+				let daUnit = filterData(regex, "serving")[0];
 				if (
 					daUnit &&
 					formData.ingredient.text.length >= 3 &&
@@ -282,8 +247,8 @@ const UnitSelectCompact = ({
 	const handleSubmission = ({ unit, unitDotLong, noSubmit }) => {
 		if (!unit && unitDotLong) {
 			unit =
-				filterData(unitDotLong).length === 1
-					? filterData(unitDotLong)[0]
+				filterData(unitDotLong, "serving").length === 1
+					? filterData(unitDotLong, "serving")[0]
 					: null;
 		}
 		if (noSubmit) {
@@ -340,16 +305,19 @@ const UnitSelectCompact = ({
 				(u) => u.long.toLowerCase() === e.target.value.trim().toLowerCase()
 			);
 			setOptions(_unit);
+			setCurrentHighlightedOption({ item: _unit[0] });
 			if (_unit.length === 1) {
 				handleSubmission({ unit: _unit });
 			}
 			setUnitHelper(e.target.value);
-			let filtered = filterData(e.target.value);
+			let filtered = filterData(e.target.value, "serving");
 			if (e.target.value.length > 0) {
 				setOptions(filtered);
+				setCurrentHighlightedOption({ item: filtered[0] });
 			}
 			if (e.target.value.length === 0) {
 				setOptions(null);
+				setCurrentHighlightedOption(null);
 			}
 		}
 	};
@@ -388,119 +356,20 @@ const UnitSelectCompact = ({
 
 	return (
 		<FormControl className={classes.margin}>
-			<Autocomplete
-				{...defaultProps}
-				id="unit-select-autocomplete"
-				disableCloseOnSelect
-				defaultMuiPrevented
-				open={popperIsOpen}
+			<TextField
+				id={textFieldId}
+				value={unitHelper}
 				fullWidth
-				// autoSelect
-				autoComplete
-				getOptionDisabled={(option) => option.isKey}
 				onChange={handleChange}
-				classes={{
-					root: clsx(
-						classes.autoCompleteRoot,
-						focusState.unit.focus && classes.autoCompleteRootFocused
-					),
-					popper: classes.autoCompletePopper,
-					listbox: classes.autoCompleteListbox,
-					paper: classes.autoCompletePaper,
-					loading: classes.loading,
-					noOptions: classes.noOptions,
-					groupLabel: classes.groupLabel,
-					groupUl: classes.groupUl,
-					option: classes.autoCompleteOption,
-					inputFocused: props.InputProps.classes.focused,
-					input: props.InputProps.classes.input,
-					inputRoot: props.InputProps.classes.root,
-					endAdornment: classes.endAdornment,
-					clearIndicator: classes.clearIndicator,
-				}}
-				renderInput={(params) => {
-					// Don't delete this. Needed to use value inline here.
-					delete params.inputProps.value;
-					return (
-						<TextField
-							id={props.id}
-							value={unitHelper}
-							fullWidth
-							onChange={handleChange}
-							onFocus={() => handleFocus("focus")}
-							onBlur={() => handleFocus("blur")}
-							onKeyDown={(e) => handleKeyPress(e)}
-							{...props}
-							{...params}
-						/>
-					);
-				}}
-				renderOption={(option, { ...state }) => {
-					const ignore = (e) => {
-						return e.preventDefault();
-					};
-					const parts = getParts(option);
-					if (!option.isKey) {
-						return (
-							<div
-								className={clsx(
-									classes.option,
-									"unit-autocomplete-option",
-									unitHelper.length > 0 && classes.optionWithValue
-								)}
-								value={option.long}
-								onClick={(e) => handleItemClick(e, option)}
-								onSelect={(e) => console.log("Selected", option.long)}
-								onFocus={(e) => console.log("Selected", option.long)}
-								// TODO make sure this clickItem function or something similar is handled on select or whatever method is called when you press Enter
-							>
-								{parts.map((part, index) => (
-									<span
-										key={index}
-										style={{
-											color: part.match ? theme.palette.primary.main : "#000",
-											padding: part.text === " " && "0px 2px",
-										}}
-										value={option.long}
-										onClick={(e) => handleItemClick(e, option)}
-									>
-										{part.text}
-									</span>
-								))}
-							</div>
-						);
-					}
-					if (option.isKey) {
-						return (
-							<div className={classes.keyContainer}>
-								<div className={classes.strikethroughContainerThing}>
-									<div className={classes.strikethroughUpper}></div>
-									<div className={classes.strikethroughLower}></div>
-								</div>
-								<div className={classes.textContainer} onClick={ignore}>
-									{parts.map((part, index) => (
-										<span
-											key={index}
-											style={{
-												color: part.match
-													? theme.palette.secondary.main
-													: "#000",
-												margin: part.text === "_" && "10px",
-											}}
-											onClick={ignore}
-										>
-											{part.text.toUpperCase()}
-										</span>
-									))}
-								</div>
-								<div className={classes.strikethroughContainerThing}>
-									<div className={classes.strikethroughUpper}></div>
-									<div className={classes.strikethroughLower}></div>
-								</div>
-							</div>
-						);
-					}
-				}}
+				onFocus={() => handleFocus("focus")}
+				onBlur={() => handleFocus("blur")}
+				onKeyDown={(e) => handleKeyPress(e)}
+				{...props}
+			/>
+			<DropDown
+				options={options}
+				unitHelper={unitHelper}
+				highlighted={currentHighlightedOption}
 			/>
 		</FormControl>
 	);
@@ -511,3 +380,208 @@ const mapStateToProps = (state, props) => ({
 	props: props,
 });
 export default connect(mapStateToProps)(UnitSelectCompact);
+
+const useDropdownClasses = makeStyles((theme) => ({
+	dropdownContainer: {
+		width: "100%",
+		position: "absolute",
+		backgroundColor: "#fff",
+		zIndex: 101,
+		border: `2px solid ${theme.palette.primary.light}`,
+		padding: "0.5rem 0rem",
+		borderRadius: "4px",
+		transform: "translateY(50)",
+	},
+	hide: { display: "none" },
+	textContainer: { width: "fit-content", padding: "0px 5px" },
+	autoCompleteOption: {
+		opacity: "1 !important",
+		padding: "0px",
+		"&:hover": {
+			backgroundColor: "rgba(81, 161, 255, 0.4)",
+		},
+		'&[data-focus="true"]': {
+			backgroundColor: "rgba(81, 161, 255, 0.4)",
+		},
+	},
+	optionKey: {
+		"&[data-focus='true']": {
+			backgroundColor: "#fff",
+			"& span": {
+				borderBottom: "1px solid #fff",
+			},
+		},
+	},
+	optionWithValue: {
+		// padding: "4px 7px",
+		// margin: "4px 7px",
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		"& span": {
+			padding: "0px",
+			fontSize: "0.7rem",
+			// whiteSpace: "nowrap",
+			whiteSpace: "break-spaces",
+			overflow: "hidden",
+			textOverflow: "ellipsis",
+		},
+	},
+	option: {
+		// padding: "4px 18px",
+		margin: "0",
+		display: "flex",
+		width: "100%",
+		height: "100%",
+		padding: "6px 16px",
+		justifyContent: "center",
+		alignItems: "center",
+		// padding: "0px",
+		"& span": {
+			fontSize: "0.7rem",
+			// Go back to this for smaller screen sizes.
+			// whiteSpace: "nowrap",
+			whiteSpace: "break-spaces",
+			overflow: "hidden",
+			textOverflow: "ellipsis",
+		},
+		"&[data-focus='true']": {
+			backgroundColor: "rgba(81, 161, 255, 0.4)",
+			"& span": {
+				borderBottom: "1px solid #fff",
+			},
+		},
+	},
+	optionHighlighted: {
+		backgroundColor: "rgba(81, 161, 255) !important",
+		"& span": {
+			borderBottom: "1px solid #fff",
+			color: "#fff",
+		},
+	},
+	strikethroughContainerThing: {
+		display: "flex",
+		width: "calc(100% - 0.5rem)",
+		height: "100%",
+		margin: "0px 0.25rem",
+		flexDirection: "column",
+		justifyContent: "space-between",
+		backgroundColor: theme.palette.primary.main,
+	},
+	strikethroughUpper: {
+		height: "calc(50% - 1px)",
+		width: "100%",
+		backgroundColor: "#fff",
+	},
+	strikethroughLower: {
+		height: "calc(50% - 1px)",
+		// height: "100%",
+		width: "100%",
+		backgroundColor: "#fff",
+	},
+	keyContainer: {
+		opacity: "1 !important",
+		width: "100%",
+		display: "grid",
+		gridTemplateColumns: "1fr auto 1fr",
+		"& span": {
+			fontSize: "0.7rem",
+			whiteSpace: "nowrap",
+			overflow: "hidden",
+			textOverflow: "ellipsis",
+		},
+	},
+}));
+
+const DropDown = ({ options, unitHelper, highlighted }) => {
+	const classes = useDropdownClasses();
+	const [isOpen, setIsOpen] = useState(false);
+	const [styles, setStyles] = useState({});
+	useEffect(() => {
+		let txtField = document
+			.getElementById(textFieldId)
+			?.getBoundingClientRect();
+		let pEm = document.getElementById(textFieldId)?.parentElement?.clientWidth;
+		console.log("pEm: txtField ", pEm);
+		if (!txtField) {
+			return setStyles({});
+		}
+		let ns = {
+			top: `${txtField.bottom}px`,
+			left: `${txtField.left}px`,
+			width: `${pEm}px`,
+		};
+		setStyles(ns);
+		console.log("txtField: ", txtField);
+
+		// }, [deviceWidth, deviceHeight])
+	}, []);
+
+	useEffect(() => {
+		setIsOpen(options?.length > 0);
+	}, [options]);
+	return (
+		<ClientSidePortal selector="#topLevelPortalContainer">
+			<div
+				className={clsx(classes.dropdownContainer, !isOpen && classes.hide)}
+				style={styles}
+			>
+				{options &&
+					options.map((option, i) => (
+						<DropdownItem
+							option={option}
+							key={`unit-dropdown-item-${i}`}
+							unitHelper={unitHelper}
+							highlighted={highlighted?.item?.long === option.long}
+						/>
+					))}
+			</div>
+		</ClientSidePortal>
+	);
+};
+
+const DropdownItem = ({ option, unitHelper, highlighted }) => {
+	const classes = useDropdownClasses();
+	const theme = useTheme();
+	if (!option.isKey) {
+		return (
+			<div
+				className={clsx(
+					classes.option,
+					highlighted && classes.optionHighlighted,
+					"unit-autocomplete-option",
+					unitHelper.length > 0 && classes.optionWithValue
+				)}
+				value={option.long}
+				// And here too: from like 10 lines below
+				// onClick={(e) => handleItemClick(e, option)}
+				onSelect={(e) => console.log("Selected", option.long)}
+				onFocus={(e) => console.log("Selected", option.long)}
+				// TODO make sure this clickItem function or something similar is handled on select or whatever method is called when you press Enter
+			>
+				<span
+					value={option.long}
+					// TODO: add this back in either after passing it down again or creating it here.
+					// onClick={(e) => handleItemClick(e, option)}
+				>
+					{option.long}
+				</span>
+			</div>
+		);
+	}
+	if (option.isKey) {
+		return (
+			<div className={classes.keyContainer}>
+				<div className={classes.strikethroughContainerThing}>
+					<div className={classes.strikethroughUpper}></div>
+					<div className={classes.strikethroughLower}></div>
+				</div>
+				<div className={classes.textContainer}>{option.long}</div>
+				<div className={classes.strikethroughContainerThing}>
+					<div className={classes.strikethroughUpper}></div>
+					<div className={classes.strikethroughLower}></div>
+				</div>
+			</div>
+		);
+	}
+};

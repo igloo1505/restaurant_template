@@ -34,7 +34,7 @@ export const authenticateUser = (user) => async (dispatch) => {
 		url: "/api/portal/login",
 		data: user,
 	});
-	console.log("RES: ", res);
+	// console.log("RES: ", res);
 	if (res.status === 200) {
 		dispatch({
 			type: Types.AUTHENTICATE_USER,
@@ -52,7 +52,7 @@ export const authenticateUser = (user) => async (dispatch) => {
 };
 
 export const tryAutoLogin = () => async (dispatch) => {
-	console.log("RUNNING AUTOLOGIN...");
+	// console.log("RUNNING AUTOLOGIN...");
 	debugger;
 	if (typeof window !== "undefined") {
 		let rememberMe = cookie.get("rememberMe");
@@ -78,7 +78,7 @@ export const tryAutoLogin = () => async (dispatch) => {
 				}
 				return { msg: "what the flying fuck" };
 			} catch (error) {
-				console.log("ERROR: ", error);
+				// console.log("ERROR: ", error);
 				return error;
 			}
 		}
@@ -86,7 +86,7 @@ export const tryAutoLogin = () => async (dispatch) => {
 };
 
 export const addNewUser = (user) => async (dispatch) => {
-	console.log("fired addNewUser with: ", user);
+	// console.log("fired addNewUser with: ", user);
 	const res = await axios.post("/api/portal/newUser", user, config);
 	if (res.status === 200) {
 		dispatch({
@@ -192,16 +192,16 @@ export const validatePassword = (password) => {
 	let f = nums.filter((n) => password.includes(n));
 	let z = spec.filter((s) => password.includes(s));
 	if (f.length > 0 && z.length > 0) {
-		console.log("true");
+		// console.log("true");
 		return true;
 	} else {
-		console.log("false");
+		// console.log("false");
 		return false;
 	}
 };
 
 export const logOut = () => async (dispatch) => {
-	console.log("logging out...");
+	// console.log("logging out...");
 	cookie.delete("rememberMe");
 	cookie.delete("userId");
 	cookie.delete("token");
@@ -211,7 +211,7 @@ export const logOut = () => async (dispatch) => {
 
 export const forgotPassword = () => async (dispatch) => {
 	let props = { email: "aiglinski@icloud.com" };
-	console.log("Running forgotPassword");
+	// console.log("Running forgotPassword");
 	try {
 		let res = await axios.post("/api/forgotPassword", props, config);
 		dispatch({ type: Types.FORGOT_PASSWORD_SUCCESS, payload: res.data });
@@ -262,11 +262,11 @@ export const handleGroceryItem = (item) => async (dispatch) => {
 };
 
 const sendUploadProgress = (progress) => {
-	console.log("progress: ", progress);
+	// console.log("progress: ", progress);
 };
 
 export const addProfileImage = (formData) => async (dispatch) => {
-	// console.log("formData: ", formData);
+	console.log("formData: ", formData);
 	let userId = getUserId();
 	if (!userId) {
 		return dispatch({
@@ -305,7 +305,7 @@ export const addProfileImage = (formData) => async (dispatch) => {
 export const updateProfileData = (profileData) => async (dispatch) => {
 	let userId = getUserId();
 	let data = profileData;
-	console.log("profileData: ", profileData);
+	// console.log("profileData: ", profileData);
 	if (userId) {
 		data = {
 			...profileData,
@@ -317,7 +317,7 @@ export const updateProfileData = (profileData) => async (dispatch) => {
 		url: "/api/handleProfileData/updateProfileData",
 		data: data,
 	});
-	console.log("response", res);
+	// console.log("response", res);
 	if (res.status === 200) {
 		dispatch({
 			type: Types.UPDATE_PROFILE_DATA_SUCCESS,
@@ -325,7 +325,7 @@ export const updateProfileData = (profileData) => async (dispatch) => {
 		});
 	}
 	if (res.status !== 200) {
-		console.log("Res.data", res.data);
+		// console.log("Res.data", res.data);
 		dispatch({
 			type: Types.UPDATE_PROFILE_DATA_FAIL,
 			payload: "Error adding profile data",
@@ -334,13 +334,13 @@ export const updateProfileData = (profileData) => async (dispatch) => {
 };
 
 export const deleteReview = (data) => async (dispatch) => {
-	console.log(data);
+	// console.log(data);
 	let res = await useAxios({
 		method: "post",
 		url: "/api/userInteractions/removeRecipeReview",
 		data: data,
 	});
-	console.log("response", res);
+	// console.log("response", res);
 	if (res.status === 200) {
 		dispatch({
 			type: Types.REMOVE_RECIPE_REVIEW_SUCCESS,
@@ -348,7 +348,7 @@ export const deleteReview = (data) => async (dispatch) => {
 		});
 	}
 	if (res.status !== 200) {
-		console.log("Res.data", res.data);
+		// console.log("Res.data", res.data);
 		dispatch({
 			type: Types.REMOVE_RECIPE_REVIEW_FAIL,
 			payload: "Error adding profile data",
@@ -360,7 +360,7 @@ export const setKeyboardListener = () => {
 	let state = store.getState();
 	// if (typeof window !== 'undefined' && state?.user?.userSettings?.allowKeyboardShortcuts && state?.user?.userSettings?.keyboardShortcuts?.length === 3) {
 	window.addEventListener("keydown", (e) => {
-		console.log("Global keydown listener: ", e);
+		// console.log("Global keydown listener: ", e);
 		let cmdShift = e.shiftKey && e.metaKey;
 
 		//     if (cmdShift && Boolean(e.keyCode === state?.user?.userSettings?.keyboardShortcuts?.filter((s) => !s.specialKey)?.[0].keyCode))) ) {
@@ -377,13 +377,13 @@ export const setKeyboardListener = () => {
 
 export const setNewKeyboardShortcuts = (shortcuts) => async (dispatch) => {
 	// RESUME resume here after listeners are handled appropriately
-	// console.log(data);
+	console.log(data);
 	// let res = await useAxios({
 	//   method: "post",
 	//   url: "/api/userInteractions/removeRecipeReview",
 	//   data: data,
 	// });
-	// console.log("response", res);
+	console.log("response", res);
 	// if (res.status === 200) {
 	//   dispatch({
 	//     type: Types.REMOVE_RECIPE_REVIEW_SUCCESS,
@@ -391,7 +391,7 @@ export const setNewKeyboardShortcuts = (shortcuts) => async (dispatch) => {
 	//   });
 	// }
 	// if (res.status !== 200) {
-	//   console.log("Res.data", res.data);
+	console.log("Res.data", res.data);
 	//   dispatch({
 	//     type: Types.REMOVE_RECIPE_REVIEW_FAIL,
 	//     payload: "Error adding profile data",

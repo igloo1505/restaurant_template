@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import { connect, useDispatch } from "react-redux";
@@ -164,14 +165,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const StepOneFormComponent = ({
-	props: {
-		handleFormChange,
-		placeHolder,
-		setPlaceHolder,
-		hasMenuOpen,
-		setHasMenuOpen,
-		hasSetCommand,
-	},
+	props: { handleFormChange, placeHolder, setPlaceHolder },
 	UI: {
 		addRecipe: { activeStep, formData },
 	},
@@ -179,7 +173,6 @@ const StepOneFormComponent = ({
 	const titleInputRef = useRef();
 	const dispatch = useDispatch();
 	const classes = useStyles();
-	const [menuOpen, setMenuOpen] = useState(false);
 
 	const setFormData = (newFormData) => {
 		dispatch({
@@ -383,8 +376,6 @@ const StepOneFormComponent = ({
 						formData={formData}
 						setFormData={setFormData}
 						classes={classes}
-						menuOpen={menuOpen}
-						setMenuOpen={setMenuOpen}
 					/>
 				</Grid>
 				<Grid item xs={12}>

@@ -62,7 +62,7 @@ const MainCanvas = ({
 	viewport: { width: deviceWidth, height: deviceHeight, navHeight },
 	props: { visibleSection },
 }) => {
-	// console.log("visibleSection_props: ", props);
+	//
 
 	return (
 		<Controls.Provider>
@@ -97,7 +97,7 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 	// RESUME
 	const checkHoverPositions = (e) => {
 		let hoverTargets = getHoverPositions();
-		console.log("e: checkhoverPosition", e, hoverTargets);
+
 		// debugger;
 		if (!hoverTargets) return;
 		let currentHoveredTargets = hoverTargets.filter(
@@ -233,7 +233,6 @@ const Radish = ({
 	const group = useRef();
 	const getRadishPosition = (scene) => {
 		scene.traverse((child) => {
-			console.log("child: ", child);
 			if (child instanceof THREE.Mesh) {
 				child.castShadow = true;
 			}
@@ -244,8 +243,7 @@ const Radish = ({
 		}
 		let cbPos = cb.position;
 		let clone = scene?.clone();
-		console.log("_clone: ", clone);
-		console.log("_clone _scene: ", scene);
+
 		scene.position.set(cbPos.x - 0.12, cbPos.y - 0.005, cbPos.z + 0.015);
 		scene.castShadow = true;
 		scene.receiveShadow = true;
@@ -308,14 +306,13 @@ const Radish = ({
 				var distance = -camera.position.z / vec.z;
 				pos.copy(camera.position).add(vec.multiplyScalar(distance));
 				let targetPosition = [pos.x, pos.y + _scaleUp, pos.z];
-				console.log("targetPosition: target positions", targetPosition);
+
 				if (_t.classList.contains("white")) {
 					_hasColor = "white";
 				}
 				newTargets.push({ position: targetPosition, hasColor: _hasColor });
 			}
 
-			console.log("newTargets: ", newTargets);
 			if (newTargets.length === 0) {
 				return;
 			}
@@ -397,15 +394,11 @@ const Radish = ({
 			(gltf) => {
 				let _scene = gltf.scene;
 				let Scene = getRadishPosition(gltf.scene);
-				console.log("_scene: ", _scene, Scene);
+
 				setScene(Scene);
 			},
-			(xhr) => {
-				console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-			},
-			(error) => {
-				console.error("An error happened", error);
-			}
+			(xhr) => {},
+			(error) => {}
 		);
 		window.addEventListener("resize", () => {
 			updatePosition();
