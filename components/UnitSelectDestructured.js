@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect, Fragment, useLayoutEffect } from "react";
 import { connect } from "react-redux";
 import clsx from "clsx";
@@ -126,6 +127,7 @@ const useStyles = makeStyles((theme) => ({
 		padding: "0px 3px 3px 3px",
 	},
 	wrapper: {
+		minWidth: "180px",
 		"& > div.MuiInput-underline": {
 			"&:before": { borderBottom: "1px solid #fff" },
 			"&:after": {
@@ -149,7 +151,7 @@ const UnitSelect = ({ props: { handleFormChange, formData, setFormData } }) => {
 	const [focused, setFocus] = useState(false);
 
 	return (
-		<FormControl fullWidth className={classes.wrapper}>
+		<FormControl fullWidth classes={{ root: classes.wrapper }}>
 			<InputLabel
 				id="unit-select-input-label"
 				focused={focused}

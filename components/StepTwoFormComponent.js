@@ -610,6 +610,7 @@ const StepTwoFormComponent = ({
 			{arrayWithMain.length > 0 &&
 				arrayWithMain.map((title, index) => (
 					<SubRecipeBanner
+						key={`sub-recipe-banner-${index}`}
 						classes={classes}
 						subRecipeIndex={index}
 						currentTitle={subRecipeTitleArray[isSubRecipe]}
@@ -778,6 +779,7 @@ const StepTwoFormComponent = ({
 						}}
 						inputProps={{
 							className: "inputListener",
+							autocomplete: "off",
 						}}
 						InputProps={{
 							classes: {

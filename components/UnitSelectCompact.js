@@ -25,7 +25,10 @@ const menuLimit = 10;
 const textFieldId = "unit-autocomplete-textfield";
 
 const useStyles = makeStyles((theme) => ({
-	margin: { width: "100%" },
+	margin: {
+		// adjust width here
+		width: "120px",
+	},
 	autoCompleteRoot: {
 		width: "100%",
 		"& label": {
@@ -60,6 +63,9 @@ const UnitSelectCompact = ({
 	UI: {
 		addRecipe: { allowSubRecipe: addSecondItemButton, activeStep, formData },
 	},
+	alert: {
+		subRecipe: { isSubRecipe },
+	},
 	props,
 }) => {
 	const {
@@ -70,8 +76,6 @@ const UnitSelectCompact = ({
 		focusState,
 		setFocusState,
 		addIngredient,
-		isSubRecipe,
-		setIsSubRecipe,
 	} = props;
 	const [unitHelper, setUnitHelper] = useState("");
 	const [options, setOptions] = useState(null);
@@ -79,7 +83,10 @@ const UnitSelectCompact = ({
 		useState(null);
 
 	const dispatch = useDispatch();
+
 	useEffect(() => {
+		console.log("Form data here", formData.ingredient);
+		// debugger;
 		if (formData.ingredient?.unit?.long) {
 			setUnitHelper(formData.ingredient.unit.long);
 		}
@@ -106,7 +113,7 @@ const UnitSelectCompact = ({
 		if (options?.length === 1) {
 			let _unit = options?.[0];
 			if (_unit) {
-				handleSubmission(_unit);
+				handleSubmission({ unit: _unit });
 			}
 		}
 	}, [options]);
@@ -174,6 +181,7 @@ const UnitSelectCompact = ({
 		const getValue = (curVal = 0, dir) => {
 			// if (curVal === 0) curVal = 1;
 			let iz = options?.findIndex((o) => !o.isKey);
+
 			if (typeof iz !== "number") {
 				return;
 			}
@@ -183,7 +191,6 @@ const UnitSelectCompact = ({
 				if (curVal === iz) {
 					console.log("curVal", curVal);
 					newVal = options?.length - 1;
-					// newVal = setcurVal()
 				}
 				if (curVal > iz) {
 					console.log("curVal", curVal);
@@ -200,7 +207,7 @@ const UnitSelectCompact = ({
 					newVal = curVal + 1;
 				}
 			}
-			if (newVal) {
+			if (typeof newVal === "number") {
 				let ox = options[newVal];
 				// if (!ox) return getValue(0, "up");
 				if (ox.isKey) return getValue(newVal, dir);
@@ -215,52 +222,55 @@ const UnitSelectCompact = ({
 		if (nhl) {
 			console.log("new highlighted item: ", nhl);
 			setCurrentHighlightedOption(nhl);
+			handleSubmission({ unit: nhl.item });
 		}
+		return nhl;
 	};
 
 	const handleKeyPress = (e) => {
+		if (e.code === "Escape") {
+			handleSubmission({ unitDotLong: e.target.value });
+			setOptions(null);
+		}
 		if (e.key === "ArrowDown" || e.key === "ArrowUp") {
 			handleArrowKeys(e.key);
 			if (!options) {
 				setOptions(filterData("_initial_", "servings"));
 			}
-			// debugger;
 		}
-		if (typeof window !== "undefined") {
-			if (e.code === "Enter") {
-				e.preventDefault();
-				e.stopPropagation();
-				let regex = new RegExp(e.target.value, "gi");
-				let daUnit = filterData(regex, "serving")[0];
-				if (
-					daUnit &&
-					formData.ingredient.text.length >= 3 &&
-					typeof parseFloat(formData.ingredient.amount) === "number"
-				) {
-					console.log("DIspatch addIngredient", addIngredient);
-					// addIngredient(daUnit);
+		// debugger;
+		if (e.code === "Enter") {
+			e.preventDefault();
+			e.stopPropagation();
+			console.log("options", formData.ingredient);
+			if (!options) {
+				let un = handleSubmission({ unitDotLong: e.target.value });
+				if (un) {
+					addIngredient(currentHighlightedOption.item);
+					handleFocus("blur");
 				}
 			}
+			if (options) {
+				setOptions(null);
+			}
+			// handleSubmission({ unit: currentHighlightedOption.item });
 		}
 	};
 
-	const handleSubmission = ({ unit, unitDotLong, noSubmit }) => {
+	const handleSubmission = ({ unit, unitDotLong }) => {
 		if (!unit && unitDotLong) {
 			unit =
 				filterData(unitDotLong, "serving").length === 1
 					? filterData(unitDotLong, "serving")[0]
 					: null;
 		}
-		if (noSubmit) {
-			return unit;
-		}
 		if (unit && isSubRecipe < 0) {
 			setFormData({
 				...formData,
-				ingredient: { ...formData.ingredient, unit: unit[0] },
+				ingredient: { ...formData.ingredient, unit: unit },
 			});
 		}
-
+		console.log("Form data", formData);
 		if (unit && isSubRecipe >= 0) {
 			let newSubRecData = [...formData?.subRecipes];
 			newSubRecData[isSubRecipe] = {
@@ -269,17 +279,16 @@ const UnitSelectCompact = ({
 					...newSubRecData[isSubRecipe].ingredient,
 					ingredient: {
 						...newSubRecData[isSubRecipe].ingredient,
-						unit: unit[0],
+						unit: unit,
 					},
 				},
 			};
 			setSubRecipeFormData(newSubRecData);
 		}
+		return unit;
 	};
 
-	handleSubmission({
-		unitDotLong: "Liter",
-	});
+	//
 
 	const handleChange = (e) => {
 		console.log("e: ", e);
@@ -357,6 +366,7 @@ const UnitSelectCompact = ({
 	return (
 		<FormControl className={classes.margin}>
 			<TextField
+				autocomplete="off"
 				id={textFieldId}
 				value={unitHelper}
 				fullWidth
@@ -377,6 +387,7 @@ const UnitSelectCompact = ({
 
 const mapStateToProps = (state, props) => ({
 	UI: state.UI,
+	alert: state.alert,
 	props: props,
 });
 export default connect(mapStateToProps)(UnitSelectCompact);
@@ -493,52 +504,66 @@ const useDropdownClasses = makeStyles((theme) => ({
 	},
 }));
 
-const DropDown = ({ options, unitHelper, highlighted }) => {
-	const classes = useDropdownClasses();
-	const [isOpen, setIsOpen] = useState(false);
-	const [styles, setStyles] = useState({});
-	useEffect(() => {
-		let txtField = document
-			.getElementById(textFieldId)
-			?.getBoundingClientRect();
-		let pEm = document.getElementById(textFieldId)?.parentElement?.clientWidth;
-		console.log("pEm: txtField ", pEm);
-		if (!txtField) {
-			return setStyles({});
-		}
-		let ns = {
-			top: `${txtField.bottom}px`,
-			left: `${txtField.left}px`,
-			width: `${pEm}px`,
-		};
-		setStyles(ns);
-		console.log("txtField: ", txtField);
+const DropDown = connect(mapStateToProps)(
+	({
+		props: { options, unitHelper, highlighted },
+		UI: {
+			addRecipe: { formData },
+			viewport: { width: deviceWidth, height: deviceHeight },
+		},
+	}) => {
+		const classes = useDropdownClasses();
+		const [isOpen, setIsOpen] = useState(false);
+		const [styles, setStyles] = useState({});
+		useEffect(() => {
+			let txtField = document
+				.getElementById(textFieldId)
+				?.getBoundingClientRect();
+			let pEm = document.getElementById(textFieldId)?.parentElement;
+			let oSet = pEm.computedStyleMap().get("transform");
+			console.log("pEm: txtField ", pEm, oSet);
+			if (!txtField) {
+				return setStyles({});
+			}
+			let ns = {
+				top: `${txtField.bottom}px`,
+				left: `${txtField.left}px`,
+				...(pEm?.clientWidth
+					? { width: `${pEm?.clientWidth}px` }
+					: { width: "120px" }),
+			};
+			setStyles(ns);
+			console.log("txtField: ", txtField);
+		}, [
+			deviceWidth,
+			deviceHeight,
+			formData?.ingredients,
+			formData?.subRecipes,
+		]);
 
-		// }, [deviceWidth, deviceHeight])
-	}, []);
-
-	useEffect(() => {
-		setIsOpen(options?.length > 0);
-	}, [options]);
-	return (
-		<ClientSidePortal selector="#topLevelPortalContainer">
-			<div
-				className={clsx(classes.dropdownContainer, !isOpen && classes.hide)}
-				style={styles}
-			>
-				{options &&
-					options.map((option, i) => (
-						<DropdownItem
-							option={option}
-							key={`unit-dropdown-item-${i}`}
-							unitHelper={unitHelper}
-							highlighted={highlighted?.item?.long === option.long}
-						/>
-					))}
-			</div>
-		</ClientSidePortal>
-	);
-};
+		useEffect(() => {
+			setIsOpen(options?.length > 0);
+		}, [options]);
+		return (
+			<ClientSidePortal selector="#topLevelPortalContainer">
+				<div
+					className={clsx(classes.dropdownContainer, !isOpen && classes.hide)}
+					style={styles}
+				>
+					{options &&
+						options.map((option, i) => (
+							<DropdownItem
+								option={option}
+								key={`unit-dropdown-item-${i}`}
+								unitHelper={unitHelper}
+								highlighted={highlighted?.item?.long === option.long}
+							/>
+						))}
+				</div>
+			</ClientSidePortal>
+		);
+	}
+);
 
 const DropdownItem = ({ option, unitHelper, highlighted }) => {
 	const classes = useDropdownClasses();

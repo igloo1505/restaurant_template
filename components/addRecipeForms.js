@@ -4,8 +4,7 @@ import clsx from "clsx";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import * as Types from "../stateManagement/TYPES";
-import UnitSelectDestructed from "./UnitSelectDestructured";
-import Grid from "@material-ui/core/Grid";
+import UnitSelectDestructured from "./UnitSelectDestructured";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 
@@ -14,6 +13,15 @@ import TextField from "@material-ui/core/TextField";
 const useStyles = makeStyles((theme) => ({
 	textFieldRoot: {
 		minWidth: "100%",
+		alignSelf: "stretch",
+		// color: "#fff",
+		"& > div": {
+			minWidth: "100%",
+			width: "100%",
+		},
+	},
+	servingTextfieldRoot: {
+		minWidth: "100px",
 		alignSelf: "stretch",
 		// color: "#fff",
 		"& > div": {
@@ -35,6 +43,12 @@ const useStyles = makeStyles((theme) => ({
 			// border: "1px solid green",
 			borderBottom: "1px solid #fff",
 		},
+	},
+	gridItemTitle: {
+		width: "240px",
+	},
+	gridItemServing: {
+		width: "120px",
 	},
 	inputroot: {
 		color: "#fff",
@@ -139,6 +153,11 @@ const useStyles = makeStyles((theme) => ({
 		// padding: "0px 3px 3px 3px", },
 	},
 	inputLabelRequired: {},
+	topRow: {
+		display: "flex",
+		flexDirection: "row",
+		gap: "0.75rem",
+	},
 	inputLabelFocused: {
 		color: "#fff !important",
 		transform: "translate(10px, 27px)",
@@ -148,9 +167,13 @@ const useStyles = makeStyles((theme) => ({
 		padding: "5px 8px 8px",
 		zIndex: 999,
 	},
+
 	gridRoot: {
+		gap: "0.75rem",
+		display: "flex",
+		flexDirection: "column",
 		[theme.breakpoints.down(1150)]: {
-			gridRowGap: "0.75rem",
+			gap: "0.75rem",
 		},
 		[theme.breakpoints.down(600)]: {
 			padding: "0px 0.75rem 1rem 0.75rem",
@@ -257,53 +280,107 @@ const StepOneFormComponent = ({
 			>
 				Let's get some information about your recipe!
 			</Typography>
-			<Grid
+			<div
 				container
 				spacing={3}
-				className="addRecipeFormContainer"
-				classes={{
-					root: classes.gridRoot,
-				}}
+				className={clsx(classes.gridRoot, "addRecipeFormContainer")}
 			>
-				<Grid item xs={12} sm={12} md={4}>
-					<div
-						className={clsx(
-							classes.textFieldWrapper,
-							focusState?.title?.focus && classes.textFieldWrapperFocused,
-							Boolean(formData?.title?.length !== 0) &&
-								classes.textFieldWrapperShrunk
-						)}
-					>
-						<TextField // required
-							id="recipeTitleInput"
-							name="title"
-							onFocus={() => fauxListener("title", "focus")}
-							onBlur={() => fauxListener("title", "blur")}
+				<div className={classes.topRow}>
+					<div className={classes.gridItemTitle}>
+						<div
+							className={clsx(
+								classes.textFieldWrapper,
+								focusState?.title?.focus && classes.textFieldWrapperFocused,
+								Boolean(formData?.title?.length !== 0) &&
+									classes.textFieldWrapperShrunk
+							)}
+						>
+							<TextField
+								id="recipeTitleInput"
+								name="title"
+								onFocus={() => fauxListener("title", "focus")}
+								onBlur={() => fauxListener("title", "blur")}
+								fullWidth
+								autoFocus
+								multiline
+								inputRef={titleInputRef}
+								label="Recipe's title "
+								onChange={handleFormChange}
+								value={formData?.title}
+								onKeyDown={(e) => {
+									console.log("eventtttt", e);
+								}}
+								focused={focusState.title.focus}
+								InputLabelProps={{
+									focused: focusState.title.focus,
+									shrink: Boolean(formData?.title?.length !== 0),
+									classes: {
+										root: clsx(
+											classes.inputLabelRoot,
+											focusState.title.focus && classes.inputLabelFocused,
+											formData?.title?.length !== 0 &&
+												classes.inputLabelWithValue
+										),
+										required: classes.inputLabelRequired,
+									},
+								}}
+								inputProps={{
+									className: "inputListener",
+								}}
+								InputProps={{
+									classes: {
+										root: clsx("inputListener", classes.inputroot),
+										input: classes.inputRoot,
+										focused: classes.inputFocused,
+									},
+								}}
+								classes={{
+									root: classes.textFieldRoot,
+								}}
+							/>
+						</div>
+					</div>
+					<div className={classes.gridItemServing}>
+						<TextField
+							id="recipeServingInput"
+							name="servings"
+							onFocus={() => fauxListener("servings", "focus")}
+							onBlur={() => fauxListener("servings", "blur")}
+							type="number"
 							fullWidth
-							autoFocus
-							multiline
-							inputRef={titleInputRef}
-							label="Recipe's title "
+							label="Servings"
 							onChange={handleFormChange}
-							value={formData?.title}
-							onKeyDown={(e) => {
-								console.log("eventtttt", e);
+							inputProps={{
+								className: "inputListener",
+								pattern: "\\d*",
 							}}
-							focused={focusState.title.focus}
+							onKeyDown={(e) => {
+								// All of this to avoid Safari's shadow user agent
+								let allowed = false;
+								let regex = /^\d+$/;
+								if (regex.test(e.key) || e.code.slice(0, 3) !== "Key") {
+									allowed = true;
+								}
+								if (!allowed) {
+									e.preventDefault();
+								}
+							}}
+							value={formData?.servings}
+							classes={{
+								root: classes.servingTextfieldRoot,
+							}}
 							InputLabelProps={{
-								focused: focusState.title.focus,
-								shrink: Boolean(formData?.title?.length !== 0),
+								focused: focusState.servings.focus,
+								shrink: Boolean(formData?.servings?.length !== 0),
 								classes: {
 									root: clsx(
 										classes.inputLabelRoot,
-										focusState.title.focus && classes.inputLabelFocused,
-										formData?.title?.length !== 0 && classes.inputLabelWithValue
+										focusState.servings.focus && classes.inputLabelFocused,
+										formData?.servings?.length !== 0 &&
+											classes.inputLabelWithValue
 									),
 									required: classes.inputLabelRequired,
 								},
-							}}
-							inputProps={{
-								className: "inputListener",
 							}}
 							InputProps={{
 								classes: {
@@ -312,73 +389,19 @@ const StepOneFormComponent = ({
 									focused: classes.inputFocused,
 								},
 							}}
-							classes={{
-								root: classes.textFieldRoot,
-							}}
 						/>
 					</div>
-				</Grid>
-				<Grid item xs={4} sm={4} md={3}>
-					<TextField
-						id="recipeServingInput"
-						name="servings"
-						onFocus={() => fauxListener("servings", "focus")}
-						onBlur={() => fauxListener("servings", "blur")}
-						type="number"
-						fullWidth
-						label="Servings"
-						onChange={handleFormChange}
-						inputProps={{
-							className: "inputListener",
-							pattern: "\\d*",
-						}}
-						onKeyDown={(e) => {
-							// All of this to avoid Safari's shadow user agent
-							let allowed = false;
-							let regex = /^\d+$/;
-							if (regex.test(e.key) || e.code.slice(0, 3) !== "Key") {
-								allowed = true;
-							}
-							if (!allowed) {
-								e.preventDefault();
-							}
-						}}
-						value={formData?.servings}
-						classes={{
-							root: classes.textFieldRoot,
-						}}
-						InputLabelProps={{
-							focused: focusState.servings.focus,
-							shrink: Boolean(formData?.servings?.length !== 0),
-							classes: {
-								root: clsx(
-									classes.inputLabelRoot,
-									focusState.servings.focus && classes.inputLabelFocused,
-									formData?.servings?.length !== 0 &&
-										classes.inputLabelWithValue
-								),
-								required: classes.inputLabelRequired,
-							},
-						}}
-						InputProps={{
-							classes: {
-								root: clsx("inputListener", classes.inputroot),
-								input: classes.inputRoot,
-								focused: classes.inputFocused,
-							},
-						}}
-					/>
-				</Grid>
-				<Grid item xs={8} sm={8} md={5}>
-					<UnitSelectDestructed
-						handleFormChange={handleFormChange}
-						focusState={focusState}
-						formData={formData}
-						setFormData={setFormData}
-						classes={classes}
-					/>
-				</Grid>
-				<Grid item xs={12}>
+					<div className={classes.gridItemUnit}>
+						<UnitSelectDestructured
+							handleFormChange={handleFormChange}
+							focusState={focusState}
+							formData={formData}
+							setFormData={setFormData}
+							classes={classes}
+						/>
+					</div>
+				</div>
+				<div className={classes.gridItemDescription}>
 					<TextField // required
 						id="recipeDescriptionInput"
 						name="description"
@@ -445,8 +468,8 @@ const StepOneFormComponent = ({
 							}
 						`}
 					</style>
-				</Grid>
-			</Grid>
+				</div>
+			</div>
 		</Fragment>
 	);
 };
