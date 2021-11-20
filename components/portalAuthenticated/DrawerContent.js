@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import clsx from "clsx";
@@ -16,6 +17,7 @@ import {
 	ListItemText,
 	Divider,
 	List,
+	Typography,
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -65,6 +67,7 @@ const DrawerContent = ({
 	user: {
 		loggedIn,
 		self: { _id: userId },
+		userSettings: { allowKeyboardShortcuts },
 	},
 }) => {
 	const dispatch = useDispatch();
@@ -119,7 +122,7 @@ const DrawerContent = ({
 		{
 			text: "My Shortcuts",
 			action: myRecipeAction,
-			icon: <TwoToneBookIcon color="secondary" fontSize="large" />,
+			icon: <LetterIcon color="secondary" fontSize="large" />,
 		},
 	];
 	return (
@@ -133,6 +136,7 @@ const DrawerContent = ({
 						key={a.text}
 						loggedIn={loggedIn}
 						userId={userId}
+						allowKeyboardShortcuts={allowKeyboardShortcuts}
 					/>
 				))}
 			</List>
@@ -166,13 +170,22 @@ const mapStateToProps = (state, props) => ({
 export default connect(mapStateToProps)(DrawerContent);
 // {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} above InboxIcon ln 30
 
-const ListItemComponent = ({ item, classes, loggedIn, userId }) => {
+const ListItemComponent = ({
+	item,
+	classes,
+	loggedIn,
+	userId,
+	allowKeyboardShortcuts,
+}) => {
 	const [disabled, setDisabled] = useState(false);
-	useEffect(() => {
-		let shouldDisable = Boolean(loggedIn && userId);
-		setDisabled(!shouldDisable);
-	}, [loggedIn, userId]);
 	let { text, action, icon } = item;
+	useEffect(() => {
+		let shouldDisable = Boolean(!loggedIn || !userId);
+		if (text === "My Shortcuts") {
+			shouldDisable = !allowKeyboardShortcuts;
+		}
+		setDisabled(shouldDisable);
+	}, [loggedIn, userId]);
 	return (
 		<ListItem
 			button
@@ -183,7 +196,7 @@ const ListItemComponent = ({ item, classes, loggedIn, userId }) => {
 					disabled && classes.listItemRootDisabled
 				),
 			}}
-			onClick={action}
+			onClick={disabled ? () => {} : action}
 		>
 			<ListItemIcon
 				classes={{
@@ -211,3 +224,54 @@ const ListItemComponent = ({ item, classes, loggedIn, userId }) => {
 		</ListItem>
 	);
 };
+
+const LetterIcon = connect(mapStateToProps)(
+	({
+		user: {
+			userSettings: { allowKeyboardShortcuts },
+		},
+	}) => {
+		const [disabled, setDisabled] = useState(!allowKeyboardShortcuts);
+		useEffect(() => {
+			setDisabled(!allowKeyboardShortcuts);
+			console.log("userSettings disabled: ", disabled);
+		}, [allowKeyboardShortcuts]);
+
+		return (
+			<div
+				style={
+					disabled
+						? {
+								border: "1px solid rgba(235, 96, 16, 0.5)",
+								borderRadius: "5px",
+						  }
+						: {
+								border: "1px solid #eb6010",
+								backgroundColor: "#eb6010",
+								borderRadius: "5px",
+						  }
+				}
+			>
+				<Typography
+					variant="h5"
+					style={
+						disabled
+							? {
+									padding: "0.35rem 0.5rem",
+									color: "rgba(235, 96, 16, 0.5)",
+									lineHeight: "1",
+							  }
+							: {
+									margin: "0",
+									padding: "0.35rem 0.5rem",
+									color: "#fff",
+									lineHeight: "1",
+							  }
+					}
+				>
+					K
+				</Typography>
+			</div>
+		);
+	}
+);

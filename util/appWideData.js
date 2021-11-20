@@ -104,3 +104,106 @@ export const validateUnit = (formDataUnit) => {
 	);
 	return units.length > 0;
 };
+
+export const getParsedValue = (val) => {
+	let valFloat = parseFloat(val);
+	valFloat = valFloat?.toFixed(3);
+	valFloat = parseFloat(valFloat);
+	console.log("Typeof ", typeof valFloat);
+	if (valFloat >= 1) {
+		return val;
+	}
+	if (valFloat < 1) {
+		switch (valFloat) {
+			case 0.25:
+				return "1/4";
+			case 0.75:
+				return "3/4";
+			case 0.5:
+				return "1/2";
+			case 0.333:
+				return "1/3";
+			case 0.666:
+				return "2/3";
+			case 0.125:
+				return "1/8";
+			case 0.375:
+				return "3/8";
+			case 0.625:
+				return "5/8";
+			case 0.875:
+				return "7/8";
+			default:
+				return val;
+		}
+	}
+};
+
+export const healthKeyEnum = [
+	"gluten free",
+	"dairy free",
+	"vegan",
+	"vegetarian",
+	"paleo",
+	"keto",
+	"lactose free",
+	"low fat",
+	"low carb",
+	"low sodium",
+	"high protein",
+	"low cholesterol",
+	"high fiber",
+	"low sugar",
+];
+
+export const cuisineEnum = [
+	"Italian",
+	"American",
+	"Chinese",
+	"Thai",
+	"Indian",
+	"Mexican",
+	"French",
+	"Salad",
+];
+
+export const categoryEnum = [
+	"one pan",
+	"side",
+	"drink",
+	"condiment",
+	"dinner",
+	"snack",
+	"holiday",
+	"celebration",
+	"breakfast",
+	"on the go",
+	"affordable",
+	"health focused",
+	"Salad",
+];
+
+export const unitArray = [
+	"A pinch",
+	"A smidgen",
+	"A heap",
+	"just a little",
+	"A wee bit",
+	"A speckle",
+	"Teaspoons",
+	"Tablespoons",
+	"Cups",
+	"Quarts",
+	"Gallons",
+	"Milliliters",
+	"Cubic cm",
+	"liters",
+	"Pounds",
+	"Ounces",
+	"Grams",
+	"Kilograms",
+	"Stone",
+	"People",
+	"Whole",
+	"Items",
+];

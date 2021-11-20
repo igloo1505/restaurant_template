@@ -23,8 +23,7 @@ import Fade from "@material-ui/core/Fade";
 import AddAdornment from "./AddAdornment";
 import ingredientAdornment from "./ingredientUnitAdornment";
 import UnitSelectCompact from "./UnitSelectCompact";
-import { getIngredientUnits } from "../util/appWideData";
-import { validateStepTwo } from "../util/addRecipeFormValidate";
+import { getIngredientUnits, getParsedValue } from "../util/appWideData";
 
 const unitContainerBreakpoint = "xl";
 
@@ -360,6 +359,21 @@ const StepTwoFormComponent = ({
 	};
 
 	const handleChange = (e) => {
+		if (e.target.name === "amount") {
+			let toArr = [...e.target.value];
+			let iOf = toArr.indexOf("/");
+			if (iOf !== -1) {
+				let a = toArr.slice(0, iOf);
+				let b = toArr.slice(iOf + 1, toArr.length);
+				console.log("A and B", a, b);
+				if (parseInt(a) && parseInt(b)) {
+					e.target.value = parseInt(a) / parseInt(b);
+					debugger;
+					console.log("etargetvalue", e.target.value);
+				}
+				// e.target.value = e.target.value.replace(/\//g, "");
+			}
+		}
 		if (e.target.value.length === 3) {
 			sendAddIngredientNotification();
 		}
@@ -458,7 +472,6 @@ const StepTwoFormComponent = ({
 
 	useEffect(() => {
 		if (subRecipeTitleArray.length > 0) {
-			let length = subRecipeTitleArray.length - 1;
 			setSubRecipeFormData([
 				...formData?.subRecipes,
 				{
@@ -713,8 +726,10 @@ const StepTwoFormComponent = ({
 						onChange={handleChange}
 						value={
 							isSubRecipe >= 0
-								? formData?.subRecipes?.[isSubRecipe]?.ingredient?.amount
-								: formData.ingredient.amount
+								? getParsedValue(
+										formData?.subRecipes?.[isSubRecipe]?.ingredient?.amount
+								  )
+								: getParsedValue(formData.ingredient.amount)
 						}
 						focused={focusState.amount.focus}
 						InputLabelProps={{

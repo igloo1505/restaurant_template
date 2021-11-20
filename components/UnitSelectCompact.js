@@ -27,7 +27,8 @@ const textFieldId = "unit-autocomplete-textfield";
 const useStyles = makeStyles((theme) => ({
 	margin: {
 		// adjust width here
-		width: "120px",
+		// width: "120px",
+		width: "100%",
 	},
 	autoCompleteRoot: {
 		width: "100%",
@@ -209,7 +210,7 @@ const UnitSelectCompact = ({
 			}
 			if (typeof newVal === "number") {
 				let ox = options[newVal];
-				// if (!ox) return getValue(0, "up");
+				if (!ox) return;
 				if (ox.isKey) return getValue(newVal, dir);
 				return { item: ox, index: newVal };
 			}
@@ -246,7 +247,7 @@ const UnitSelectCompact = ({
 			if (!options) {
 				let un = handleSubmission({ unitDotLong: e.target.value });
 				if (un) {
-					addIngredient(currentHighlightedOption.item);
+					addIngredient(un);
 					handleFocus("blur");
 				}
 			}
@@ -537,8 +538,9 @@ const DropDown = connect(mapStateToProps)(
 		}, [
 			deviceWidth,
 			deviceHeight,
-			formData?.ingredients,
-			formData?.subRecipes,
+			formData.ingredients,
+			formData.subRecipes,
+			options,
 		]);
 
 		useEffect(() => {

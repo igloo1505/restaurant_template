@@ -310,7 +310,6 @@ const AddRecipeFormContainer = (
 			data.directions.push(formData.direction);
 			delete data.direction;
 		}
-
 		dispatch(addNewRecipe(data));
 	};
 

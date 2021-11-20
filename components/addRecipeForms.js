@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 		},
 	},
 	textFieldWrapper: {
-		padding: "0px 5px 5px 5px",
+		padding: "0px 0px 5px 0px",
 	},
 	textFieldWrapperFocused: {},
 	textFieldWrapperShrunk: {},
@@ -308,7 +308,12 @@ const StepOneFormComponent = ({
 								onChange={handleFormChange}
 								value={formData?.title}
 								onKeyDown={(e) => {
-									console.log("eventtttt", e);
+									if (
+										e.target.value.length > 80 &&
+										!allowKeys.includes(e.key)
+									) {
+										e.preventDefault();
+									}
 								}}
 								focused={focusState.title.focus}
 								InputLabelProps={{

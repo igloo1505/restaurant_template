@@ -59,8 +59,8 @@ const useClasses = makeStyles((theme) => ({
 		flexDirection: "column",
 		justifyContent: "center",
 		alignItems: "center",
-		height: "100%",
-		minHeight: "100%",
+		// height: "100%",
+		// minHeight: "100%",
 		width: `${RightColumnWidth}`,
 		float: "right",
 		gap: "1.5rem",
@@ -69,9 +69,9 @@ const useClasses = makeStyles((theme) => ({
 		display: "flex",
 		flexDirection: "row",
 		width: "100%",
-		height: "50%",
+		// height: "50%",
 		maxHeight: "50%",
-		minHeight: "50%",
+		// minHeight: "50%",
 		alignItems: "flex-start",
 	},
 	containerBottomLeft: {
@@ -83,6 +83,7 @@ const useClasses = makeStyles((theme) => ({
 		width: "100%",
 		justifyContent: "flex-start",
 		alignItems: "flex-end",
+		position: "relative",
 		[theme.breakpoints.down(1200)]: {
 			height: "100%",
 			minHeight: "100%",
@@ -111,7 +112,7 @@ const mapStateToProps = (state, props) => ({
 
 const SectionTwoMain = connect(mapStateToProps)(
 	({
-		props: { visibleSection },
+		props: { visibleSection, featuredRecipe },
 		UI: {
 			viewport: { width: deviceWidth },
 		},
@@ -139,8 +140,14 @@ const SectionTwoMain = connect(mapStateToProps)(
 				</div>
 				<div className={classes.mainContentContainer}>
 					{deviceWidth < 1200 && (
-						<div className={classes.containerBottomLeft}>
-							<FeaturedRecipeSectionTwo />
+						<div
+							className={classes.containerBottomLeft}
+							id="section-two-left-container"
+						>
+							<FeaturedRecipeSectionTwo
+								featuredRecipe={featuredRecipe}
+								visibleSection={visibleSection}
+							/>
 						</div>
 					)}
 					<div
@@ -160,8 +167,11 @@ const SectionTwoMain = connect(mapStateToProps)(
 						<Bulletin>Share recipes, ideas, inspiration and more.</Bulletin>
 					</div>
 					{deviceWidth >= 1200 && (
-						<div className={classes.containerBottomLeft}>
-							<FeaturedRecipeSectionTwo />
+						<div
+							className={classes.containerBottomLeft}
+							id="section-two-left-container"
+						>
+							<FeaturedRecipeSectionTwo featuredRecipe={featuredRecipe} />
 						</div>
 					)}
 				</div>

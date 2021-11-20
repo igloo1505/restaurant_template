@@ -44,6 +44,27 @@ const hoverTargetIds = [
 		},
 	},
 	{
+		id: "redirectToFeaturedRecipe",
+		action: (router) => {
+			let rId = document
+				.getElementById("redirectToFeaturedRecipe")
+				?.getAttribute("rId");
+			if (!rId) return;
+			router.push(`/recipeDetails/${rId}`);
+		},
+	},
+	{
+		id: "redirect-to-featured-rec-prof",
+		action: (router) => {
+			let emId = document
+				.getElementById("redirect-to-featured-rec-prof")
+				.attributes.getNamedItem("prf").nodeValue;
+			if (typeof emId === "string") {
+				router.push(`/user/${emId}`);
+			}
+		},
+	},
+	{
 		id: "landingPage-banner-signupButton",
 		action: (router) => {
 			router.push({
@@ -76,112 +97,123 @@ const mapStateToProps = (state, props) => ({
 	props: props,
 });
 
-const Scene = withControls(({ deviceWidth, visibleSection }) => {
-	const cameraRef = useRef();
-	const rayCaster = useRef();
-	const canvasRef = useRef();
-	const rendererRef = useRef();
-	const cuttingBoardRef = useRef();
-	const router = useRouter();
-	const [newShadowProps, setNewShadowProps] = useState({});
-	// const ContextBridge = useContextBridge(ThemeContext, GreetingContext)
+const Scene = withControls(
+	({ deviceWidth, visibleSection, visibleSectionAnimStart }) => {
+		const cameraRef = useRef();
+		const rayCaster = useRef();
+		const canvasRef = useRef();
+		const rendererRef = useRef();
+		const cuttingBoardRef = useRef();
+		const router = useRouter();
+		const [newShadowProps, setNewShadowProps] = useState({});
+		// const ContextBridge = useContextBridge(ThemeContext, GreetingContext)
 
-	const getHoverPositions = () => {
-		let newTargets = [];
-		hoverTargetIds.forEach((hti) => {
-			let tar = document.getElementById(hti.id)?.getBoundingClientRect();
-			tar && newTargets.push({ target: tar, id: hti.id, action: hti.action });
-		});
-		return newTargets;
-	};
-	// RESUME
-	const checkHoverPositions = (e) => {
-		let hoverTargets = getHoverPositions();
-
-		// debugger;
-		if (!hoverTargets) return;
-		let currentHoveredTargets = hoverTargets.filter(
-			(ht) =>
-				e.clientX > ht.target.left &&
-				e.clientX < ht.target.right &&
-				e.clientY > ht.target.top &&
-				e.clientY < ht.target.bottom
-		);
-		currentHoveredTargets.length > 0
-			? (document.body.style.cursor = "pointer")
-			: (document.body.style.cursor = "default");
-		return currentHoveredTargets;
-	};
-
-	const [_aspectRatio, setAspectRatio] = useState(1);
-
-	const setAR = () => {
-		let _canvas = document.getElementById("main-canvas-container");
-		let ar = _canvas?.clientWidth / _canvas?.clientHeight;
-		if (ar) {
-			setAspectRatio(ar);
-		}
-		document.addEventListener("resize", setAR);
-	};
-
-	useEffect(() => {
-		router.prefetch("/portal");
-		setAR();
-		window.addEventListener("mousemove", (e) => {
-			checkHoverPositions(e);
-		});
-		let cListener = window.addEventListener("click", (e) => {
-			if (router.pathname !== "/") return removeClickListener();
-			let hovered = checkHoverPositions(e);
-			if (hovered.length > 0) {
-				hovered[0].action(router);
-			}
-		});
-		const removeClickListener = () => {
-			window.removeEventListener("click", cListener);
+		const getHoverPositions = () => {
+			let newTargets = [];
+			hoverTargetIds.forEach((hti) => {
+				let tar = document.getElementById(hti.id)?.getBoundingClientRect();
+				tar && newTargets.push({ target: tar, id: hti.id, action: hti.action });
+			});
+			return newTargets;
 		};
-	}, []);
+		// RESUME
+		const checkHoverPositions = (e) => {
+			let hoverTargets = getHoverPositions();
 
-	return (
-		<div className="mainCanvasContainer">
-			<ClientSidePortal selector="#topLevelPortalContainer">
-				<Canvas
-					colorManagement
-					dpr={[1, 2]}
-					ref={canvasRef}
-					gl={{
-						shadowMapEnabled: true,
-						"shadowMap.type": THREE.PCFSoftShadowMap,
-						outputEncoding: THREE.sRGBEncoding,
-						pixelRatio: window.devicePixelRatio,
-						alpha: true,
-						ref: rendererRef,
-					}}
-					id={canvasId}
-					style={{
-						width: "100vw",
-						height: "calc(100vh)",
-						minHeight: "calc(100vh)",
-						maxHeight: "fit-content",
-						position: "absolute",
-						zIndex: 1,
-						top: 0,
-						left: 0,
-						backgroundColor: "transparent",
-					}}
-				>
-					<Suspense fallback={null}>
-						<Camera
-							cameraRef={cameraRef}
-							_aspectRatio={_aspectRatio}
-							rayCaster={rayCaster}
-						/>
-						<Billboard ponsition={[0, 0, -0.5]} receiveShadow />
-						<Lights cameraRef={cameraRef} visibleSection={visibleSection} />
-						<MainPlane cameraRef={cameraRef} />
-						{Boolean(deviceWidth > 1200 || visibleSection === 2) &&
-							!isMobile && (
-								<CuttingBoard
+			// debugger;
+			if (!hoverTargets) return;
+			let currentHoveredTargets = hoverTargets.filter(
+				(ht) =>
+					e.clientX > ht.target.left &&
+					e.clientX < ht.target.right &&
+					e.clientY > ht.target.top &&
+					e.clientY < ht.target.bottom
+			);
+			currentHoveredTargets.length > 0
+				? (document.body.style.cursor = "pointer")
+				: (document.body.style.cursor = "default");
+			return currentHoveredTargets;
+		};
+
+		const [_aspectRatio, setAspectRatio] = useState(1);
+
+		const setAR = () => {
+			let _canvas = document.getElementById("main-canvas-container");
+			let ar = _canvas?.clientWidth / _canvas?.clientHeight;
+			if (ar) {
+				setAspectRatio(ar);
+			}
+			document.addEventListener("resize", setAR);
+		};
+
+		useEffect(() => {
+			router.prefetch("/portal");
+			setAR();
+			window.addEventListener("mousemove", (e) => {
+				checkHoverPositions(e);
+			});
+			let cListener = window.addEventListener("click", (e) => {
+				if (router.pathname !== "/") return removeClickListener();
+				let hovered = checkHoverPositions(e);
+				if (hovered.length > 0) {
+					hovered[0].action(router, e);
+				}
+			});
+			const removeClickListener = () => {
+				window.removeEventListener("click", cListener);
+			};
+		}, []);
+
+		return (
+			<div className="mainCanvasContainer">
+				<ClientSidePortal selector="#topLevelPortalContainer">
+					<Canvas
+						colorManagement
+						dpr={[1, 2]}
+						ref={canvasRef}
+						gl={{
+							shadowMapEnabled: true,
+							"shadowMap.type": THREE.PCFSoftShadowMap,
+							outputEncoding: THREE.sRGBEncoding,
+							pixelRatio: window.devicePixelRatio,
+							alpha: true,
+							ref: rendererRef,
+						}}
+						id={canvasId}
+						style={{
+							width: "100vw",
+							height: "calc(100vh)",
+							minHeight: "calc(100vh)",
+							maxHeight: "fit-content",
+							position: "absolute",
+							zIndex: 1,
+							top: 0,
+							left: 0,
+							backgroundColor: "transparent",
+						}}
+					>
+						<Suspense fallback={null}>
+							<Camera
+								cameraRef={cameraRef}
+								_aspectRatio={_aspectRatio}
+								rayCaster={rayCaster}
+							/>
+							<Billboard ponsition={[0, 0, -0.5]} receiveShadow />
+							<Lights cameraRef={cameraRef} visibleSection={visibleSection} />
+							<MainPlane cameraRef={cameraRef} />
+							{Boolean(deviceWidth > 1200 || visibleSection === 2) &&
+								!isMobile && (
+									<CuttingBoard
+										cameraRef={cameraRef}
+										canvasRef={canvasRef}
+										cuttingBoardRef={cuttingBoardRef}
+										newShadowProps={newShadowProps}
+										setNewShadowProps={setNewShadowProps}
+										visibleSection={visibleSection}
+									/>
+								)}
+							{!isMobile && (
+								<Radish
 									cameraRef={cameraRef}
 									canvasRef={canvasRef}
 									cuttingBoardRef={cuttingBoardRef}
@@ -190,36 +222,27 @@ const Scene = withControls(({ deviceWidth, visibleSection }) => {
 									visibleSection={visibleSection}
 								/>
 							)}
-						{!isMobile && (
-							<Radish
+
+							<TitleHoverSpheres
 								cameraRef={cameraRef}
 								canvasRef={canvasRef}
-								cuttingBoardRef={cuttingBoardRef}
-								newShadowProps={newShadowProps}
-								setNewShadowProps={setNewShadowProps}
+								rayCasterRef={rayCaster}
 								visibleSection={visibleSection}
 							/>
-						)}
-
-						<TitleHoverSpheres
-							cameraRef={cameraRef}
-							canvasRef={canvasRef}
-							rayCasterRef={rayCaster}
-							visibleSection={visibleSection}
-						/>
-						{ADD_CONTROLS && (
-							<>
-								<OrbitControls />
-								<TransformControls />
-								<axesHelper args={[5]} />
-							</>
-						)}
-					</Suspense>
-				</Canvas>
-			</ClientSidePortal>
-		</div>
-	);
-});
+							{ADD_CONTROLS && (
+								<>
+									<OrbitControls />
+									<TransformControls />
+									<axesHelper args={[5]} />
+								</>
+							)}
+						</Suspense>
+					</Canvas>
+				</ClientSidePortal>
+			</div>
+		);
+	}
+);
 
 const Radish = ({
 	cameraRef,

@@ -317,7 +317,7 @@ const landingPageBanner = ({
 			<div className={classes.titleTextWrapper}>
 				<div className={classes.entireTextContainer}>
 					<div className={classes.textUnderline}>
-						{[..."Radish"].map((ch, i) => {
+						{[..."Radish"].map((ch, index) => {
 							return (
 								<Typography
 									variant="h1"
@@ -325,7 +325,7 @@ const landingPageBanner = ({
 										classes.titleTextMain,
 										`title-character-${ch}`
 									)}
-									key={`title-${ch}-${i}`}
+									key={`title-${ch}-${index}`}
 								>
 									{ch === "i" && (
 										<div style={coverBackground}>
@@ -430,9 +430,7 @@ const landingPageBanner = ({
 							Definition
 						</Typography>
 						<Typography variant="h1" className={classes.definitionMain}>
-							<Typography variant="h1" className={classes.informal}>
-								informal
-							</Typography>
+							<span className={classes.informal}>informal</span>
 							The state of being kind of awesome. Usually in the presence of
 							friends.
 						</Typography>

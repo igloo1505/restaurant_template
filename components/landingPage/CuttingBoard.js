@@ -10,6 +10,8 @@ import { a as web } from "@react-spring/web";
 import { useTheme } from "@material-ui/styles";
 import { gsap } from "gsap";
 
+const boardPositionSteps = ["alignTitle", "demoLeft"];
+
 const sectionTwoRotation = [
 	(Math.PI * 20) / 36,
 	(-Math.PI * 1) / 36,
@@ -187,9 +189,10 @@ const Model = ({
 		sphereTl.fromTo(
 			sphereMaterial,
 			{
-				r: 0.83137255,
-				g: 0.3372549,
-				b: 0.05490196,
+				r: 0.91796875,
+				g: 0.375,
+				b: 0.0625,
+				a: 1,
 				duration: 0.35,
 				onUpdateParams: [sphereMaterial.newColor],
 			},
@@ -248,16 +251,27 @@ const Model = ({
 		}
 	}, [UIstate]);
 
+	useEffect(() => {
+		document.addEventListener("click", () =>
+			console.log(visibleSection, newBoardPosition)
+		);
+	}, []);
+
 	const handleUIState = (isLoop) => {
 		clearAnimations();
 		let state = store.getState();
 		if (UIstate?.UI?.viewport?.width !== state?.UI?.viewport?.width) {
 			let int = setInterval(() => {
 				// setTargetPosition([])
-				let nb = visibleSection === 1 ? newBoardPosition : "demoLeft";
-				toggleItemPosition(nb, cancelInt);
-			}, 200);
-			const cancelInt = () => {};
+				// let nb = visibleSection === 1 ? newBoardPosition : "demoLeft";
+				// toggleItemPosition(nb, cancelInt);
+				console.log("visibileSection", visibleSection, newBoardPosition);
+				// debugger;
+			});
+			const cancelInt = () => {
+				clearInterval(int);
+			};
+			// };
 
 			setTimeout(() => {
 				clearInterval(int);
@@ -427,13 +441,6 @@ const Model = ({
 	const getAlignTitlePosition = () => {
 		console.log("Running get title position target");
 		let scalePercentage = 67;
-
-		// if (window.innerHeight < 900) {
-		// 	scalePercentage = 40;
-		// }
-		// if (window.innerHeight < 700) {
-		// 	scalePercentage = 30;
-		// }
 		let camera = cameraRef.current;
 		let target = document
 			.getElementById("dot-io-target")
@@ -523,6 +530,9 @@ const Model = ({
 		}
 		if (transformation === "alignTitle") {
 			let np = getAlignTitlePosition();
+			// let cancelInt = setInterval(() => {
+			// 	getAlignTitlePosition(cancelInt)
+			// })
 			additionalStyles.rotation = [0, 0, 0];
 			additionalStyles.scale = [1.3, 1.3, 1.3];
 			if (np) {
@@ -583,7 +593,7 @@ const Model = ({
 			{newBoardPosition && newBoardPosition === "alignTitle" && (
 				<three.mesh
 					ref={sphereRef}
-					receiveShadow
+					// receiveShadow
 					castShadow
 					scale={[1, 1, 1]}
 					position={[0, 0.19, 0]}

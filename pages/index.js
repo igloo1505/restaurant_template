@@ -9,9 +9,13 @@ import {
 	AdjustForDrawerContainer,
 } from "../components/UIComponents";
 import { makeStyles } from "@material-ui/core/styles";
+import { useRouter } from "next/router";
 import LandingPageBanner from "../components/landingPage/landingPageBanner";
 import SlidingSection from "../components/landingPage/SlidingSection";
 import SectionTwoMain from "../components/landingPage/sectionTwo/SectionTwoMain";
+import Cookies from "cookies";
+import mongoose from "mongoose";
+import Recipe from "../models/Recipe";
 import { gsap } from "gsap";
 import clsx from "clsx";
 import { a as three, config } from "@react-spring/three";
@@ -28,6 +32,8 @@ const MainCanvas = dynamic(
 		ssr: false,
 	}
 );
+
+const setFeaturedRecipeIdThisWayForNow = "618713b0ed2a427d04a636ab";
 
 const useClasses = makeStyles((theme) => ({
 	mainCanvasContainer: {
@@ -69,11 +75,15 @@ const Home = connect(mapStateToProps)(
 		},
 		network: { loading: isLoading },
 		tryAutoLogin,
-		props: { visibleSection },
+		props: { visibleSection, visibleSectionAnimStart, featuredRecipe },
 	}) => {
-		// console.log("props: visibleSection", visibleSection);
 		const dispatch = useDispatch();
+		const router = useRouter();
 		const classes = useClasses();
+
+		useEffect(() => {
+			router.prefetch("/portal");
+		}, []);
 
 		return (
 			<Fragment>
@@ -83,7 +93,10 @@ const Home = connect(mapStateToProps)(
 						className={classes.mainCanvasContainer}
 						id="main-canvas-container"
 					>
-						<MainCanvas visibleSection={visibleSection} />
+						<MainCanvas
+							visibleSection={visibleSection}
+							visibleSectionAnimStart={visibleSectionAnimStart}
+						/>
 					</div>
 					<LandingPageBanner visibleSection={visibleSection} />
 					<WaveBackdrop
@@ -110,7 +123,7 @@ const Home = connect(mapStateToProps)(
 
 const Switcher = ({
 	viewport: { width: deviceWidth, height: deviceHeight, navHeight },
-	props: { hasUser },
+	props: { hasUser, featuredRecipe },
 }) => {
 	const dispatch = useDispatch();
 	const [visibleSection, setVisibleSection] = useState(1);
@@ -118,6 +131,7 @@ const Switcher = ({
 
 	useEffect(() => {
 		console.log("hasUser", hasUser);
+
 		if (hasUser) {
 			dispatch({
 				type: Types.AUTO_LOGIN_SUCCESS,
@@ -181,6 +195,7 @@ const Switcher = ({
 		api.start({
 			transform: `translateX(-${_w * (visibleSection - 1)}px)`,
 			onResolve: () => {
+				// debugger;
 				setInitialVisibleSection(visibleSection);
 			},
 		});
@@ -233,6 +248,8 @@ const Switcher = ({
 				>
 					<Home
 						visibleSection={initialVisibleSection}
+						visibleSectionAnimStart={visibleSection}
+						featuredRecipe={featuredRecipe}
 						// setVisibleSection={setVisibleSection}
 						// startEarlyAnimation={startEarlyAnimation}
 					/>
@@ -252,7 +269,10 @@ const Switcher = ({
 					// visibleSection={visibleSection}
 					// setVisibleSection={setVisibleSection}
 				>
-					<SectionTwoMain visibleSection={visibleSection} />
+					<SectionTwoMain
+						visibleSection={visibleSection}
+						featuredRecipe={featuredRecipe}
+					/>
 				</SlidingSection>
 			</web.div>
 		</div>
@@ -261,9 +281,36 @@ const Switcher = ({
 
 export const getServerSideProps = async (ctx) => {
 	let _user = await autoLoginOnFirstRequest(ctx.req, ctx.res);
+	let featuredRecipe = await mongoose
+		.connect(process.env.MONGO_URI, {
+			useNewUrlParser: true,
+			useCreateIndex: true,
+			useFindAndModify: false,
+			useUnifiedTopology: true,
+		})
+		.then(async () => {
+			let r = await Recipe.findById(setFeaturedRecipeIdThisWayForNow)
+				.populate("ingredients")
+				.populate({
+					path: "recipeReviews",
+					options: {
+						limit: 10,
+						sort: { created: -1 },
+						// skip: req.params.pageIndex*10
+					},
+					populate: {
+						path: "submittedBy",
+						select:
+							"firstName lastName _id -groceryList -myBookmarks -userProfileData",
+					},
+				})
+				.populate("createdBy", { firstName: 1, lastName: 1, _id: 1 });
+			return r;
+		});
 	return {
 		props: {
 			hasUser: _user,
+			featuredRecipe: JSON.parse(JSON.stringify(featuredRecipe)),
 		},
 	};
 };
