@@ -6,149 +6,154 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 const drawerWidth = 240;
 
 const useStylesUnderNavbar = makeStyles((theme) => ({
-  root: {
-    position: "absolute",
-    width: "100%",
-    marginBottom: "20px",
-    marginTop: "20px",
-    display: "block",
+	root: {
+		position: "absolute",
+		width: "100%",
+		marginBottom: "20px",
+		marginTop: "20px",
+		display: "block",
 
-    [theme.breakpoints.down("lg")]: {
-      display: "flex",
-    },
-  },
-  shifted: {
-    width: `calc(100vw - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-  },
+		[theme.breakpoints.down("lg")]: {
+			display: "flex",
+		},
+	},
+	shifted: {
+		width: `calc(100vw - ${drawerWidth}px)`,
+		marginLeft: `${drawerWidth}px`,
+	},
 }));
 
 const UnderNavbarComponent = ({
-  viewport: { navHeight },
-  props: { withMargin },
-  drawerIsOpen,
+	viewport: { navHeight },
+	props: { withMargin },
+	drawerIsOpen,
 }) => {
-  const [shifted, setShifted] = useState(false);
-  const classes = useStylesUnderNavbar();
-  useEffect(() => {
-    setShifted(drawerIsOpen);
-  }, [drawerIsOpen]);
-  let style = {
-    height: `${navHeight}px`,
-    ...(withMargin && { marginBottom: `${withMargin}px` }),
-  };
-  return (
-    <div
-      className={clsx(classes.root, shifted && classes.shifted)}
-      style={style}
-    ></div>
-  );
+	const [shifted, setShifted] = useState(false);
+	const classes = useStylesUnderNavbar();
+	useEffect(() => {
+		setShifted(drawerIsOpen);
+	}, [drawerIsOpen]);
+	let style = {
+		height: `${navHeight}px`,
+		...(withMargin && { marginBottom: `${withMargin}px` }),
+	};
+	return (
+		<div
+			className={clsx(classes.root, shifted && classes.shifted)}
+			style={style}
+		></div>
+	);
 };
 const mapStateToPropsUnderNavbar = (state, props) => ({
-  viewport: state.UI.viewport,
-  drawerIsOpen: state.UI.mainDrawer.open,
-  props: props,
+	viewport: state.UI.viewport,
+	drawerIsOpen: state.UI.mainDrawer.open,
+	props: props,
 });
 
 export const UnderNavbar = connect(mapStateToPropsUnderNavbar)(
-  UnderNavbarComponent
+	UnderNavbarComponent
 );
 
 const marginHorizontal = "24px";
 const marginVertical = "24px";
 
 const useStylesAdjustForDrawer = makeStyles((theme) => ({
-  root: {
-    display: "block",
-    width: "100vw",
-    paddingRight: marginHorizontal,
-    paddingLeft: marginHorizontal,
-    paddingTop: marginVertical,
-    transition: theme.transitions.create(["margin-left", "width"], {
-      duration: 500,
-    }),
-    overflowY: "auto",
-    [theme.breakpoints.down("lg")]: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-  },
-  shifted: {
-    width: `calc(100vw - ${drawerWidth}px)`,
-    display: "block",
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(["margin-left", "width"], {
-      duration: 500,
-    }),
-    overflowX: "hidden",
-  },
+	root: {
+		display: "block",
+		width: "100vw",
+		paddingRight: marginHorizontal,
+		paddingLeft: marginHorizontal,
+		paddingTop: marginVertical,
+		transition: theme.transitions.create(["margin-left", "width"], {
+			duration: 500,
+		}),
+		overflowY: "auto",
+		[theme.breakpoints.down("lg")]: {
+			display: "flex",
+			justifyContent: "center",
+			alignItems: "center",
+		},
+	},
+	shifted: {
+		width: `calc(100vw - ${drawerWidth}px)`,
+		display: "block",
+		marginLeft: `${drawerWidth}px`,
+		transition: theme.transitions.create(["margin-left", "width"], {
+			duration: 500,
+		}),
+		overflowX: "hidden",
+	},
 }));
 
 const AdjustForDrawerContainerComponent = ({
-  UI: {
-    mainDrawer: { open: drawerIsOpen },
-    viewport: { navHeight, width: deviceWidth },
-  },
-  props: { children, centerAll, overflowHidden },
+	UI: {
+		mainDrawer: { open: drawerIsOpen },
+		viewport: { navHeight, width: deviceWidth },
+	},
+	props: { children, centerAll, overflowHidden, customStyles },
 }) => {
-  const classes = useStylesAdjustForDrawer();
-  const [shifted, setShifted] = useState(deviceWidth > 1920);
-  const [styles, setStyles] = useState({
-    marginTop: "64px",
-  });
-  useEffect(() => {
-    // console.log(centerAll);
-    let shouldShift = drawerIsOpen
-      ? drawerIsOpen
-      : deviceWidth > 1920
-      ? true
-      : false;
-    setShifted(shouldShift);
-    getStyles();
-  }, [drawerIsOpen, navHeight, deviceWidth]);
+	const classes = useStylesAdjustForDrawer();
+	const [shifted, setShifted] = useState(deviceWidth > 1920);
+	const [styles, setStyles] = useState({
+		marginTop: "64px",
+	});
+	useEffect(() => {
+		let shouldShift = drawerIsOpen
+			? drawerIsOpen
+			: deviceWidth > 1920
+			? true
+			: false;
+		setShifted(shouldShift);
+		getStyles();
+	}, [drawerIsOpen, navHeight, deviceWidth]);
 
-  const getStyles = () => {
-    let _navHeight = navHeight === 0 ? 64 : navHeight;
-    let _styles = {
-      height: `calc(100vh - ${_navHeight}px)`,
-    };
-    if (_navHeight >= 0) {
-      _styles.marginTop = `${_navHeight}px`;
-    }
-    if (_navHeight === 0) {
-      _styles.marginTop = "64px";
-    }
-    if (!overflowHidden) {
-      // setStyles({ marginTop: `${navHeight}px` });
-    }
-    if (overflowHidden) {
-      _styles.overflowX = "hidden";
-    }
-    if (centerAll) {
-      _styles.display = "flex";
-      _styles.justifyContent = "center";
-      _styles.alignItems = "center";
-    }
-    setStyles(_styles);
-  };
+	const getStyles = () => {
+		let _navHeight = navHeight === 0 ? 64 : navHeight;
+		let _styles = {
+			height: `calc(100vh - ${_navHeight}px)`,
+		};
+		if (_navHeight >= 0) {
+			_styles.marginTop = `${_navHeight}px`;
+		}
+		if (_navHeight === 0) {
+			_styles.marginTop = "64px";
+		}
+		if (!overflowHidden) {
+			// setStyles({ marginTop: `${navHeight}px` });
+		}
+		if (overflowHidden) {
+			_styles.overflowX = "hidden";
+		}
+		if (centerAll) {
+			_styles.display = "flex";
+			_styles.justifyContent = "center";
+			_styles.alignItems = "center";
+		}
+		if (!centerAll) {
+			_styles.display = "block";
+		}
+		setStyles({
+			..._styles,
+			...customStyles,
+		});
+	};
 
-  return (
-    <div
-      className={clsx(classes.root, shifted && classes.shifted)}
-      style={styles}
-      id="ui-layout-container"
-    >
-      {children}
-    </div>
-  );
+	return (
+		<div
+			className={clsx(classes.root, shifted && classes.shifted)}
+			style={styles}
+			id="ui-layout-container"
+		>
+			{children}
+		</div>
+	);
 };
 
 const mapStateToPropsAdjustForDrawer = (state, props) => ({
-  UI: state.UI,
-  props: props,
+	UI: state.UI,
+	props: props,
 });
 
 export const AdjustForDrawerContainer = connect(mapStateToPropsAdjustForDrawer)(
-  AdjustForDrawerContainerComponent
+	AdjustForDrawerContainerComponent
 );

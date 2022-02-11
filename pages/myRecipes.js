@@ -5,8 +5,9 @@ import { wrapper } from "../stateManagement/store";
 import Cookies from "cookies";
 import mongoose from "mongoose";
 import Recipe from "../models/Recipe";
-// import GroceryItem from "../models/GroceryItem";
+import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
 import User from "../models/User";
+// import GroceryItem from "../models/GroceryItem";
 // import Ingredient from "../models/Ingredient";
 import {
   UnderNavbar,
@@ -21,7 +22,6 @@ import * as Types from "../stateManagement/TYPES";
 // mongoose.set("bufferCommands", false);
 // import { deleteRecipe } from "../stateManagement/recipeActions";
 // import * as Types from "../stateManagement/TYPES";
-import { autoLoginOnFirstRequest } from "../util/autoLoginOnFirstRequest";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -52,10 +52,9 @@ const myRecipes = ({
   hasUser,
 }) => {
   const dispatch = useDispatch();
-
   useEffect(() => {
     console.log("_myRecipes: ", _myRecipes);
-    if (!myRecipes && _myRecipes) {
+    if (_myRecipes) {
       dispatch({
         type: Types.GET_OWN_RECIPES_SUCCESS,
         payload: { _myRecipes },

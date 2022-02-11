@@ -21,7 +21,14 @@ handler.post(async (req, res) => {
     if (recipe && userId) {
       let _user = await User.findById(userId);
       if (_user && _user.myFavorites) {
-        _user.myFavorites.pull(recipe._id);
+        // I know this is horribly inefficient but .save method was throwing errors.
+        await User.findByIdAndUpdate(
+          _user._id,
+          {
+            $pullAll: { myFavorites: [recipe._id] },
+          },
+          { new: true }
+        );
         return res.json({
           msg: "Recipe favorite removed successfully.",
           recipeId: recipe._id,

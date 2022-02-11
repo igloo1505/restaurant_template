@@ -120,6 +120,7 @@ const RecipeReviewModal = ({
   };
 
   const handleSubmitReview = () => {
+    let relevantId = relevantRecipe._id;
     if (!userId || !relevantId) {
       return;
     }
@@ -209,6 +210,7 @@ const RecipeReviewModal = ({
               type="text"
               value={formData.comment}
               fullWidth
+              multiline
               onKeyDown={(e) => {
                 if (e.key !== "Backspace" && formData.comment.length >= 200) {
                   e.preventDefault();
@@ -374,13 +376,11 @@ const _RatingIcon = ({
   useEffect(() => {
     if (typeof window !== undefined) {
       let em = document.getElementById(starIconId).getBoundingClientRect();
-
       setClientRect(em);
     }
   }, [deviceWidth]);
 
   const handleMouseMove = (e) => {
-    console.log("e: ", e);
     if (allowHover[name]) {
       let rValue = 0;
       let mouseXValue = e.pageX;
@@ -426,7 +426,6 @@ const _RatingIcon = ({
           id={starIconId}
           classes={{ root: ratingClasses.iconRoot }}
           onMouseMove={handleMouseMove}
-          onTouchStart={(e) => console.log("E", e)}
         />
       );
     case 1:
@@ -435,7 +434,6 @@ const _RatingIcon = ({
           id={starIconId}
           classes={{ root: ratingClasses.iconRoot }}
           onMouseMove={handleMouseMove}
-          onTouchStart={(e) => console.log("E", e)}
         />
       );
     case 0:
@@ -445,7 +443,6 @@ const _RatingIcon = ({
           id={starIconId}
           classes={{ root: ratingClasses.iconRoot }}
           onMouseMove={handleMouseMove}
-          onTouchStart={(e) => console.log("E", e)}
         />
       );
   }
@@ -457,13 +454,3 @@ const _mapStateToProps = (state, props) => ({
 });
 
 const RatingIcon = connect(_mapStateToProps)(_RatingIcon);
-
-// getBoudingClientRect
-// bottom: 647.5
-// height: 40
-// left: 725.5
-// right: 765.5
-// top: 607.5
-// width: 40
-// x: 725.5
-// y: 607.5

@@ -139,7 +139,6 @@ const ingredientAdornment = (
   hasMenuOpen,
   setHasMenuOpen
 ) => {
-  console.log("hasMenuOpen: ", hasMenuOpen);
   const dispatch = useDispatch();
   let unitArray = getIngredientUnits();
   const [menuOpen, setMenuOpen] = useState(null);

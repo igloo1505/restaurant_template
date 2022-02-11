@@ -7,8 +7,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import * as Types from "../../stateManagement/TYPES";
 import Typography from "@material-ui/core/Typography";
 import Tooltip from "@material-ui/core/Tooltip";
-import BookmarkedIcon from "@material-ui/icons/BookmarkOutlined";
-import NotBookmarkedIcon from "@material-ui/icons/BookmarkBorderOutlined";
+import { useRouter } from "next/router";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import RateMeIcon from "@material-ui/icons/ThumbsUpDown";
 import FavoritedIcon from "@material-ui/icons/FavoriteSharp";
 import NotFavoritedIcon from "@material-ui/icons/FavoriteBorderSharp";
@@ -108,11 +108,12 @@ const Details_ActionSection = ({
     loggedIn,
     self: { _id: userId },
   },
-  recipes: { myFavorites },
+  recipes: { myFavorites, currentRecipeDetails },
   handleFavorite,
 }) => {
   const dispatch = useDispatch();
   const [isFavorited, setIsFavorited] = useState(false);
+  const router = useRouter();
   const actionArray = [
     {
       name: "favorite",
@@ -134,10 +135,22 @@ const Details_ActionSection = ({
       iconTrue: RateMeIcon,
       protected: true,
     },
+    {
+      name: "redirectToUserProfile",
+      action: () => {
+        router.push(`/user/${userId}`);
+        // dispatch({ type: Types.SHOW_RECIPE_REVIEW_MODAL, payload: recipe });
+      },
+      iconTrue: AccountCircleIcon,
+      // protected: true,
+    },
   ];
   const classes = useStyles();
   useEffect(() => {
     let isIncluded = myFavorites?.includes(recipe._id);
+    if (currentRecipeDetails?._id && !isIncluded) {
+      isIncluded = myFavorites?.includes(currentRecipeDetails._id);
+    }
     setIsFavorited(isIncluded);
   }, [myFavorites]);
 
@@ -176,15 +189,16 @@ const ActionItem = ({ action, classes, isFavorited, loggedIn, userId }) => {
     if (action.name === "rateMe") {
       Action = action.iconTrue;
     }
+    if (action.name === "redirectToUserProfile") {
+      Action = action.iconTrue;
+    }
     if (action.name === "favorite") {
       Action = isFavorited ? action.iconTrue : action.iconFalse;
-      console.log("isFavorited: ", isFavorited);
     }
     setIcon(Action);
   }, [isFavorited]);
   useEffect(() => {
     let shouldDisable = Boolean(loggedIn && userId);
-    console.log("shouldDisable: ", shouldDisable);
     setDisabled(!shouldDisable);
   }, [loggedIn, userId]);
 

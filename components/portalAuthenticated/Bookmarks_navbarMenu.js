@@ -21,6 +21,12 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "transparent",
     transform: "translate(-30px, 30px)",
   },
+  list: {
+    padding: "0px",
+  },
+  noneToDisplay: {
+    paddingBottom: "14px",
+  },
   menuPaper: {
     // transform: "translateX(-50%) !important",
   },
@@ -71,7 +77,14 @@ const Bookmarks_navbarMenu = ({
             {myBookmarks?.map((bi, i, a) => (
               <BookmarkMenuItem bi={bi} i={i} a={a} classes={classes} />
             ))}
-            <MenuItem classes={{ root: classes.viewAll }}>View All</MenuItem>
+            {Boolean(myBookmarks?.length && myBookmarks.length > 5) && (
+              <MenuItem classes={{ root: classes.viewAll }}>View All</MenuItem>
+            )}
+            {Boolean(!myBookmarks?.length && myBookmarks.length === 0) && (
+              <MenuItem classes={{ root: classes.noneToDisplay }} disabled>
+                No Bookmarks
+              </MenuItem>
+            )}
           </Menu>
         </ClientSidePortal>
       )}
@@ -116,7 +129,7 @@ const useMenuItemClasses = makeStyles((theme) => ({
 }));
 
 const trimTitle = (title) => {
-  if (title.length > 30) {
+  if (title?.length > 30) {
     return `${title.slice(0, 30)}...`;
   }
   return title;

@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from "react";
+import React, { useEffect, Fragment, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/portalAuthenticated/Navbar";
 import SnackbarSwitcher from "../components/modalsAndAlerts/SnackbarSwitcher";
@@ -6,12 +6,17 @@ import SimpleBooleanSnackbar from "../components/SimpleBooleanSnackbar";
 import Alert from "../components/modalsAndAlerts/Modal";
 import Grocery_navbarMenu from "../components/portalAuthenticated/Grocery_navbarMenu";
 import Bookmarks_navbarMenu from "../components/portalAuthenticated/Bookmarks_navbarMenu";
+import AddRecipeKeyboardShortcuts from '../components/modalContent/AddRecipeKeyboardShortcuts';
+import SettingsModal from '../components/modalsAndAlerts/SettingsModal';
+import SetShortcutsBackdrop from '../components/modalsAndAlerts/SetKeyboardShortcutBackdrop';
 import RecipeReviewModal from "../components/modalsAndAlerts/RecipeReviewModal";
 import Drawer from "../components/portalAuthenticated/Drawer";
+import ReviewRecipeBeforeSubmission from '../components/modalsAndAlerts/ReviewRecipeBeforeSubmission';
 import AccountIconMenu from "../components/portalAuthenticated/AccountIconMenu";
 import Head from "next/head";
 import "../styles/globals.css";
 import { Provider } from "react-redux";
+// import { useRouter } from "next/router"
 import store, { wrapper } from "../stateManagement/store";
 import { removeBoxShadow } from "../stateManagement/uiActions";
 import { ThemeProvider } from "@material-ui/core/styles";
@@ -22,12 +27,9 @@ import theme from "../styles/MUITheme";
 // import { tryAutoLogin } from "../stateManagement/userActions";
 import * as userActions from "../stateManagement/userActions";
 import setAuthToken from "../stateManagement/setAuth";
-import { sw } from "../util/serviceWorker-main";
-import {
-  SET_VIEWPORT_DIMENSIONS,
-  SET_NAV_HEIGHT,
-  IS_CLIENT,
-} from "../stateManagement/TYPES";
+// import { sw } from "../util/serviceWorker-main";
+import { settingKeysKeyup, settingKeysKeydown, handleEventListeners } from "../util/SettingShortcutsListeners"
+import * as Types from "../stateManagement/TYPES";
 
 const cache = createCache({
   key: "css",
@@ -35,14 +37,15 @@ const cache = createCache({
 });
 cache.compat = true;
 
-const reallyTryAutoLogin = () => {
-  // tryAutoLogin();
-};
+
+
 
 function MyApp({ Component, pageProps, ...rest }) {
   // if (localStorage.token) {
   //   setAuthToken(localStorage.token);
   // }
+
+
 
   useEffect(() => {
     const jssStyles = document.querySelector("#jss-server-side");
@@ -50,24 +53,29 @@ function MyApp({ Component, pageProps, ...rest }) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
+
+  const [state, setState] = useState({})
+
   useEffect(() => {
-    if (typeof window !== undefined && "serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("../util/serviceWorker-main.js", { scope: "./" })
-        .then((reg) => {
-          // registration worked
-          console.log("Registration succeeded. Scope is " + reg.scope);
-        })
-        .catch((error) => {
-          // registration failed
-          console.log("Registration failed with " + error);
-        });
+    let _state = store.getState();
+    let unSub = store.subscribe(() => setState(_state));
+    return () => {
+      unSub();
     }
   }, []);
 
+
+
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      handleEventListeners()
+    }
+  }, [state?.UI?.settingsModal?.settingKeysBackdrop, state?.user?.userSettings?.allowKeyboardShortcuts, state.user?.userSettings?.keyboardShortcuts]);
+
   const setViewPortDimensions = () => {
     if (typeof window !== "undefined") {
-      store.dispatch({ type: IS_CLIENT });
+      store.dispatch({ type: Types.IS_CLIENT });
       const vw = Math.max(
         document.documentElement.clientWidth || 0,
         window.innerWidth || 0
@@ -77,7 +85,7 @@ function MyApp({ Component, pageProps, ...rest }) {
         window.innerHeight || 0
       );
       store.dispatch({
-        type: SET_VIEWPORT_DIMENSIONS,
+        type: Types.SET_VIEWPORT_DIMENSIONS,
         payload: {
           width: vw,
           height: vh,
@@ -93,7 +101,7 @@ function MyApp({ Component, pageProps, ...rest }) {
         height = Math.ceil(
           parseFloat(height.height.slice(0, height.height.length - 2))
         );
-        store.dispatch({ type: SET_NAV_HEIGHT, payload: height });
+        store.dispatch({ type: Types.SET_NAV_HEIGHT, payload: height });
       }
     }
   };
@@ -134,9 +142,13 @@ function MyApp({ Component, pageProps, ...rest }) {
           <Navbar />
           <Drawer />
           <RecipeReviewModal />
+          <SetShortcutsBackdrop />
+          <SettingsModal />
           <Grocery_navbarMenu />
+          <AddRecipeKeyboardShortcuts />
           <Bookmarks_navbarMenu />
           <AccountIconMenu />
+          <ReviewRecipeBeforeSubmission />
           <Alert />
           <SnackbarSwitcher />
           <SimpleBooleanSnackbar />
@@ -148,6 +160,3 @@ function MyApp({ Component, pageProps, ...rest }) {
 }
 
 export default wrapper.withRedux(MyApp);
-
-// <Navbar />
-// <CacheProvider value={cache}>

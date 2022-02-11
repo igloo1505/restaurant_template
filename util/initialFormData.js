@@ -18,6 +18,19 @@ const initialFormData = {
     amount: 1,
     unit: { long: "Cups", short: "cups", key: "Volume" },
   },
+  // subRecipes: [
+  //   {
+  //     title: "",
+  //     ingredients: [],
+  //     ingredient: {
+  //       text: "",
+  //       optional: false,
+  //       amount: 1,
+  //       unit: { long: "Cups", short: "cups", key: "Volume" },
+  //     },
+  //   },
+  // ],
+  subRecipes: []
 };
 
 export default initialFormData;

@@ -125,7 +125,6 @@ const timeAdornment = (
   setFormData,
   formData
 ) => {
-  console.log("hasMenuOpen: ", hasMenuOpen);
   const units = [
     { long: "Seconds", short: "secs" },
     { long: "Minutes", short: "mins" },
@@ -148,7 +147,7 @@ const timeAdornment = (
   const handleItemClick = (index) => {
     setSelectedUnit(units[index]);
     setFormData({ ...formData, [`${name}Unit`]: units[index] });
-    console.log(formData);
+
     toggleMenu(null);
   };
   return (
@@ -200,7 +199,6 @@ const UnitMenu = forwardRef(
     },
     ref
   ) => {
-    console.log("hasMenuOpen: ", hasMenuOpen);
     const handleMenuClose = () => {
       toggleMenu(null);
     };

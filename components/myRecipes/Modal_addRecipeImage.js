@@ -127,7 +127,9 @@ const Modal_addRecipeImage = ({
   const [image, setImage] = useState(false);
   const dispatch = useDispatch();
   const handleUpload = (e) => {
+    console.log("Sending Image");
     if (!image || !relevantId) {
+      console.log("returning without sending image");
       return;
     }
     const formData = new FormData();

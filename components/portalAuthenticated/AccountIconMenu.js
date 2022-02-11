@@ -77,12 +77,6 @@ const AccountIconMenuLocal = ({
             >
               Profile
             </MenuItem>
-            <MenuItem
-              classes={{ root: classes.itemRoot }}
-              onClick={() => handleItemClick("/myAccount")}
-            >
-              My account
-            </MenuItem>
             <MenuItem classes={{ root: classes.itemRoot }} onClick={logOut}>
               Logout
             </MenuItem>

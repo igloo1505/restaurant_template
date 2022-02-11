@@ -266,6 +266,12 @@ const CardTimeSection = ({ classes, recipe, timeIconClasses, index }) => {
       {formattedTime?.hours && (
         <Typography classes={{ root: classes.hoursText }}>
           {formattedTime.hours}
+          {!formattedTime.minutes &&
+            parseInt(formattedTime.hours) === 1 &&
+            " Hr"}
+          {!formattedTime.minutes &&
+            parseInt(formattedTime.hours) > 1 &&
+            " Hrs"}
         </Typography>
       )}
       {formattedTime?.minutes && (

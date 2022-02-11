@@ -16,6 +16,11 @@ const initialState = {
     results: [],
   },
   error: null,
+  currentRecipeDetails: {},
+};
+
+const filterById = (itemId, array) => {
+  return array.filter((item) => item._id === itemId);
 };
 
 const recipeReducer = (state = initialState, action) => {
@@ -31,11 +36,24 @@ const recipeReducer = (state = initialState, action) => {
         myRecipe: _myRecipes,
       };
     case Types.GET_OWN_RECIPES_SUCCESS:
-      console.log("initialState", state.myRecipes);
-      console.log("payload", action.payload);
       return {
         ...state,
         myRecipes: action.payload._myRecipes,
+      };
+    case Types.SET_RECIPE_DETAILS_RECIPE:
+      return {
+        ...state,
+        currentRecipeDetails: action.payload,
+      };
+    case Types.SUBMIT_RECIPE_REVIEW_SUCCESS:
+      return {
+        ...state,
+        currentRecipeDetails: action.payload.updatedRecipe,
+      };
+    case Types.REMOVE_RECIPE_REVIEW_SUCCESS:
+      return {
+        ...state,
+        currentRecipeDetails: action.payload.updatedRecipe,
       };
     case Types.ADD_RECIPE_IMAGE:
       return {
@@ -84,8 +102,8 @@ const recipeReducer = (state = initialState, action) => {
       };
     case Types.ADD_RECIPE_BOOKMARK:
       let newBookmarks = state.myBookmarks
-        ? [...state.myBookmarks, action.payload.recipeId]
-        : [action.payload.recipeId];
+        ? [...state.myBookmarks, action.payload.bookmarkedRecipe]
+        : [action.payload.bookmarkedRecipe];
       return {
         ...state,
         myBookmarks: newBookmarks,
@@ -94,7 +112,7 @@ const recipeReducer = (state = initialState, action) => {
       return {
         ...state,
         myBookmarks: state.myBookmarks.filter(
-          (b) => b !== action.payload.recipeId
+          (b) => b._id !== action.payload.recipeId
         ),
       };
     case Types.SUBMIT_RECIPE_REVIEW_SUCCESS:

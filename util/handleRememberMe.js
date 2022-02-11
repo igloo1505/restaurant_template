@@ -13,6 +13,7 @@ export const handleRememberMe = async (user, req, cookies) => {
         stringifiedPassword += uniquePassword[i];
       }
     }
+
     cookies.set("rememberMe", true, { httpOnly: false });
     cookies.set("email", req.body.email, { httpOnly: true });
     cookies.set("_p", stringifiedPassword, { httpOnly: true });

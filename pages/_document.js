@@ -31,6 +31,8 @@ export default class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Style+Script&display=swap"
             rel="stylesheet"
           ></link>
+          <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@200;300;400;500&display=swap" rel="stylesheet"
+          ></link>
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
@@ -45,6 +47,13 @@ export default class MyDocument extends Document {
             integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0"
             crossorigin="anonymous"
           ></link>
+          <link rel="manifest" href="/manifest.json" />
+          <link rel="icon" href="/favicon.ico" />
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/radish-icons/apple-touch-icon.png"
+          />
         </Head>
         <body>
           <div id="topLevelPortalContainer" />

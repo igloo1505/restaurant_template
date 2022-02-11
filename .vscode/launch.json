@@ -1,0 +1,62 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/pages/myRecipes.js",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "pwa-chrome",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "Next: Node",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/next"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Next: Node",
+            "program": "${workspaceFolder}/server.js",
+            "runtimeArgs": [
+                "--inspect"
+            ],
+            "port": 9229,
+            "console": "integratedTerminal"
+          }
+          {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch via NPM",
+            "runtimeExecutable": "${workspaceFolder}\\node_modules\\.bin\\next",
+            "port": 9229,
+            "env": {
+              "NODE_OPTIONS": "--inspect"
+            }, 
+          },
+          {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Remote",
+            "address": "localhost",
+            "port": 9229,
+            "sourceMaps": true
+          }
+    ]
+}
