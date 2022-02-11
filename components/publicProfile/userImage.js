@@ -1,14 +1,8 @@
-import React, { useState, useEffect, Fragment, forwardRef } from "react";
-import AddPhotoIcon from "@material-ui/icons/AddAPhoto";
 import Slide from "@material-ui/core/Slide";
-import { connect, useDispatch } from "react-redux";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import clsx from "clsx";
 import { gsap } from "gsap";
-import * as Types from "../../stateManagement/TYPES";
-import { updateProfileData } from "../../stateManagement/userActions";
+import React, { useEffect, useState } from "react";
 
 const imgContainerId = "user-image-container";
 const bShadow = {
