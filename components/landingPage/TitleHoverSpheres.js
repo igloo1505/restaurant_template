@@ -43,7 +43,7 @@ const TitleHoverSpheres = ({
 			var distance = -camera.position.z / vec.z;
 			pos.copy(camera.position).add(vec.multiplyScalar(distance));
 			let targetPosition = [pos.x, pos.y + _scaleUp, pos.z];
-			console.log("targetPosition: target positions", targetPosition);
+
 			// debugger
 			if (_t.classList.contains("white")) {
 				_hasColor = "white";
@@ -70,7 +70,6 @@ const TitleHoverSpheres = ({
 	const handleUIState = (force) => {
 		let state = store.getState();
 		if (UIstate?.UI?.viewport?.width !== state?.UI?.viewport?.width || force) {
-			console.log("handling ui state target");
 			let int = setInterval(() => {
 				// setTargetPosition([])
 				setTargets(cancelInt);
@@ -104,7 +103,6 @@ const TitleHoverSpheres = ({
 	return (
 		<>
 			{targetPosition.map((t, i) => {
-				console.log("Target!!!! hoverSpheres", t);
 				return (
 					<HoverOrb
 						t={t.position}

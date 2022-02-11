@@ -25,7 +25,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import CuttingBoard from "./CuttingBoard";
 import TitleHoverSpheres from "./TitleHoverSpheres";
 import ClientSidePortal from "../portalAuthenticated/ClientSidePortal";
-import { config, useSpring } from "@react-spring/core";
+import { Spring } from "@react-spring/core";
 import gsap from "gsap";
 import {
 	BrowserView,
@@ -81,13 +81,32 @@ const canvasId = "mainCanvas";
 
 const MainCanvas = ({
 	viewport: { width: deviceWidth, height: deviceHeight, navHeight },
-	props: { visibleSection },
+	props: {
+		visibleSection,
+		setVisibleSection,
+		initialVisibleSection,
+		setInitialVisibleSection,
+		scrollXPosition,
+		setScrollXPosition,
+		isTicking,
+		setIsTicking,
+	},
 }) => {
 	//
 
 	return (
 		<Controls.Provider>
-			<Scene deviceWidth={deviceWidth} visibleSection={visibleSection} />
+			<Scene
+				deviceWidth={deviceWidth}
+				visibleSection={visibleSection}
+				setVisibleSection={setVisibleSection}
+				initialVisibleSection={initialVisibleSection}
+				setInitialVisibleSection={setInitialVisibleSection}
+				scrollXPosition={scrollXPosition}
+				setScrollXPosition={setScrollXPosition}
+				isTicking={isTicking}
+				setIsTicking={setIsTicking}
+			/>
 		</Controls.Provider>
 	);
 };
@@ -98,7 +117,18 @@ const mapStateToProps = (state, props) => ({
 });
 
 const Scene = withControls(
-	({ deviceWidth, visibleSection, visibleSectionAnimStart }) => {
+	({
+		deviceWidth,
+		visibleSection,
+		setVisibleSection,
+		initialVisibleSection,
+		setInitialVisibleSection,
+		visibleSectionAnimStart,
+		scrollXPosition,
+		setScrollXPosition,
+		isTicking,
+		setIsTicking,
+	}) => {
 		const cameraRef = useRef();
 		const rayCaster = useRef();
 		const canvasRef = useRef();
@@ -106,6 +136,7 @@ const Scene = withControls(
 		const cuttingBoardRef = useRef();
 		const router = useRouter();
 		const [newShadowProps, setNewShadowProps] = useState({});
+
 		// const ContextBridge = useContextBridge(ThemeContext, GreetingContext)
 
 		const getHoverPositions = () => {
@@ -149,6 +180,29 @@ const Scene = withControls(
 		useEffect(() => {
 			router.prefetch("/portal");
 			setAR();
+
+			document.addEventListener("touchmove", (e) => {
+				let scrollDiv = document.getElementById("main-section-scroller");
+				let _start = scrollDiv.style.transform.indexOf("(") + 1;
+				let _end = scrollDiv.style.transform.indexOf("px");
+				let _val = scrollDiv.style.transform.slice(_start, _end);
+				if (parseFloat(_val)) {
+					// setScrollXPosition(parseFloat(_val));
+				}
+			});
+			document.addEventListener(
+				"wheel",
+				() => {
+					let scrollDiv = document.getElementById("main-section-scroller");
+					let _start = scrollDiv.style.transform.indexOf("(") + 1;
+					let _end = scrollDiv.style.transform.indexOf("px");
+					let _val = scrollDiv.style.transform.slice(_start, _end);
+					if (parseFloat(_val)) {
+						// setScrollXPosition(parseFloat(_val));
+					}
+				},
+				{ passive: true }
+			);
 			window.addEventListener("mousemove", (e) => {
 				checkHoverPositions(e);
 			});
@@ -163,6 +217,9 @@ const Scene = withControls(
 				window.removeEventListener("click", cListener);
 			};
 		}, []);
+		const [newBoardPosition, setNewBoardPosition] = useState(
+			visibleSection === 1 ? "alignTitle" : "demoLeft"
+		);
 
 		return (
 			<div className="mainCanvasContainer">
@@ -210,6 +267,15 @@ const Scene = withControls(
 										newShadowProps={newShadowProps}
 										setNewShadowProps={setNewShadowProps}
 										visibleSection={visibleSection}
+										setVisibleSection={setVisibleSection}
+										initialVisibleSection={initialVisibleSection}
+										setInitialVisibleSection={setInitialVisibleSection}
+										visibleSectionAnimStart={visibleSectionAnimStart}
+										newBoardPosition={newBoardPosition}
+										setNewBoardPosition={setNewBoardPosition}
+										scrollXPosition={scrollXPosition}
+										isTicking={isTicking}
+										setIsTicking={setIsTicking}
 									/>
 								)}
 							{!isMobile && (
@@ -220,9 +286,13 @@ const Scene = withControls(
 									newShadowProps={newShadowProps}
 									setNewShadowProps={setNewShadowProps}
 									visibleSection={visibleSection}
+									newBoardPosition={newBoardPosition}
+									setNewBoardPosition={setNewBoardPosition}
+									scrollXPosition={scrollXPosition}
+									isTicking={isTicking}
+									setIsTicking={setIsTicking}
 								/>
 							)}
-
 							<TitleHoverSpheres
 								cameraRef={cameraRef}
 								canvasRef={canvasRef}
@@ -251,6 +321,9 @@ const Radish = ({
 	newShadowProps,
 	setNewShadowProps,
 	visibleSection,
+	isTicking,
+	setIsTicking,
+	scrollXPosition,
 }) => {
 	const [scene, setScene] = useState(null);
 	const group = useRef();
@@ -342,6 +415,7 @@ const Radish = ({
 			let _x = newTargets[0].position[0];
 			// BUG: set this to zero after transition is handled obviously.
 			newTargets[1] && (_x = (_x + newTargets[1].position[0]) / 2);
+
 			positionAnimation(
 				{
 					x: _x,
@@ -405,7 +479,7 @@ const Radish = ({
 		if (visibleSection !== 2) {
 			updatePosition({ p: visibleSection });
 		}
-	}, [visibleSection]);
+	}, [visibleSection, scrollXPosition]);
 
 	useEffect(() => {
 		const loader = new GLTFLoader();

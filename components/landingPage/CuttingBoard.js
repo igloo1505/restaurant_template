@@ -2,8 +2,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Sphere, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
-import { to, useSpring } from "@react-spring/core";
-import { a as three, config } from "@react-spring/three";
+import { to, useSpring, Spring } from "@react-spring/core";
+import { a as three, animated, config } from "@react-spring/three";
 import store from "../../stateManagement/store";
 import { ContactShadows } from "@react-three/drei";
 import { a as web } from "@react-spring/web";
@@ -24,15 +24,23 @@ const Model = ({
 	newShadowProps,
 	setNewShadowProps,
 	cuttingBoardRef: group,
+	setVisibleSection,
+	initialVisibleSection,
+	setInitialVisibleSection,
+	visibleSectionAnimStart,
 	visibleSection,
+	newBoardPosition,
+	setNewBoardPosition,
+	scrollXPosition,
+	setScrollXPosition,
+	isTicking,
+	setIsTicking,
 }) => {
 	const modelRef = useRef();
 	const sphereRef = useRef();
 	const [currentAnimations, setCurrentAnimations] = useState([]);
 	const { nodes, materials } = useGLTF("/cuttingBoard.glb");
-	const [newBoardPosition, setNewBoardPosition] = useState(
-		visibleSection === 1 ? "alignTitle" : "demoLeft"
-	);
+
 	const [latestAlignedPosition, setLatestAlignedPosition] = useState(null);
 
 	const clearAnimations = () => {
@@ -91,9 +99,12 @@ const Model = ({
 	const wobbleBoard = () => {
 		if (visibleSection !== 1) {
 			clearAnimations();
-			let _int = setInterval(() => {
-				toggleItemPosition("demoLeft", cancelSetPosition);
-			});
+			toggleItemPosition("demoLeft", cancelSetPosition);
+			// let np = getAlignTitlePosition
+			// api.start({
+			// 	position:
+			// })
+			let _int = setInterval(() => {});
 			const cancelSetPosition = () => {
 				clearInterval(_int);
 			};
@@ -263,10 +274,27 @@ const Model = ({
 		if (UIstate?.UI?.viewport?.width !== state?.UI?.viewport?.width) {
 			let int = setInterval(() => {
 				// setTargetPosition([])
+
 				// let nb = visibleSection === 1 ? newBoardPosition : "demoLeft";
 				// toggleItemPosition(nb, cancelInt);
-				console.log("visibileSection", visibleSection, newBoardPosition);
-				// debugger;
+				console.log("CALLED UP HERE");
+				let np = getAlignTitlePosition();
+
+				if (np) {
+					console.log(
+						"visibileSection here",
+						visibleSection,
+						newBoardPosition,
+						[np.x, np.y, np.z]
+					);
+					api.start({
+						position: [np.x, np.y, np.z],
+						rotation:
+							newBoardPosition === "alignTitle"
+								? [0, 0, 0]
+								: sectionTwoRotation,
+					});
+				}
 			});
 			const cancelInt = () => {
 				clearInterval(int);
@@ -297,46 +325,69 @@ const Model = ({
 	};
 
 	useEffect(() => {
-		let unsubscribe = store.subscribe(handleUIState);
-		return () => {
-			unsubscribe();
-		};
+		if (typeof window !== "undefined") {
+			window.addEventListener("resize", handleUIState);
+		}
+		// let unsubscribe = store.subscribe(handleUIState);
+		// return () => {
+		// 	unsubscribe();
+		// };
 	}, []);
 
-	const [styles, api] = useSpring(() => ({
+	const [styles, api, cancelSpring] = useSpring(({ onRest }) => ({
 		// position: [0, 0, 0],
-		config: config.stiff,
+		config: {
+			...config.stiff,
+			precision: 0.0001,
+		},
+		onRest: () => {
+			if (onRest) {
+				onRest();
+			}
+			console.log("Did rest");
+		},
 	}));
 
-	useEffect(() => {
-		// if (newBoardPosition === "demoLeft") {
-		// 	return cancelInterval();
-		// }
-
+	useEffect(async () => {
 		if (visibleSection !== 1) {
 			clearAnimations();
 		}
-		let lookForTarget = setInterval(() => {
-			toggleItemPosition(newBoardPosition, cancelInterval);
-		});
-		function cancelInterval() {
-			clearInterval(lookForTarget);
-			const wobbleWobble = wobbleBoard();
-			// if (!wobbleWobble) {
-			// 	debugger;
-			// }
-			if (wobbleWobble) {
-				setCurrentAnimations([
-					...currentAnimations,
-					...Object.values(wobbleWobble),
-				]);
-			}
-			if (visibleSection !== 1) {
-				clearAnimations();
+		if (visibleSection === 1 && !isTicking) {
+			console.log("isTicking: in here", isTicking);
+			console.log("Called down here");
+			let _np = await getAlignTitlePosition({ _timeout: 500 });
+			console.log("_np: isTicking", _np);
+			const animate = (newPosition) => {
+				api.start({
+					rotation: [0, 0, 0],
+					scale: [1.3, 1.3, 1.3],
+					position: newPosition,
+				});
+			};
+			if (_np) {
+				animate([_np.x, _np.y, _np.z]);
 			}
 		}
-		// }
-	}, [newBoardPosition]);
+
+		if (visibleSection === 2) {
+			let np = getDemoLeftPosition();
+			let _position = null;
+			if (np) {
+				_position = [np.x, np.y, 0.75];
+			}
+			console.log("Api start from useEffect with ", {
+				rotation: sectionTwoRotation,
+				scale: [2.9, 2.9, 2.9],
+				position: _position,
+			});
+			api.start({
+				rotation: sectionTwoRotation,
+				scale: [2.9, 2.9, 2.9],
+				position: _position,
+			});
+		}
+		console.log("scrollXPosition: ", scrollXPosition);
+	}, [visibleSection, scrollXPosition, isTicking]);
 
 	const getVisibleBox = (z) => {
 		if (!cameraRef?.current) {
@@ -368,6 +419,7 @@ const Model = ({
 		let _x = window.innerWidth / 3;
 		let _y = window.innerHeight / 2;
 		if (!target || !modelRef?.current) {
+			console.log("Returning, !target or !modelRef?.current");
 			return;
 		}
 		let clone = modelRef.current.clone();
@@ -438,47 +490,61 @@ const Model = ({
 		};
 	};
 
-	const getAlignTitlePosition = () => {
+	const getAlignTitlePosition = async ({ _timeout }) => {
 		console.log("Running get title position target");
 		let scalePercentage = 67;
 		let camera = cameraRef.current;
-		let target = document
-			.getElementById("dot-io-target")
-			?.getBoundingClientRect();
-		if (!target) {
-			return;
-		}
-		let clone = modelRef.current.clone();
-		modelRef.current.geometry.computeBoundingBox();
-		let bBox = clone.geometry.boundingBox;
-		let obSize = bBox.getSize(new THREE.Vector3());
-		console.log("obSize: ", obSize);
+		const getPosition = () => {
+			let target = document
+				.getElementById("dot-io-target")
+				?.getBoundingClientRect();
 
-		var vec = new THREE.Vector3();
-		var pos = new THREE.Vector3();
-		vec.set(
-			(target.x / window.innerWidth) * 2 - 1,
-			-(target.y / window.innerHeight) * 2 + 1,
-			clone.position.z
-		);
+			if (!target) {
+				return;
+			}
+			let clone = modelRef.current.clone();
+			modelRef.current.geometry.computeBoundingBox();
+			let bBox = clone.geometry.boundingBox;
+			let obSize = bBox.getSize(new THREE.Vector3());
+			console.log("obSize: ", obSize);
 
-		vec.unproject(camera);
+			var vec = new THREE.Vector3();
+			var pos = new THREE.Vector3();
+			vec.set(
+				(target.x / window.innerWidth) * 2 - 1,
+				-(target.y / window.innerHeight) * 2 + 1,
+				clone.position.z
+			);
 
-		vec.sub(camera.position).normalize();
+			vec.unproject(camera);
 
-		var distance = -camera.position.z / vec.z;
+			vec.sub(camera.position).normalize();
 
-		pos.copy(camera.position).add(vec.multiplyScalar(distance));
-		setLatestAlignedPosition({
-			x: pos.x,
-			y: pos.y - (obSize.y * scalePercentage) / 100,
-			z: pos.z,
-		});
-		return {
-			x: pos.x,
-			y: pos.y - (obSize.y * scalePercentage) / 100,
-			z: pos.z,
+			var distance = -camera.position.z / vec.z;
+
+			pos.copy(camera.position).add(vec.multiplyScalar(distance));
+			setLatestAlignedPosition({
+				x: pos.x,
+				y: pos.y - (obSize.y * scalePercentage) / 100,
+				z: pos.z,
+			});
+			return {
+				x: pos.x,
+				y: pos.y - (obSize.y * scalePercentage) / 100,
+				z: pos.z,
+			};
 		};
+		let promise = new Promise((resolve, reject) => {
+			return setTimeout(() => {
+				let pos = getPosition();
+				resolve({
+					x: pos.x,
+					y: pos.y,
+					z: pos.z,
+				});
+			}, _timeout || 0);
+		});
+		return promise;
 	};
 
 	const toggleItemPosition = (transformation, cancel) => {
@@ -506,27 +572,12 @@ const Model = ({
 		if (visibleSection === 1) {
 			additionalStyles.rotation = [0, 0, 0];
 		}
+		if (visibleSection === 2) {
+			additionalStyles.rotation = sectionTwoRotation;
+		}
 		if (!obSize) {
+			console.log("Return here no obSize");
 			return;
-		}
-		if (transformation === "topLeft") {
-			newPosition[0] = newPosition[0] + obSize.x / 2;
-			newPosition[1] = newPosition[1] - obSize.y / 1.5;
-		}
-		if (transformation === "topRight") {
-			newPosition[0] = newPosition[0] - obSize.x / 2;
-			newPosition[1] = newPosition[1] - obSize.y / 1.5;
-		}
-		if (transformation === "bottomLeft") {
-			newPosition[0] = newPosition[0] + obSize.x / 2;
-			newPosition[1] = newPosition[1] + obSize.y / 1.5;
-		}
-		if (transformation === "bottomRight") {
-			newPosition[0] = newPosition[0] - obSize.x / 2;
-			newPosition[1] = newPosition[1] + obSize.y / 1.5;
-		}
-		if (transformation === "center") {
-			newPosition = [0, 0, 0];
 		}
 		if (transformation === "alignTitle") {
 			let np = getAlignTitlePosition();
@@ -536,37 +587,32 @@ const Model = ({
 			additionalStyles.rotation = [0, 0, 0];
 			additionalStyles.scale = [1.3, 1.3, 1.3];
 			if (np) {
-				cancel();
+				cancel && cancel();
 				newPosition = [np.x, np.y, np.z];
 			}
 		}
-		if (transformation === "alignBottom") {
-			let np = getAlignBottomPosition();
-			additionalStyles.rotation = [0, 0, 0];
-			additionalStyles.scale = [1.3, 1.3, 1.3];
-			if (np) {
-				cancel();
-				newPosition = [np.x, np.y, np.z];
-			}
-		}
+
 		if (transformation === "demoLeft") {
 			let np = getDemoLeftPosition();
+			if (!np) {
+				console.log("No np... was this the cause");
+			}
 			if (np) {
-				cancel();
-				newPosition = [np.x, np.y, 0.75];
+				cancel && cancel();
+				console.log("Has np", np);
 				additionalStyles.rotation = sectionTwoRotation;
 				additionalStyles.scale = [2.9, 2.9, 2.9];
+				newPosition = [np.x, np.y, 0.75];
 			}
 		}
 		let sending = {
 			position: newPosition,
 			...additionalStyles,
 		};
-		console.log("sending: ", sending, additionalStyles);
-		api.start({
-			position: newPosition,
-			...additionalStyles,
-		});
+		console.log("sending: ", transformation, sending);
+		if (visibleSection !== 2) {
+			api.start(sending);
+		}
 	};
 
 	return (
@@ -576,6 +622,11 @@ const Model = ({
 			// position={[0, 0, 0]}
 			name="cuttingBoard"
 			scale={[1.3, 1.3, 1.3]}
+			rotation={
+				visibleSection === 1
+					? [0, 0, 0]
+					: [(Math.PI * 20) / 36, (-Math.PI * 1) / 36, (Math.PI * 102) / 36]
+			}
 			castShadow
 			receiveShadow
 			// {...wobbleStyles}

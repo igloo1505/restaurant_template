@@ -76,12 +76,22 @@ const Home = connect(mapStateToProps)(
 		},
 		network: { loading: isLoading },
 		tryAutoLogin,
-		props: { visibleSection, visibleSectionAnimStart, featuredRecipe },
+		props: {
+			visibleSection,
+			setVisibleSection,
+			initialVisibleSection,
+			setInitialVisibleSection,
+			visibleSectionAnimStart,
+			scrollXPosition,
+			setScrollXPosition,
+			featuredRecipe,
+			isTicking,
+			setIsTicking,
+		},
 	}) => {
 		const dispatch = useDispatch();
 		const router = useRouter();
 		const classes = useClasses();
-
 		useEffect(() => {
 			router.prefetch("/portal");
 		}, []);
@@ -96,7 +106,14 @@ const Home = connect(mapStateToProps)(
 					>
 						<MainCanvas
 							visibleSection={visibleSection}
+							setVisibleSection={setVisibleSection}
+							scrollXPosition={scrollXPosition}
+							setScrollXPosition={setScrollXPosition}
+							initialVisibleSection={initialVisibleSection}
+							setInitialVisibleSection={setInitialVisibleSection}
 							visibleSectionAnimStart={visibleSectionAnimStart}
+							isTicking={isTicking}
+							setIsTicking={setIsTicking}
 						/>
 					</div>
 					<LandingPageBanner visibleSection={visibleSection} />
@@ -129,6 +146,13 @@ const Switcher = ({
 	const dispatch = useDispatch();
 	const [visibleSection, setVisibleSection] = useState(1);
 	const [initialVisibleSection, setInitialVisibleSection] = useState(1);
+	const [scrollXPosition, setScrollxPosition] = useState(0);
+	const [isTicking, setIsTicking] = useState(false);
+
+	const setScrollXPosition = (val) => {
+		console.log("is ticking", isTicking);
+		setScrollxPosition(val);
+	};
 
 	useEffect(() => {
 		console.log("hasUser", hasUser);
@@ -143,6 +167,7 @@ const Switcher = ({
 
 	const dragHandler = useDrag(({ delta, ...rest }) => {
 		console.log("data first", delta[0], rest, rest.args);
+		console.log("Handle drag and isTicking state");
 		if (delta[0] < -10) {
 			if (typeof window !== "undefined" && visibleSection === 1) {
 				let em = document.getElementById("banner-title-narrow-title-text");
@@ -161,6 +186,17 @@ const Switcher = ({
 	const [styles, api] = useSpring(() => ({
 		transform: "translateX(0px)",
 		config: config.stiff,
+		onStart: () => {
+			setIsTicking(true);
+			console.log("On Start down here isTicking", isTicking);
+		},
+		onRest: () => {
+			console.log("On Rest down here isTicking", isTicking);
+		},
+		onResolve: () => {
+			setIsTicking(false);
+			console.log("On Resolve down here isTicking", isTicking);
+		},
 	}));
 	useEffect(() => {
 		document.addEventListener("scroll", (e) => {
@@ -196,8 +232,24 @@ const Switcher = ({
 		api.start({
 			transform: `translateX(-${_w * (visibleSection - 1)}px)`,
 			onResolve: () => {
-				// debugger;
 				setInitialVisibleSection(visibleSection);
+				setScrollXPosition(_w * (visibleSection - 1));
+				console.log("On Resolve isTicking", isTicking);
+				setTimeout(() => {
+					setIsTicking(false);
+				}, 500);
+			},
+			onStart: () => {
+				setIsTicking(true);
+				console.log("On Start isTicking", isTicking);
+			},
+			onRest: () => {
+				console.log("On Rest isTicking", isTicking);
+			},
+			onChange: () => {
+				console.log("onChange: ", isTicking);
+
+				if (!isTicking) setIsTicking(true);
 			},
 		});
 	}, [visibleSection, deviceWidth]);
@@ -248,7 +300,14 @@ const Switcher = ({
 					// setVisibleSection={setVisibleSection}
 				>
 					<Home
-						visibleSection={initialVisibleSection}
+						visibleSection={visibleSection}
+						setVisibleSection={setVisibleSection}
+						initialVisibleSection={initialVisibleSection}
+						scrollXPosition={scrollXPosition}
+						setScrollXPosition={setScrollXPosition}
+						isTicking={isTicking}
+						setIsTicking={setIsTicking}
+						setInitialVisibleSection={setInitialVisibleSection}
 						visibleSectionAnimStart={visibleSection}
 						featuredRecipe={featuredRecipe}
 						// setVisibleSection={setVisibleSection}
