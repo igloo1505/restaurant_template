@@ -267,7 +267,7 @@ const animateEntrance = () => {
 				duration: 1.5,
 			},
 			{
-				boxShadow: "8px 8px 12px #4589d9, -8px -8px 12px #5db9ff",
+				boxShadow: "8px 8px 12px #1f70cf , -8px -8px 12px #2485f6",
 				border: "1px solid #fffa",
 				// padding: "0px",
 				background: "linear-gradient(145deg, #2485f6, #1f70cf)",

@@ -112,8 +112,16 @@ const useClasses = makeStyles((theme) => ({
 		bottom: 0,
 		left: 0,
 		padding: "0.75rem 0.75rem",
-		zIndex: 9999,
+		zIndex: 999,
 	},
+	// rightDefinitionTitleDrawerOpen: {
+	// 	// opacity: 0,
+	// 	// left: "240px !important",
+	// 	transform: "rotateZ(-90deg) translate(calc(-50% + 240px), 50%, 0%)",
+	// 	// transition: theme.transitions.create(["opacity"], {
+	// 	// 	duration: 500,
+	// 	// }),
+	// },
 	rightDefinitionTitleContainer: {
 		display: "flex",
 		flexDirection: "column",
@@ -243,6 +251,7 @@ const coverBackground = {
 const landingPageBanner = ({
 	UI: {
 		viewport: { width: deviceWidth, height: deviceHeight },
+		mainDrawer: { open: mobileOpen },
 	},
 	props: { visibleSection },
 }) => {
@@ -256,6 +265,8 @@ const landingPageBanner = ({
 			console.log("Target i iTargets", targets[i]);
 		}
 	}, []);
+
+	useEffect(() => {}, [mobileOpen]);
 
 	const handleAnchorPoint = (cancel) => {
 		let dim = document
@@ -305,7 +316,7 @@ const landingPageBanner = ({
 		const cancelInterval = () => {
 			clearInterval(_int);
 		};
-	}, [deviceWidth, deviceHeight]);
+	}, [deviceWidth, deviceHeight, mobileOpen]);
 
 	const handleSignupClick = (e) => {
 		console.log("Did click signup button target");
@@ -387,6 +398,7 @@ const landingPageBanner = ({
 							className={clsx(
 								classes.rightDefinitionTitle,
 								deviceWidth < 1200 && classes.rightDefinitionTitleNarrow
+								// mobileOpen && classes.rightDefinitionTitleDrawerOpen
 							)}
 							style={{ ...anchorToCorner }}
 							id="banner-title-narrow-title-text"

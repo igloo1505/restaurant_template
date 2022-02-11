@@ -225,8 +225,8 @@ const StepOneFormComponent = ({
 	const [focusState, setFocusState] = useState(initialFocusState);
 	const [shouldShrinkDescription, setShouldShrinkDescription] = useState(true);
 	useEffect(() => {
+		console.log("formData: ", formData.description);
 		let shouldShrink = Boolean(formData?.description?.length !== 0);
-
 		setShouldShrinkDescription(shouldShrink);
 		setPlaceHolder(!shouldShrink);
 	}, []);

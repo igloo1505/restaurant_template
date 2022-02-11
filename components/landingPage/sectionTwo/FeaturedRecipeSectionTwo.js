@@ -195,6 +195,7 @@ const FeaturedRecipeSectionTwo = ({
 				.map((review, index) => (
 					<IndividualReview
 						review={review}
+						createdBy={createdBy}
 						index={index}
 						key={`recipe-featured-review-${index}`}
 					/>
@@ -274,6 +275,7 @@ const IndividualReview = ({
 		quickSnack: quick,
 		submittedBy,
 	},
+	createdBy,
 	index,
 }) => {
 	let revs = [kid, diet, quick, date];

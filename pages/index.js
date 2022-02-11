@@ -26,6 +26,7 @@ import { useDrag } from "@use-gesture/react";
 import { useMobileOrientation } from "react-device-detect";
 import WaveBackdrop from "../components/landingPage/WaveBackdrop";
 import SecondWaveBackdrop from "../components/landingPage/SecondWaveBackdrop";
+
 const MainCanvas = dynamic(
 	() => import("../components/landingPage/MainCanvas"),
 	{
